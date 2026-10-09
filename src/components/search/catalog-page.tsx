@@ -1,0 +1,41 @@
+import { Suspense } from "react";
+import { CatalogClient } from "@/components/search/catalog-client";
+import { LoadingState } from "@/components/shared/states";
+import { getSession } from "@/lib/auth";
+import { dealDefault, runCatalogSearch } from "@/lib/catalog";
+import type { SearchFilters, TransactionType } from "@/lib/types";
+
+export async function CatalogPage({
+  searchParams,
+  title,
+  description,
+  deal,
+  defaults,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  title: string;
+  description: string;
+  deal?: TransactionType;
+  defaults?: Partial<SearchFilters>;
+}) {
+  const params = await searchParams;
+  const session = await getSession();
+  const result = await runCatalogSearch(params, {
+    ...(deal ? dealDefault(deal) : {}),
+    ...defaults,
+  });
+
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-10"><LoadingState /></div>}>
+      <CatalogClient
+        items={result.items}
+        total={result.total}
+        page={result.page}
+        totalPages={result.totalPages}
+        userId={session?.id}
+        title={title}
+        description={description}
+      />
+    </Suspense>
+  );
+}

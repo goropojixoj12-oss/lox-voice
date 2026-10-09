@@ -1,0 +1,281 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  BUYER
+  OWNER
+  AGENT
+  ADMIN
+}
+
+enum TransactionType {
+  SALE
+  RENT
+  SHORT_STAY
+}
+
+enum PropertyType {
+  APARTMENT
+  CONDO
+  HOUSE
+  VILLA
+  TOWNHOUSE
+  COMMERCIAL
+  OFFICE
+  RETAIL
+  WAREHOUSE
+  LAND
+  PROJECT_UNIT
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING
+  PUBLISHED
+  REJECTED
+  ARCHIVED
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  VERIFIED
+  PREMIUM
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  name         String
+  role         UserRole      @default(BUYER)
+  agencyId     String?
+  agency       Agency?       @relation(fields: [agencyId], references: [id])
+  profile      UserProfile?
+  favorites    Favorite[]
+  savedSearches SavedSearch[]
+  inquiries    Inquiry[]     @relation("InquirySender")
+  notifications Notification[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  phone     String?
+  bio       String?
+  languages String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Agency {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  city        String
+  verified    Boolean  @default(false)
+  users       User[]
+  agents      AgentProfile[]
+  properties  Property[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AgentProfile {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  bio       String
+  agencyId  String
+  agency    Agency   @relation(fields: [agencyId], references: [id])
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Location {
+  id           String     @id @default(cuid())
+  country      String
+  countrySlug  String
+  city         String
+  citySlug     String
+  district     String
+  districtSlug String
+  lat          Float
+  lng          Float
+  properties   Property[]
+  projects     DevelopmentProject[]
+
+  @@unique([citySlug, districtSlug])
+  @@index([citySlug])
+}
+
+model Property {
+  id              String             @id @default(cuid())
+  slug            String             @unique
+  title           String
+  summary         String
+  description     String
+  transactionType TransactionType
+  propertyType    PropertyType
+  status          ListingStatus      @default(DRAFT)
+  verification    VerificationStatus @default(UNVERIFIED)
+  price           Decimal            @db.Decimal(14, 2)
+  currency        String
+  bedrooms        Int?
+  bathrooms       Int?
+  areaSqm         Int?
+  landSqm         Int?
+  locationId      String
+  location        Location           @relation(fields: [locationId], references: [id])
+  agencyId        String?
+  agency          Agency?            @relation(fields: [agencyId], references: [id])
+  projectId       String?
+  project         DevelopmentProject? @relation(fields: [projectId], references: [id])
+  images          PropertyImage[]
+  amenities       PropertyAmenity[]
+  favorites       Favorite[]
+  inquiries       Inquiry[]
+  publishedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([transactionType, status])
+  @@index([price])
+}
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  url        String
+  alt        String
+  isCover    Boolean  @default(false)
+}
+
+model PropertyAmenity {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  key        String
+
+  @@unique([propertyId, key])
+}
+
+model DevelopmentProject {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  name         String
+  developer    String
+  description  String
+  locationId   String
+  location     Location   @relation(fields: [locationId], references: [id])
+  priceFrom    Decimal    @db.Decimal(14, 2)
+  priceTo      Decimal    @db.Decimal(14, 2)
+  currency     String
+  units        Property[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, propertyId])
+}
+
+model SavedSearch {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  params    Json
+  createdAt DateTime @default(now())
+}
+
+model Inquiry {
+  id          String           @id @default(cuid())
+  propertyId  String?
+  property    Property?        @relation(fields: [propertyId], references: [id])
+  senderId    String?
+  sender      User?            @relation("InquirySender", fields: [senderId], references: [id])
+  name        String
+  contact     String
+  status      String           @default("new")
+  messages    InquiryMessage[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model InquiryMessage {
+  id        String   @id @default(cuid())
+  inquiryId String
+  inquiry   Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ArticleCategory {
+  id       String    @id @default(cuid())
+  slug     String    @unique
+  name     String
+  articles Article[]
+}
+
+model Article {
+  id         String          @id @default(cuid())
+  slug       String          @unique
+  title      String
+  excerpt    String
+  content    String
+  cover      String
+  author     String
+  categoryId String
+  category   ArticleCategory @relation(fields: [categoryId], references: [id])
+  publishedAt DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  targetType String
+  targetId   String
+  reason     String
+  status     String   @default("open")
+  createdAt  DateTime @default(now())
+}
+
+model ModerationEvent {
+  id         String   @id @default(cuid())
+  targetType String
+  targetId   String
+  action     String
+  note       String?
+  actorId    String?
+  createdAt  DateTime @default(now())
+}

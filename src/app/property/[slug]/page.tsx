@@ -1,0 +1,236 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { InquiryForm } from "@/components/forms/inquiry-form";
+import { FavoriteButton } from "@/components/property/favorite-button";
+import { PriceDisplay } from "@/components/property/price-display";
+import { PropertyGallery } from "@/components/property/property-gallery";
+import { PropertyGrid } from "@/components/property/property-card";
+import { PropertyMap } from "@/components/search/property-map";
+import { Section } from "@/components/shared/section";
+import { ButtonLink } from "@/components/ui/button";
+import { getAgencyById, getAgentById } from "@/data/agencies";
+import { getProjectById } from "@/data/projects";
+import {
+  getPropertyBySlug,
+  getRelatedProperties,
+} from "@/data/properties";
+import { getAllProperties } from "@/lib/catalog";
+import { getSession } from "@/lib/auth";
+import {
+  amenityLabels,
+  furnishingLabels,
+  propertyTypeLabels,
+  transactionLabels,
+  verificationLabels,
+} from "@/lib/labels";
+import { daysAgo } from "@/lib/utils";
+
+export async function generateStaticParams() {
+  const all = await getAllProperties();
+  return all.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const property = getPropertyBySlug(slug);
+  if (!property) return { title: "Property not found" };
+  return {
+    title: property.title,
+    description: property.summary,
+    openGraph: {
+      title: property.title,
+      description: property.summary,
+      images: [{ url: property.images[0]?.url }],
+    },
+  };
+}
+
+export default async function PropertyDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const all = await getAllProperties();
+  const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
+  if (!property) notFound();
+
+  const session = await getSession();
+  const agent = property.agentId ? getAgentById(property.agentId) : undefined;
+  const agency = property.agencyId ? getAgencyById(property.agencyId) : undefined;
+  const project = property.projectId ? getProjectById(property.projectId) : undefined;
+  const related = getRelatedProperties(property);
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
+        <Link href="/search" className="hover:text-[var(--color-primary)]">
+          Search
+        </Link>
+        <span>/</span>
+        <Link
+          href={`/locations/${property.location.citySlug}`}
+          className="hover:text-[var(--color-primary)]"
+        >
+          {property.location.city}
+        </Link>
+        <span>/</span>
+        <span>{property.title}</span>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+        <div className="space-y-8">
+          <PropertyGallery images={property.images} />
+          <div>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-accent)]">
+                  {transactionLabels[property.transactionType]} ·{" "}
+                  {propertyTypeLabels[property.propertyType]}
+                </p>
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+                  {property.title}
+                </h1>
+                <p className="mt-2 text-[var(--color-muted)]">
+                  {property.location.address} · {property.location.district},{" "}
+                  {property.location.city}
+                </p>
+              </div>
+              <FavoriteButton propertyId={property.id} userId={session?.id} />
+            </div>
+            <PriceDisplay
+              property={property}
+              className="mt-4 text-3xl font-semibold text-[var(--color-primary)]"
+            />
+            <div className="mt-4 flex flex-wrap gap-2 text-sm">
+              <span className="rounded-full bg-[var(--color-mist)] px-3 py-1">
+                {verificationLabels[property.verification]}
+              </span>
+              <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
+                Updated {daysAgo(property.updatedAt)}
+              </span>
+              {property.demo ? (
+                <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
+                  Demo listing
+                </span>
+              ) : null}
+            </div>
+          </div>
+
+          <section>
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              Overview
+            </h2>
+            <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[
+                ["Bedrooms", property.bedrooms === 0 ? "Studio" : property.bedrooms],
+                ["Bathrooms", property.bathrooms],
+                ["Interior", property.areaSqm ? `${property.areaSqm} m²` : null],
+                ["Land", property.landSqm ? `${property.landSqm} m²` : null],
+                [
+                  "Furnishing",
+                  property.furnishing ? furnishingLabels[property.furnishing] : null,
+                ],
+                ["Seller", property.sellerType],
+              ]
+                .filter(([, value]) => value !== null && value !== undefined)
+                .map(([label, value]) => (
+                  <div
+                    key={String(label)}
+                    className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
+                  >
+                    <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
+                      {label}
+                    </dt>
+                    <dd className="mt-1 font-semibold capitalize">{value}</dd>
+                  </div>
+                ))}
+            </dl>
+          </section>
+
+          <section>
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              Description
+            </h2>
+            <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed text-[var(--color-muted)]">
+              {property.description}
+            </p>
+          </section>
+
+          {property.amenities.length ? (
+            <section>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+                Amenities
+              </h2>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {property.amenities.map((amenity) => (
+                  <li
+                    key={amenity}
+                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
+                  >
+                    {amenityLabels[amenity]}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          <section>
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              Location
+            </h2>
+            <PropertyMap items={[property]} activeId={property.id} />
+          </section>
+        </div>
+
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <InquiryForm propertyId={property.id} propertyTitle={property.title} />
+          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <h3 className="font-semibold text-[var(--color-primary)]">Share</h3>
+            <p className="mt-1 text-sm text-[var(--color-muted)]">
+              Copy the page URL from your browser to share this listing. External messaging
+              integrations are not enabled in demo mode.
+            </p>
+            <ButtonLink href={`/search?city=${property.location.citySlug}`} variant="outline" className="mt-3 w-full">
+              More in {property.location.city}
+            </ButtonLink>
+          </div>
+          {agent ? (
+            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Listed by</p>
+              <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-primary)]">
+                {agent.name}
+              </Link>
+              <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
+              {agency ? (
+                <Link href={`/agencies/${agency.slug}`} className="mt-2 block text-sm text-[var(--color-accent)]">
+                  {agency.name}
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
+          {project ? (
+            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Project</p>
+              <Link href={`/projects/${project.slug}`} className="mt-1 block font-semibold">
+                {project.name}
+              </Link>
+            </div>
+          ) : null}
+        </aside>
+      </div>
+
+      <Section className="px-0">
+        <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+          Similar listings
+        </h2>
+        <PropertyGrid items={related} userId={session?.id} />
+      </Section>
+    </div>
+  );
+}
