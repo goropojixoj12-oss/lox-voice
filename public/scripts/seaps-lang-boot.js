@@ -1,19 +1,33 @@
 /**
- * Runs before paint: pick language (manual override or browser/OS)
- * and set googtrans so Google Translate can apply immediately.
+ * Runs before paint: manual menu override OR any browser/OS language,
+ * then set googtrans so Google Translate can apply immediately.
  */
 (function () {
   var KEY = "seaps-lang";
   var SOURCE = "en";
 
-  function mapBrowser(locale) {
+  /** Any locale → Google Translate code (ru, fr, th, zh-CN, …). */
+  function mapBrowserToGoogle(locale) {
     if (!locale) return "en";
-    var l = String(locale).toLowerCase();
-    if (l.indexOf("km") === 0) return "km";
-    if (l.indexOf("zh") === 0) return "zh-CN";
-    if (l.indexOf("ja") === 0) return "ja";
-    if (l.indexOf("en") === 0) return "en";
-    return "en";
+    var raw = String(locale).replace(/_/g, "-");
+    var lower = raw.toLowerCase();
+
+    if (lower === "zh" || lower.indexOf("zh-cn") === 0 || lower.indexOf("hans") !== -1) {
+      return "zh-CN";
+    }
+    if (
+      lower.indexOf("zh-tw") === 0 ||
+      lower.indexOf("zh-hk") === 0 ||
+      lower.indexOf("hant") !== -1
+    ) {
+      return "zh-TW";
+    }
+    if (lower.indexOf("pt-br") === 0) return "pt";
+    if (lower.indexOf("nb") === 0 || lower.indexOf("nn") === 0 || lower === "no") return "no";
+
+    var primary = lower.split("-")[0] || "en";
+    var aliases = { he: "iw", jv: "jw", nb: "no", nn: "no" };
+    return aliases[primary] || primary;
   }
 
   function siteToGoogle(code) {
@@ -70,10 +84,11 @@
       navigator.language ||
       navigator.userLanguage ||
       "en";
-    googleLang = mapBrowser(nav);
-    window.__SEAPS_LANG__ =
-      googleLang === "zh-CN" ? "zh" : googleLang === "en" ? "en" : googleLang;
+    googleLang = mapBrowserToGoogle(nav);
+    window.__SEAPS_LANG__ = "auto";
   }
+
+  window.__SEAPS_GOOGLE_LANG__ = googleLang;
 
   if (!googleLang || googleLang === "en") {
     clearGoogTrans();

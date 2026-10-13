@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   LANG_STORAGE_KEY,
   googleCodeFor,
+  googleLangToSiteLang,
   isSiteLangCode,
-  mapBrowserToSiteLang,
+  mapBrowserToGoogleLang,
   siteLanguages,
   type SiteLangCode,
 } from "@/config/languages";
@@ -32,29 +33,45 @@ function setGoogTransCookie(googleTarget: string) {
   }
 }
 
-function resolveInitialLang(): SiteLangCode {
+function browserGoogleLang(): string {
   if (typeof window === "undefined") return "en";
-  try {
-    const stored = localStorage.getItem(LANG_STORAGE_KEY);
-    if (isSiteLangCode(stored)) return stored;
-  } catch {
-    /* ignore */
-  }
-  if (isSiteLangCode(window.__SEAPS_LANG__)) return window.__SEAPS_LANG__;
-  return mapBrowserToSiteLang(
+  if (window.__SEAPS_GOOGLE_LANG__) return window.__SEAPS_GOOGLE_LANG__;
+  return mapBrowserToGoogleLang(
     navigator.languages?.[0] || navigator.language || "en",
   );
 }
 
+function displayNameForGoogleLang(code: string): string {
+  try {
+    const dn = new Intl.DisplayNames([code, "en"], { type: "language" });
+    return dn.of(code) ?? code.toUpperCase();
+  } catch {
+    return code.toUpperCase();
+  }
+}
+
 export function LanguageSwitcher({ className }: { className?: string }) {
-  const [lang, setLang] = useState<SiteLangCode>("en");
+  const [manual, setManual] = useState<SiteLangCode | null>(null);
+  const [autoGoogle, setAutoGoogle] = useState("en");
 
   useEffect(() => {
-    setLang(resolveInitialLang());
+    try {
+      const stored = localStorage.getItem(LANG_STORAGE_KEY);
+      setManual(isSiteLangCode(stored) ? stored : null);
+    } catch {
+      setManual(null);
+    }
+    setAutoGoogle(browserGoogleLang());
   }, []);
 
-  const onChange = (next: SiteLangCode) => {
-    setLang(next);
+  const autoAsSite = useMemo(() => googleLangToSiteLang(autoGoogle), [autoGoogle]);
+  const selectValue = manual ?? autoAsSite ?? "__auto__";
+  const showAutoOption = !manual && !autoAsSite && autoGoogle !== "en";
+
+  const onChange = (next: string) => {
+    if (!isSiteLangCode(next)) return;
+
+    setManual(next);
     try {
       localStorage.setItem(LANG_STORAGE_KEY, next);
     } catch {
@@ -67,7 +84,6 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       setGoogTransCookie(googleCodeFor(next));
     }
 
-    // Hard reload so every page node is translated consistently.
     window.location.reload();
   };
 
@@ -76,11 +92,16 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       <span className="sr-only">Language</span>
       <select
         id="lang"
-        className="h-10 max-w-[9.5rem] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)]"
-        value={lang}
+        className="h-10 max-w-[10.5rem] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)]"
+        value={selectValue}
         aria-label="Language"
-        onChange={(e) => onChange(e.target.value as SiteLangCode)}
+        onChange={(e) => onChange(e.target.value)}
       >
+        {showAutoOption ? (
+          <option value="__auto__">
+            {displayNameForGoogleLang(autoGoogle)}
+          </option>
+        ) : null}
         {siteLanguages.map((item) => (
           <option key={item.code} value={item.code}>
             {item.label}
