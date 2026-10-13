@@ -26,8 +26,8 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-50 overflow-x-hidden border-b border-[var(--color-border)]/80 bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)] backdrop-blur-md">
       <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group min-w-0 shrink" aria-label="SEAPS home">
-          <SeapsLogo compact className="max-w-[180px] sm:max-w-none" />
+        <Link href="/" className="group shrink-0" aria-label="SEAPS home">
+          <SeapsLogo compact variant="image" />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">

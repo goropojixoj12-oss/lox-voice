@@ -1,13 +1,45 @@
+"use client";
+
+import Image from "next/image";
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 type SeapsLogoProps = {
   className?: string;
   compact?: boolean;
+  /** Use the brand mark image with gold treatment */
+  variant?: "svg" | "image";
 };
 
-export function SeapsLogo({ className, compact = false }: SeapsLogoProps) {
-  const gid = compact ? "seapsGoldCompact" : "seapsGoldFull";
-  const glowId = compact ? "seapsGlowCompact" : "seapsGlowFull";
+export function SeapsLogo({
+  className,
+  compact = false,
+  variant = "svg",
+}: SeapsLogoProps) {
+  const uid = useId().replace(/:/g, "");
+  const gid = `seapsGold-${uid}`;
+  const glowId = `seapsGlow-${uid}`;
+
+  if (variant === "image") {
+    return (
+      <span
+        className={cn("seaps-logo inline-flex items-center justify-center", className)}
+        aria-label="SEAPS — South East Asia Property Services"
+      >
+        <Image
+          src="/brand/seaps-logo.png"
+          alt="SEAPS — South East Asia Property Services"
+          width={compact ? 160 : 280}
+          height={compact ? 100 : 180}
+          className={cn(
+            "seaps-logo-img h-auto w-auto object-contain",
+            compact ? "h-12 w-auto max-w-[160px] sm:h-14 sm:max-w-[200px]" : "h-24 w-auto max-w-[280px] md:h-28",
+          )}
+          priority
+        />
+      </span>
+    );
+  }
 
   return (
     <span
@@ -15,33 +47,25 @@ export function SeapsLogo({ className, compact = false }: SeapsLogoProps) {
       aria-label="SEAPS — South East Asia Property Services"
     >
       <svg
-        viewBox="0 0 320 210"
-        className={cn(compact ? "h-11 w-auto sm:h-12" : "h-[4.5rem] w-auto md:h-24", "seaps-gold-shine")}
+        viewBox={compact ? "40 10 240 170" : "0 0 320 210"}
+        className={cn(
+          "seaps-gold-shine block",
+          compact ? "h-12 w-auto max-w-[200px] sm:h-14" : "h-24 w-auto max-w-[300px] md:h-28",
+        )}
         role="img"
         aria-hidden="true"
       >
         <defs>
           <linearGradient id={gid} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#7A5E14" />
-            <stop offset="22%" stopColor="#C9A227" />
-            <stop offset="48%" stopColor="#FFE9A8" />
-            <stop offset="72%" stopColor="#D4AF37" />
-            <stop offset="100%" stopColor="#7A5E14" />
-            <animate
-              attributeName="x1"
-              values="-80%;20%;-80%"
-              dur="8s"
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="x2"
-              values="20%;120%;20%"
-              dur="8s"
-              repeatCount="indefinite"
-            />
+            <stop offset="0%" stopColor="#C9A227" />
+            <stop offset="35%" stopColor="#FFE9A8" />
+            <stop offset="65%" stopColor="#D4AF37" />
+            <stop offset="100%" stopColor="#C9A227" />
+            <animate attributeName="x1" values="-40%;40%;-40%" dur="8s" repeatCount="indefinite" />
+            <animate attributeName="x2" values="60%;140%;60%" dur="8s" repeatCount="indefinite" />
           </linearGradient>
-          <filter id={glowId} x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="1.4" result="blur" />
+          <filter id={glowId} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="1.2" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -52,7 +76,7 @@ export function SeapsLogo({ className, compact = false }: SeapsLogoProps) {
         <g
           fill="none"
           stroke={`url(#${gid})`}
-          strokeWidth="5.5"
+          strokeWidth={compact ? 6 : 5.5}
           strokeLinejoin="round"
           filter={`url(#${glowId})`}
         >
@@ -70,7 +94,7 @@ export function SeapsLogo({ className, compact = false }: SeapsLogoProps) {
           filter={`url(#${glowId})`}
           style={{
             fontFamily: "var(--font-display), Georgia, serif",
-            fontSize: "58px",
+            fontSize: compact ? "64px" : "58px",
             fontWeight: 700,
             letterSpacing: "0.1em",
           }}
@@ -85,9 +109,9 @@ export function SeapsLogo({ className, compact = false }: SeapsLogoProps) {
           fill={`url(#${gid})`}
           style={{
             fontFamily: "var(--font-display), Georgia, serif",
-            fontSize: "12px",
-            fontWeight: 500,
-            letterSpacing: "0.16em",
+            fontSize: compact ? "13px" : "12px",
+            fontWeight: 600,
+            letterSpacing: "0.12em",
           }}
         >
           SOUTH EAST ASIA PROPERTY SERVICES

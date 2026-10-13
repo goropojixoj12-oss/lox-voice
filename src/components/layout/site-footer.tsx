@@ -47,7 +47,7 @@ export function SiteFooter() {
     <footer className="mt-auto overflow-hidden border-t border-[var(--color-border)] bg-[#050d18] text-[var(--color-text)]">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_2fr] lg:px-8">
         <div className="min-w-0">
-          <SeapsLogo className="max-w-full" />
+          <SeapsLogo variant="image" className="max-w-full" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
             {brand.fullName} · Cambodia · since {brand.foundedYear}
           </p>

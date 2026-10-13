@@ -69,11 +69,20 @@ canvas {
 
 .seaps-logo {
   max-width: 100%;
+  flex-shrink: 0;
 }
 
-.seaps-logo svg {
-  max-width: min(100%, 320px);
+.seaps-logo svg,
+.seaps-logo img {
+  max-width: 100%;
   height: auto;
+  display: block;
+}
+
+/* Soft gold glow on brand mark */
+.seaps-logo-img {
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+  animation: seapsShimmer 7s ease-in-out infinite;
 }
 
 ::selection {
