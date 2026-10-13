@@ -26,9 +26,9 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
 Edit `src/config/brand.ts` and CSS variables in `src/app/globals.css`.
 
-## Offline / self-contained assets
+## Self-contained assets + translation
 
-Runtime assets are local (no Unsplash / Google Fonts / Google Translate CDN):
+Local (no Unsplash / Google Fonts CDN):
 
 - Fonts: `src/fonts/*.woff2` via `next/font/local`
 - Photos: `public/media/photos/*.jpg`
@@ -36,7 +36,7 @@ Runtime assets are local (no Unsplash / Google Fonts / Google Translate CDN):
 - Brand mark: `public/brand/seaps-logo.png`
 - Language boot: `public/scripts/seaps-lang-boot.js`
 
-The language menu (EN / ខ្មែរ / 中文 / 日本語) stores a local preference only — it does not call external translation APIs.
+Translation uses the hidden Google Website Translator (network). Browser/OS locale can be any language; the header menu (EN / ខ្� hidden Google Website Translator (network). Browser/OS locale can be any language; the header menu (EN / ខ្មែរ / 中文 / 日本語) overrides and persists.
 
 ## Deploy
 

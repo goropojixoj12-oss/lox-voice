@@ -1,18 +1,39 @@
 /**
- * Local-only language boot (no external network).
- * Picks manual override or browser/OS locale among supported site languages.
+ * Runs before paint: manual menu override OR any browser/OS language,
+ * then set googtrans so Google Translate can apply immediately.
  */
 (function () {
   var KEY = "seaps-lang";
-  var supported = { en: 1, km: 1, zh: 1, ja: 1 };
+  var SOURCE = "en";
 
-  function mapBrowser(locale) {
+  /** Any locale → Google Translate code (ru, fr, th, zh-CN, …). */
+  function mapBrowserToGoogle(locale) {
     if (!locale) return "en";
-    var l = String(locale).toLowerCase();
-    if (l.indexOf("km") === 0) return "km";
-    if (l.indexOf("zh") === 0) return "zh";
-    if (l.indexOf("ja") === 0) return "ja";
-    if (l.indexOf("en") === 0) return "en";
+    var raw = String(locale).replace(/_/g, "-");
+    var lower = raw.toLowerCase();
+
+    if (lower === "zh" || lower.indexOf("zh-cn") === 0 || lower.indexOf("hans") !== -1) {
+      return "zh-CN";
+    }
+    if (
+      lower.indexOf("zh-tw") === 0 ||
+      lower.indexOf("zh-hk") === 0 ||
+      lower.indexOf("hant") !== -1
+    ) {
+      return "zh-TW";
+    }
+    if (lower.indexOf("pt-br") === 0) return "pt";
+    if (lower.indexOf("nb") === 0 || lower.indexOf("nn") === 0 || lower === "no") return "no";
+
+    var primary = lower.split("-")[0] || "en";
+    var aliases = { he: "iw", jv: "jw", nb: "no", nn: "no" };
+    return aliases[primary] || primary;
+  }
+
+  function siteToGoogle(code) {
+    if (code === "zh") return "zh-CN";
+    if (code === "km") return "km";
+    if (code === "ja") return "ja";
     return "en";
   }
 
@@ -24,22 +45,60 @@
     }
   }
 
+  function clearGoogTrans() {
+    var host = location.hostname;
+    var expire = "Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "googtrans=; expires=" + expire + "; path=/";
+    document.cookie = "googtrans=; expires=" + expire + "; path=/; domain=" + host;
+    if (host.indexOf(".") !== -1) {
+      document.cookie =
+        "googtrans=; expires=" + expire + "; path=/; domain=." + host.replace(/^www\./, "");
+    }
+  }
+
+  function setGoogTrans(target) {
+    var value = "/" + SOURCE + "/" + target;
+    var maxAge = "; max-age=31536000";
+    var host = location.hostname;
+    document.cookie = "googtrans=" + value + "; path=/" + maxAge;
+    document.cookie = "googtrans=" + value + "; path=/; domain=" + host + maxAge;
+    if (host.indexOf(".") !== -1) {
+      document.cookie =
+        "googtrans=" +
+        value +
+        "; path=/; domain=." +
+        host.replace(/^www\./, "") +
+        maxAge;
+    }
+  }
+
   var forced = readForced();
-  var lang;
-  if (forced && supported[forced]) {
-    lang = forced;
+  var googleLang;
+
+  if (forced === "en" || forced === "km" || forced === "zh" || forced === "ja") {
+    googleLang = siteToGoogle(forced);
+    window.__SEAPS_LANG__ = forced;
   } else {
     var nav =
       (navigator.languages && navigator.languages[0]) ||
       navigator.language ||
       navigator.userLanguage ||
       "en";
-    lang = mapBrowser(nav);
+    googleLang = mapBrowserToGoogle(nav);
+    window.__SEAPS_LANG__ = "auto";
   }
 
-  window.__SEAPS_LANG__ = lang;
+  window.__SEAPS_GOOGLE_LANG__ = googleLang;
+
+  if (!googleLang || googleLang === "en") {
+    clearGoogTrans();
+  } else {
+    setGoogTrans(googleLang);
+  }
+
   try {
-    document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
+    document.documentElement.lang =
+      googleLang === "zh-CN" ? "zh-CN" : googleLang === "en" ? "en" : googleLang;
   } catch (e) {
     /* ignore */
   }
