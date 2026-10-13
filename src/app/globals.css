@@ -23,6 +23,7 @@
   --shadow-lift: 0 18px 50px rgba(212, 175, 55, 0.12);
   --background: var(--color-background);
   --foreground: var(--color-text);
+  /* Soft base sheen (fills / large surfaces) */
   --gold-shine: linear-gradient(
     110deg,
     #8a6a1a 0%,
@@ -31,15 +32,25 @@
     #d4af37 78%,
     #8a6a1a 100%
   );
+  /*
+    Living gold: mostly solid metal with a narrow specular gleam.
+    Wide plateaus + tiny highlight = visible sweep on headings & labels.
+  */
   --gold-flow: linear-gradient(
-    110deg,
-    #b88920 0%,
-    #d4af37 18%,
-    #f0d78c 36%,
-    #fff4c8 50%,
-    #f0d78c 64%,
-    #d4af37 82%,
-    #b88920 100%
+    105deg,
+    #9a7420 0%,
+    #c9a227 18%,
+    #d4af37 32%,
+    #d4af37 44%,
+    #f0d78c 47%,
+    #fff8dc 49%,
+    #ffffff 50%,
+    #fff8dc 51%,
+    #f0d78c 53%,
+    #d4af37 56%,
+    #d4af37 68%,
+    #c9a227 82%,
+    #9a7420 100%
   );
 }
 
@@ -136,9 +147,9 @@ canvas {
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   background-image: var(--gold-flow);
-  background-size: 220% 100%;
+  background-size: 340% 100%;
   background-color: #d4af37;
-  animation: seapsGoldFlow 2.8s linear infinite;
+  animation: seapsGoldFlow 2.2s linear infinite;
 }
 
 .seaps-btn-gold::after {
@@ -149,13 +160,13 @@ canvas {
   pointer-events: none;
   background: linear-gradient(
     105deg,
-    transparent 34%,
-    rgba(255, 255, 255, 0.55) 50%,
-    transparent 66%
+    transparent 38%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 62%
   );
-  background-size: 220% 100%;
+  background-size: 260% 100%;
   background-repeat: no-repeat;
-  animation: seapsBtnShine 2.4s linear infinite;
+  animation: seapsBtnShine 2.2s linear infinite;
   will-change: background-position;
 }
 
@@ -169,18 +180,30 @@ canvas {
   background:
     linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
     var(--gold-flow) border-box;
-  background-size: 100% 100%, 220% 100%;
-  animation: seapsGoldBorderFlow 2.8s linear infinite;
+  background-size: 100% 100%, 340% 100%;
+  animation: seapsGoldBorderFlow 2.2s linear infinite;
   color: transparent;
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 18px rgba(212, 175, 55, 0.12);
 }
 
 .seaps-btn-gold-outline > span {
   background-image: var(--gold-flow);
-  background-size: 220% 100%;
+  background-size: 340% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: seapsGoldFlow 2.8s linear infinite;
+  -webkit-text-fill-color: transparent;
+  animation: seapsGoldFlow 2.2s linear infinite;
+}
+
+/* Keep GT <font> wrappers from painting solid color over clipped gold */
+.seaps-btn-gold-outline > span font,
+.seaps-gold-text font,
+.text-\[var\(--color-accent\)\]:not(:has(svg)) font,
+.text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  background: none !important;
 }
 
 .seaps-btn-gold-outline::after {
@@ -191,64 +214,89 @@ canvas {
   pointer-events: none;
   background: linear-gradient(
     105deg,
-    transparent 40%,
-    rgba(255, 248, 220, 0.18) 50%,
-    transparent 60%
+    transparent 42%,
+    rgba(255, 248, 220, 0.28) 50%,
+    transparent 58%
   );
-  background-size: 220% 100%;
-  animation: seapsBtnShine 2.6s linear infinite;
+  background-size: 260% 100%;
+  animation: seapsBtnShine 2.3s linear infinite;
 }
 
-/* Gold text everywhere we use accent / accent-soft */
-.text-\[var\(--color-accent\)\],
-.text-\[var\(--color-accent-soft\)\],
+/*
+  Gold text: clip flowing gradient into glyphs.
+  Skip elements that host SVGs — transparent currentColor would hide icons.
+*/
+.text-\[var\(--color-accent\)\]:not(:has(svg)),
+.text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
 .seaps-gold-text {
   background-image: var(--gold-flow) !important;
-  background-size: 220% 100% !important;
+  background-size: 340% 100% !important;
+  background-repeat: no-repeat;
   -webkit-background-clip: text !important;
   background-clip: text !important;
   color: transparent !important;
-  -webkit-text-fill-color: transparent;
-  animation: seapsGoldFlow 3s linear infinite;
-  filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.22));
+  -webkit-text-fill-color: transparent !important;
+  animation: seapsGoldFlow 2.2s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.28));
 }
 
-.hover\:text-\[var\(--color-accent\)\]:hover,
-.hover\:text-\[var\(--color-accent-soft\)\]:hover {
+/* Icon-only / SVG hosts: keep currentColor gold + living glow */
+.text-\[var\(--color-accent\)\]:has(svg),
+.text-\[var\(--color-accent-soft\)\]:has(svg) {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #d4af37;
+  -webkit-text-fill-color: #d4af37;
+  animation: seapsGoldIconPulse 2.4s ease-in-out infinite;
+}
+
+.hover\:text-\[var\(--color-accent\)\]:hover:not(:has(svg)),
+.hover\:text-\[var\(--color-accent-soft\)\]:hover:not(:has(svg)) {
   background-image: var(--gold-flow) !important;
-  background-size: 220% 100% !important;
+  background-size: 340% 100% !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
   color: transparent !important;
-  -webkit-text-fill-color: transparent;
-  animation: seapsGoldFlow 2.4s linear infinite;
+  -webkit-text-fill-color: transparent !important;
+  animation: seapsGoldFlow 2s linear infinite;
+}
+
+.hover\:text-\[var\(--color-accent\)\]:hover:has(svg),
+.hover\:text-\[var\(--color-accent-soft\)\]:hover:has(svg) {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #f0d78c;
+  -webkit-text-fill-color: #f0d78c;
+  animation: seapsGoldIconPulse 1.8s ease-in-out infinite;
 }
 
 /* Gold fills (chips, progress, badges) */
 .bg-\[var\(--color-accent\)\] {
   background-color: transparent !important;
   background-image: var(--gold-flow) !important;
-  background-size: 220% 100% !important;
-  animation: seapsGoldFlow 2.8s linear infinite;
+  background-size: 340% 100% !important;
+  animation: seapsGoldFlow 2.2s linear infinite;
 }
 
-/* Gold borders / rings */
+/* Gold borders / rings — luminous pulse (keeps existing backgrounds intact) */
 .border-\[var\(--color-accent\)\],
 .border-\[var\(--color-accent\)\]\/25,
 .border-\[var\(--color-accent\)\]\/30,
 .border-\[var\(--color-accent\)\]\/40,
 .seaps-gold-border {
-  border-color: rgba(212, 175, 55, 0.55) !important;
-  animation: seapsGoldRing 2.6s ease-in-out infinite;
+  border-color: rgba(232, 198, 90, 0.7) !important;
+  animation: seapsGoldRing 2.4s ease-in-out infinite;
 }
 
 .hover\:border-\[var\(--color-accent\)\]:hover {
-  border-color: rgba(248, 231, 161, 0.85) !important;
-  box-shadow: 0 0 0 1px rgba(248, 231, 161, 0.35), 0 0 16px rgba(212, 175, 55, 0.28);
+  border-color: rgba(255, 244, 200, 0.95) !important;
+  box-shadow: 0 0 0 1px rgba(248, 231, 161, 0.45), 0 0 18px rgba(212, 175, 55, 0.35);
 }
 
 .seaps-gold-shine {
-  animation: seapsGoldRing 2.8s ease-in-out infinite;
+  animation: seapsGoldRing 2.4s ease-in-out infinite;
 }
 
 ::selection {
@@ -265,7 +313,7 @@ a {
     background-position: 0% 50%;
   }
   to {
-    background-position: 200% 50%;
+    background-position: 100% 50%;
   }
 }
 
@@ -278,7 +326,7 @@ a {
   to {
     background-position:
       0 0,
-      200% 50%;
+      100% 50%;
   }
 }
 
@@ -286,13 +334,25 @@ a {
   0%,
   100% {
     box-shadow:
-      0 0 0 1px rgba(212, 175, 55, 0.28),
-      0 0 10px rgba(212, 175, 55, 0.14);
+      0 0 0 1px rgba(212, 175, 55, 0.35),
+      0 0 12px rgba(212, 175, 55, 0.18);
   }
   50% {
     box-shadow:
-      0 0 0 1px rgba(255, 243, 196, 0.7),
-      0 0 20px rgba(248, 231, 161, 0.38);
+      0 0 0 1px rgba(255, 248, 220, 0.85),
+      0 0 26px rgba(255, 236, 170, 0.5);
+  }
+}
+
+@keyframes seapsGoldIconPulse {
+  0%,
+  100% {
+    color: #d4af37;
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.35));
+  }
+  50% {
+    color: #fff4c8;
+    filter: drop-shadow(0 0 10px rgba(255, 244, 200, 0.65));
   }
 }
 
@@ -342,8 +402,10 @@ a {
   .seaps-btn-gold-outline,
   .seaps-btn-gold-outline::after,
   .seaps-btn-gold-outline > span,
-  .text-\[var\(--color-accent\)\],
-  .text-\[var\(--color-accent-soft\)\],
+  .text-\[var\(--color-accent\)\]:not(:has(svg)),
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
+  .text-\[var\(--color-accent\)\]:has(svg),
+  .text-\[var\(--color-accent-soft\)\]:has(svg),
   .seaps-gold-text,
   .bg-\[var\(--color-accent\)\],
   .border-\[var\(--color-accent\)\],
@@ -360,12 +422,19 @@ a {
     opacity: 0;
   }
 
-  .text-\[var\(--color-accent\)\],
-  .text-\[var\(--color-accent-soft\)\],
+  .text-\[var\(--color-accent\)\]:not(:has(svg)),
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
   .seaps-gold-text {
     background-image: none !important;
     color: var(--color-accent-soft) !important;
     -webkit-text-fill-color: var(--color-accent-soft);
+    filter: none;
+  }
+
+  .text-\[var\(--color-accent\)\]:has(svg),
+  .text-\[var\(--color-accent-soft\)\]:has(svg) {
+    color: var(--color-accent) !important;
+    -webkit-text-fill-color: var(--color-accent) !important;
     filter: none;
   }
 
