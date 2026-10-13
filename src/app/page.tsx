@@ -44,7 +44,7 @@ export default async function HomePage() {
         </div>
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-28">
           <div className="reveal text-white">
-            <SeapsLogo variant="image" className="items-start" />
+            <SeapsLogo size="hero" />
             <p className="mt-4 text-sm uppercase tracking-[0.2em] text-[var(--color-accent-soft)]">
               {brand.fullName}
             </p>

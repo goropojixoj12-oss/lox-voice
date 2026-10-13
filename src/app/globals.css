@@ -68,21 +68,53 @@ canvas {
 }
 
 .seaps-logo {
-  max-width: 100%;
+  position: relative;
   flex-shrink: 0;
+  line-height: 0;
+  overflow: hidden;
 }
 
-.seaps-logo svg,
-.seaps-logo img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* Soft gold glow on brand mark */
+.seaps-logo img,
 .seaps-logo-img {
-  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
-  animation: seapsShimmer 7s ease-in-out infinite;
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.35));
+}
+
+.seaps-logo-shine-wrap {
+  overflow: hidden;
+}
+
+/* Gold light sweep clipped to the logo mark */
+.seaps-logo-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(255, 248, 220, 0.15) 44%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 236, 170, 0.35) 56%,
+    transparent 68%
+  );
+  background-size: 250% 100%;
+  animation: seapsGoldSlide 3.8s ease-in-out infinite;
+  -webkit-mask-image: url("/brand/seaps-logo.png");
+  mask-image: url("/brand/seaps-logo.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  mix-blend-mode: screen;
 }
 
 ::selection {
@@ -134,13 +166,13 @@ a {
 
 @keyframes seapsGoldSlide {
   0% {
-    background-position: 0% 50%;
+    background-position: 120% 50%;
   }
-  50% {
-    background-position: 100% 50%;
+  55% {
+    background-position: -20% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: -20% 50%;
   }
 }
 
@@ -166,6 +198,7 @@ a {
 
   .seaps-gold-shine,
   .seaps-gold-text,
+  .seaps-logo-shine,
   .seaps-logo svg stop {
     animation: none !important;
   }
