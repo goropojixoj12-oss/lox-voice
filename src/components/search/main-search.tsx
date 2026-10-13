@@ -41,7 +41,7 @@ export function MainSearch({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn("rounded-[var(--radius-xl)] bg-white/95 p-4 shadow-[var(--shadow-lift)] backdrop-blur md:p-5", className)}>
+    <div className={cn("rounded-[var(--radius-xl)] border border-[var(--color-accent)]/25 bg-[var(--color-surface)]/95 p-4 shadow-[var(--shadow-lift)] backdrop-blur md:p-5 seaps-gold-border", className)}>
       <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
         {deals.map((deal) => (
           <button
@@ -53,7 +53,7 @@ export function MainSearch({ className }: { className?: string }) {
             className={cn(
               "rounded-full px-4 py-2 text-sm font-semibold transition",
               mode === deal.id
-                ? "bg-[var(--color-primary)] text-white"
+                ? "bg-[var(--color-accent)] text-[#0B1C33]"
                 : "bg-[var(--color-mist)] text-[var(--color-text)] hover:bg-[var(--color-secondary)]",
             )}
           >

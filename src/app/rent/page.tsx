@@ -3,7 +3,7 @@ import { CatalogPage } from "@/components/search/catalog-page";
 
 export const metadata: Metadata = {
   title: "Homes for rent",
-  description: "Long-term rental listings in the EstateNova demo catalog.",
+  description: "Long-term rental listings in the SEAPS demo catalog.",
 };
 
 export default async function RentPage({

@@ -5,7 +5,7 @@ import { agencies } from "@/data/agencies";
 
 export const metadata: Metadata = {
   title: "Agencies",
-  description: "Directory of demo real estate agencies on EstateNova.",
+  description: "Directory of demo real estate agencies on SEAPS.",
 };
 
 export default function AgenciesPage() {

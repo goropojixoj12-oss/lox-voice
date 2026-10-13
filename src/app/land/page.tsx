@@ -3,7 +3,7 @@ import { CatalogPage } from "@/components/search/catalog-page";
 
 export const metadata: Metadata = {
   title: "Land for sale",
-  description: "Land parcels in the EstateNova demo catalog.",
+  description: "Land parcels in the SEAPS demo catalog.",
 };
 
 export default async function LandPage({

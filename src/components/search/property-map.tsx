@@ -36,7 +36,7 @@ export function PropertyMap({
                   "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-xs font-semibold shadow-sm transition",
                   active
                     ? "z-10 border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
-                    : "border-[var(--color-primary)] bg-white text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white",
+                    : "border-[var(--color-primary)] bg-white text-[var(--color-accent-soft)] hover:bg-[var(--color-primary)] hover:text-white",
                 )}
                 style={{ left: `${left}%`, top: `${top}%` }}
                 title={property.title}
@@ -53,7 +53,7 @@ export function PropertyMap({
                 return (
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-[var(--color-primary)]">{property.title}</p>
+                      <p className="font-semibold text-[var(--color-accent-soft)]">{property.title}</p>
                       <p className="text-sm text-[var(--color-muted)]">
                         {property.location.district}, {property.location.city}
                       </p>

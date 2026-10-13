@@ -9,7 +9,7 @@ export default async function StatsPage() {
   const views = properties.reduce((sum, p) => sum + (p.views ?? 0), 0);
   return (
     <div>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         Performance snapshot
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">

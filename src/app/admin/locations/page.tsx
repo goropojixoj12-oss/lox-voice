@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Admin Locations" };
 export default function AdminLocationsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         Manage locations
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">

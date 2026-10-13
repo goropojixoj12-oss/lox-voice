@@ -8,7 +8,7 @@ export default async function ProfilePage() {
   if (!session) return null;
   return (
     <div>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         Profile
       </h1>
       <dl className="mt-5 max-w-lg space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">

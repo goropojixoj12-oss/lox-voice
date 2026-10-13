@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Terms" };
 export default function TermsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Terms of use
       </h1>
       <div className="mt-4 space-y-4 text-[var(--color-muted)]">

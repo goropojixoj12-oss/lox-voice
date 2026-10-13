@@ -11,11 +11,11 @@ export const articles: Article[] = [
 
 Look for inconsistencies between room counts and area. Ask whether furnishings are included in the advertised price. For rentals, clarify utility responsibilities. For sales, request documents early rather than after emotional commitment.
 
-EstateNova surfaces verification badges and update timestamps so you can prioritize trustworthy inventory.`,
+SEAPS surfaces verification badges and update timestamps so you can prioritize trustworthy inventory.`,
     cover:
       "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80",
     category: "guides",
-    author: "EstateNova Editorial",
+    author: "SEAPS Editorial",
     publishedAt: "2026-03-18T10:00:00.000Z",
     relatedPropertyIds: ["p-001", "p-003"],
   },
@@ -25,7 +25,7 @@ EstateNova surfaces verification badges and update timestamps so you can priorit
     title: "Lisbon Rental Demand: Spring Brief (Demo Indicators)",
     excerpt:
       "Demo market indicators for Chiado and Alfama long-stay demand. Not live market statistics.",
-    content: `This brief uses demonstration indicators to show how EstateNova presents market narratives.
+    content: `This brief uses demonstration indicators to show how SEAPS presents market narratives.
 
 In our demo set, long-stay apartments in Chiado remain competitive for relocating professionals, while Alfama short-stay inventory behaves differently from annual leases. Treat every number here as sample content until a live data feed is connected.
 
@@ -45,7 +45,7 @@ When live analytics are enabled, this page will pull from moderated market snaps
       "Separate marketing claims from confirmed construction facts with a simple inquiry script.",
     content: `Ask for the current construction stage, not just the brochure render. Request a sample payment schedule and clarify what happens if handover slips.
 
-On EstateNova project pages, verified facts and developer claims are listed separately so you can see which statements are moderated and which come from marketing materials.`,
+On SEAPS project pages, verified facts and developer claims are listed separately so you can see which statements are moderated and which come from marketing materials.`,
     cover:
       "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80",
     category: "investor",
@@ -72,7 +72,7 @@ On EstateNova project pages, verified facts and developer claims are listed sepa
     slug: "platform-update-verification-labels",
     title: "Platform Update: Clearer Verification Labels",
     excerpt:
-      "Why EstateNova separates unverified, verified, and premium listing states.",
+      "Why SEAPS separates unverified, verified, and premium listing states.",
     content: `Verification is not a guarantee of purchase success. It is a signal that key listing fields and ownership claims passed moderation checks available in the current demo workflow.
 
 Premium marks highlight additional review depth in this demonstration environment.`,

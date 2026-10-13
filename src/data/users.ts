@@ -4,21 +4,21 @@ import type { DemoUser } from "@/lib/types";
 export const demoUsers: DemoUser[] = [
   {
     id: "user-buyer",
-    email: "buyer@estatenova.demo",
+    email: "buyer@seaps.demo",
     password: "demo-buyer-123",
     name: "Alex Buyer",
     role: "buyer",
   },
   {
     id: "user-owner",
-    email: "owner@estatenova.demo",
+    email: "owner@seaps.demo",
     password: "demo-owner-123",
     name: "Sam Owner",
     role: "owner",
   },
   {
     id: "user-agent",
-    email: "agent@estatenova.demo",
+    email: "agent@seaps.demo",
     password: "demo-agent-123",
     name: "Maya Ferreira",
     role: "agent",
@@ -26,7 +26,7 @@ export const demoUsers: DemoUser[] = [
   },
   {
     id: "user-admin",
-    email: "admin@estatenova.demo",
+    email: "admin@seaps.demo",
     password: "demo-admin-123",
     name: "Jordan Admin",
     role: "admin",

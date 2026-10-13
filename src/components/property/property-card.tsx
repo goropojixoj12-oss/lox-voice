@@ -69,11 +69,11 @@ export function PropertyCard({
           />
         </Link>
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
+          <span className="rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-accent-soft)]">
             {transactionLabels[property.transactionType]}
           </span>
           {property.isPremium ? (
-            <span className="rounded-full bg-[var(--color-accent)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
+            <span className="rounded-full bg-[var(--color-accent)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#0B1C33]">
               Premium
             </span>
           ) : null}
@@ -88,12 +88,12 @@ export function PropertyCard({
         <div className="flex items-start justify-between gap-3">
           <PriceDisplay
             property={property}
-            className="text-xl font-semibold tracking-tight text-[var(--color-primary)]"
+            className="text-xl font-semibold tracking-tight text-[var(--color-accent-soft)]"
           />
           <span className="text-xs text-[var(--color-muted)]">{daysAgo(property.publishedAt)}</span>
         </div>
         <div>
-          <Link href={href} className="font-semibold text-[var(--color-text)] hover:text-[var(--color-accent)]">
+          <Link href={href} className="font-semibold text-[var(--color-text)] hover:text-[var(--color-accent-soft)]">
             {property.title}
           </Link>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
@@ -123,7 +123,7 @@ export function PropertyCard({
           ) : null}
         </div>
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-1 text-xs">
-          <span className="rounded-full bg-[var(--color-mist)] px-2.5 py-1 text-[var(--color-primary)]">
+          <span className="rounded-full bg-[var(--color-mist)] px-2.5 py-1 text-[var(--color-accent-soft)]">
             {propertyTypeLabels[property.propertyType]}
           </span>
           <span className="rounded-full bg-[var(--color-secondary)] px-2.5 py-1 text-[var(--color-text)]">

@@ -34,7 +34,7 @@ export default async function InsightArticlePage({
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-accent)]">
         {article.category}
       </p>
-      <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)] md:text-5xl">
+      <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)] md:text-5xl">
         {article.title}
       </h1>
       <p className="mt-3 text-sm text-[var(--color-muted)]">

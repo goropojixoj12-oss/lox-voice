@@ -19,7 +19,7 @@ export default async function DashboardListingsPage() {
   }
   return (
     <div>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         My listings
       </h1>
       <ul className="mt-5 space-y-3">

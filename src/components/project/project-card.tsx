@@ -19,7 +19,7 @@ export function ProjectCard({ project }: { project: DevelopmentProject }) {
         <p className="text-sm text-[var(--color-muted)]">
           {project.location.district}, {project.location.city}
         </p>
-        <p className="font-semibold text-[var(--color-primary)]">
+        <p className="font-semibold text-[var(--color-accent-soft)]">
           {formatPrice(project.priceFrom, project.currency)} –{" "}
           {formatPrice(project.priceTo, project.currency)}
         </p>

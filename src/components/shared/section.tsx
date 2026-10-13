@@ -35,7 +35,7 @@ export function SectionHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h2 className="font-[family-name:var(--font-display)] text-3xl leading-tight text-[var(--color-primary)] md:text-4xl">
+        <h2 className="font-[family-name:var(--font-display)] text-3xl leading-tight text-[var(--color-accent-soft)] md:text-4xl">
           {title}
         </h2>
         {description ? (

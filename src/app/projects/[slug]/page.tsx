@@ -81,7 +81,7 @@ export default async function ProjectDetailPage({
           </section>
 
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Concept
             </h2>
             <p className="mt-3 leading-relaxed text-[var(--color-muted)]">{project.description}</p>
@@ -89,7 +89,7 @@ export default async function ProjectDetailPage({
 
           <section className="grid gap-4 md:grid-cols-2">
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <h3 className="font-semibold text-[var(--color-primary)]">Verified / moderated notes</h3>
+              <h3 className="font-semibold text-[var(--color-accent-soft)]">Verified / moderated notes</h3>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--color-muted)]">
                 {project.verifiedFacts.map((fact) => (
                   <li key={fact}>{fact}</li>
@@ -97,7 +97,7 @@ export default async function ProjectDetailPage({
               </ul>
             </div>
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <h3 className="font-semibold text-[var(--color-primary)]">Developer-provided claims</h3>
+              <h3 className="font-semibold text-[var(--color-accent-soft)]">Developer-provided claims</h3>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--color-muted)]">
                 {project.developerClaims.map((fact) => (
                   <li key={fact}>{fact}</li>
@@ -107,7 +107,7 @@ export default async function ProjectDetailPage({
           </section>
 
           <section>
-            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Amenities
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -120,7 +120,7 @@ export default async function ProjectDetailPage({
           </section>
 
           <section>
-            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Available units
             </h2>
             {units.length ? (
@@ -133,7 +133,7 @@ export default async function ProjectDetailPage({
           </section>
 
           <section>
-            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Location
             </h2>
             <PropertyMap
@@ -154,7 +154,7 @@ export default async function ProjectDetailPage({
             Brochures and document downloads require object storage configuration. No fake PDF is
             linked in this demo.
             <Link href="/contact" className="mt-2 block text-[var(--color-accent)]">
-              Contact EstateNova
+              Contact SEAPS
             </Link>
           </div>
         </aside>

@@ -1,8 +1,8 @@
-# EstateNova
+# SEAPS
 
 International real estate marketplace demo built with Next.js, TypeScript, and Tailwind CSS.
 
-EstateNova is an original product concept inspired by the *category* of large property portals (buy, rent, short stay, developments, agencies, insights). It does **not** copy the design system, branding, or content of any reference site.
+SEAPS is an original product concept inspired by the *category* of large property portals (buy, rent, short stay, developments, agencies, insights). It does **not** copy the design system, branding, or content of any reference site.
 
 ## What works in this demo
 
@@ -37,10 +37,10 @@ Copy `.env.example` to `.env.local` when you need maps or Postgres.
 
 | Role  | Email                   | Password         |
 | ----- | ----------------------- | ---------------- |
-| Buyer | buyer@estatenova.demo   | demo-buyer-123   |
-| Owner | owner@estatenova.demo   | demo-owner-123   |
-| Agent | agent@estatenova.demo   | demo-agent-123   |
-| Admin | admin@estatenova.demo   | demo-admin-123   |
+| Buyer | buyer@seaps.demo   | demo-buyer-123   |
+| Owner | owner@seaps.demo   | demo-owner-123   |
+| Agent | agent@seaps.demo   | demo-agent-123   |
+| Admin | admin@seaps.demo   | demo-admin-123   |
 
 Open registration returns `501` until Prisma user persistence is connected.
 

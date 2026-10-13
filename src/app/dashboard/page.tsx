@@ -16,7 +16,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Welcome back, {session.name}
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">

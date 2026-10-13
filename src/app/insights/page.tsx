@@ -6,7 +6,7 @@ import { marketStats } from "@/data/market";
 
 export const metadata: Metadata = {
   title: "Market insights",
-  description: "News, analysis, and market notes from the EstateNova editorial desk.",
+  description: "News, analysis, and market notes from the SEAPS editorial desk.",
 };
 
 export default function InsightsPage() {
@@ -25,7 +25,7 @@ export default function InsightsPage() {
             className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
           >
             <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{stat.label}</p>
-            <p className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+            <p className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               {stat.value}
             </p>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{stat.note}</p>

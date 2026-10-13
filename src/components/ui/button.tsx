@@ -6,14 +6,14 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-soft)] shadow-[var(--shadow-soft)]",
+    "bg-[var(--color-accent)] text-[#0B1C33] hover:bg-[var(--color-accent-soft)] shadow-[var(--shadow-soft)]",
   secondary:
     "bg-[var(--color-secondary)] text-[var(--color-text)] hover:bg-[var(--color-sand)]",
   ghost: "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-mist)]",
   accent:
-    "bg-[var(--color-accent)] text-white hover:brightness-105 shadow-[var(--shadow-soft)]",
+    "bg-[linear-gradient(110deg,#8a6a1a,#d4af37,#f8e7a1,#d4af37,#8a6a1a)] bg-[length:220%_100%] text-[#0B1C33] shadow-[var(--shadow-lift)] hover:brightness-105 animate-[seapsGoldSlide_7s_ease-in-out_infinite]",
   outline:
-    "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)]",
+    "border border-[var(--color-accent)]/40 bg-[var(--color-surface)] text-[var(--color-accent-soft)] hover:border-[var(--color-accent)]",
 };
 
 const sizes: Record<Size, string> = {

@@ -78,7 +78,7 @@ export function FavoriteButton({
       onClick={toggle}
       disabled={pending}
       className={cn(
-        "inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] bg-white/95 text-[var(--color-primary)] backdrop-blur transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]",
+        "inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] bg-white/95 text-[var(--color-accent-soft)] backdrop-blur transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]",
         active && "border-[var(--color-accent)] text-[var(--color-accent)]",
         className,
       )}

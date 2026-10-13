@@ -3,7 +3,7 @@ import { CatalogPage } from "@/components/search/catalog-page";
 
 export const metadata: Metadata = {
   title: "Short stays",
-  description: "Nightly short-stay listings in the EstateNova demo catalog.",
+  description: "Nightly short-stay listings in the SEAPS demo catalog.",
 };
 
 export default async function ShortStayPage({

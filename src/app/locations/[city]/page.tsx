@@ -53,7 +53,7 @@ export default async function CityPage({
       </div>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <section className="mb-10">
-          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             Districts
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -84,7 +84,7 @@ export default async function CityPage({
         </section>
         <section>
           <div className="mb-4 flex items-end justify-between gap-3">
-            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               Listings in {guide.name}
             </h2>
             <Link href={`/search?city=${guide.slug}`} className="text-sm font-semibold text-[var(--color-accent)]">

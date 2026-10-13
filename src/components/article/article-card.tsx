@@ -20,7 +20,7 @@ export function ArticleCard({ article }: { article: Article }) {
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-accent)]">
           {article.category}
         </p>
-        <Link href={href} className="mt-1 block font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+        <Link href={href} className="mt-1 block font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
           {article.title}
         </Link>
         <p className="mt-2 text-sm text-[var(--color-muted)]">{article.excerpt}</p>

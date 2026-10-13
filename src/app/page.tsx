@@ -14,6 +14,7 @@ import { cities } from "@/data/locations";
 import { marketStats, popularDistrictPrices } from "@/data/market";
 import { projects } from "@/data/projects";
 import { properties } from "@/data/properties";
+import { SeapsLogo } from "@/components/brand/seaps-logo";
 import { brand } from "@/config/brand";
 import { getSession } from "@/lib/auth";
 
@@ -39,19 +40,20 @@ export default async function HomePage() {
             className="object-cover"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(15,46,36,0.88)_0%,rgba(15,46,36,0.55)_48%,rgba(15,46,36,0.25)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,17,31,0.92)_0%,rgba(11,28,51,0.72)_48%,rgba(11,28,51,0.35)_100%)]" />
         </div>
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-28">
           <div className="reveal text-white">
-            <p className="font-[family-name:var(--font-display)] text-5xl leading-[0.95] tracking-tight md:text-7xl">
-              {brand.name}
+            <SeapsLogo className="items-start" />
+            <p className="mt-4 text-sm uppercase tracking-[0.2em] text-[var(--color-accent-soft)]">
+              {brand.fullName}
             </p>
             <h1 className="mt-5 max-w-xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
               Find homes, rentals, and developments with clear filters and verified listing signals
             </h1>
             <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-              An international marketplace built for decisive browsing — sale, long-term rent, short
-              stay, commercial, and off-plan in one composed experience
+              A South East Asia–focused marketplace for decisive browsing — sale, long-term rent,
+              short stay, commercial, and off-plan in one composed experience
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
@@ -132,7 +134,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section className="bg-[color-mix(in_srgb,var(--color-primary)_96%,black)] text-white">
+      <Section className="bg-[#050d18] text-white">
         <SectionHeader
           eyebrow="Geography"
           title="Popular cities and districts"
@@ -205,7 +207,7 @@ export default async function HomePage() {
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 {stat.label}
               </p>
-              <p className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+              <p className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
                 {stat.value}
               </p>
               <p className="mt-2 text-sm text-[var(--color-accent)]">{stat.change}</p>
@@ -223,7 +225,7 @@ export default async function HomePage() {
                 <span>
                   {row.district}, {row.city}
                 </span>
-                <span className="font-semibold text-[var(--color-primary)]">{row.pricePerSqm}</span>
+                <span className="font-semibold text-[var(--color-accent-soft)]">{row.pricePerSqm}</span>
               </li>
             ))}
           </ul>
@@ -272,7 +274,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               Request a tailored shortlist
             </h2>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
@@ -308,15 +310,15 @@ export default async function HomePage() {
       </Section>
 
       <Section className="pb-24">
-        <div className="overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-primary)] px-6 py-12 text-white md:px-10">
+        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-accent)]/30 bg-[linear-gradient(135deg,#0b1c33,#122844_55%,#0b1c33)] px-6 py-12 text-white md:px-10 seaps-gold-border">
           <div className="grid gap-6 md:grid-cols-[1.2fr_auto] md:items-center">
             <div>
-              <h2 className="font-[family-name:var(--font-display)] text-3xl md:text-4xl">
+              <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)] md:text-4xl">
                 Ready to publish your property?
               </h2>
-              <p className="mt-3 max-w-xl text-white/75">
+              <p className="mt-3 max-w-xl text-[var(--color-muted)]">
                 Use the multi-step listing wizard to draft, preview, and submit for moderation in
-                demo mode.
+                demo mode with SEAPS.
               </p>
             </div>
             <ButtonLink href="/list-property" variant="accent" size="lg">

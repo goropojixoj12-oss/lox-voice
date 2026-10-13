@@ -44,7 +44,7 @@ export const projects: DevelopmentProject[] = [
     areasTo: 142,
     verifiedFacts: [
       "Construction stage listed as structure based on developer progress notes shared for demo.",
-      "Unit inventory shown on EstateNova is a demonstration subset.",
+      "Unit inventory shown on SEAPS is a demonstration subset.",
     ],
     developerClaims: [
       "Developer materials claim completion in mid-2028.",

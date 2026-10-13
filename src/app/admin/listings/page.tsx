@@ -10,7 +10,7 @@ export default async function AdminListingsPage() {
   const pending = runtime.filter((l) => l.status === "pending");
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         Listing moderation
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">

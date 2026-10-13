@@ -47,7 +47,7 @@ export default async function AgencyDetailPage({
             <Image src={agency.logo} alt="" fill className="object-cover" sizes="80px" />
           </div>
           <div className="flex-1">
-            <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+            <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               {agency.name}
             </h1>
             <p className="mt-1 text-[var(--color-muted)]">
@@ -62,7 +62,7 @@ export default async function AgencyDetailPage({
         <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
           <div className="space-y-8">
             <section>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
                 About
               </h2>
               <p className="mt-3 text-[var(--color-muted)]">{agency.description}</p>
@@ -75,7 +75,7 @@ export default async function AgencyDetailPage({
               </div>
             </section>
             <section>
-              <h2 className="mb-4 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              <h2 className="mb-4 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
                 Agents
               </h2>
               <div className="grid gap-4 md:grid-cols-2">
@@ -85,7 +85,7 @@ export default async function AgencyDetailPage({
               </div>
             </section>
             <section>
-              <h2 className="mb-4 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              <h2 className="mb-4 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
                 Listings
               </h2>
               <PropertyGrid items={listings} userId={session?.id} />

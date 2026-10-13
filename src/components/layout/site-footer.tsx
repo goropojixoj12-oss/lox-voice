@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SeapsLogo } from "@/components/brand/seaps-logo";
 import { brand } from "@/config/brand";
 
 const columns = [
@@ -43,25 +44,27 @@ const columns = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-[var(--color-border)] bg-[var(--color-primary)] text-white">
+    <footer className="mt-auto border-t border-[var(--color-border)] bg-[#050d18] text-[var(--color-text)]">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_2fr] lg:px-8">
         <div>
-          <p className="font-[family-name:var(--font-display)] text-3xl">{brand.name}</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/75">{brand.tagline}</p>
-          <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent-soft)]">
+          <SeapsLogo />
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
+            {brand.fullName}
+          </p>
+          <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
             Demo marketplace · sample inventory
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {columns.map((column) => (
             <div key={column.title}>
-              <p className="text-sm font-semibold">{column.title}</p>
+              <p className="text-sm font-semibold text-[var(--color-accent-soft)]">{column.title}</p>
               <ul className="mt-3 space-y-2">
                 {column.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/75 transition hover:text-white"
+                      className="text-sm text-[var(--color-muted)] transition hover:text-[var(--color-accent-soft)]"
                     >
                       {link.label}
                     </Link>
@@ -72,9 +75,11 @@ export function SiteFooter() {
           ))}
         </div>
       </div>
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} {brand.name}. Built as an original product concept.</p>
+      <div className="border-t border-[var(--color-border)]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-[var(--color-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <p>
+            © {new Date().getFullYear()} {brand.name}. {brand.fullName}.
+          </p>
           <p>Images from Unsplash for demonstration only</p>
         </div>
       </div>

@@ -21,7 +21,7 @@ export function EmptyState({
         className,
       )}
     >
-      <h3 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+      <h3 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
         {title}
       </h3>
       <p className="mx-auto mt-2 max-w-md text-[var(--color-muted)]">{description}</p>

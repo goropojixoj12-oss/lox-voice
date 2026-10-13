@@ -60,7 +60,7 @@ export function InquiryForm({
   return (
     <form onSubmit={onSubmit} className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <div>
-        <h3 className="font-semibold text-[var(--color-primary)]">Request information</h3>
+        <h3 className="font-semibold text-[var(--color-accent-soft)]">Request information</h3>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           Send a viewing or details request. No phone numbers are invented on this page.
         </p>

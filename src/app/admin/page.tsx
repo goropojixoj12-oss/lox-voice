@@ -29,7 +29,7 @@ export default async function AdminPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Admin panel
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">

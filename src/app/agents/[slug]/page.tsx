@@ -42,7 +42,7 @@ export default async function AgentDetailPage({
           <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-full">
             <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="160px" />
           </div>
-          <h1 className="mt-5 text-center font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+          <h1 className="mt-5 text-center font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             {agent.name}
           </h1>
           <p className="mt-1 text-center text-[var(--color-muted)]">{agent.title}</p>
@@ -68,7 +68,7 @@ export default async function AgentDetailPage({
           </div>
         </aside>
         <section>
-          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             Listings
           </h2>
           <PropertyGrid items={listings} userId={session?.id} />

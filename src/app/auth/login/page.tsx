@@ -36,7 +36,7 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Sign in
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
@@ -45,7 +45,7 @@ export default function LoginPage() {
       <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <div>
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required defaultValue="buyer@estatenova.demo" />
+          <Input id="email" name="email" type="email" required defaultValue="buyer@seaps.demo" />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
@@ -65,10 +65,10 @@ export default function LoginPage() {
       <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-mist)] p-4 text-xs text-[var(--color-muted)]">
         <p className="font-semibold text-[var(--color-text)]">Demo logins</p>
         <ul className="mt-2 space-y-1">
-          <li>buyer@estatenova.demo / demo-buyer-123</li>
-          <li>owner@estatenova.demo / demo-owner-123</li>
-          <li>agent@estatenova.demo / demo-agent-123</li>
-          <li>admin@estatenova.demo / demo-admin-123</li>
+          <li>buyer@seaps.demo / demo-buyer-123</li>
+          <li>owner@seaps.demo / demo-owner-123</li>
+          <li>agent@seaps.demo / demo-agent-123</li>
+          <li>admin@seaps.demo / demo-admin-123</li>
         </ul>
       </div>
       <p className="mt-4 text-sm">

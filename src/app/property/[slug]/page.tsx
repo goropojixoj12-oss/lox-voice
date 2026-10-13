@@ -69,13 +69,13 @@ export default async function PropertyDetailPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
-        <Link href="/search" className="hover:text-[var(--color-primary)]">
+        <Link href="/search" className="hover:text-[var(--color-accent-soft)]">
           Search
         </Link>
         <span>/</span>
         <Link
           href={`/locations/${property.location.citySlug}`}
-          className="hover:text-[var(--color-primary)]"
+          className="hover:text-[var(--color-accent-soft)]"
         >
           {property.location.city}
         </Link>
@@ -93,7 +93,7 @@ export default async function PropertyDetailPage({
                   {transactionLabels[property.transactionType]} ·{" "}
                   {propertyTypeLabels[property.propertyType]}
                 </p>
-                <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
                   {property.title}
                 </h1>
                 <p className="mt-2 text-[var(--color-muted)]">
@@ -105,7 +105,7 @@ export default async function PropertyDetailPage({
             </div>
             <PriceDisplay
               property={property}
-              className="mt-4 text-3xl font-semibold text-[var(--color-primary)]"
+              className="mt-4 text-3xl font-semibold text-[var(--color-accent-soft)]"
             />
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
               <span className="rounded-full bg-[var(--color-mist)] px-3 py-1">
@@ -123,7 +123,7 @@ export default async function PropertyDetailPage({
           </div>
 
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Overview
             </h2>
             <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -154,7 +154,7 @@ export default async function PropertyDetailPage({
           </section>
 
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Description
             </h2>
             <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed text-[var(--color-muted)]">
@@ -164,7 +164,7 @@ export default async function PropertyDetailPage({
 
           {property.amenities.length ? (
             <section>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
                 Amenities
               </h2>
               <ul className="mt-3 flex flex-wrap gap-2">
@@ -181,7 +181,7 @@ export default async function PropertyDetailPage({
           ) : null}
 
           <section>
-            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Location
             </h2>
             <PropertyMap items={[property]} activeId={property.id} />
@@ -191,7 +191,7 @@ export default async function PropertyDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <InquiryForm propertyId={property.id} propertyTitle={property.title} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <h3 className="font-semibold text-[var(--color-primary)]">Share</h3>
+            <h3 className="font-semibold text-[var(--color-accent-soft)]">Share</h3>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
               Copy the page URL from your browser to share this listing. External messaging
               integrations are not enabled in demo mode.
@@ -203,7 +203,7 @@ export default async function PropertyDetailPage({
           {agent ? (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
               <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Listed by</p>
-              <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-primary)]">
+              <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-accent-soft)]">
                 {agent.name}
               </Link>
               <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
@@ -226,7 +226,7 @@ export default async function PropertyDetailPage({
       </div>
 
       <Section className="px-0">
-        <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+        <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
           Similar listings
         </h2>
         <PropertyGrid items={related} userId={session?.id} />

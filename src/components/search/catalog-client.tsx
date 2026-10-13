@@ -54,7 +54,7 @@ export function CatalogClient({
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 max-w-3xl">
-        <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+        <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
           {title}
         </h1>
         <p className="mt-2 text-[var(--color-muted)]">{description}</p>

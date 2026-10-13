@@ -14,7 +14,7 @@ export function AgencyCard({ agency }: { agency: Agency }) {
             <Image src={agency.logo} alt="" fill className="object-cover" sizes="48px" />
           </div>
           <div>
-            <Link href={`/agencies/${agency.slug}`} className="font-semibold text-[var(--color-primary)]">
+            <Link href={`/agencies/${agency.slug}`} className="font-semibold text-[var(--color-accent-soft)]">
               {agency.name}
             </Link>
             <p className="text-sm text-[var(--color-muted)]">
@@ -50,7 +50,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
           <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="56px" />
         </div>
         <div>
-          <Link href={`/agents/${agent.slug}`} className="font-semibold text-[var(--color-primary)]">
+          <Link href={`/agents/${agent.slug}`} className="font-semibold text-[var(--color-accent-soft)]">
             {agent.name}
           </Link>
           <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
