@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
+import { BackgroundVideo } from "@/components/shared/background-video";
 import { brand } from "@/config/brand";
 
 const columns = [
@@ -44,8 +45,14 @@ const columns = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto overflow-hidden border-t border-[var(--color-border)] bg-[#050d18] text-[var(--color-text)]">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_2fr] lg:px-8">
+    <footer className="relative mt-auto overflow-hidden border-t border-[var(--color-border)] text-[var(--color-text)]">
+      <BackgroundVideo
+        src="/videos/footer-banner.mp4"
+        mobileSrc="/videos/footer-banner-mobile.mp4"
+        poster="/videos/footer-banner.jpg"
+        overlayClassName="bg-[linear-gradient(180deg,rgba(5,13,24,0.92)_0%,rgba(5,13,24,0.88)_55%,rgba(5,13,24,0.95)_100%)]"
+      />
+      <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_2fr] lg:px-8">
         <div className="min-w-0">
           <SeapsLogo size="footer" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
@@ -75,7 +82,7 @@ export function SiteFooter() {
           ))}
         </div>
       </div>
-      <div className="border-t border-[var(--color-border)]">
+      <div className="relative border-t border-[var(--color-border)]/80">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-[var(--color-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>
             © {brand.foundedYear}–{new Date().getFullYear()} {brand.name}. {brand.fullName}.

@@ -5,6 +5,7 @@ import { AgencyCard } from "@/components/agency/agency-card";
 import { ProjectCard } from "@/components/project/project-card";
 import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
 import { MainSearch } from "@/components/search/main-search";
+import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section, SectionHeader } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
@@ -30,18 +31,14 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=2400&q=80"
-            alt="Phnom Penh skyline and riverside architecture"
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(7,17,31,0.92)_0%,rgba(11,28,51,0.72)_48%,rgba(11,28,51,0.35)_100%)]" />
-        </div>
+      <section className="relative min-h-[min(88vh,820px)] overflow-hidden">
+        <BackgroundVideo
+          eager
+          src="/videos/hero-banner.mp4"
+          mobileSrc="/videos/hero-banner-mobile.mp4"
+          poster="/videos/hero-banner.jpg"
+          overlayClassName="bg-[linear-gradient(105deg,rgba(7,17,31,0.9)_0%,rgba(11,28,51,0.7)_48%,rgba(11,28,51,0.4)_100%)]"
+        />
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-28">
           <div className="reveal text-white">
             <SeapsLogo size="hero" />
