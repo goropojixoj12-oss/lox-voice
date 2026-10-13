@@ -42,7 +42,7 @@ export default function ListPropertyPage() {
     summary: "",
     description: "",
     imageUrl:
-      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1600&q=80",
+      "/media/photos/photo-1502672260266-1c1ef2d93688.jpg",
     contactName: "",
     contactEmail: "",
   });
@@ -62,7 +62,9 @@ export default function ListPropertyPage() {
       case 4:
         return form.title.length >= 8 && form.summary.length >= 12 && form.description.length >= 40;
       case 5:
-        return form.imageUrl.startsWith("http");
+        return (
+          form.imageUrl.startsWith("http") || form.imageUrl.startsWith("/media/")
+        );
       case 6:
         return form.contactName.length >= 2 && form.contactEmail.includes("@");
       default:
@@ -309,7 +311,7 @@ export default function ListPropertyPage() {
               onChange={(e) => update("imageUrl", e.target.value)}
             />
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Paste an https image URL for the cover photo. Recommended: under 5MB, jpg/png/webp.
+              Local path like /media/photos/….jpg or a full https URL. Recommended: under 5MB, jpg/png/webp.
             </p>
           </div>
         ) : null}

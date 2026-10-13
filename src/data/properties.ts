@@ -1,10 +1,7 @@
 import type { Property } from "@/lib/types";
+import { photoImage } from "@/lib/media";
 
-const img = (id: string, alt: string) => ({
-  id,
-  url: `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=80`,
-  alt,
-});
+const img = (id: string, alt: string) => photoImage(id, alt);
 
 const kh = (
   city: string,

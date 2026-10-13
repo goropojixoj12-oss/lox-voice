@@ -1,7 +1,7 @@
 import type { Agency, Agent } from "@/lib/types";
+import { photoUrl } from "@/lib/media";
 
-const img = (id: string, w = 1600) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+const img = (id: string, w = 1600) => photoUrl(id, w);
 
 export const agencies: Agency[] = [
   {

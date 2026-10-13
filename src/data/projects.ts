@@ -1,9 +1,8 @@
 import type { DevelopmentProject } from "@/lib/types";
+import { photoImage } from "@/lib/media";
 
 const img = (id: string, alt: string, cover = false) => ({
-  id,
-  url: `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=80`,
-  alt,
+  ...photoImage(id, alt),
   isCover: cover || undefined,
 });
 

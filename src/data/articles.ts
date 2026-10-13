@@ -1,7 +1,7 @@
 import type { Article } from "@/lib/types";
+import { photoUrl } from "@/lib/media";
 
-const img = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=80`;
+const img = (id: string) => photoUrl(id);
 
 export const articles: Article[] = [
   {
