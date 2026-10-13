@@ -40,12 +40,18 @@ export default function LoginPage() {
         Sign in
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Demo accounts are listed below. Open registration waits for PostgreSQL user persistence.
+        Access your SEAPS account to manage favorites, listings, and inquiries.
       </p>
       <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <div>
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required defaultValue="buyer@seaps.demo" />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            defaultValue="buyer@seaps.com.kh"
+          />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
@@ -54,7 +60,7 @@ export default function LoginPage() {
             name="password"
             type="password"
             required
-            defaultValue="demo-buyer-123"
+            defaultValue="seaps-buyer-123"
           />
         </div>
         {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
@@ -63,18 +69,18 @@ export default function LoginPage() {
         </Button>
       </form>
       <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-mist)] p-4 text-xs text-[var(--color-muted)]">
-        <p className="font-semibold text-[var(--color-text)]">Demo logins</p>
-        <ul className="mt-2 space-y-1">
-          <li>buyer@seaps.demo / demo-buyer-123</li>
-          <li>owner@seaps.demo / demo-owner-123</li>
-          <li>agent@seaps.demo / demo-agent-123</li>
-          <li>admin@seaps.demo / demo-admin-123</li>
+        <p className="font-semibold text-[var(--color-text)]">Sample access accounts</p>
+        <ul className="mt-2 space-y-1 break-all">
+          <li>buyer@seaps.com.kh / seaps-buyer-123</li>
+          <li>owner@seaps.com.kh / seaps-owner-123</li>
+          <li>agent@seaps.com.kh / seaps-agent-123</li>
+          <li>admin@seaps.com.kh / seaps-admin-123</li>
         </ul>
       </div>
       <p className="mt-4 text-sm">
-        Need an account notes page?{" "}
+        New to SEAPS?{" "}
         <Link href="/auth/register" className="font-semibold text-[var(--color-accent)]">
-          Registration status
+          Registration info
         </Link>
       </p>
     </div>

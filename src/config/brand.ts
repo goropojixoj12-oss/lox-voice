@@ -1,13 +1,14 @@
 export const brand = {
   name: "SEAPS",
   fullName: "South East Asia Property Services",
-  tagline: "South East Asia Property Services",
+  tagline: "Trusted property services across Cambodia since 1997",
   description:
-    "SEAPS — South East Asia Property Services — is a modern marketplace for buying, renting, and investing in residential and commercial real estate across the region and beyond.",
+    "SEAPS — South East Asia Property Services — helps buyers, renters, and investors find residential and commercial property across Cambodia, with local expertise since 1997.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:43123",
   locale: "en",
-  supportEmail: "hello@seaps.demo",
-  demoMode: true,
+  supportEmail: "hello@seaps.com.kh",
+  foundedYear: 1997,
+  country: "Cambodia",
   social: {
     linkedin: "#",
     x: "#",

@@ -13,11 +13,11 @@ export default async function StatsPage() {
         Performance snapshot
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Demo metrics combining seed catalog views with runtime inquiry volume.
+        Performance snapshot from catalog views and inquiry volume.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <p className="text-sm text-[var(--color-muted)]">Catalog views (demo)</p>
+          <p className="text-sm text-[var(--color-muted)]">Catalog views</p>
           <p className="mt-2 text-3xl font-semibold">{views}</p>
         </div>
         <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">

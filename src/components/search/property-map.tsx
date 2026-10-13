@@ -76,8 +76,7 @@ export function PropertyMap({
 
   return (
     <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-white p-6 text-sm text-[var(--color-muted)]">
-      Map provider selected but client widget not mounted in this demo build. Configure tokens and
-      mount the Mapbox/Google component here.
+      Map provider selected. Configure map tokens to enable the live map widget.
     </div>
   );
 }

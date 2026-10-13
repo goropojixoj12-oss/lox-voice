@@ -14,7 +14,7 @@ export default async function AdminListingsPage() {
         Listing moderation
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Pending runtime submissions appear first. Seed listings are published demo stock (
+        Pending submissions appear first. Published catalog size: 
         {properties.length} items).
       </p>
       <ul className="mt-6 space-y-3">

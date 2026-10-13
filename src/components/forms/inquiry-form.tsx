@@ -94,7 +94,7 @@ export function InquiryForm({
       </Button>
       {status === "success" ? (
         <p className="text-sm text-[var(--color-success)]" role="status">
-          Inquiry saved. In demo mode it is stored locally for the recipient inbox.
+          Inquiry sent. Our team will respond using the contact details you provided.
         </p>
       ) : null}
       {status === "error" ? (

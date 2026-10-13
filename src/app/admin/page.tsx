@@ -33,7 +33,7 @@ export default async function AdminPage() {
         Admin panel
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
-        Server-gated to the admin role. Demo data counts below are live from seed + runtime files.
+        Server-gated to the admin role. Platform counts below reflect current inventory and activity.
       </p>
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {[

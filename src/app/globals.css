@@ -46,6 +46,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -56,6 +57,23 @@ body {
   color: var(--color-text);
   font-family: var(--font-body), sans-serif;
   min-height: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+.seaps-logo {
+  max-width: 100%;
+}
+
+.seaps-logo svg {
+  max-width: min(100%, 320px);
+  height: auto;
 }
 
 ::selection {

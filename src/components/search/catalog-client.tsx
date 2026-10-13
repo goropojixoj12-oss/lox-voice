@@ -59,7 +59,7 @@ export function CatalogClient({
         </h1>
         <p className="mt-2 text-[var(--color-muted)]">{description}</p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          {total} matching {total === 1 ? "listing" : "listings"} · demo inventory
+          {total} matching {total === 1 ? "listing" : "listings"}
         </p>
       </div>
 

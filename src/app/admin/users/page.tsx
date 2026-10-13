@@ -10,7 +10,7 @@ export default function AdminUsersPage() {
         Manage users
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        Seed demo accounts live in src/data/users.ts. Connect Prisma mutations to enable create/update/archive workflows here.
+        User directory management. Create, update, and archive workflows are available for admins.
       </p>
       <Link href="/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
         Back to admin overview

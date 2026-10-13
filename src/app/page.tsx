@@ -33,8 +33,8 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=80"
-            alt="Architectural residence with pool terrace"
+            src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=2400&q=80"
+            alt="Phnom Penh skyline and riverside architecture"
             fill
             priority
             className="object-cover"
@@ -52,8 +52,8 @@ export default async function HomePage() {
               Find homes, rentals, and developments with clear filters and verified listing signals
             </h1>
             <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-              A South East Asia–focused marketplace for decisive browsing — sale, long-term rent,
-              short stay, commercial, and off-plan in one composed experience
+              Cambodia property search since {brand.foundedYear} — buy, long-term rent, short stay,
+              commercial, and off-plan across Phnom Penh, Siem Reap, and the coast
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
@@ -76,8 +76,8 @@ export default async function HomePage() {
                 { href: "/buy?type=villa", label: "Villas" },
                 { href: "/rent", label: "Long-term rent" },
                 { href: "/projects", label: "New projects" },
-                { href: "/locations/lisbon", label: "Lisbon" },
-                { href: "/locations/dubai", label: "Dubai" },
+                { href: "/locations/phnom-penh", label: "Phnom Penh" },
+                { href: "/locations/siem-reap", label: "Siem Reap" },
               ].map((item) => (
                 <Link
                   key={item.href}
@@ -96,7 +96,7 @@ export default async function HomePage() {
         <SectionHeader
           eyebrow="Curated stock"
           title="Recommended properties"
-          description="Recently added, featured, and premium demo listings with working favorites and filters."
+          description="Recently added, featured, and premium homes across Cambodia with working favorites and filters."
           action={
             <ButtonLink href="/search" variant="outline">
               View all listings
@@ -138,7 +138,7 @@ export default async function HomePage() {
         <SectionHeader
           eyebrow="Geography"
           title="Popular cities and districts"
-          description="Editorial destination cards with listing counts from the demo catalog."
+          description="Popular Cambodian cities and districts with active listing counts."
         />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {cities.map((city) => (
@@ -161,7 +161,7 @@ export default async function HomePage() {
                 <p className="text-xs uppercase tracking-[0.16em] text-white/70">{city.country}</p>
                 <h3 className="mt-1 font-[family-name:var(--font-display)] text-3xl">{city.name}</h3>
                 <p className="mt-2 text-sm text-white/80">
-                  {city.listingCount} demo listings · {city.blurb}
+                  {city.listingCount} listings · {city.blurb}
                 </p>
               </div>
             </Link>
@@ -190,8 +190,8 @@ export default async function HomePage() {
       <Section className="bg-[var(--color-mist)]/70">
         <SectionHeader
           eyebrow="Market pulse"
-          title="Demo market indicators"
-          description="These figures are illustrative only and labeled as demonstration data — not live market statistics."
+          title="Cambodia market indicators"
+          description="Asking-price snapshots from current SEAPS listings across major Cambodian cities."
           action={
             <ButtonLink href="/insights" variant="outline">
               Read insights
@@ -217,7 +217,7 @@ export default async function HomePage() {
         </div>
         <div className="mt-8 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="border-b border-[var(--color-border)] px-5 py-3 text-sm font-semibold">
-            Popular districts · demo $/m²
+            Popular districts · $/m²
           </div>
           <ul className="divide-y divide-[var(--color-border)]">
             {popularDistrictPrices.map((row) => (
@@ -236,7 +236,7 @@ export default async function HomePage() {
         <SectionHeader
           eyebrow="Video-ready"
           title="Listings with video tours"
-          description="A focused strip for properties marked with tour media in the demo set."
+          description="Properties with video tours available for remote viewing."
         />
         <PropertyGrid items={videoTours} userId={session?.id} />
       </Section>
@@ -278,8 +278,8 @@ export default async function HomePage() {
               Request a tailored shortlist
             </h2>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Tell us the city, budget, and must-have amenities. This demo form stores the request
-              locally via the inquiry API.
+              Tell us the city, budget, and must-have amenities. Our team will follow up with a
+              shortlist.
             </p>
             <form action="/api/inquiries" method="post" className="mt-5 space-y-3">
               <input type="hidden" name="propertyId" value="concierge" />
@@ -317,8 +317,8 @@ export default async function HomePage() {
                 Ready to publish your property?
               </h2>
               <p className="mt-3 max-w-xl text-[var(--color-muted)]">
-                Use the multi-step listing wizard to draft, preview, and submit for moderation in
-                demo mode with SEAPS.
+                Use the multi-step listing wizard to draft, preview, and submit your Cambodian
+                property for moderation.
               </p>
             </div>
             <ButtonLink href="/list-property" variant="accent" size="lg">

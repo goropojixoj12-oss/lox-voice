@@ -90,8 +90,8 @@ export async function POST(request: Request) {
       },
     ],
     location: {
-      country: "Demo",
-      countrySlug: "demo",
+      country: "Cambodia",
+      countrySlug: "cambodia",
       city: data.city,
       citySlug: data.citySlug,
       district: data.district,
@@ -105,7 +105,6 @@ export async function POST(request: Request) {
     agencyId: session.agencyId,
     publishedAt: now,
     updatedAt: now,
-    demo: true,
     views: 0,
     inquiries: 0,
   };

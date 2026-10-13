@@ -15,7 +15,7 @@ export default async function DashboardInquiriesPage() {
     return (
       <EmptyState
         title="No inquiries yet"
-        description="When someone submits a property inquiry form, it appears here in demo storage."
+        description="When someone submits a property inquiry form, it appears here."
         actionHref="/search"
         actionLabel="Browse listings"
       />

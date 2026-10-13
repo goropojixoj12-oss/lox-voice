@@ -11,16 +11,16 @@ export default function TermsPage() {
       </h1>
       <div className="mt-4 space-y-4 text-[var(--color-muted)]">
         <p>
-          {brand.name} demo listings are fictional sample inventory for product evaluation. They are
-          not real offers to sell or rent property.
+          {brand.name} publishes property listings and project information for Cambodia. Users must
+          verify documents, zoning, and ownership before completing any transaction.
         </p>
         <p>
           Users must not upload unlawful content, scrape personal data, or attempt to access admin
           tools without authorization.
         </p>
         <p>
-          External integrations (maps, email, SMS, payments, WhatsApp) require explicit configuration
-          and are not implied to be active in this demo.
+          External integrations such as maps and messaging require configuration and are enabled
+          only when credentials are provided.
         </p>
       </div>
     </div>

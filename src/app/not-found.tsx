@@ -10,7 +10,7 @@ export default function NotFound() {
         Page not found
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        That route does not exist or the listing was removed from the demo catalog.
+        That page does not exist or the listing is no longer available.
       </p>
       <ButtonLink href="/" className="mt-6">
         Back to home

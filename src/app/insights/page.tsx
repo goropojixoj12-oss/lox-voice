@@ -16,7 +16,7 @@ export default function InsightsPage() {
       <SectionHeader
         eyebrow="Editorial"
         title="Market insights and reports"
-        description="Demo indicators and original articles. Statistics are labeled as sample data."
+        description="Market notes and guides for buyers, renters, and investors in Cambodia."
       />
       <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {marketStats.slice(0, 3).map((stat) => (

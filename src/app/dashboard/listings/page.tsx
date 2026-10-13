@@ -11,7 +11,7 @@ export default async function DashboardListingsPage() {
     return (
       <EmptyState
         title="No runtime listings yet"
-        description="Create a listing with the wizard. Seed catalog items remain separate from your drafts."
+        description="Create a listing with the wizard. Your submissions appear here after save."
         actionHref="/list-property"
         actionLabel="Create listing"
       />

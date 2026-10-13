@@ -3,7 +3,7 @@ import { CatalogPage } from "@/components/search/catalog-page";
 
 export const metadata: Metadata = {
   title: "Map search",
-  description: "Browse demo listings with list/map synchronization.",
+  description: "Browse listings with list and map synchronization.",
 };
 
 export default async function MapPage({

@@ -4,7 +4,7 @@ import { ButtonLink } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Register",
-  description: "Registration status for SEAPS demo mode.",
+  description: "Create a SEAPS account.",
 };
 
 export default function RegisterPage() {
@@ -14,24 +14,26 @@ export default function RegisterPage() {
         Registration
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        Open self-serve registration is intentionally disabled until PostgreSQL + Prisma user
-        tables are connected. Use the seeded demo accounts to explore role-based dashboards.
+        Public self-serve registration is prepared for the next platform upgrade. For now, use the
+        SEAPS access accounts below to explore buyer, owner, agent, and admin desks.
       </p>
-      <div className="mt-6 space-y-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-sm">
-        <p>buyer@seaps.demo / demo-buyer-123</p>
-        <p>owner@seaps.demo / demo-owner-123</p>
-        <p>agent@seaps.demo / demo-agent-123</p>
-        <p>admin@seaps.demo / demo-admin-123</p>
+      <div className="mt-6 space-y-2 break-all rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-sm">
+        <p>buyer@seaps.com.kh / seaps-buyer-123</p>
+        <p>owner@seaps.com.kh / seaps-owner-123</p>
+        <p>agent@seaps.com.kh / seaps-agent-123</p>
+        <p>admin@seaps.com.kh / seaps-admin-123</p>
       </div>
-      <div className="mt-6 flex gap-3">
-        <ButtonLink href="/auth/login">Sign in with demo account</ButtonLink>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <ButtonLink href="/auth/login">Sign in</ButtonLink>
         <ButtonLink href="/about" variant="outline">
-          Read about the platform
+          About SEAPS
         </ButtonLink>
       </div>
       <p className="mt-6 text-sm text-[var(--color-muted)]">
-        API contract ready at <Link href="/api/auth/register">/api/auth/register</Link> (returns 501
-        in demo mode).
+        Need help opening an account?{" "}
+        <Link href="/contact" className="font-semibold text-[var(--color-accent)]">
+          Contact us
+        </Link>
       </p>
     </div>
   );

@@ -151,8 +151,7 @@ export default async function ProjectDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <InquiryForm propertyId={project.id} propertyTitle={`${project.name} project inquiry`} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-muted)]">
-            Brochures and document downloads require object storage configuration. No fake PDF is
-            linked in this demo.
+            Brochures and document downloads are provided when the developer supplies files.
             <Link href="/contact" className="mt-2 block text-[var(--color-accent)]">
               Contact SEAPS
             </Link>

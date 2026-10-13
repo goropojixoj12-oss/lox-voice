@@ -41,8 +41,8 @@ export default function FavoritesPage() {
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
         {mode === "guest"
-          ? "Guest favorites are stored temporarily in this browser only."
-          : "Signed-in favorites sync to demo server storage."}
+          ? "Guest favorites stay in this browser until you sign in."
+          : "Signed-in favorites sync to your SEAPS account."}
       </p>
       <div className="mt-6">
         {items.length ? (

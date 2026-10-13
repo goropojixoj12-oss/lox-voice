@@ -3,7 +3,7 @@ import { CatalogPage } from "@/components/search/catalog-page";
 
 export const metadata: Metadata = {
   title: "Search properties",
-  description: "Filter SEAPS demo listings by deal type, city, price, amenities, and more.",
+  description: "Filter SEAPS listings by deal type, city, price, amenities, and more.",
 };
 
 export default async function SearchRoute({

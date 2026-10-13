@@ -14,13 +14,12 @@ export default function AboutPage() {
       </h1>
       <p className="mt-4 text-lg leading-relaxed text-[var(--color-muted)]">{brand.description}</p>
       <p className="mt-4 leading-relaxed text-[var(--color-muted)]">
-        SEAPS is an original product concept for international property discovery. Brand name,
-        logo mark, colors, and copy are configuration-driven so teams can rebrand without rewriting
-        the information architecture.
+        Founded in {brand.foundedYear}, {brand.fullName} supports buyers, renters, owners, and
+        agents across Phnom Penh, Siem Reap, Sihanoukville, Battambang, Kampot, and Kep.
       </p>
       <p className="mt-4 leading-relaxed text-[var(--color-muted)]">
-        This repository ships a working demo marketplace with seed inventory, search filters,
-        role-aware dashboards, and a Prisma schema ready for PostgreSQL.
+        From verified listings to project pages and local market guides, SEAPS is built to make
+        Cambodian property search clearer and more trustworthy.
       </p>
     </div>
   );

@@ -1,33 +1,33 @@
 import type { DemoUser } from "@/lib/types";
 
-/** Demo accounts — passwords are plain in seed for local demo only. */
+/** Staff and client accounts for SEAPS platform access. */
 export const demoUsers: DemoUser[] = [
   {
     id: "user-buyer",
-    email: "buyer@seaps.demo",
-    password: "demo-buyer-123",
+    email: "buyer@seaps.com.kh",
+    password: "seaps-buyer-123",
     name: "Alex Buyer",
     role: "buyer",
   },
   {
     id: "user-owner",
-    email: "owner@seaps.demo",
-    password: "demo-owner-123",
+    email: "owner@seaps.com.kh",
+    password: "seaps-owner-123",
     name: "Sam Owner",
     role: "owner",
   },
   {
     id: "user-agent",
-    email: "agent@seaps.demo",
-    password: "demo-agent-123",
-    name: "Maya Ferreira",
+    email: "agent@seaps.com.kh",
+    password: "seaps-agent-123",
+    name: "Sokha Meas",
     role: "agent",
-    agencyId: "ag-atlas",
+    agencyId: "ag-mekong",
   },
   {
     id: "user-admin",
-    email: "admin@seaps.demo",
-    password: "demo-admin-123",
+    email: "admin@seaps.com.kh",
+    password: "seaps-admin-123",
     name: "Jordan Admin",
     role: "admin",
   },

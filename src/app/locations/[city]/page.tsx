@@ -75,7 +75,7 @@ export default async function CityPage({
                 <div className="p-4">
                   <h3 className="font-semibold">{district.name}</h3>
                   <p className="text-sm text-[var(--color-muted)]">
-                    {district.listingCount} demo listings
+                    {district.listingCount} listings
                   </p>
                 </div>
               </Link>

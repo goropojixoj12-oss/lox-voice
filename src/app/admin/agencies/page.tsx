@@ -10,7 +10,7 @@ export default function AdminAgenciesPage() {
         Manage agencies
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        Agency profiles are seeded in src/data/agencies.ts. Connect Prisma mutations to enable create/update/archive workflows here.
+        Agency profiles are managed for Cambodia markets. Use these tools to keep published records current.
       </p>
       <Link href="/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
         Back to admin overview

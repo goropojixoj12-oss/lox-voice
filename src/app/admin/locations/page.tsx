@@ -10,7 +10,7 @@ export default function AdminLocationsPage() {
         Manage locations
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        City and district guides are seeded in src/data/locations.ts. Connect Prisma mutations to enable create/update/archive workflows here.
+        City and district guides cover Cambodia. Use these tools to keep published records current.
       </p>
       <Link href="/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
         Back to admin overview

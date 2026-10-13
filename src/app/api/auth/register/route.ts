@@ -19,12 +19,12 @@ export async function POST(request: Request) {
     {
       ok: false,
       error:
-        "Demo mode uses fixed seed accounts. Connect PostgreSQL + Prisma user persistence to enable open registration.",
-      demoAccounts: [
-        "buyer@seaps.demo",
-        "owner@seaps.demo",
-        "agent@seaps.demo",
-        "admin@seaps.demo",
+        "Open registration will be enabled with full user persistence. Use current SEAPS access accounts meanwhile.",
+      accessAccounts: [
+        "buyer@seaps.com.kh",
+        "owner@seaps.com.kh",
+        "agent@seaps.com.kh",
+        "admin@seaps.com.kh",
       ],
     },
     { status: 501 },

@@ -20,8 +20,7 @@ export default async function DashboardPage() {
         Welcome back, {session.name}
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
-        Role: {session.role}. This desk stores favorites, inquiries, and draft listings in local
-        demo files under <code>.data/</code>.
+        Role: {session.role}. Manage favorites, inquiries, and your listings from this desk.
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         {[

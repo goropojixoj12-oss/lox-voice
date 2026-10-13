@@ -44,20 +44,20 @@ const columns = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-[var(--color-border)] bg-[#050d18] text-[var(--color-text)]">
+    <footer className="mt-auto overflow-hidden border-t border-[var(--color-border)] bg-[#050d18] text-[var(--color-text)]">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_2fr] lg:px-8">
-        <div>
-          <SeapsLogo />
+        <div className="min-w-0">
+          <SeapsLogo className="max-w-full" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
-            {brand.fullName}
+            {brand.fullName} · Cambodia · since {brand.foundedYear}
           </p>
           <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
-            Demo marketplace · sample inventory
+            Property search across Cambodia
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {columns.map((column) => (
-            <div key={column.title}>
+            <div key={column.title} className="min-w-0">
               <p className="text-sm font-semibold text-[var(--color-accent-soft)]">{column.title}</p>
               <ul className="mt-3 space-y-2">
                 {column.links.map((link) => (
@@ -78,9 +78,9 @@ export function SiteFooter() {
       <div className="border-t border-[var(--color-border)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-[var(--color-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>
-            © {new Date().getFullYear()} {brand.name}. {brand.fullName}.
+            © {brand.foundedYear}–{new Date().getFullYear()} {brand.name}. {brand.fullName}.
           </p>
-          <p>Images from Unsplash for demonstration only</p>
+          <p>Phnom Penh · Siem Reap · Sihanoukville · Kampot · Kep</p>
         </div>
       </div>
     </footer>

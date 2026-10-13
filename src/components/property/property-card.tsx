@@ -93,7 +93,10 @@ export function PropertyCard({
           <span className="text-xs text-[var(--color-muted)]">{daysAgo(property.publishedAt)}</span>
         </div>
         <div>
-          <Link href={href} className="font-semibold text-[var(--color-text)] hover:text-[var(--color-accent-soft)]">
+          <Link
+            href={href}
+            className="break-words font-semibold text-[var(--color-text)] hover:text-[var(--color-accent-soft)]"
+          >
             {property.title}
           </Link>
           <p className="mt-1 text-sm text-[var(--color-muted)]">

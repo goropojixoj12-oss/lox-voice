@@ -26,8 +26,7 @@ export default async function ProfilePage() {
         </div>
       </dl>
       <p className="mt-4 text-sm text-[var(--color-muted)]">
-        Profile editing persists after PostgreSQL users are wired. Current values come from demo
-        seed accounts.
+        Profile details for your SEAPS account. Contact support to update verified credentials.
       </p>
     </div>
   );

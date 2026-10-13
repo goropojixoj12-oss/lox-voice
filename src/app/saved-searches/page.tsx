@@ -29,7 +29,7 @@ export default function SavedSearchesPage() {
   function saveCurrent() {
     const params = Object.fromEntries(new URLSearchParams(window.location.search).entries());
     // default to a useful starter if opened directly
-    const payload = Object.keys(params).length ? params : { deal: "sale", city: "lisbon" };
+    const payload = Object.keys(params).length ? params : { deal: "sale", city: "phnom-penh" };
     const entry: Saved = {
       id: crypto.randomUUID(),
       name,
@@ -52,7 +52,7 @@ export default function SavedSearchesPage() {
         <Label htmlFor="search-name">Name</Label>
         <Input id="search-name" value={name} onChange={(e) => setName(e.target.value)} />
         <Button type="button" className="mt-3" onClick={saveCurrent}>
-          Save starter search (Lisbon sale)
+          Save starter search (Phnom Penh sale)
         </Button>
         {message ? <p className="mt-2 text-sm text-[var(--color-success)]">{message}</p> : null}
       </div>

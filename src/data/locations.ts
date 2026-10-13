@@ -1,174 +1,156 @@
 import type { CityGuide } from "@/lib/types";
 
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
 export const cities: CityGuide[] = [
   {
-    slug: "lisbon",
-    name: "Lisbon",
-    country: "Portugal",
-    image:
-      "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1600&q=80",
-    listingCount: 86,
-    blurb: "Riverfront apartments, tiled façades, and strong long-stay demand.",
+    slug: "phnom-penh",
+    name: "Phnom Penh",
+    country: "Cambodia",
+    image: img("photo-1552465011-b4e21bf6e79a"),
+    listingCount: 128,
+    blurb: "Capital apartments, riverside homes, and commercial corridors across the city.",
     districts: [
       {
-        slug: "alfama",
-        name: "Alfama",
-        listingCount: 18,
-        image:
-          "https://images.unsplash.com/photo-1585208798174-6cedd86e968a?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        slug: "chiado",
-        name: "Chiado",
-        listingCount: 22,
-        image:
-          "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        slug: "parque-das-nacoes",
-        name: "Parque das Nações",
-        listingCount: 16,
-        image:
-          "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1200&q=80",
-      },
-    ],
-  },
-  {
-    slug: "barcelona",
-    name: "Barcelona",
-    country: "Spain",
-    image:
-      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1600&q=80",
-    listingCount: 74,
-    blurb: "Mediterranean living with design-led apartments and coastal villas.",
-    districts: [
-      {
-        slug: "eixample",
-        name: "Eixample",
-        listingCount: 24,
-        image:
-          "https://images.unsplash.com/photo-1562883676-8c7feb83f09b?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        slug: "gracia",
-        name: "Gràcia",
-        listingCount: 19,
-        image:
-          "https://images.unsplash.com/photo-1558642084-fd07fae5282e?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        slug: "poblenou",
-        name: "Poblenou",
-        listingCount: 15,
-        image:
-          "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?auto=format&fit=crop&w=1200&q=80",
-      },
-    ],
-  },
-  {
-    slug: "dubai",
-    name: "Dubai",
-    country: "UAE",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80",
-    listingCount: 112,
-    blurb: "High-rise residences, waterfront towers, and investor-ready stock.",
-    districts: [
-      {
-        slug: "marina",
-        name: "Dubai Marina",
+        slug: "bkk-1",
+        name: "BKK 1",
         listingCount: 34,
-        image:
-          "https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?auto=format&fit=crop&w=1200&q=80",
+        image: img("photo-1545324418-cc1a3fa10c00", 1200),
       },
       {
-        slug: "downtown",
-        name: "Downtown",
+        slug: "toul-kork",
+        name: "Toul Kork",
+        listingCount: 22,
+        image: img("photo-1486406146926-c627a92ad1ab", 1200),
+      },
+      {
+        slug: "daun-penh",
+        name: "Daun Penh",
         listingCount: 28,
-        image:
-          "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1200&q=80",
+        image: img("photo-1512917774080-9991f1c4c750", 1200),
       },
       {
-        slug: "palm-jumeirah",
-        name: "Palm Jumeirah",
-        listingCount: 21,
-        image:
-          "https://images.unsplash.com/photo-1546412414-e1885259563a?auto=format&fit=crop&w=1200&q=80",
-      },
-    ],
-  },
-  {
-    slug: "singapore",
-    name: "Singapore",
-    country: "Singapore",
-    image:
-      "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1600&q=80",
-    listingCount: 61,
-    blurb: "Efficient urban homes with strong rental fundamentals.",
-    districts: [
-      {
-        slug: "orchard",
-        name: "Orchard",
-        listingCount: 14,
-        image:
-          "https://images.unsplash.com/photo-1565967511849-76a60a516170?auto=format&fit=crop&w=1200&q=80",
+        slug: "chamkarmon",
+        name: "Chamkarmon",
+        listingCount: 19,
+        image: img("photo-1560448204-e02f11c3d0e2", 1200),
       },
       {
-        slug: "tanjong-pagar",
-        name: "Tanjong Pagar",
-        listingCount: 17,
-        image:
-          "https://images.unsplash.com/photo-1496939376851-023ee8753335?auto=format&fit=crop&w=1200&q=80",
-      },
-    ],
-  },
-  {
-    slug: "mexico-city",
-    name: "Mexico City",
-    country: "Mexico",
-    image:
-      "https://images.unsplash.com/photo-1518659526054-1798dd90db65?auto=format&fit=crop&w=1600&q=80",
-    listingCount: 58,
-    blurb: "Creative neighborhoods, courtyards, and growing commercial corridors.",
-    districts: [
-      {
-        slug: "roma-norte",
-        name: "Roma Norte",
-        listingCount: 20,
-        image:
-          "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?auto=format&fit=crop&w=1200&q=80",
-      },
-      {
-        slug: "polanco",
-        name: "Polanco",
-        listingCount: 18,
-        image:
-          "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80",
-      },
-    ],
-  },
-  {
-    slug: "cape-town",
-    name: "Cape Town",
-    country: "South Africa",
-    image:
-      "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=1600&q=80",
-    listingCount: 49,
-    blurb: "Mountain views, coastal villas, and lifestyle-driven rentals.",
-    districts: [
-      {
-        slug: "sea-point",
-        name: "Sea Point",
+        slug: "meanchey",
+        name: "Meanchey",
         listingCount: 12,
-        image:
-          "https://images.unsplash.com/photo-1576485290814-1c72aa4bbb6d?auto=format&fit=crop&w=1200&q=80",
+        image: img("photo-1586528116311-ad8dd3c8310d", 1200),
       },
       {
-        slug: "camps-bay",
-        name: "Camps Bay",
+        slug: "chroy-changvar",
+        name: "Chroy Changvar",
         listingCount: 11,
-        image:
-          "https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?auto=format&fit=crop&w=1200&q=80",
+        image: img("photo-1500382017468-9049fed747ef", 1200),
+      },
+      {
+        slug: "sen-sok",
+        name: "Sen Sok",
+        listingCount: 14,
+        image: img("photo-1536376072261-38c75010e6c9", 1200),
+      },
+    ],
+  },
+  {
+    slug: "siem-reap",
+    name: "Siem Reap",
+    country: "Cambodia",
+    image: img("photo-1528183429752-a97d14bf51b1"),
+    listingCount: 64,
+    blurb: "Villas, boutique residences, and investment stock near the temple belt.",
+    districts: [
+      {
+        slug: "svay-dangkum",
+        name: "Svay Dangkum",
+        listingCount: 18,
+        image: img("photo-1600596542815-ffad4c1539a9", 1200),
+      },
+      {
+        slug: "sala-kamraeuk",
+        name: "Sala Kamraeuk",
+        listingCount: 15,
+        image: img("photo-1600585154340-be6161a56a0c", 1200),
+      },
+      {
+        slug: "sla-kram",
+        name: "Sla Kram",
+        listingCount: 12,
+        image: img("photo-1600607687939-ce8a6c25118c", 1200),
+      },
+    ],
+  },
+  {
+    slug: "sihanoukville",
+    name: "Sihanoukville",
+    country: "Cambodia",
+    image: img("photo-1507525428034-b723cf961d3e"),
+    listingCount: 41,
+    blurb: "Coastal condos, beachfront rentals, and waterfront commercial space.",
+    districts: [
+      {
+        slug: "otres",
+        name: "Otres",
+        listingCount: 14,
+        image: img("photo-1512917774080-9991f1c4c750", 1200),
+      },
+      {
+        slug: "sangkat-bei",
+        name: "Sangkat Bei",
+        listingCount: 11,
+        image: img("photo-1545324418-cc1a3fa10c00", 1200),
+      },
+    ],
+  },
+  {
+    slug: "battambang",
+    name: "Battambang",
+    country: "Cambodia",
+    image: img("photo-1555881400-74d7acaacd8b"),
+    listingCount: 27,
+    blurb: "Provincial homes, shopfronts, and quieter residential streets.",
+    districts: [
+      {
+        slug: "svay-por",
+        name: "Svay Por",
+        listingCount: 10,
+        image: img("photo-1564013799919-ab600027ffc6", 1200),
+      },
+    ],
+  },
+  {
+    slug: "kampot",
+    name: "Kampot",
+    country: "Cambodia",
+    image: img("photo-1506905925346-21bda4d32df4"),
+    listingCount: 22,
+    blurb: "Riverfront houses and lifestyle rentals along the Kampot waterfront.",
+    districts: [
+      {
+        slug: "kampong-bay",
+        name: "Kampong Bay",
+        listingCount: 9,
+        image: img("photo-1605276374104-dee2a0ed3cd6", 1200),
+      },
+    ],
+  },
+  {
+    slug: "kep",
+    name: "Kep",
+    country: "Cambodia",
+    image: img("photo-1476514525535-07fb3b4ae5f1"),
+    listingCount: 16,
+    blurb: "Coastal retreats and weekend homes overlooking the Kep shoreline.",
+    districts: [
+      {
+        slug: "prey-thom",
+        name: "Prey Thom",
+        listingCount: 7,
+        image: img("photo-1613490493576-7fde63acd811", 1200),
       },
     ],
   },

@@ -27,13 +27,13 @@ export default function ListPropertyPage() {
   const [form, setForm] = useState({
     transactionType: "sale" as TransactionType,
     propertyType: "apartment" as PropertyType,
-    city: "Lisbon",
-    citySlug: "lisbon",
-    district: "Chiado",
-    districtSlug: "chiado",
+    city: "Phnom Penh",
+    citySlug: "phnom-penh",
+    district: "BKK 1",
+    districtSlug: "bkk-1",
     address: "",
     price: "",
-    currency: "EUR",
+    currency: "USD",
     pricePeriod: "" as "" | "month" | "night" | "year",
     bedrooms: "2",
     bathrooms: "1",
@@ -228,7 +228,7 @@ export default function ListPropertyPage() {
                 value={form.currency}
                 onChange={(e) => update("currency", e.target.value)}
               >
-                {["EUR", "USD", "AED", "SGD", "ZAR"].map((c) => (
+                {["USD", "KHR"].map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -309,8 +309,7 @@ export default function ListPropertyPage() {
               onChange={(e) => update("imageUrl", e.target.value)}
             />
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Direct uploads require S3-compatible storage. For demo, paste an https image URL
-              (Unsplash recommended). Max practical size guidance: under 5MB, jpg/png/webp.
+              Paste an https image URL for the cover photo. Recommended: under 5MB, jpg/png/webp.
             </p>
           </div>
         ) : null}

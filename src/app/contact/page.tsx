@@ -31,8 +31,7 @@ export default function ContactPage() {
         Contact
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
-        Send a message to the platform team. Demo mode stores inquiries locally — no invented phone
-        numbers or fake CRM sync.
+        Send a message to the SEAPS team. We respond using the contact details you provide.
       </p>
       <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <div>
@@ -50,7 +49,7 @@ export default function ContactPage() {
         <Button type="submit">Send message</Button>
       </form>
       {status === "ok" ? (
-        <p className="mt-3 text-sm text-[var(--color-success)]">Message saved in demo storage.</p>
+        <p className="mt-3 text-sm text-[var(--color-success)]">Message received. We will get back to you shortly.</p>
       ) : null}
       {status === "error" ? (
         <p className="mt-3 text-sm text-[var(--color-danger)]">Could not send. Try again shortly.</p>
