@@ -1,19 +1,50 @@
 import { promises as fs } from "fs";
+import os from "os";
 import path from "path";
 import { nanoid } from "nanoid";
 import type { Inquiry, Property, SavedSearch } from "@/lib/types";
 
-const dataDir = path.join(process.cwd(), ".data");
+/**
+ * Prefer project-local `.data` when the filesystem is writable (local/dev).
+ * On Vercel and other serverless hosts cwd is read-only, so fall back to tmp.
+ */
+function preferredDataDirs(): string[] {
+  const local = path.join(process.cwd(), ".data");
+  const tmp = path.join(os.tmpdir(), "seaps-data");
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return [tmp, local];
+  }
+  return [local, tmp];
+}
 
-async function ensureDir() {
-  await fs.mkdir(dataDir, { recursive: true });
+let resolvedDataDir: string | null = null;
+
+async function getDataDir(): Promise<string> {
+  if (resolvedDataDir) return resolvedDataDir;
+
+  for (const dir of preferredDataDirs()) {
+    try {
+      await fs.mkdir(dir, { recursive: true });
+      const probe = path.join(dir, `.write-probe-${process.pid}`);
+      await fs.writeFile(probe, "ok", "utf8");
+      await fs.unlink(probe).catch(() => undefined);
+      resolvedDataDir = dir;
+      return dir;
+    } catch {
+      // try next candidate
+    }
+  }
+
+  // Last resort — still point at tmp so callers have a path; reads/writes
+  // are individually guarded below.
+  resolvedDataDir = path.join(os.tmpdir(), "seaps-data");
+  return resolvedDataDir;
 }
 
 async function readJson<T>(file: string, fallback: T): Promise<T> {
-  await ensureDir();
-  const full = path.join(dataDir, file);
   try {
-    const raw = await fs.readFile(full, "utf8");
+    const dir = await getDataDir();
+    const raw = await fs.readFile(path.join(dir, file), "utf8");
     return JSON.parse(raw) as T;
   } catch {
     return fallback;
@@ -21,8 +52,9 @@ async function readJson<T>(file: string, fallback: T): Promise<T> {
 }
 
 async function writeJson<T>(file: string, data: T) {
-  await ensureDir();
-  await fs.writeFile(path.join(dataDir, file), JSON.stringify(data, null, 2), "utf8");
+  const dir = await getDataDir();
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, file), JSON.stringify(data, null, 2), "utf8");
 }
 
 export async function getRuntimeListings() {
