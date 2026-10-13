@@ -58,8 +58,8 @@ export default async function HomePage() {
               </ButtonLink>
               <ButtonLink
                 href="/list-property"
-                variant="outline"
-                className="border-white/40 bg-white/10 text-white hover:bg-white/20"
+                variant="ghost"
+                className="border border-white/40 bg-white/10 text-white hover:bg-white/20"
               >
                 List your property
               </ButtonLink>

@@ -6,13 +6,12 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-accent)] text-[#0B1C33] hover:bg-[var(--color-accent-soft)] shadow-[var(--shadow-soft)]",
+    "seaps-btn-gold text-[#0B1C33] shadow-[var(--shadow-soft)] hover:brightness-105",
   secondary:
     "bg-[var(--color-secondary)] text-[var(--color-text)] hover:bg-[var(--color-sand)]",
   ghost: "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-mist)]",
   accent: "seaps-btn-gold text-[#0B1C33] shadow-[var(--shadow-lift)] hover:brightness-105",
-  outline:
-    "border border-[var(--color-accent)]/40 bg-[var(--color-surface)] text-[var(--color-accent-soft)] hover:border-[var(--color-accent)]",
+  outline: "seaps-btn-gold-outline",
 };
 
 const sizes: Record<Size, string> = {
@@ -22,7 +21,7 @@ const sizes: Record<Size, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center rounded-[var(--radius-md)] font-medium transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center rounded-[var(--radius-md)] font-medium transition-[filter,transform,opacity] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] disabled:opacity-50 disabled:pointer-events-none";
 
 export function Button({
   className,
