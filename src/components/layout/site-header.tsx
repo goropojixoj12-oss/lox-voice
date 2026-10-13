@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-50 overflow-x-hidden border-b border-[var(--color-border)]/80 bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)] backdrop-blur-md">
       <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group shrink-0" aria-label="SEAPS home">
+        <Link href="/" className="group shrink-0 notranslate" aria-label="SEAPS home">
           <SeapsLogo size="header" />
         </Link>
 
@@ -43,19 +44,7 @@ export function SiteHeader({
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <label className="sr-only" htmlFor="lang">
-            Language
-          </label>
-          <select
-            id="lang"
-            className="h-10 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)]"
-            defaultValue="en"
-            aria-label="Language"
-          >
-            <option value="en">EN</option>
-            <option value="es">ES</option>
-            <option value="pt">PT</option>
-          </select>
+          <LanguageSwitcher />
           {userName ? (
             <ButtonLink href="/dashboard" variant="ghost" size="sm">
               {userName}
@@ -90,6 +79,9 @@ export function SiteHeader({
         )}
       >
         <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4">
+          <div className="mb-2">
+            <LanguageSwitcher className="w-full [&_select]:w-full [&_select]:max-w-none" />
+          </div>
           {nav.map((item) => (
             <Link
               key={item.href}
