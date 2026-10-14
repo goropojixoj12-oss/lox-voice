@@ -14,15 +14,9 @@ export default function RegisterPage() {
         Registration
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        Public self-serve registration is prepared for the next platform upgrade. For now, use the
-        SEAPS access accounts below to explore buyer, owner, agent, and admin desks.
+        Public self-serve registration is prepared for the next platform upgrade. If you already
+        have SEAPS credentials, sign in to access your desk.
       </p>
-      <div className="mt-6 space-y-2 break-all rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-sm">
-        <p>buyer@seaps.com.kh / seaps-buyer-123</p>
-        <p>owner@seaps.com.kh / seaps-owner-123</p>
-        <p>agent@seaps.com.kh / seaps-agent-123</p>
-        <p>admin@seaps.com.kh / seaps-admin-123</p>
-      </div>
       <div className="mt-6 flex flex-wrap gap-3">
         <ButtonLink href="/auth/login">Sign in</ButtonLink>
         <ButtonLink href="/about" variant="outline">
