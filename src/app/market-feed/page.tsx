@@ -15,8 +15,14 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function MarketFeedPage() {
-  await ensureAggregationsSeeded();
-  const items = toPublicAggregatedListings(await getAggregatedListings());
+  // Public route: never throw on store/seed failures (serverless FS, cold start).
+  let items: ReturnType<typeof toPublicAggregatedListings> = [];
+  try {
+    await ensureAggregationsSeeded();
+    items = toPublicAggregatedListings(await getAggregatedListings());
+  } catch {
+    items = [];
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

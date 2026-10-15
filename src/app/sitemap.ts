@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/land",
     "/agencies",
     "/insights",
+    "/market-feed",
     "/guides",
     "/map",
     "/about",

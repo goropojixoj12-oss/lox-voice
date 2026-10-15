@@ -7,6 +7,7 @@ import { ensureAggregationsSeeded } from "@/lib/aggregations/ensure-seeded";
 import { toPublicAggregatedListing } from "@/lib/aggregations/sanitize";
 import { propertyTypeLabels } from "@/lib/labels";
 import { getAggregatedListingById } from "@/lib/store";
+import type { AggregatedListing } from "@/lib/types";
 import { daysAgo, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -15,20 +16,29 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  await ensureAggregationsSeeded();
-  const raw = await getAggregatedListingById(id);
-  if (!raw) return { title: "Listing not found" };
-  return {
-    title: raw.title,
-    description: raw.description.slice(0, 160),
-    robots: { index: true, follow: true },
-  };
+  try {
+    await ensureAggregationsSeeded();
+    const raw = await getAggregatedListingById(id);
+    if (!raw) return { title: "Listing not found" };
+    return {
+      title: raw.title,
+      description: raw.description.slice(0, 160),
+      robots: { index: true, follow: true },
+    };
+  } catch {
+    return { title: "Market Feed" };
+  }
 }
 
 export default async function MarketFeedDetailPage({ params }: Props) {
   const { id } = await params;
-  await ensureAggregationsSeeded();
-  const raw = await getAggregatedListingById(id);
+  let raw: AggregatedListing | null = null;
+  try {
+    await ensureAggregationsSeeded();
+    raw = await getAggregatedListingById(id);
+  } catch {
+    notFound();
+  }
   if (!raw) notFound();
 
   const listing = toPublicAggregatedListing(raw);
