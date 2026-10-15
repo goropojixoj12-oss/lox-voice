@@ -6,12 +6,12 @@ export function AgencyCard({ agency }: { agency: Agency }) {
   return (
     <article className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="relative h-36">
-        <Image src={agency.cover} alt="" fill className="object-cover" sizes="400px" />
+        <Image src={agency.cover} alt={`${agency.name} cover`} fill className="object-cover" sizes="400px" />
       </div>
       <div className="p-4">
         <div className="flex items-center gap-3">
           <div className="relative h-12 w-12 overflow-hidden rounded-full border border-[var(--color-border)]">
-            <Image src={agency.logo} alt="" fill className="object-cover" sizes="48px" />
+            <Image src={agency.logo} alt={`${agency.name} logo`} fill className="object-cover" sizes="48px" />
           </div>
           <div>
             <Link href={`/agencies/${agency.slug}`} className="font-semibold text-[var(--color-accent-soft)]">

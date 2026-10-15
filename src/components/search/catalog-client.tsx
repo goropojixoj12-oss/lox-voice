@@ -97,12 +97,25 @@ export function CatalogClient({
           </div>
 
           {total === 0 ? (
-            <EmptyState
-              title="No properties match these filters"
-              description="Try widening price, removing amenities, or resetting the search."
-              actionHref={pathname}
-              actionLabel="Reset filters"
-            />
+            <div className="space-y-4">
+              <EmptyState
+                title="No properties match these filters"
+                description="Try widening price, removing amenities, or resetting the search. Suggested next steps: browse all sale homes, Phnom Penh listings, or open map search."
+                actionHref={pathname}
+                actionLabel="Reset filters"
+              />
+              <div className="flex flex-wrap gap-2">
+                <ButtonLink href="/buy" variant="outline" size="sm">
+                  Homes for sale
+                </ButtonLink>
+                <ButtonLink href="/locations/phnom-penh" variant="outline" size="sm">
+                  Phnom Penh
+                </ButtonLink>
+                <ButtonLink href="/map" variant="outline" size="sm">
+                  Map search
+                </ButtonLink>
+              </div>
+            </div>
           ) : view === "map" ? (
             <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
               <PropertyMap items={items} activeId={activeId} onSelect={setActiveId} />

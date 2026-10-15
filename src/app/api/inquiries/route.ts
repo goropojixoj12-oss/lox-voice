@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createInquiry, getInquiries } from "@/lib/store";
 import { getSession, requireRole } from "@/lib/auth";
+import { clientKey, rateLimit } from "@/lib/rate-limit";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -9,9 +10,9 @@ const schema = z.object({
   message: z.string().min(10),
   propertyId: z.string().min(1),
   propertyTitle: z.string().min(1),
+  website: z.string().optional(), // honeypot
+  consent: z.literal(true),
 });
-
-const rateMap = new Map<string, number>();
 
 export async function GET() {
   const session = await requireRole(["agent", "owner", "admin"]);
@@ -23,23 +24,38 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for") ?? "local";
-  const now = Date.now();
-  const last = rateMap.get(ip) ?? 0;
-  if (now - last < 3000) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  const limited = rateLimit(clientKey(request, "inquiry"), {
+    limit: 8,
+    windowMs: 60_000,
+  });
+  if (!limited.ok) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      {
+        status: 429,
+        headers: { "Retry-After": String(limited.retryAfterSec) },
+      },
+    );
   }
-  rateMap.set(ip, now);
 
   const body = await request.json();
+  // Honeypot filled → pretend success
+  if (typeof body?.website === "string" && body.website.trim().length > 0) {
+    return NextResponse.json({ inquiry: { id: "ignored" }, sessionUserId: null });
+  }
+
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid payload", issues: parsed.error.issues }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid payload", issues: parsed.error.issues },
+      { status: 400 },
+    );
   }
 
   const session = await getSession();
+  const { website: _hp, consent: _consent, ...data } = parsed.data;
   const inquiry = await createInquiry({
-    ...parsed.data,
+    ...data,
     recipientType: "platform",
   });
 

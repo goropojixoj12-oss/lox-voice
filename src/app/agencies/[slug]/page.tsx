@@ -38,13 +38,13 @@ export default async function AgencyDetailPage({
   return (
     <div>
       <div className="relative h-56 md:h-72">
-        <Image src={agency.cover} alt="" fill className="object-cover" sizes="100vw" />
+        <Image src={agency.cover} alt={`${agency.name} cover`} fill className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-[var(--color-primary)]/55" />
       </div>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="-mt-16 mb-8 flex flex-col gap-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-soft)] md:flex-row md:items-center">
           <div className="relative h-20 w-20 overflow-hidden rounded-full border border-[var(--color-border)]">
-            <Image src={agency.logo} alt="" fill className="object-cover" sizes="80px" />
+            <Image src={agency.logo} alt={`${agency.name} logo`} fill className="object-cover" sizes="80px" />
           </div>
           <div className="flex-1">
             <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">

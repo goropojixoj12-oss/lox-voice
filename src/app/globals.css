@@ -11,7 +11,8 @@
   --color-sand: #2a3f5c;
   --color-mist: #1a3050;
   --color-text: #e8eef7;
-  --color-muted: #9aadc2;
+  /* AA-ish contrast on dark navy surfaces (~#0F2138) */
+  --color-muted: #b7c6d8;
   --color-border: #2a4060;
   --color-success: #3d8b6e;
   --color-warning: #d4af37;
@@ -476,6 +477,21 @@ iframe.skiptranslate {
 
 body {
   top: 0 !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
 }
 
 body > .skiptranslate,

@@ -8,7 +8,6 @@ import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section, SectionHeader } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
-import { Input, Label, Textarea } from "@/components/ui/input";
 import { agencies } from "@/data/agencies";
 import { articles } from "@/data/articles";
 import { cities } from "@/data/locations";
@@ -46,15 +45,16 @@ export default async function HomePage() {
               {brand.fullName}
             </p>
             <h1 className="mt-5 max-w-xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
-              Find homes, rentals, and developments with clear filters and verified listing signals
+              Cambodia property marketplace — buy, rent, or list with local expertise since{" "}
+              {brand.foundedYear}
             </h1>
             <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-              Cambodia property search since {brand.foundedYear} — buy, long-term rent, short stay,
-              commercial, and off-plan across Phnom Penh, Siem Reap, and the coast
+              Verified listing signals, city and district filters, and agent desks across Phnom Penh,
+              Siem Reap, and the coast — one search for homes, commercial, and off-plan.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
-                Browse homes for sale
+                Start property search
               </ButtonLink>
               <ButtonLink
                 href="/list-property"
@@ -276,32 +276,16 @@ export default async function HomePage() {
             </h2>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
               Tell us the city, budget, and must-have amenities. Our team will follow up with a
-              shortlist.
+              shortlist — with privacy consent on the contact form.
             </p>
-            <form action="/api/inquiries" method="post" className="mt-5 space-y-3">
-              <input type="hidden" name="propertyId" value="concierge" />
-              <input type="hidden" name="propertyTitle" value="Concierge shortlist request" />
-              <div>
-                <Label htmlFor="concierge-name">Name</Label>
-                <Input id="concierge-name" name="name" required />
-              </div>
-              <div>
-                <Label htmlFor="concierge-contact">Email</Label>
-                <Input id="concierge-contact" name="contact" type="email" required />
-              </div>
-              <div>
-                <Label htmlFor="concierge-message">What are you looking for?</Label>
-                <Textarea
-                  id="concierge-message"
-                  name="message"
-                  required
-                  defaultValue="City, budget, bedrooms, and must-have amenities…"
-                />
-              </div>
-              <ButtonLink href="/contact" variant="primary" className="w-full">
-                Continue on contact page
-              </ButtonLink>
-            </form>
+            <ul className="mt-5 space-y-2 text-sm text-[var(--color-muted)]">
+              <li>· City and district preferences</li>
+              <li>· Budget and deal type (buy / rent / short stay)</li>
+              <li>· Must-have amenities and timeline</li>
+            </ul>
+            <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
+              Contact SEAPS for a shortlist
+            </ButtonLink>
           </div>
         </div>
       </Section>

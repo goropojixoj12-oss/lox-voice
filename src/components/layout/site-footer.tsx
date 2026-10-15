@@ -22,7 +22,7 @@ const columns = [
       { href: "/agencies", label: "Agencies" },
       { href: "/list-property", label: "List a property" },
       { href: "/dashboard", label: "Owner & agent desk" },
-      { href: "/admin", label: "Admin" },
+      { href: "/auth/login", label: "Sign in" },
     ],
   },
   {
@@ -61,6 +61,14 @@ export function SiteFooter() {
           <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
             Property search across Cambodia
           </p>
+          <p className="mt-3 text-sm text-[var(--color-muted)]">
+            <a
+              href={`mailto:${brand.supportEmail}`}
+              className="font-medium text-[var(--color-accent-soft)] underline-offset-2 hover:underline"
+            >
+              {brand.supportEmail}
+            </a>
+          </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {columns.map((column) => (
@@ -85,7 +93,15 @@ export function SiteFooter() {
       <div className="relative border-t border-[var(--color-border)]/80">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-4 text-xs text-[var(--color-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>
-            © {brand.foundedYear}–{new Date().getFullYear()} {brand.name}. {brand.fullName}.
+            © {brand.foundedYear}–{new Date().getFullYear()} {brand.name}. {brand.fullName}. See{" "}
+            <Link href="/terms" className="underline-offset-2 hover:underline">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="underline-offset-2 hover:underline">
+              Privacy
+            </Link>
+            .
           </p>
           <p>Phnom Penh · Siem Reap · Sihanoukville · Kampot · Kep</p>
         </div>

@@ -4,7 +4,11 @@ export const brand = {
   tagline: "Trusted property services across Cambodia since 1997",
   description:
     "SEAPS — South East Asia Property Services — helps buyers, renters, and investors find residential and commercial property across Cambodia, with local expertise since 1997.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:43123",
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_ENV === "production"
+      ? "https://www.vps1.store"
+      : "http://127.0.0.1:43123"),
   locale: "en",
   supportEmail: "hello@seaps.com.kh",
   foundedYear: 1997,

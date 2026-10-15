@@ -7,6 +7,7 @@ import { PriceDisplay } from "@/components/property/price-display";
 import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
+import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
 import { getAgencyById, getAgentById } from "@/data/agencies";
@@ -39,13 +40,24 @@ export async function generateMetadata({
   const { slug } = await params;
   const property = getPropertyBySlug(slug);
   if (!property) return { title: "Property not found" };
+  const path = `/property/${property.slug}`;
   return {
     title: property.title,
     description: property.summary,
+    alternates: { canonical: path },
     openGraph: {
       title: property.title,
       description: property.summary,
-      images: [{ url: property.images[0]?.url }],
+      url: path,
+      images: property.images[0]
+        ? [{ url: property.images[0].url, alt: property.images[0].alt || property.title }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: property.title,
+      description: property.summary,
+      images: property.images[0] ? [property.images[0].url] : undefined,
     },
   };
 }
@@ -68,7 +80,29 @@ export default async function PropertyDetailPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
+      <PropertyJsonLd
+        title={property.title}
+        description={property.summary}
+        url={`/property/${property.slug}`}
+        image={property.images[0]?.url}
+        price={property.price}
+        currency={property.currency}
+        locality={property.location.district}
+        region={property.location.city}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", url: "/" },
+          { name: "Search", url: "/search" },
+          { name: property.location.city, url: `/locations/${property.location.citySlug}` },
+          { name: property.title, url: `/property/${property.slug}` },
+        ]}
+      />
+      <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
+        <Link href="/" className="hover:text-[var(--color-accent-soft)]">
+          Home
+        </Link>
+        <span>/</span>
         <Link href="/search" className="hover:text-[var(--color-accent-soft)]">
           Search
         </Link>
@@ -80,8 +114,8 @@ export default async function PropertyDetailPage({
           {property.location.city}
         </Link>
         <span>/</span>
-        <span>{property.title}</span>
-      </div>
+        <span aria-current="page">{property.title}</span>
+      </nav>
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="space-y-8">

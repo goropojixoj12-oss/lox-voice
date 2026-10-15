@@ -40,7 +40,7 @@ export default async function GuideArticlePage({
         {article.title}
       </h1>
       <div className="relative my-8 aspect-[16/9] overflow-hidden rounded-[var(--radius-xl)]">
-        <Image src={article.cover} alt="" fill className="object-cover" sizes="800px" />
+        <Image src={article.cover} alt={article.title} fill className="object-cover" sizes="800px" />
       </div>
       <div className="space-y-4 whitespace-pre-line text-lg leading-relaxed">{article.content}</div>
     </article>

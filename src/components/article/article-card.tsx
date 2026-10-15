@@ -10,7 +10,7 @@ export function ArticleCard({ article }: { article: Article }) {
       <Link href={href} className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-md)] md:aspect-square">
         <Image
           src={article.cover}
-          alt=""
+          alt={article.title}
           fill
           className="object-cover transition duration-500 group-hover:scale-[1.03]"
           sizes="180px"
