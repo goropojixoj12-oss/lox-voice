@@ -47,12 +47,46 @@ const DEFAULT_ENABLED_URLS = new Set(
   ].map(normalizeUrl),
 );
 
-/** Host → built-in HTML adapter id (when present). */
+/** Host → built-in HTML adapter id (one poll per host per sync batch). */
 const HOST_ADAPTER = {
   "www.realestate.com.kh": "realestate-com-kh",
   "realestate.com.kh": "realestate-com-kh",
   "www.khmer24.com": "khmer24-property",
   "khmer24.com": "khmer24-property",
+  "www.fazwaz.com": "fazwaz-kh",
+  "fazwaz.com": "fazwaz-kh",
+  "kh.fazwaz.com": "fazwaz-kh",
+  "www.bongthom.com": "bongthom-property",
+  "bongthom.com": "bongthom-property",
+  "www.dotproperty.com.kh": "dotproperty-kh",
+  "dotproperty.com.kh": "dotproperty-kh",
+  "cambodia.dotproperty.com.kh": "dotproperty-kh",
+  "www.propertyarea.asia": "propertyarea-kh",
+  "propertyarea.asia": "propertyarea-kh",
+  "www.propertyguru.com.kh": "propertyguru-kh",
+  "propertyguru.com.kh": "propertyguru-kh",
+  "www.lamudi.com.kh": "lamudi-kh",
+  "lamudi.com.kh": "lamudi-kh",
+  "propertyhub.com.kh": "propertyhub-kh",
+  "www.propertyhub.com.kh": "propertyhub-kh",
+  "www.cambodia-property.com": "cambodia-property",
+  "cambodia-property.com": "cambodia-property",
+  "www.homekh.com": "homekh",
+  "homekh.com": "homekh",
+  "www.rent.com.kh": "rent-com-kh",
+  "rent.com.kh": "rent-com-kh",
+  "www.pointerasia.com": "pointerasia",
+  "pointerasia.com": "pointerasia",
+  "www.khmerproperty.com.kh": "khmerproperty",
+  "khmerproperty.com.kh": "khmerproperty",
+  "www.phnompenhrealestate.net": "phnompenhrealestate",
+  "phnompenhrealestate.net": "phnompenhrealestate",
+  "www.housing.com.kh": "housing-com-kh",
+  "housing.com.kh": "housing-com-kh",
+  "www.properstar.com.kh": "properstar-kh",
+  "properstar.com.kh": "properstar-kh",
+  "www.zillaproperty.asia": "zillaproperty",
+  "zillaproperty.asia": "zillaproperty",
 };
 
 function normalizeUrl(raw) {
@@ -106,8 +140,13 @@ function parseMarkdown(md) {
     }
 
     const adapterId = HOST_ADAPTER[hostname] ?? null;
+    /** All catalog rows enabled for registry sync; FB/TG get blocked status at poll time. */
     const enabled =
-      currentType === "portal" && DEFAULT_ENABLED_URLS.has(url);
+      currentType === "portal" ||
+      currentType === "agency" ||
+      currentType === "facebook" ||
+      currentType === "telegram" ||
+      currentType === "other";
 
     sources.push({
       id: slugFromUrl(url),
@@ -141,6 +180,8 @@ const payload = {
   sourceDocument: path.basename(defaultMd),
   total: sources.length,
   defaultEnabledCount: sources.filter((s) => s.enabled).length,
+  defaultEnabledNote:
+    "All 773 URLs enabled for batched sync; portals/agencies polled, social marked blocked/skipped",
   sources,
 };
 
@@ -148,5 +189,5 @@ fs.mkdirSync(path.dirname(outPath), { recursive: true });
 fs.writeFileSync(outPath, JSON.stringify(payload, null, 2) + "\n", "utf8");
 
 console.log(
-  `Wrote ${sources.length} sources (${payload.defaultEnabledCount} enabled portals) → ${outPath}`,
+  `Wrote ${sources.length} sources (${payload.defaultEnabledCount} enabled) → ${outPath}`,
 );

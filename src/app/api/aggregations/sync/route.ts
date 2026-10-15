@@ -43,7 +43,15 @@ async function handle(request: Request) {
     ? adapterParam.split(",").map((s) => s.trim()).filter(Boolean)
     : undefined;
 
-  const summary = await runAggregationSync({ adapterIds });
+  const batchParam = url.searchParams.get("batchSize");
+  const batchSize = batchParam ? Math.min(50, Math.max(1, Number(batchParam))) : undefined;
+  const fullCycle = url.searchParams.get("fullCycle") === "1";
+
+  const summary = await runAggregationSync({
+    adapterIds,
+    batchSize: Number.isFinite(batchSize) ? batchSize : undefined,
+    fullCycle,
+  });
   return NextResponse.json({ ok: true, ...summary });
 }
 

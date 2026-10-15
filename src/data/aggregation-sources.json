@@ -1,15 +1,16 @@
 {
-  "generatedAt": "2026-10-15T09:41:01.632Z",
+  "generatedAt": "2026-10-15T10:28:05.191Z",
   "sourceDocument": "cambodia-re-sources-unique-links-full.md",
   "total": 773,
-  "defaultEnabledCount": 19,
+  "defaultEnabledCount": 773,
+  "defaultEnabledNote": "All 773 URLs enabled for batched sync; portals/agencies polled, social marked blocked/skipped",
   "sources": [
     {
       "id": "58cam-com",
       "name": "www.58cam.com",
       "url": "https://www.58cam.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -17,7 +18,7 @@
       "name": "www.allboreys.com",
       "url": "https://www.allboreys.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -25,7 +26,7 @@
       "name": "www.allrealestate.asia",
       "url": "https://www.allrealestate.asia/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -33,7 +34,7 @@
       "name": "www.allrealestate.com.kh",
       "url": "https://www.allrealestate.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -41,7 +42,7 @@
       "name": "www.allrealestate.com.kh",
       "url": "https://www.allrealestate.com.kh/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -49,7 +50,7 @@
       "name": "www.angkor24.com",
       "url": "https://www.angkor24.com/property",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -57,7 +58,7 @@
       "name": "www.angkorhome.com",
       "url": "https://www.angkorhome.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -65,7 +66,7 @@
       "name": "www.angkorhome.com.kh",
       "url": "https://www.angkorhome.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -73,7 +74,7 @@
       "name": "angkorhomes.com",
       "url": "https://angkorhomes.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -81,7 +82,7 @@
       "name": "www.angkorhousing.com",
       "url": "https://www.angkorhousing.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -89,7 +90,7 @@
       "name": "www.anjapproperty.com",
       "url": "https://www.anjapproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -97,7 +98,7 @@
       "name": "www.aseanproperty.com",
       "url": "https://www.aseanproperty.com/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -105,40 +106,40 @@
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-classified-property",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/classified/property",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-classifieds-property",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/classifieds/property",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-classifieds-property-for-sale",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/classifieds/property-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-en-classifieds-property-condos-for-sale",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/en/classifieds/property/condos-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-en-classifieds-property-houses-for-sale",
@@ -146,62 +147,62 @@
       "url": "https://www.bongthom.com/en/classifieds/property/houses-for-sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-en-classifieds-property-lands-for-sale",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/en/classifieds/property/lands-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-en-property",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/en/property",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-en-property-for-sale",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/en/property-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-en-real-estate-for-sale",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/en/real-estate-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-housing",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/housing",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "bongthom-com-real-estate",
       "name": "www.bongthom.com",
       "url": "https://www.bongthom.com/real-estate",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "bongthom-property"
     },
     {
       "id": "borey24-com-en",
       "name": "www.borey24.com",
       "url": "https://www.borey24.com/en",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -209,7 +210,7 @@
       "name": "www.buyabodecambodia.com",
       "url": "https://www.buyabodecambodia.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -217,8 +218,8 @@
       "name": "www.cambodia-property.com",
       "url": "https://www.cambodia-property.com/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "cambodia-property"
     },
     {
       "id": "cambodia-property-com-buy",
@@ -226,30 +227,30 @@
       "url": "https://www.cambodia-property.com/buy",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "cambodia-property"
     },
     {
       "id": "cambodia-property-com-cambodia-property-for-sale",
       "name": "www.cambodia-property.com",
       "url": "https://www.cambodia-property.com/cambodia-property-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "cambodia-property"
     },
     {
       "id": "cambodia-property-com-for-sale",
       "name": "www.cambodia-property.com",
       "url": "https://www.cambodia-property.com/for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "cambodia-property"
     },
     {
       "id": "cambodia-craigslist-org-d-real-estate-search-rea",
       "name": "cambodia.craigslist.org",
       "url": "https://cambodia.craigslist.org/d/real-estate/search/rea",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -258,14 +259,14 @@
       "url": "https://cambodia.dotproperty.com.kh/",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "dotproperty-kh"
     },
     {
       "id": "cambodiaproperty-com",
       "name": "www.cambodiaproperty.com",
       "url": "https://www.cambodiaproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -273,7 +274,7 @@
       "name": "www.cambodiaproperty.com.kh",
       "url": "https://www.cambodiaproperty.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -281,7 +282,7 @@
       "name": "www.cambodiaproperty.info",
       "url": "https://www.cambodiaproperty.info/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -289,7 +290,7 @@
       "name": "www.camboproperty.com.kh",
       "url": "https://www.camboproperty.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -297,7 +298,7 @@
       "name": "camhomes.com.kh",
       "url": "https://camhomes.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -305,7 +306,7 @@
       "name": "www.camhomes.com.kh",
       "url": "https://www.camhomes.com.kh/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -313,7 +314,7 @@
       "name": "camhomes.com.kh",
       "url": "https://camhomes.com.kh/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -321,7 +322,7 @@
       "name": "camhomes.com.kh",
       "url": "https://camhomes.com.kh/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -329,7 +330,7 @@
       "name": "cammarket.com.kh",
       "url": "https://cammarket.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -337,7 +338,7 @@
       "name": "www.camproperty.com",
       "url": "https://www.camproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -345,7 +346,7 @@
       "name": "www.chipmongland.com",
       "url": "https://www.chipmongland.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -353,7 +354,7 @@
       "name": "www.condo.com.kh",
       "url": "https://www.condo.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -361,7 +362,7 @@
       "name": "www.cplisting.com",
       "url": "https://www.cplisting.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -369,7 +370,7 @@
       "name": "www.daangna.com",
       "url": "https://www.daangna.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -377,7 +378,7 @@
       "name": "dabestproperties.asia",
       "url": "https://dabestproperties.asia/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -385,16 +386,16 @@
       "name": "www.dotproperty.com.kh",
       "url": "https://www.dotproperty.com.kh/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "dotproperty-kh"
     },
     {
       "id": "dotproperty-com-kh-buy",
       "name": "www.dotproperty.com.kh",
       "url": "https://www.dotproperty.com.kh/buy",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "dotproperty-kh"
     },
     {
       "id": "dotproperty-com-kh-en-for-sale",
@@ -402,22 +403,22 @@
       "url": "https://www.dotproperty.com.kh/en/for-sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "dotproperty-kh"
     },
     {
       "id": "dotproperty-com-kh-en-sale",
       "name": "www.dotproperty.com.kh",
       "url": "https://www.dotproperty.com.kh/en/sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "dotproperty-kh"
     },
     {
       "id": "en-rentkh-com",
       "name": "en.rentkh.com",
       "url": "https://en.rentkh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -425,7 +426,7 @@
       "name": "evergreen-property.com",
       "url": "https://evergreen-property.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -433,7 +434,7 @@
       "name": "www.expat.com",
       "url": "https://www.expat.com/en/housing/asia/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -441,7 +442,7 @@
       "name": "www.fazwaz-kh.com",
       "url": "https://www.fazwaz-kh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -449,7 +450,7 @@
       "name": "www.fazwaz-kh.com",
       "url": "https://www.fazwaz-kh.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -457,7 +458,7 @@
       "name": "fazwaz-kh.com",
       "url": "https://fazwaz-kh.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -465,16 +466,16 @@
       "name": "www.fazwaz.com",
       "url": "https://www.fazwaz.com/cambodia",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "fazwaz-kh"
     },
     {
       "id": "fazwaz-com-cambodia-for-sale",
       "name": "www.fazwaz.com",
       "url": "https://www.fazwaz.com/cambodia-for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "fazwaz-kh"
     },
     {
       "id": "fazwaz-com-cambodia-for-sale-2",
@@ -482,14 +483,14 @@
       "url": "https://www.fazwaz.com/cambodia/for-sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "fazwaz-kh"
     },
     {
       "id": "fazwaz-com-kh",
       "name": "www.fazwaz.com.kh",
       "url": "https://www.fazwaz.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -497,7 +498,7 @@
       "name": "www.firstcambodianproperty.com",
       "url": "https://www.firstcambodianproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -505,7 +506,7 @@
       "name": "www.flatinphnompenh.com",
       "url": "https://www.flatinphnompenh.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -513,7 +514,7 @@
       "name": "flatphnompenh.com",
       "url": "https://flatphnompenh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -521,7 +522,7 @@
       "name": "www.flatphnompenh.com",
       "url": "https://www.flatphnompenh.com/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -529,7 +530,7 @@
       "name": "harborproperty.com",
       "url": "https://harborproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -537,7 +538,7 @@
       "name": "www.harborproperty.com.kh",
       "url": "https://www.harborproperty.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -545,7 +546,7 @@
       "name": "www.harbourproperty.com.kh",
       "url": "https://www.harbourproperty.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -553,7 +554,7 @@
       "name": "www.home-cambodia.com",
       "url": "https://www.home-cambodia.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -561,7 +562,7 @@
       "name": "www.home-cambodia.com",
       "url": "https://www.home-cambodia.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -569,16 +570,16 @@
       "name": "www.homekh.com",
       "url": "https://www.homekh.com/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "homekh"
     },
     {
       "id": "homekh-com-buy",
       "name": "www.homekh.com",
       "url": "https://www.homekh.com/buy",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "homekh"
     },
     {
       "id": "homekh-com-en-sale",
@@ -586,14 +587,14 @@
       "url": "https://www.homekh.com/en/sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "homekh"
     },
     {
       "id": "homekh-com-kh",
       "name": "www.homekh.com.kh",
       "url": "https://www.homekh.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -601,7 +602,7 @@
       "name": "www.homekhmer.com",
       "url": "https://www.homekhmer.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -609,7 +610,7 @@
       "name": "www.homekhmer.com",
       "url": "https://www.homekhmer.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -617,7 +618,7 @@
       "name": "www.homekhmer.com",
       "url": "https://www.homekhmer.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -625,7 +626,7 @@
       "name": "www.homekhmer24.com",
       "url": "https://www.homekhmer24.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -633,7 +634,7 @@
       "name": "www.homezz.com.kh",
       "url": "https://www.homezz.com.kh/en/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -641,7 +642,7 @@
       "name": "www.hopoh.com",
       "url": "https://www.hopoh.com/en/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -650,14 +651,14 @@
       "url": "https://www.housing.com.kh/en/buy",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "housing-com-kh"
     },
     {
       "id": "housingphnompenh-com",
       "name": "www.housingphnompenh.com",
       "url": "https://www.housingphnompenh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -665,7 +666,7 @@
       "name": "www.housingphnompenh.com",
       "url": "https://www.housingphnompenh.com/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -673,7 +674,7 @@
       "name": "housingphnompenh.com",
       "url": "https://housingphnompenh.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -681,7 +682,7 @@
       "name": "www.housingphnompenh.com",
       "url": "https://www.housingphnompenh.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -689,7 +690,7 @@
       "name": "www.housingphnompenh.com",
       "url": "https://www.housingphnompenh.com/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -697,7 +698,7 @@
       "name": "www.immobilier-khmer.com",
       "url": "https://www.immobilier-khmer.com/en",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -705,7 +706,7 @@
       "name": "www.jamesedition.com",
       "url": "https://www.jamesedition.com/real_estate/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -713,7 +714,7 @@
       "name": "www.juwai.com",
       "url": "https://www.juwai.com/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -721,7 +722,7 @@
       "name": "www.kampotproperty.com",
       "url": "https://www.kampotproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -729,7 +730,7 @@
       "name": "www.kampotproperty.com",
       "url": "https://www.kampotproperty.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -737,7 +738,7 @@
       "name": "kh.88property.com",
       "url": "https://kh.88property.com/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -745,7 +746,7 @@
       "name": "kh.allrealestate.asia",
       "url": "https://kh.allrealestate.asia/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -753,7 +754,7 @@
       "name": "kh.fang8.com",
       "url": "https://kh.fang8.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -762,14 +763,14 @@
       "url": "https://kh.fazwaz.com/",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "fazwaz-kh"
     },
     {
       "id": "kh-juwai-com",
       "name": "kh.juwai.com",
       "url": "https://kh.juwai.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -777,7 +778,7 @@
       "name": "www.khbuy.com",
       "url": "https://www.khbuy.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -785,7 +786,7 @@
       "name": "www.khland.com.kh",
       "url": "https://www.khland.com.kh/en/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -793,7 +794,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -801,7 +802,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/apartment-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -809,7 +810,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-apartments-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -817,7 +818,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-apartments-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -825,7 +826,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-houses-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -833,7 +834,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-houses-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -841,7 +842,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-land-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -849,7 +850,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-land-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -857,7 +858,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-property-apartments-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -865,7 +866,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-property-houses-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -873,7 +874,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-property-housing-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -881,7 +882,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-property-housing-rentals",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -889,7 +890,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-property-housing-rentals.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -897,7 +898,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c-property-land-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -905,7 +906,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c/property-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -913,7 +914,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/c/property/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -921,7 +922,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/cat11-property.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -929,7 +930,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/house-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -937,7 +938,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/land-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -945,7 +946,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -953,7 +954,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -961,7 +962,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -969,7 +970,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property/buy.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -977,7 +978,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property/house-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -985,7 +986,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property/house-villa-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -993,7 +994,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property/houses-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -1001,7 +1002,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/property/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -1009,7 +1010,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/en/search?category=property",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -1017,7 +1018,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/kh/property",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -1025,7 +1026,7 @@
       "name": "www.khmer24.com",
       "url": "https://www.khmer24.com/km/c-property-for-sale.html",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "khmer24-property"
     },
     {
@@ -1033,7 +1034,7 @@
       "name": "www.khmer24.market",
       "url": "https://www.khmer24.market/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1041,7 +1042,7 @@
       "name": "khmer24.pro",
       "url": "https://khmer24.pro/en/c-property-housing-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1049,7 +1050,7 @@
       "name": "www.khmer24h.com",
       "url": "https://www.khmer24h.com/en/property",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1057,7 +1058,7 @@
       "name": "www.khmerhome.com",
       "url": "https://www.khmerhome.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1065,7 +1066,7 @@
       "name": "www.khmerhome.com.kh",
       "url": "https://www.khmerhome.com.kh/en/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1073,7 +1074,7 @@
       "name": "www.khmerhome360.com",
       "url": "https://www.khmerhome360.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1081,7 +1082,7 @@
       "name": "www.khmerhomes.com",
       "url": "https://www.khmerhomes.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1089,7 +1090,7 @@
       "name": "khmerhousing.com",
       "url": "https://khmerhousing.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1097,7 +1098,7 @@
       "name": "www.khmerhousing.com.kh",
       "url": "https://www.khmerhousing.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1105,7 +1106,7 @@
       "name": "www.khmerlisting.com",
       "url": "https://www.khmerlisting.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1113,7 +1114,7 @@
       "name": "www.khmerproperty.com",
       "url": "https://www.khmerproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1122,22 +1123,22 @@
       "url": "https://www.khmerproperty.com.kh/",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "khmerproperty"
     },
     {
       "id": "khmerproperty-com-kh-en-sale",
       "name": "khmerproperty.com.kh",
       "url": "https://khmerproperty.com.kh/en/sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "khmerproperty"
     },
     {
       "id": "khmerproperty-net",
       "name": "khmerproperty.net",
       "url": "https://khmerproperty.net/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1145,7 +1146,7 @@
       "name": "khmerpropertyhunter.com",
       "url": "https://khmerpropertyhunter.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1153,7 +1154,7 @@
       "name": "www.khmerpropertyhunter.com",
       "url": "https://www.khmerpropertyhunter.com/en/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1161,7 +1162,7 @@
       "name": "www.khmerpropertykh.com",
       "url": "https://www.khmerpropertykh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1169,7 +1170,7 @@
       "name": "www.khmerrealestate.com.kh",
       "url": "https://www.khmerrealestate.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1177,7 +1178,7 @@
       "name": "www.khmersale.com",
       "url": "https://www.khmersale.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1185,7 +1186,7 @@
       "name": "www.khmersearch.com",
       "url": "https://www.khmersearch.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1193,7 +1194,7 @@
       "name": "www.khproperty24.com",
       "url": "https://www.khproperty24.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1201,7 +1202,7 @@
       "name": "www.khrealestate.com",
       "url": "https://www.khrealestate.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1209,7 +1210,7 @@
       "name": "www.knlproperty.com",
       "url": "https://www.knlproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1218,14 +1219,14 @@
       "url": "https://www.lamudi.com.kh/",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "lamudi-kh"
     },
     {
       "id": "lazudi-com-kh",
       "name": "www.lazudi.com",
       "url": "https://www.lazudi.com/kh",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1233,7 +1234,7 @@
       "name": "www.lifullconnect.com",
       "url": "https://www.lifullconnect.com/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1241,7 +1242,7 @@
       "name": "www.lina-realestate.com",
       "url": "https://www.lina-realestate.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1249,7 +1250,7 @@
       "name": "www.lina.com.kh",
       "url": "https://www.lina.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1257,7 +1258,7 @@
       "name": "www.mansionglobal.com",
       "url": "https://www.mansionglobal.com/search?query=cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1265,7 +1266,7 @@
       "name": "marketplace.com.kh",
       "url": "https://marketplace.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1273,7 +1274,7 @@
       "name": "www.penhhouses.com",
       "url": "https://www.penhhouses.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1281,7 +1282,7 @@
       "name": "www.phnompenh-realestate.com",
       "url": "https://www.phnompenh-realestate.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1289,7 +1290,7 @@
       "name": "phnompenh.craigslist.org",
       "url": "https://phnompenh.craigslist.org/d/real-estate/search/rea",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1297,7 +1298,7 @@
       "name": "phnompenh.locanto.com.kh",
       "url": "https://phnompenh.locanto.com.kh/Real-estate",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1305,7 +1306,7 @@
       "name": "phnompenhproperty.net",
       "url": "https://phnompenhproperty.net/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1313,16 +1314,16 @@
       "name": "phnompenhrealestate.net",
       "url": "https://phnompenhrealestate.net/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "phnompenhrealestate"
     },
     {
       "id": "phnompenhrealestate-net-buy",
       "name": "www.phnompenhrealestate.net",
       "url": "https://www.phnompenhrealestate.net/buy",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "phnompenhrealestate"
     },
     {
       "id": "phnompenhrealestate-net-for-sale",
@@ -1330,14 +1331,14 @@
       "url": "https://www.phnompenhrealestate.net/for-sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "phnompenhrealestate"
     },
     {
       "id": "phsarum-com-search",
       "name": "www.phsarum.com",
       "url": "https://www.phsarum.com/search?type=sale&category=property",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1345,7 +1346,7 @@
       "name": "www.phsarum.com",
       "url": "https://www.phsarum.com/search/property/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1353,7 +1354,7 @@
       "name": "www.point2homes.com",
       "url": "https://www.point2homes.com/KH/For-Sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1361,7 +1362,7 @@
       "name": "pointer.cambodiarealestate.net",
       "url": "https://pointer.cambodiarealestate.net/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1370,14 +1371,14 @@
       "url": "https://www.pointerasia.com/property-for-sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "pointerasia"
     },
     {
       "id": "pointerhomes-com-kh-en-sale",
       "name": "www.pointerhomes.com.kh",
       "url": "https://www.pointerhomes.com.kh/en/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1385,7 +1386,7 @@
       "name": "www.pointerpropertykh.com",
       "url": "https://www.pointerpropertykh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1393,7 +1394,7 @@
       "name": "prian.ru",
       "url": "https://prian.ru/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1402,63 +1403,63 @@
       "url": "https://www.properstar.com.kh/en/cambodia/buy",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "properstar-kh"
     },
     {
       "id": "propertyarea-asia",
       "name": "www.propertyarea.asia",
       "url": "https://www.propertyarea.asia/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyarea-kh"
     },
     {
       "id": "propertyarea-asia-buy",
       "name": "www.propertyarea.asia",
       "url": "https://www.propertyarea.asia/buy",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyarea-kh"
     },
     {
       "id": "propertyarea-asia-cambodia",
       "name": "www.propertyarea.asia",
       "url": "https://www.propertyarea.asia/cambodia",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyarea-kh"
     },
     {
       "id": "propertyarea-asia-for-sale",
       "name": "www.propertyarea.asia",
       "url": "https://www.propertyarea.asia/for-sale",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyarea-kh"
     },
     {
       "id": "propertyarea-asia-kh",
       "name": "www.propertyarea.asia",
       "url": "https://www.propertyarea.asia/kh",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyarea-kh"
     },
     {
       "id": "propertyarea-asia-kh-buy",
       "name": "propertyarea.asia",
       "url": "https://propertyarea.asia/kh/buy",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyarea-kh"
     },
     {
       "id": "propertyguru-com-kh",
       "name": "www.propertyguru.com.kh",
       "url": "https://www.propertyguru.com.kh/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "propertyguru-kh"
     },
     {
       "id": "propertyguru-com-kh-en-buy",
@@ -1466,7 +1467,7 @@
       "url": "https://www.propertyguru.com.kh/en/buy",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "propertyguru-kh"
     },
     {
       "id": "propertyhub-com-kh-en-sale",
@@ -1474,14 +1475,14 @@
       "url": "https://propertyhub.com.kh/en/sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "propertyhub-kh"
     },
     {
       "id": "propertykh-com",
       "name": "www.propertykh.com",
       "url": "https://www.propertykh.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1489,7 +1490,7 @@
       "name": "propertykh.com",
       "url": "https://propertykh.com/en/buy",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1497,7 +1498,7 @@
       "name": "propertykh.com",
       "url": "https://propertykh.com/en/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1505,7 +1506,7 @@
       "name": "www.realestate.com.kh",
       "url": "https://www.realestate.com.kh/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "realestate-com-kh"
     },
     {
@@ -1521,7 +1522,7 @@
       "name": "www.realestate.com.kh",
       "url": "https://www.realestate.com.kh/buy?alert=create",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "realestate-com-kh"
     },
     {
@@ -1529,7 +1530,7 @@
       "name": "www.realestate.com.kh",
       "url": "https://www.realestate.com.kh/buy?sort_by=newest",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "realestate-com-kh"
     },
     {
@@ -1537,7 +1538,7 @@
       "name": "www.realestate.com.kh",
       "url": "https://www.realestate.com.kh/en/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "realestate-com-kh"
     },
     {
@@ -1545,7 +1546,7 @@
       "name": "www.realestate.com.kh",
       "url": "https://www.realestate.com.kh/new-developments",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "realestate-com-kh"
     },
     {
@@ -1553,7 +1554,7 @@
       "name": "www.realestate.com.kh",
       "url": "https://www.realestate.com.kh/sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": "realestate-com-kh"
     },
     {
@@ -1561,8 +1562,8 @@
       "name": "www.rent.com.kh",
       "url": "https://www.rent.com.kh/",
       "type": "portal",
-      "enabled": false,
-      "adapterId": null
+      "enabled": true,
+      "adapterId": "rent-com-kh"
     },
     {
       "id": "rent-com-kh-sale",
@@ -1570,14 +1571,14 @@
       "url": "https://www.rent.com.kh/sale",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "rent-com-kh"
     },
     {
       "id": "rentkh-com-property-for-sale",
       "name": "www.rentkh.com",
       "url": "https://www.rentkh.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1585,7 +1586,7 @@
       "name": "rielproperty.com",
       "url": "https://rielproperty.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1601,7 +1602,7 @@
       "name": "www.sela-property.com",
       "url": "https://www.sela-property.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1609,7 +1610,7 @@
       "name": "sellkh.com",
       "url": "https://sellkh.com/category/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1617,7 +1618,7 @@
       "name": "www.siemreaprealestate.net",
       "url": "https://www.siemreaprealestate.net/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1625,7 +1626,7 @@
       "name": "www.sihanoukville-property.com",
       "url": "https://www.sihanoukville-property.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1633,7 +1634,7 @@
       "name": "www.sihanoukville-realestate.com",
       "url": "https://www.sihanoukville-realestate.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1641,7 +1642,7 @@
       "name": "www.sihanoukville-realestate.com",
       "url": "https://www.sihanoukville-realestate.com/for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1649,7 +1650,7 @@
       "name": "www.tphomecambodia.com",
       "url": "https://www.tphomecambodia.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1657,7 +1658,7 @@
       "name": "tranio.com",
       "url": "https://tranio.com/cambodia",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1665,7 +1666,7 @@
       "name": "urbanlandasia.com",
       "url": "https://urbanlandasia.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1673,7 +1674,7 @@
       "name": "www.z1l.com",
       "url": "https://www.z1l.com/property-for-sale",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1681,7 +1682,7 @@
       "name": "z1property.com",
       "url": "https://z1property.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1689,7 +1690,7 @@
       "name": "www.zillaincambodia.com",
       "url": "https://www.zillaincambodia.com/",
       "type": "portal",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1698,14 +1699,14 @@
       "url": "https://www.zillaproperty.asia/",
       "type": "portal",
       "enabled": true,
-      "adapterId": null
+      "adapterId": "zillaproperty"
     },
     {
       "id": "amg-realty-com-kh",
       "name": "amg-realty.com.kh",
       "url": "https://amg-realty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1713,7 +1714,7 @@
       "name": "angelrealestate.com.kh",
       "url": "https://angelrealestate.com.kh/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1721,7 +1722,7 @@
       "name": "www.angkor-realestate.com",
       "url": "https://www.angkor-realestate.com/en/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1729,7 +1730,7 @@
       "name": "www.angkorinternational.com",
       "url": "https://www.angkorinternational.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1737,7 +1738,7 @@
       "name": "www.angkorrealestate.com",
       "url": "https://www.angkorrealestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1745,7 +1746,7 @@
       "name": "www.angkorrealestate.com",
       "url": "https://www.angkorrealestate.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1753,7 +1754,7 @@
       "name": "www.angkorrealestate.com",
       "url": "https://www.angkorrealestate.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1761,7 +1762,7 @@
       "name": "www.angkortl.com",
       "url": "https://www.angkortl.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1769,7 +1770,7 @@
       "name": "aqaram.com.kh",
       "url": "https://aqaram.com.kh/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1777,7 +1778,7 @@
       "name": "arec.com.kh",
       "url": "https://arec.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1785,7 +1786,7 @@
       "name": "www.asiarealestatecambodia.com",
       "url": "https://www.asiarealestatecambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1793,7 +1794,7 @@
       "name": "www.asiarealty.com.kh",
       "url": "https://www.asiarealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1801,7 +1802,7 @@
       "name": "www.batres.com.kh",
       "url": "https://www.batres.com.kh/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1809,7 +1810,7 @@
       "name": "www.bona-realty.com",
       "url": "https://www.bona-realty.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1817,7 +1818,7 @@
       "name": "borey-peng-huoth.com",
       "url": "https://borey-peng-huoth.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1825,7 +1826,7 @@
       "name": "www.borey.com",
       "url": "https://www.borey.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1833,7 +1834,7 @@
       "name": "www.borey.com.kh",
       "url": "https://www.borey.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1841,7 +1842,7 @@
       "name": "www.borey.com.kh",
       "url": "https://www.borey.com.kh/en/project",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1849,7 +1850,7 @@
       "name": "borey.com.kh",
       "url": "https://borey.com.kh/en/projects",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1857,7 +1858,7 @@
       "name": "borey.com.kh",
       "url": "https://borey.com.kh/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1865,7 +1866,7 @@
       "name": "www.boreylida.com",
       "url": "https://www.boreylida.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1873,7 +1874,7 @@
       "name": "boreylorncity.com",
       "url": "https://boreylorncity.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1881,7 +1882,7 @@
       "name": "boreylyhour.com.kh",
       "url": "https://boreylyhour.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1889,7 +1890,7 @@
       "name": "boreymongreththy.com",
       "url": "https://boreymongreththy.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1897,7 +1898,7 @@
       "name": "boreynewworld.com",
       "url": "https://boreynewworld.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1905,7 +1906,7 @@
       "name": "boreynewworld.com.kh",
       "url": "https://boreynewworld.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1913,7 +1914,7 @@
       "name": "www.boreypenghuoth.com",
       "url": "https://www.boreypenghuoth.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1921,7 +1922,7 @@
       "name": "boreyphnompenh.com",
       "url": "https://boreyphnompenh.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1929,7 +1930,7 @@
       "name": "boreyvimeanphnompenh.com",
       "url": "https://boreyvimeanphnompenh.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1937,7 +1938,7 @@
       "name": "www.c21-cambodia.com",
       "url": "https://www.c21-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1945,7 +1946,7 @@
       "name": "www.c21.com.kh",
       "url": "https://www.c21.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1953,7 +1954,7 @@
       "name": "www.c21.com.kh",
       "url": "https://www.c21.com.kh/en/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1961,7 +1962,7 @@
       "name": "www.c21.com.kh",
       "url": "https://www.c21.com.kh/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1969,7 +1970,7 @@
       "name": "www.c21.com.kh",
       "url": "https://www.c21.com.kh/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1977,7 +1978,7 @@
       "name": "www.c21cambodia.com",
       "url": "https://www.c21cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1985,7 +1986,7 @@
       "name": "www.c21cambodia.com",
       "url": "https://www.c21cambodia.com/en/property/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -1993,7 +1994,7 @@
       "name": "www.c21cambodia.com",
       "url": "https://www.c21cambodia.com/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2001,7 +2002,7 @@
       "name": "www.c21cambodia.com.kh",
       "url": "https://www.c21cambodia.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2009,7 +2010,7 @@
       "name": "www.c21cambodia.com.kh",
       "url": "https://www.c21cambodia.com.kh/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2017,7 +2018,7 @@
       "name": "c21fortuna.com",
       "url": "https://c21fortuna.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2025,7 +2026,7 @@
       "name": "c21imperial.com",
       "url": "https://c21imperial.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2033,7 +2034,7 @@
       "name": "www.c21kh.com",
       "url": "https://www.c21kh.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2041,7 +2042,7 @@
       "name": "www.c21zillion.com",
       "url": "https://www.c21zillion.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2049,7 +2050,7 @@
       "name": "www.c21zillion.com.kh",
       "url": "https://www.c21zillion.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2057,7 +2058,7 @@
       "name": "www.c21zillione.com.kh",
       "url": "https://www.c21zillione.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2065,7 +2066,7 @@
       "name": "www.cambodia-estate.com",
       "url": "https://www.cambodia-estate.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2073,7 +2074,7 @@
       "name": "www.cambodiaestateagency.com",
       "url": "https://www.cambodiaestateagency.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2081,7 +2082,7 @@
       "name": "www.cambodiaestateagency.com",
       "url": "https://www.cambodiaestateagency.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2089,7 +2090,7 @@
       "name": "www.camestate.com",
       "url": "https://www.camestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2097,7 +2098,7 @@
       "name": "www.camestate.com.kh",
       "url": "https://www.camestate.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2105,7 +2106,7 @@
       "name": "www.camhome.com.kh",
       "url": "https://www.camhome.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2113,7 +2114,7 @@
       "name": "www.casa-cambodia.com",
       "url": "https://www.casa-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2121,7 +2122,7 @@
       "name": "casa-cambodia.com",
       "url": "https://casa-cambodia.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2129,7 +2130,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2137,7 +2138,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/en-gb/properties",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2145,7 +2146,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/en/properties-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2153,7 +2154,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/en/properties/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2161,7 +2162,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/en/properties/properties-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2169,7 +2170,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/en/property-search/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2177,7 +2178,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/listings/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2185,7 +2186,7 @@
       "name": "www.cbre.com.kh",
       "url": "https://www.cbre.com.kh/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2193,7 +2194,7 @@
       "name": "www.ceicambodia.com",
       "url": "https://www.ceicambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2201,7 +2202,7 @@
       "name": "www.century21.com.kh",
       "url": "https://www.century21.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2209,7 +2210,7 @@
       "name": "www.century21.com.kh",
       "url": "https://www.century21.com.kh/en/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2217,7 +2218,7 @@
       "name": "www.century21.com.kh",
       "url": "https://www.century21.com.kh/en/listings/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2225,7 +2226,7 @@
       "name": "www.century21.com.kh",
       "url": "https://www.century21.com.kh/en/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2233,7 +2234,7 @@
       "name": "www.century21cambodia.com",
       "url": "https://www.century21cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2241,7 +2242,7 @@
       "name": "www.century21cambodia.com",
       "url": "https://www.century21cambodia.com/en/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2249,7 +2250,7 @@
       "name": "www.century21cambodia.com",
       "url": "https://www.century21cambodia.com/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2257,7 +2258,7 @@
       "name": "www.century21fortuna.com",
       "url": "https://www.century21fortuna.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2265,7 +2266,7 @@
       "name": "www.century21zillion.com.kh",
       "url": "https://www.century21zillion.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2273,7 +2274,7 @@
       "name": "www.citanest.com",
       "url": "https://www.citanest.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2281,7 +2282,7 @@
       "name": "www.coldwellbankercambodia.com",
       "url": "https://www.coldwellbankercambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2289,7 +2290,7 @@
       "name": "www.coldwellbankercambodia.com",
       "url": "https://www.coldwellbankercambodia.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2297,7 +2298,7 @@
       "name": "www.cpl-cambodia.com",
       "url": "https://www.cpl-cambodia.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2305,7 +2306,7 @@
       "name": "www.cpl.com.kh",
       "url": "https://www.cpl.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2313,7 +2314,7 @@
       "name": "www.cplagent.com",
       "url": "https://www.cplagent.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2321,7 +2322,7 @@
       "name": "www.cplagent.com",
       "url": "https://www.cplagent.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2329,7 +2330,7 @@
       "name": "www.cplagent.com.kh",
       "url": "https://www.cplagent.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2337,7 +2338,7 @@
       "name": "www.cplagent.com.kh",
       "url": "https://www.cplagent.com.kh/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2345,7 +2346,7 @@
       "name": "www.cplagent.com.kh",
       "url": "https://www.cplagent.com.kh/properties-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2353,7 +2354,7 @@
       "name": "www.cplcorner.com.kh",
       "url": "https://www.cplcorner.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2361,7 +2362,7 @@
       "name": "www.eastwestrealty.com.kh",
       "url": "https://www.eastwestrealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2369,7 +2370,7 @@
       "name": "www.eracambodia.com",
       "url": "https://www.eracambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2377,7 +2378,7 @@
       "name": "www.eracambodia.com",
       "url": "https://www.eracambodia.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2385,7 +2386,7 @@
       "name": "everbrightcambodia.com",
       "url": "https://everbrightcambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2393,7 +2394,7 @@
       "name": "www.everwellrealty.com",
       "url": "https://www.everwellrealty.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2401,7 +2402,7 @@
       "name": "everwellrealty.com.kh",
       "url": "https://everwellrealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2409,7 +2410,7 @@
       "name": "www.guru-realestate.com",
       "url": "https://www.guru-realestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2417,7 +2418,7 @@
       "name": "www.huttons.com.kh",
       "url": "https://www.huttons.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2425,7 +2426,7 @@
       "name": "hvu.com.kh",
       "url": "https://hvu.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2433,7 +2434,7 @@
       "name": "www.ips-cambodia.com",
       "url": "https://www.ips-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2441,7 +2442,7 @@
       "name": "ips-cambodia.com",
       "url": "https://ips-cambodia.com/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2449,7 +2450,7 @@
       "name": "www.ips-cambodia.com",
       "url": "https://www.ips-cambodia.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2457,7 +2458,7 @@
       "name": "ips-cambodia.com",
       "url": "https://ips-cambodia.com/property/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2465,7 +2466,7 @@
       "name": "www.ipscambodia.com",
       "url": "https://www.ipscambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2473,7 +2474,7 @@
       "name": "www.keyrealestate-cambodia.com",
       "url": "https://www.keyrealestate-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2481,7 +2482,7 @@
       "name": "www.keyrealestate-cambodia.com",
       "url": "https://www.keyrealestate-cambodia.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2489,7 +2490,7 @@
       "name": "keyrealestate.com.kh",
       "url": "https://keyrealestate.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2497,7 +2498,7 @@
       "name": "www.keyrealestatecambodia.com",
       "url": "https://www.keyrealestatecambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2505,7 +2506,7 @@
       "name": "keyrealestatekh.com",
       "url": "https://keyrealestatekh.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2513,7 +2514,7 @@
       "name": "keyrealestates.com.kh",
       "url": "https://keyrealestates.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2521,7 +2522,7 @@
       "name": "kh.era-realestate.com",
       "url": "https://kh.era-realestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2529,7 +2530,7 @@
       "name": "kh.knightfrank.com",
       "url": "https://kh.knightfrank.com/en/properties/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2537,7 +2538,7 @@
       "name": "khmerestate.com.kh",
       "url": "https://khmerestate.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2545,7 +2546,7 @@
       "name": "www.knightfrank.com.kh",
       "url": "https://www.knightfrank.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2553,7 +2554,7 @@
       "name": "www.knightfrank.com.kh",
       "url": "https://www.knightfrank.com.kh/en/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2561,7 +2562,7 @@
       "name": "www.knightfrank.com.kh",
       "url": "https://www.knightfrank.com.kh/en/properties/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2569,7 +2570,7 @@
       "name": "www.knightfrank.com.kh",
       "url": "https://www.knightfrank.com.kh/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2577,7 +2578,7 @@
       "name": "lchborey.com",
       "url": "https://lchborey.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2585,7 +2586,7 @@
       "name": "www.lecondemansion.com",
       "url": "https://www.lecondemansion.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2593,7 +2594,7 @@
       "name": "www.lorncity.com",
       "url": "https://www.lorncity.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2601,7 +2602,7 @@
       "name": "luckyrealty.com.kh",
       "url": "https://luckyrealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2609,7 +2610,7 @@
       "name": "mekongrealty.com.kh",
       "url": "https://mekongrealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2617,7 +2618,7 @@
       "name": "www.ocic.com.kh",
       "url": "https://www.ocic.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2625,7 +2626,7 @@
       "name": "www.orinka.com.kh",
       "url": "https://www.orinka.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2633,7 +2634,7 @@
       "name": "www.orkide.com.kh",
       "url": "https://www.orkide.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2641,7 +2642,7 @@
       "name": "www.orkideangkor.com",
       "url": "https://www.orkideangkor.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2649,7 +2650,7 @@
       "name": "www.orkidevilla.com",
       "url": "https://www.orkidevilla.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2657,7 +2658,7 @@
       "name": "www.penghuoth.com",
       "url": "https://www.penghuoth.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2665,7 +2666,7 @@
       "name": "www.phnompenhrealestate.com",
       "url": "https://www.phnompenhrealestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2673,7 +2674,7 @@
       "name": "www.piphupthmey.com",
       "url": "https://www.piphupthmey.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2681,7 +2682,7 @@
       "name": "www.pointer-cambodia.com",
       "url": "https://www.pointer-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2689,7 +2690,7 @@
       "name": "www.pointer.com.kh",
       "url": "https://www.pointer.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2697,7 +2698,7 @@
       "name": "pointer.com.kh",
       "url": "https://pointer.com.kh/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2705,7 +2706,7 @@
       "name": "prince-realestate.com",
       "url": "https://prince-realestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2713,7 +2714,7 @@
       "name": "www.princeholdinggroup.com",
       "url": "https://www.princeholdinggroup.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2721,7 +2722,7 @@
       "name": "www.princeholdinggroup.com.kh",
       "url": "https://www.princeholdinggroup.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2729,7 +2730,7 @@
       "name": "www.princerealestate.com.kh",
       "url": "https://www.princerealestate.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2737,7 +2738,7 @@
       "name": "www.realtimecambodia.com",
       "url": "https://www.realtimecambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2745,7 +2746,7 @@
       "name": "www.rfproperties.com.kh",
       "url": "https://www.rfproperties.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2753,7 +2754,7 @@
       "name": "www.rielestate.com.kh",
       "url": "https://www.rielestate.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2761,7 +2762,7 @@
       "name": "www.rightmove.com.kh",
       "url": "https://www.rightmove.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2769,7 +2770,7 @@
       "name": "www.sela-house.com",
       "url": "https://www.sela-house.com/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2777,7 +2778,7 @@
       "name": "www.siemreap-properties.com",
       "url": "https://www.siemreap-properties.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2785,7 +2786,7 @@
       "name": "www.siemreapproperties.com",
       "url": "https://www.siemreapproperties.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2793,7 +2794,7 @@
       "name": "www.siemreapproperties.com",
       "url": "https://www.siemreapproperties.com/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2801,7 +2802,7 @@
       "name": "www.siemreaprealestate.com",
       "url": "https://www.siemreaprealestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2809,7 +2810,7 @@
       "name": "www.sokharealestate.com.kh",
       "url": "https://www.sokharealestate.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2817,7 +2818,7 @@
       "name": "www.sokharealty.com.kh",
       "url": "https://www.sokharealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2825,7 +2826,7 @@
       "name": "soksanrealty.com",
       "url": "https://soksanrealty.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2833,7 +2834,7 @@
       "name": "sopheakrealestate.com",
       "url": "https://sopheakrealestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2841,7 +2842,7 @@
       "name": "sotharealestate.com",
       "url": "https://sotharealestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2849,7 +2850,7 @@
       "name": "theorkide.com",
       "url": "https://theorkide.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2857,7 +2858,7 @@
       "name": "thepeak-cambodia.com",
       "url": "https://thepeak-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2865,7 +2866,7 @@
       "name": "www.thepeakcambodia.com",
       "url": "https://www.thepeakcambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2873,7 +2874,7 @@
       "name": "www.urbanvillage.com.kh",
       "url": "https://www.urbanvillage.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2881,7 +2882,7 @@
       "name": "vimeanphnompenh.com",
       "url": "https://vimeanphnompenh.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2889,7 +2890,7 @@
       "name": "www.vtrust-appraisal.com",
       "url": "https://www.vtrust-appraisal.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2897,7 +2898,7 @@
       "name": "www.vtrust-cambodia.com",
       "url": "https://www.vtrust-cambodia.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2905,7 +2906,7 @@
       "name": "vtrust-cambodia.com",
       "url": "https://vtrust-cambodia.com/property-for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2913,7 +2914,7 @@
       "name": "www.vtrust-cambodia.com",
       "url": "https://www.vtrust-cambodia.com/property/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2921,7 +2922,7 @@
       "name": "vtrust-property.com",
       "url": "https://vtrust-property.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2929,7 +2930,7 @@
       "name": "www.vtrust-property.com",
       "url": "https://www.vtrust-property.com/en/buy",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2937,7 +2938,7 @@
       "name": "www.vtrustproperty.com",
       "url": "https://www.vtrustproperty.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2945,7 +2946,7 @@
       "name": "www.vtrustproperty.com",
       "url": "https://www.vtrustproperty.com/listings/for-sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2953,7 +2954,7 @@
       "name": "www.vtrustrealestate.com",
       "url": "https://www.vtrustrealestate.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2961,7 +2962,7 @@
       "name": "zillioneproperty.com.kh",
       "url": "https://zillioneproperty.com.kh/en/listings/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2969,7 +2970,7 @@
       "name": "zillionrealty.com.kh",
       "url": "https://zillionrealty.com.kh/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2977,7 +2978,7 @@
       "name": "www.zillum.com.kh",
       "url": "https://www.zillum.com.kh/en/sale",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2985,7 +2986,7 @@
       "name": "www.zipper-mekong.com",
       "url": "https://www.zipper-mekong.com/",
       "type": "agency",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -2993,7 +2994,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/C21Cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3001,7 +3002,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/CBRECambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3009,7 +3010,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/Century21Cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3017,7 +3018,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/ChipMongLandOfficial",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3025,7 +3026,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/IPSCambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3033,7 +3034,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/IPSCambodiaRealEstate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3041,7 +3042,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/KnightFrankCambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3049,7 +3050,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/UrbanVillagePhnomPenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3057,7 +3058,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/boreychipmongland",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3065,7 +3066,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/boreyorkide",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3073,7 +3074,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/boreypenghuoth",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3081,7 +3082,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/fazwazcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3089,7 +3090,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/fazwazkh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3097,7 +3098,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/108063242610078",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3105,7 +3106,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/110407095816234",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3113,7 +3114,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/131134783701443",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3121,7 +3122,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/1433217730296330",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3129,7 +3130,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/1449633401931154",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3137,7 +3138,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/1487405658193456",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3145,7 +3146,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/1498638740338195",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3153,7 +3154,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/185065904964345",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3161,7 +3162,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/208295695992343",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3169,7 +3170,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/224513007665432",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3177,7 +3178,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/335733383269317",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3185,7 +3186,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/355439044524343",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3193,7 +3194,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/359815187831860",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3201,7 +3202,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/389205414412234",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3209,7 +3210,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/487480514641786",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3217,7 +3218,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/670464256389099",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3225,7 +3226,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/PPhouseandland",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3233,7 +3234,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/angkorrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3241,7 +3242,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/battambangproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3249,7 +3250,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/battambangrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3257,7 +3258,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/bavetproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3265,7 +3266,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/bkk1realestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3273,7 +3274,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3281,7 +3282,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyforsaleinpp",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3289,7 +3290,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyforsalephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3297,7 +3298,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyhousecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3305,7 +3306,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreykhmer",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3313,7 +3314,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreypenghuothforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3321,7 +3322,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyphnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3329,7 +3330,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyphnompenhforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3337,7 +3338,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyppsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3345,7 +3346,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreyresalecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3353,7 +3354,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/boreysale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3361,7 +3362,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodia.baraholka",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3369,7 +3370,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodia.property.sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3377,7 +3378,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodia.real.estate.for.sale.rent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3385,7 +3386,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodia.ru.estate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3393,7 +3394,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodia.rus.realestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3401,7 +3402,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiaagentnetwork",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3409,7 +3410,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiachineserealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3417,7 +3418,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiacommercialproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3425,7 +3426,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiaexpatsproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3433,7 +3434,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiainvestmentproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3441,7 +3442,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodialandforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3449,7 +3450,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiaproperties",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3457,7 +3458,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiaproperties777",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3465,7 +3466,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiapropertybuysell",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3473,7 +3474,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiapropertybuysellrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3481,7 +3482,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiapropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3489,7 +3490,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiapropertyinvestors",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3497,7 +3498,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiapropertykhmer",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3505,7 +3506,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3513,7 +3514,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestate2015",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3521,7 +3522,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestate4sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3529,7 +3530,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestatebuysellrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3537,7 +3538,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestateforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3545,7 +3546,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestateforsaleandrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3553,7 +3554,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestateforsalerent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3561,7 +3562,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestateinvestors",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3569,7 +3570,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestatekhmer",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3577,7 +3578,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestatemarket",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3585,7 +3586,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cambodiarealestateru",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3593,7 +3594,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cheaphouseandland",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3601,7 +3602,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cheaphouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3609,7 +3610,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cheaphouseforsaleincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3617,7 +3618,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cheaphousephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3625,7 +3626,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/cheaplandcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3633,7 +3634,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/chineserealestatecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3641,7 +3642,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condoforcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3649,7 +3650,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condoforsale.cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3657,7 +3658,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condoforsale.phnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3665,7 +3666,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condoforsaleCambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3673,7 +3674,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condoforsaleincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3681,7 +3682,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condoforsalephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3689,7 +3690,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/condophnompenhforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3697,7 +3698,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilandhousesaleurgent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3705,7 +3706,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilokpteahlok",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3713,7 +3714,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilokthok",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3721,7 +3722,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilorkcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3729,7 +3730,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilorkpteahlork",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3737,7 +3738,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilortuban",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3745,7 +3746,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/dilotcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3753,7 +3754,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/directownerpp",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3761,7 +3762,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/expatcambodiarealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3769,7 +3770,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/expatscambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3777,7 +3778,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/expatsincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3785,7 +3786,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/expatspropertycambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3793,7 +3794,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/expatsrealestatecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3801,7 +3802,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/flatforsalephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3809,7 +3810,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/homeandlandcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3817,7 +3818,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseandlandcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3825,7 +3826,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseandlandforsaleincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3833,7 +3834,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseandlandforsalephnompenhkhmer",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3841,7 +3842,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseforsale.cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3849,7 +3850,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseforsalecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3857,7 +3858,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseforsaleincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3865,7 +3866,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseforsalephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3873,7 +3874,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houseforsalesiemreap",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3881,7 +3882,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houselandforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3889,7 +3890,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/houselandforsale.cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3897,7 +3898,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampot.real.estate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3905,7 +3906,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampothouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3913,7 +3914,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampotkepproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3921,7 +3922,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampotkeprealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3929,7 +3930,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampotproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3937,7 +3938,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampotpropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3945,7 +3946,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampotrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3953,7 +3954,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kampotrealestatekh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3961,7 +3962,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kepkampothousesale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3969,7 +3970,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kepkampothousing",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3977,7 +3978,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kepproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3985,7 +3986,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/keprealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -3993,7 +3994,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmer24property",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4001,7 +4002,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerhouseandlandsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4009,7 +4010,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerhouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4017,7 +4018,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerlandhouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4025,7 +4026,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4033,7 +4034,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerrealestate168",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4041,7 +4042,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerrealestateforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4049,7 +4050,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerrealestatephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4057,7 +4058,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/khmerurgentsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4065,7 +4066,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kohkongproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4073,7 +4074,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/kohrongproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4081,7 +4082,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/landforsale.cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4089,7 +4090,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/landforsaleincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4097,7 +4098,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/landforsalephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4105,7 +4106,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/landhousesalephnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4113,7 +4114,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/luxurypropertycambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4121,7 +4122,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenh.real.estate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4129,7 +4130,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenh.realestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4137,7 +4138,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhcondoforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4145,7 +4146,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhexpathousing",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4153,7 +4154,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhexpatshousing",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4161,7 +4162,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhhouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4169,7 +4170,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhhousekhmer",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4177,7 +4178,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhhousesale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4185,7 +4186,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhhousesforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4193,7 +4194,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhhousing",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4201,7 +4202,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhproperties",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4209,7 +4210,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4217,7 +4218,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhpropertybuysellrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4225,7 +4226,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhpropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4233,7 +4234,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhpropertyforsalerent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4241,7 +4242,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4249,7 +4250,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhrealestate1",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4257,7 +4258,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhrealestatebuysell",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4265,7 +4266,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhrealestatebuysellrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4273,7 +4274,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhrealestateforsaleandrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4281,7 +4282,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/phnompenhrealestates",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4289,7 +4290,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/poipetproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4297,7 +4298,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/poipetrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4305,7 +4306,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pp.house.land.condo.sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4313,7 +4314,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pphouseandlandforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4321,7 +4322,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pphouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4329,7 +4330,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pphousesforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4337,7 +4338,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pplandhouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4345,7 +4346,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/ppproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4353,7 +4354,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pppropertybuysellrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4361,7 +4362,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pppropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4369,7 +4370,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pppropertyforsalerent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4377,7 +4378,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pprealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4385,7 +4386,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/pprealestateforsaleandrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4393,7 +4394,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertycambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4401,7 +4402,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertycambodia168",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4409,7 +4410,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertyforsale.sihanoukville",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4417,7 +4418,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertyforsaleincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4425,7 +4426,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertyforsaleincambodiaaa",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4433,7 +4434,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertyforsaleinphnompenh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4441,7 +4442,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertyincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4449,7 +4450,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/propertysihanoukville",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4457,7 +4458,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestate.kh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4465,7 +4466,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4473,7 +4474,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatecambodia.kh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4481,7 +4482,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatecambodia123",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4489,7 +4490,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatecambodia168",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4497,7 +4498,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatecambodiaforsaleandrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4505,7 +4506,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatecomkh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4513,7 +4514,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestateincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4521,7 +4522,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/realestatekhmer.ru",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4529,7 +4530,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/russiansincambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4537,7 +4538,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=%E1%9E%8A%E1%9E%B8%E1%9E%9B%E1%9E%80%E1%9F%8B",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4545,7 +4546,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=%E1%9E%94%E1%9E%BB%E1%9E%9A%E1%9E%B8%E1%9E%9B%E1%9E%80%E1%9F%8B",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4553,7 +4554,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=%E1%9E%95%E1%9F%92%E1%9E%91%E1%9E%B6%E1%9E%9F+%E1%9E%9B%E1%9E%80%E1%9F%92%E1%9E%94%E1%9E%B6",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4561,7 +4562,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=%E1%9E%95%E1%9F%92%E1%9E%91%E1%9F%87%E1%9E%9B%E1%9E%80%E1%9F%8B%E1%9E%97%E1%9F%92%E1%9E%93%E1%9F%86%E1%9E%96%E1%9F%81%E1%9E%89",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4569,7 +4570,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=Cambodia+Real+Estate+For+Sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4577,7 +4578,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=Cambodia+property+for+sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4585,7 +4586,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=Phnom+Penh+Property+Buy+Sell",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4593,7 +4594,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/search/groups?q=Phnom+Penh+Property+Sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4601,7 +4602,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sellhouse.land.condo.kh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4609,7 +4610,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/shvlandhouse",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4617,7 +4618,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/shvproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4625,7 +4626,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreapexpatshousing",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4633,7 +4634,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaphouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4641,7 +4642,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaphouseland",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4649,7 +4650,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaphousesforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4657,7 +4658,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaplandforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4665,7 +4666,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreapproperties",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4673,7 +4674,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreapproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4681,7 +4682,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreappropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4689,7 +4690,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreappropertyforsaleandrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4697,7 +4698,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreappropertyforsalerent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4705,7 +4706,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreappropertysale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4713,7 +4714,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaprealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4721,7 +4722,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaprealestatecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4729,7 +4730,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaprealestateforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4737,7 +4738,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaprealestateforsalerent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4745,7 +4746,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/siemreaprealestatekh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4753,7 +4754,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4761,7 +4762,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvilerealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4769,7 +4770,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukville.real.estate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4777,7 +4778,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukville.realestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4785,7 +4786,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvilleforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4793,7 +4794,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvilleforsaleandrent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4801,7 +4802,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvillehouseforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4809,7 +4810,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvilleland",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4817,7 +4818,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvillelandforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4825,7 +4826,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvilleproperty",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4833,7 +4834,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvillepropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4841,7 +4842,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvillepropertyforsalerent",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4849,7 +4850,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/sihanoukvillerealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4857,7 +4858,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/toulkorkrealestate",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4865,7 +4866,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/urgentpropertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4873,7 +4874,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/urgentpropertykh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4881,7 +4882,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/urgentsalecambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4889,7 +4890,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/khmer24.com",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4897,7 +4898,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/khmer24.official",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4905,7 +4906,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/khmer24com",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4913,7 +4914,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/khmer24property",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4921,7 +4922,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4929,7 +4930,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/category/propertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4937,7 +4938,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/phnom-penh/property-for-sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4945,7 +4946,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/phnom-penh/property-for_sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4953,7 +4954,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/phnom-penh/propertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4961,7 +4962,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/phnompenh/search?query=property+for+sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4969,7 +4970,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/siem-reap/property-for-sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4977,7 +4978,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/siem-reap/property-for_sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4985,7 +4986,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/siem-reap/propertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -4993,7 +4994,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/sihanoukville/property-for-sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5001,7 +5002,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/sihanoukville/property-for_sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5009,7 +5010,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/marketplace/sihanoukville/propertyforsale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5017,7 +5018,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/princeinternational",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5025,7 +5026,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/princeinternationalcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5033,7 +5034,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/realestate.com.kh",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5041,7 +5042,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=%E1%9E%8A%E1%9E%B8%E1%9E%9B%E1%9E%80%E1%9F%8B",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5049,7 +5050,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=%E1%9E%8A%E1%9E%B8%E1%9E%9B%E1%9E%80%E1%9F%8B+%E1%9E%95%E1%9F%92%E1%9E%91%E1%9F%87%E1%9E%9B%E1%9E%80%E1%9F%8B",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5057,7 +5058,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=%E1%9E%8A%E1%9E%B8%E1%9E%9B%E1%9E%80%E1%9F%92%E1%9E%94",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5065,7 +5066,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=%E1%9E%95%E1%9F%92%E1%9E%91%E1%9F%87%E1%9E%9B%E1%9E%80%E1%9F%8B",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5073,7 +5074,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Borey+For+Sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5081,7 +5082,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Cambodia+property+for+sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5089,7 +5090,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Cambodia+real+estate+for+sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5097,7 +5098,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Land+For+Sale+Cambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5105,7 +5106,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Phnom+Penh+Real+Estate+For+Sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5113,7 +5114,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Phnom+Penh+property+for+sale",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5121,7 +5122,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/search/groups?q=Siem+Reap+Property",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5129,7 +5130,7 @@
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/thepeakcambodia",
       "type": "facebook",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5137,7 +5138,7 @@
       "name": "t.me",
       "url": "https://t.me/borey_cambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5145,7 +5146,7 @@
       "name": "t.me",
       "url": "https://t.me/borey_cambodia_sale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5153,7 +5154,7 @@
       "name": "t.me",
       "url": "https://t.me/borey_condo_kh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5161,7 +5162,7 @@
       "name": "t.me",
       "url": "https://t.me/borey_sale_kh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5169,7 +5170,7 @@
       "name": "t.me",
       "url": "https://t.me/boreycambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5177,7 +5178,7 @@
       "name": "t.me",
       "url": "https://t.me/boreycondo_kh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5185,7 +5186,7 @@
       "name": "t.me",
       "url": "https://t.me/c21cambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5193,7 +5194,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_barakholka",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5201,7 +5202,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_estate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5209,7 +5210,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_estate_chat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5217,7 +5218,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_expats",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5225,7 +5226,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_houseland",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5233,7 +5234,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_investors",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5241,7 +5242,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_land",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5249,7 +5250,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_land_for_sale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5257,7 +5258,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_land_sale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5265,7 +5266,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5273,7 +5274,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_property_group",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5281,7 +5282,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_property_ru",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5289,7 +5290,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_property_sale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5297,7 +5298,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_real_estate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5305,7 +5306,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_real_estate_khmer",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5313,7 +5314,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_realestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5321,7 +5322,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_realestate_chat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5329,7 +5330,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_realestate_market",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5337,7 +5338,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodia_realty_chat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5345,7 +5346,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiahouse",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5353,7 +5354,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodialandforsale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5361,7 +5362,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiaproperty",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5369,7 +5370,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiapropertychat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5377,7 +5378,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiapropertydeals",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5385,7 +5386,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiarealestatechat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5393,7 +5394,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiarealestatedaily",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5401,7 +5402,7 @@
       "name": "t.me",
       "url": "https://t.me/cambodiarealestateforsale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5409,7 +5410,7 @@
       "name": "t.me",
       "url": "https://t.me/condo_cambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5417,7 +5418,7 @@
       "name": "t.me",
       "url": "https://t.me/condocambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5425,7 +5426,7 @@
       "name": "t.me",
       "url": "https://t.me/damnak_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5433,7 +5434,7 @@
       "name": "t.me",
       "url": "https://t.me/expatscambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5441,7 +5442,7 @@
       "name": "t.me",
       "url": "https://t.me/fazwazkh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5449,7 +5450,7 @@
       "name": "t.me",
       "url": "https://t.me/houseforsale_pp",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5457,7 +5458,7 @@
       "name": "t.me",
       "url": "https://t.me/ipscambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5465,7 +5466,7 @@
       "name": "t.me",
       "url": "https://t.me/kampot_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5473,7 +5474,7 @@
       "name": "t.me",
       "url": "https://t.me/kampotproperty",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5481,7 +5482,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer24_bot",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5489,7 +5490,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer24_com",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5497,7 +5498,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer24_official",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5505,7 +5506,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer24_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5513,7 +5514,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer24official",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5521,7 +5522,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer24property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5529,7 +5530,7 @@
       "name": "t.me",
       "url": "https://t.me/khmer_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5537,7 +5538,7 @@
       "name": "t.me",
       "url": "https://t.me/khrealestatechat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5545,7 +5546,7 @@
       "name": "t.me",
       "url": "https://t.me/landforsale_cambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5553,7 +5554,7 @@
       "name": "t.me",
       "url": "https://t.me/landforsale_kh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5561,7 +5562,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenh_condo",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5569,7 +5570,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenh_kampot_estate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5577,7 +5578,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenh_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5585,7 +5586,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenh_realestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5593,7 +5594,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenhproperty",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5601,7 +5602,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenhpropertychat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5609,7 +5610,7 @@
       "name": "t.me",
       "url": "https://t.me/phnompenhrealestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5617,7 +5618,7 @@
       "name": "t.me",
       "url": "https://t.me/pp_buysellrent",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5625,7 +5626,7 @@
       "name": "t.me",
       "url": "https://t.me/pp_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5633,7 +5634,7 @@
       "name": "t.me",
       "url": "https://t.me/pp_realestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5641,7 +5642,7 @@
       "name": "t.me",
       "url": "https://t.me/pp_realestate_chat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5649,7 +5650,7 @@
       "name": "t.me",
       "url": "https://t.me/pphouseforsale",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5657,7 +5658,7 @@
       "name": "t.me",
       "url": "https://t.me/propertyareaasia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5665,7 +5666,7 @@
       "name": "t.me",
       "url": "https://t.me/propertycambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5673,7 +5674,7 @@
       "name": "t.me",
       "url": "https://t.me/propertykh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5681,7 +5682,7 @@
       "name": "t.me",
       "url": "https://t.me/propertykh_chat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5689,7 +5690,7 @@
       "name": "t.me",
       "url": "https://t.me/realestate_cambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5697,7 +5698,7 @@
       "name": "t.me",
       "url": "https://t.me/realestate_cambodia_chat",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5705,7 +5706,7 @@
       "name": "t.me",
       "url": "https://t.me/realestatecambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5713,7 +5714,7 @@
       "name": "t.me",
       "url": "https://t.me/realestatecambodia_daily",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5721,7 +5722,7 @@
       "name": "t.me",
       "url": "https://t.me/realestatecomkh",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5729,7 +5730,7 @@
       "name": "t.me",
       "url": "https://t.me/realestatekh_daily",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5737,7 +5738,7 @@
       "name": "t.me",
       "url": "https://t.me/russiancambodia_realestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5745,7 +5746,7 @@
       "name": "t.me",
       "url": "https://t.me/russians_cambodia",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5753,7 +5754,7 @@
       "name": "t.me",
       "url": "https://t.me/s/cambodia_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5761,7 +5762,7 @@
       "name": "t.me",
       "url": "https://t.me/shv_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5769,7 +5770,7 @@
       "name": "t.me",
       "url": "https://t.me/siemreap_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5777,7 +5778,7 @@
       "name": "t.me",
       "url": "https://t.me/siemreap_realestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5785,7 +5786,7 @@
       "name": "t.me",
       "url": "https://t.me/siemreapproperties",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5793,7 +5794,7 @@
       "name": "t.me",
       "url": "https://t.me/siemreapproperty",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5801,7 +5802,7 @@
       "name": "t.me",
       "url": "https://t.me/siemreaprealestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5809,7 +5810,7 @@
       "name": "t.me",
       "url": "https://t.me/sihanoukville_baraholka",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5817,7 +5818,7 @@
       "name": "t.me",
       "url": "https://t.me/sihanoukville_estate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5825,7 +5826,7 @@
       "name": "t.me",
       "url": "https://t.me/sihanoukville_property",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5833,7 +5834,7 @@
       "name": "t.me",
       "url": "https://t.me/sihanoukville_realestate",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5841,7 +5842,7 @@
       "name": "t.me",
       "url": "https://t.me/sihanoukvilleproperty",
       "type": "telegram",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5849,7 +5850,7 @@
       "name": "www.adkhmer.com",
       "url": "https://www.adkhmer.com/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5857,7 +5858,7 @@
       "name": "apps.apple.com",
       "url": "https://apps.apple.com/app/realestate-com-kh",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5865,7 +5866,7 @@
       "name": "www.b2bcambodia.com",
       "url": "https://www.b2bcambodia.com/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5873,7 +5874,7 @@
       "name": "www.bizkhmer.com",
       "url": "https://www.bizkhmer.com/property",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5881,7 +5882,7 @@
       "name": "www.cambodiaexpatonline.com",
       "url": "https://www.cambodiaexpatonline.com/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5889,7 +5890,7 @@
       "name": "cambodiaexpatsonline.com",
       "url": "https://cambodiaexpatsonline.com/forum/viewforum.php?f=7",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5897,7 +5898,7 @@
       "name": "cambodiaexpatsonline.com",
       "url": "https://cambodiaexpatsonline.com/property",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5905,7 +5906,7 @@
       "name": "cambodiaexpatsonline.com",
       "url": "https://cambodiaexpatsonline.com/real-estate-f5.html",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5913,7 +5914,7 @@
       "name": "cambodiaexpatsonline.com",
       "url": "https://cambodiaexpatsonline.com/search.php?keywords=property+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5921,7 +5922,7 @@
       "name": "camboquick.com",
       "url": "https://camboquick.com/en/c/real-estate",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5929,7 +5930,7 @@
       "name": "www.camhr.com",
       "url": "https://www.camhr.com/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5937,7 +5938,7 @@
       "name": "distill.io",
       "url": "https://distill.io/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5945,7 +5946,7 @@
       "name": "www.google.com",
       "url": "https://www.google.com/alerts",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5953,7 +5954,7 @@
       "name": "www.google.com",
       "url": "https://www.google.com/maps/search/real+estate+cambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5961,7 +5962,7 @@
       "name": "www.google.com",
       "url": "https://www.google.com/search?q=site%3Afacebook.com+cambodia+property+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5969,7 +5970,7 @@
       "name": "www.instagram.com",
       "url": "https://www.instagram.com/explore/tags/cambodiarealestate",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5977,7 +5978,7 @@
       "name": "www.instagram.com",
       "url": "https://www.instagram.com/explore/tags/phnompenhproperty",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5985,7 +5986,7 @@
       "name": "www.instagram.com",
       "url": "https://www.instagram.com/explore/tags/phnompenhrealestate",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -5993,7 +5994,7 @@
       "name": "www.instagram.com",
       "url": "https://www.instagram.com/explore/tags/realestatecambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6001,7 +6002,7 @@
       "name": "www.khmer440.com",
       "url": "https://www.khmer440.com/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6009,7 +6010,7 @@
       "name": "www.khmer440.com",
       "url": "https://www.khmer440.com/c/classifieds/property",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6017,7 +6018,7 @@
       "name": "www.khmer440.com",
       "url": "https://www.khmer440.com/chat_forum/viewforum.php?f=23",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6025,7 +6026,7 @@
       "name": "www.khmer440.com",
       "url": "https://www.khmer440.com/k",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6033,7 +6034,7 @@
       "name": "www.khmer440.com",
       "url": "https://www.khmer440.com/k/forum/12",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6041,7 +6042,7 @@
       "name": "www.khmer440.com",
       "url": "https://www.khmer440.com/k/property",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6049,7 +6050,7 @@
       "name": "knockknock.earth",
       "url": "https://knockknock.earth/en/for-sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6057,7 +6058,7 @@
       "name": "www.linkedin.com",
       "url": "https://www.linkedin.com/search/results/all?keywords=cambodia+property+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6065,7 +6066,7 @@
       "name": "www.linkedin.com",
       "url": "https://www.linkedin.com/search/results/all?keywords=cambodia+real+estate",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6073,7 +6074,7 @@
       "name": "www.linkedin.com",
       "url": "https://www.linkedin.com/search/results/all?keywords=cambodia+real+estate+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6081,7 +6082,7 @@
       "name": "www.linkedin.com",
       "url": "https://www.linkedin.com/search/results/content?keywords=cambodia+property+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6089,7 +6090,7 @@
       "name": "www.reddit.com",
       "url": "https://www.reddit.com/r/PhnomPenh",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6097,7 +6098,7 @@
       "name": "www.reddit.com",
       "url": "https://www.reddit.com/r/cambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6105,7 +6106,7 @@
       "name": "tgstat.com",
       "url": "https://tgstat.com/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6113,7 +6114,7 @@
       "name": "www.tiktok.com",
       "url": "https://www.tiktok.com/search?q=cambodia+property+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6121,7 +6122,7 @@
       "name": "www.tiktok.com",
       "url": "https://www.tiktok.com/search?q=cambodia+real+estate+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6129,7 +6130,7 @@
       "name": "www.tiktok.com",
       "url": "https://www.tiktok.com/search?q=real+estate+cambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6137,7 +6138,7 @@
       "name": "www.tiktok.com",
       "url": "https://www.tiktok.com/tag/cambodiarealestate",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6145,7 +6146,7 @@
       "name": "www.tiktok.com",
       "url": "https://www.tiktok.com/tag/realestatecambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6153,7 +6154,7 @@
       "name": "visualping.io",
       "url": "https://visualping.io/",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6161,7 +6162,7 @@
       "name": "www.youtube.com",
       "url": "https://www.youtube.com/@IPSCambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6169,7 +6170,7 @@
       "name": "www.youtube.com",
       "url": "https://www.youtube.com/@realestatecomkh",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6177,7 +6178,7 @@
       "name": "www.youtube.com",
       "url": "https://www.youtube.com/results?search_query=cambodia+property+for+sale",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     },
     {
@@ -6185,7 +6186,7 @@
       "name": "www.youtube.com",
       "url": "https://www.youtube.com/results?search_query=property+for+sale+cambodia",
       "type": "other",
-      "enabled": false,
+      "enabled": true,
       "adapterId": null
     }
   ]

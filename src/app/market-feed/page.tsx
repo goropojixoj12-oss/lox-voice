@@ -37,8 +37,9 @@ export default async function MarketFeedPage() {
       />
       <p className="mb-6 text-sm text-[var(--color-muted)]">
         {items.length} listing{items.length === 1 ? "" : "s"} from{" "}
-        {enabledSources > 0 ? enabledSources : "—"} enabled catalog source
-        {enabledSources === 1 ? "" : "s"} (portals polled on schedule). Admins see contacts and
+        {enabledSources > 0 ? enabledSources : "—"} registered source
+        {enabledSources === 1 ? "" : "s"} (batched sync; not every site yields listings each run).
+        Admins see contacts and
         source links in{" "}
         <Link href="/admin/market-feed" className="text-[var(--color-accent)] hover:underline">
           Admin → Market Feed

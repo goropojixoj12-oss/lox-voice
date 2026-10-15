@@ -10,6 +10,8 @@ export type AggregationSourceStatus =
   | "ok"
   | "error"
   | "adapter_needed"
+  | "fetch_error"
+  | "blocked"
   | "skipped";
 
 export interface AggregationSourceCatalogEntry {

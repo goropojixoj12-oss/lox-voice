@@ -1,175 +1,139 @@
-import { photoUrl } from "@/lib/media";
-import { sanitizeDescription } from "@/lib/aggregations/sanitize";
 import type { AggregationAdapter, AggregatedDraft } from "./types";
-
-const USER_AGENT =
-  "SEAPS-MarketFeed/0.1 (+https://seaps.com.kh; respectful polling; contact support)";
+import {
+  fetchGenericSourceUrl,
+  USER_AGENT,
+} from "./generic-fetch";
+import { sanitizeDescription } from "@/lib/aggregations/sanitize";
 
 type PortalConfig = {
   id: string;
   label: string;
   sourceName: string;
   listUrl: string;
-  /**
-   * When live HTML cannot be parsed (JS SPA, block, timeout), emit these
-   * representative samples so the adapter still contributes to the feed.
-   */
-  fallback: AggregatedDraft[];
 };
 
-function fallbackDraft(
-  partial: Omit<AggregatedDraft, "sourceName" | "photos"> & { photos?: string[] },
-  sourceName: string,
-): AggregatedDraft {
-  return {
-    ...partial,
-    sourceName,
-    photos: partial.photos ?? [photoUrl("photo-1512917774080-9991f1c4c750")],
-    description: sanitizeDescription(partial.description),
-  };
-}
-
+/** Dedicated list URLs for high-traffic Cambodia portals (shared adapter per host). */
 const PORTALS: PortalConfig[] = [
   {
     id: "realestate-com-kh",
     label: "realestate.com.kh (HTML poll)",
     sourceName: "realestate.com.kh",
     listUrl: "https://www.realestate.com.kh/buy/",
-    fallback: [
-      fallbackDraft(
-        {
-          title: "Phnom Penh condo listing (portal mirror)",
-          description:
-            "Sample normalized listing shaped like a public portal card. Live HTML parse may be unavailable; this fallback keeps sync non-empty.",
-          price: 195000,
-          currency: "USD",
-          location: "Phnom Penh",
-          propertyType: "condo",
-          photos: [photoUrl("photo-1545324418-cc1a3fa10c00")],
-          publishedAt: new Date().toISOString(),
-          sourceUrl: "https://www.realestate.com.kh/buy/",
-          contacts: { phone: "+855 23 000 111" },
-          externalId: "portal:realestate-com-kh:fallback-1",
-        },
-        "realestate.com.kh",
-      ),
-    ],
   },
   {
     id: "khmer24-property",
     label: "khmer24 property (HTML poll)",
     sourceName: "khmer24.com",
     listUrl: "https://www.khmer24.com/en/c-property-for-sale.html",
-    fallback: [
-      fallbackDraft(
-        {
-          title: "House for sale — portal-style sample",
-          description:
-            "Representative house listing for Khmer24-style property section. Used when remote HTML is blocked or heavily client-rendered.",
-          price: 145000,
-          currency: "USD",
-          location: "Sen Sok, Phnom Penh",
-          propertyType: "house",
-          photos: [photoUrl("photo-1564013799919-ab600027ffc6")],
-          publishedAt: new Date().toISOString(),
-          sourceUrl: "https://www.khmer24.com/en/c-property-for-sale.html",
-          contacts: { phone: "+855 12 000 222", messenger: "Telegram @khmer24_demo" },
-          externalId: "portal:khmer24:fallback-1",
-        },
-        "khmer24.com",
-      ),
-    ],
+  },
+  {
+    id: "fazwaz-kh",
+    label: "FazWaz Cambodia",
+    sourceName: "fazwaz.com",
+    listUrl: "https://www.fazwaz.com/cambodia/for-sale",
+  },
+  {
+    id: "bongthom-property",
+    label: "BongThom property",
+    sourceName: "bongthom.com",
+    listUrl: "https://www.bongthom.com/en/classifieds/property/houses-for-sale",
+  },
+  {
+    id: "dotproperty-kh",
+    label: "DotProperty Cambodia",
+    sourceName: "dotproperty.com.kh",
+    listUrl: "https://www.dotproperty.com.kh/en/for-sale",
+  },
+  {
+    id: "propertyarea-kh",
+    label: "PropertyArea Cambodia",
+    sourceName: "propertyarea.asia",
+    listUrl: "https://www.propertyarea.asia/kh/buy",
+  },
+  {
+    id: "propertyguru-kh",
+    label: "PropertyGuru Cambodia",
+    sourceName: "propertyguru.com.kh",
+    listUrl: "https://www.propertyguru.com.kh/en/buy",
+  },
+  {
+    id: "lamudi-kh",
+    label: "Lamudi Cambodia",
+    sourceName: "lamudi.com.kh",
+    listUrl: "https://www.lamudi.com.kh",
+  },
+  {
+    id: "propertyhub-kh",
+    label: "PropertyHub Cambodia",
+    sourceName: "propertyhub.com.kh",
+    listUrl: "https://propertyhub.com.kh/en/sale",
+  },
+  {
+    id: "cambodia-property",
+    label: "Cambodia Property",
+    sourceName: "cambodia-property.com",
+    listUrl: "https://www.cambodia-property.com/buy",
+  },
+  {
+    id: "homekh",
+    label: "HomeKH",
+    sourceName: "homekh.com",
+    listUrl: "https://www.homekh.com/en/sale",
+  },
+  {
+    id: "rent-com-kh",
+    label: "Rent.com.kh sales",
+    sourceName: "rent.com.kh",
+    listUrl: "https://www.rent.com.kh/sale",
+  },
+  {
+    id: "pointerasia",
+    label: "Pointer Asia",
+    sourceName: "pointerasia.com",
+    listUrl: "https://www.pointerasia.com/property-for-sale",
+  },
+  {
+    id: "khmerproperty",
+    label: "Khmer Property",
+    sourceName: "khmerproperty.com.kh",
+    listUrl: "https://www.khmerproperty.com.kh",
+  },
+  {
+    id: "phnompenhrealestate",
+    label: "Phnom Penh Real Estate",
+    sourceName: "phnompenhrealestate.net",
+    listUrl: "https://www.phnompenhrealestate.net/for-sale",
+  },
+  {
+    id: "housing-com-kh",
+    label: "Housing.com.kh",
+    sourceName: "housing.com.kh",
+    listUrl: "https://www.housing.com.kh/en/buy",
+  },
+  {
+    id: "properstar-kh",
+    label: "Properstar Cambodia",
+    sourceName: "properstar.com.kh",
+    listUrl: "https://www.properstar.com.kh/en/cambodia/buy",
+  },
+  {
+    id: "zillaproperty",
+    label: "Zilla Property Asia",
+    sourceName: "zillaproperty.asia",
+    listUrl: "https://www.zillaproperty.asia",
   },
 ];
-
-/**
- * Very conservative extractors: look for og:title / common listing title patterns.
- * Many Cambodia portals are JS-heavy — expect fallbacks more often than live rows.
- */
-function extractDraftsFromHtml(
-  html: string,
-  portal: PortalConfig,
-): AggregatedDraft[] {
-  const titles: string[] = [];
-  const ogTitle = html.match(
-    /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i,
-  );
-  if (ogTitle?.[1]) titles.push(ogTitle[1]);
-
-  const h1 = html.match(/<h1[^>]*>([^<]{8,120})<\/h1>/i);
-  if (h1?.[1]) titles.push(h1[1]);
-
-  // Generic card-ish headings
-  const headingRe = /<(?:h2|h3)[^>]*>([^<]{12,100})<\/(?:h2|h3)>/gi;
-  let match: RegExpExecArray | null;
-  while ((match = headingRe.exec(html)) !== null && titles.length < 6) {
-    const t = match[1].replace(/\s+/g, " ").trim();
-    if (t && !titles.includes(t)) titles.push(t);
-  }
-
-  if (titles.length === 0) return [];
-
-  return titles.slice(0, 4).map((title, index) =>
-    fallbackDraft(
-      {
-        title: sanitizeDescription(title).slice(0, 140),
-        description: `Imported headline from ${portal.sourceName} public HTML (poll). Full body may require a dedicated parser.`,
-        price: null,
-        currency: "USD",
-        location: null,
-        propertyType: null,
-        photos: [photoUrl("photo-1503387762-592deb58ef4e")],
-        publishedAt: new Date().toISOString(),
-        sourceUrl: portal.listUrl,
-        contacts: {},
-        externalId: `portal:${portal.id}:live-${index}-${title.slice(0, 24)}`,
-      },
-      portal.sourceName,
-    ),
-  );
-}
 
 async function fetchPortal(portal: PortalConfig): Promise<{
   items: AggregatedDraft[];
   warnings: string[];
 }> {
-  const warnings: string[] = [];
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8_000);
-
-  try {
-    const res = await fetch(portal.listUrl, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept: "text/html,application/xhtml+xml",
-      },
-      redirect: "follow",
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      warnings.push(`${portal.id}: HTTP ${res.status} — using fallback samples`);
-      return { items: portal.fallback, warnings };
-    }
-
-    const html = await res.text();
-    const live = extractDraftsFromHtml(html, portal);
-    if (live.length === 0) {
-      warnings.push(
-        `${portal.id}: HTML fetched but no listings parsed (likely SPA/bot wall) — using fallback`,
-      );
-      return { items: portal.fallback, warnings };
-    }
-
-    return { items: live, warnings };
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "fetch failed";
-    warnings.push(`${portal.id}: ${msg} — using fallback samples`);
-    return { items: portal.fallback, warnings };
-  } finally {
-    clearTimeout(timer);
-  }
+  const result = await fetchGenericSourceUrl({
+    sourceId: portal.id,
+    sourceName: portal.sourceName,
+    listUrl: portal.listUrl,
+  });
+  return { items: result.items, warnings: result.warnings };
 }
 
 function makePortalAdapter(portal: PortalConfig): AggregationAdapter {
@@ -187,74 +151,49 @@ export const htmlPortalAdapters: AggregationAdapter[] = PORTALS.map(makePortalAd
 
 const portalById = new Map(PORTALS.map((p) => [p.id, p]));
 
-/** Run a built-in portal adapter by id (realestate-com-kh, khmer24-property, …). */
+/** Run a built-in portal adapter by id. */
 export async function fetchKnownPortalAdapter(adapterId: string): Promise<{
   items: AggregatedDraft[];
   warnings: string[];
+  status: "ok" | "adapter_needed" | "fetch_error" | "blocked";
+  message: string | null;
 }> {
   const portal = portalById.get(adapterId);
   if (!portal) {
     return {
       items: [],
       warnings: [`Unknown portal adapter id: ${adapterId}`],
+      status: "adapter_needed",
+      message: "Unknown dedicated adapter",
     };
   }
-  return fetchPortal(portal);
+  const result = await fetchGenericSourceUrl({
+    sourceId: portal.id,
+    sourceName: portal.sourceName,
+    listUrl: portal.listUrl,
+  });
+  return {
+    items: result.items,
+    warnings: result.warnings,
+    status: result.status,
+    message: result.message,
+  };
 }
 
-/** Lightweight poll for registry URLs without a dedicated parser. No fallback samples. */
+/** @deprecated use fetchGenericSourceUrl from generic-fetch.ts */
 export async function fetchGenericPortalUrl(input: {
   sourceId: string;
   sourceName: string;
   listUrl: string;
-}): Promise<{
-  items: AggregatedDraft[];
-  warnings: string[];
-  adapterNeeded: boolean;
-}> {
-  const pseudo: PortalConfig = {
-    id: input.sourceId,
-    label: input.sourceName,
-    sourceName: input.sourceName,
-    listUrl: input.listUrl,
-    fallback: [],
+}) {
+  const result = await fetchGenericSourceUrl(input);
+  return {
+    items: result.items,
+    warnings: result.warnings,
+    adapterNeeded: result.adapterNeeded,
+    status: result.status,
+    message: result.message,
   };
-
-  const warnings: string[] = [];
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 8_000);
-
-  try {
-    const res = await fetch(input.listUrl, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": USER_AGENT,
-        Accept: "text/html,application/xhtml+xml",
-      },
-      redirect: "follow",
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      warnings.push(`${input.sourceId}: HTTP ${res.status}`);
-      return { items: [], warnings, adapterNeeded: true };
-    }
-
-    const html = await res.text();
-    const live = extractDraftsFromHtml(html, pseudo);
-    if (live.length === 0) {
-      warnings.push(
-        `${input.sourceId}: adapter needed — fetched HTML but no listing headings parsed`,
-      );
-      return { items: [], warnings, adapterNeeded: true };
-    }
-
-    return { items: live, warnings, adapterNeeded: false };
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "fetch failed";
-    warnings.push(`${input.sourceId}: ${msg}`);
-    return { items: [], warnings, adapterNeeded: true };
-  } finally {
-    clearTimeout(timer);
-  }
 }
+
+export { USER_AGENT, sanitizeDescription };

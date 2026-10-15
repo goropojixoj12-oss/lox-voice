@@ -52,13 +52,16 @@ curl -X POST http://127.0.0.1:43123/api/aggregations/sync \
   -H "Authorization: Bearer $AGGREGATION_SYNC_SECRET"
 ```
 
-- **Source registry:** `src/data/aggregation-sources.json` (773 URLs from Project catalog). Admin → **Market Feed → source registry** to enable/disable. Default: **19** top portal entry URLs; Facebook/Telegram/agencies off until later phases.
-- Sync polls **enabled portal** rows: dedicated HTML adapters for `realestate.com.kh` and `khmer24`; other enabled portals get a lightweight fetch (status `adapter_needed` when parse fails — no crash).
+- **Source registry:** `src/data/aggregation-sources.json` (773 URLs). All rows are **enabled by default**; disable per URL in Admin → **Market Feed → source registry** if needed.
+- **Connected** = registered in JSON + last sync status (`ok`, `adapter_needed`, `fetch_error`, `blocked`, `skipped`) — not a guarantee of live listings on every site.
+- Batched sync: **9 sources per cron run**, cursor in store (~86 runs for a full rotation). Query `?batchSize=12` or `?fullCycle=1` (admin; may timeout).
+- **18** dedicated portal adapters (realestate.com.kh, khmer24, FazWaz, BongThom, DotProperty, …) plus generic HTML/RSS/JSON-LD heuristics for other portals and agencies. **No fake fallback listings.**
+- Facebook/Telegram rows sync to status `blocked` (manual import / future API only).
 - Dedupes by `externalId` or hash of `title|price|location`.
 - Rate-limited. Set `AGGREGATION_SYNC_SECRET` (or Vercel `CRON_SECRET`) for cron/webhook auth without a browser session.
-- **Automatic sync (every 1 minute, UTC):**
-  - **Netlify (primary):** `netlify/functions/aggregation-sync-scheduled.ts` → `GET /api/aggregations/sync` with `Authorization: Bearer …` on schedule `* * * * *` (Netlify’s minimum interval).
-  - **Vercel:** `vercel.json` cron same path (`* * * * *`) when secrets are set. **Hobby** plans only allow once-per-day crons — use Netlify, upgrade to Pro/Enterprise, or an external scheduler calling GET/POST with Bearer secret.
+- **Automatic sync (every 20 minutes, UTC):**
+  - **Netlify (primary):** `netlify/functions/aggregation-sync-scheduled.ts` → `GET /api/aggregations/sync` with `Authorization: Bearer …`.
+  - **Vercel:** `vercel.json` cron `*/20 * * * *` when secrets are set. **Hobby** plans only allow once-per-day crons — use Netlify, upgrade to Pro/Enterprise, or an external scheduler.
   - Locally: **Sync now** in Admin → Market Feed or curl POST/GET above.
 - Regenerate catalog JSON: `node scripts/build-aggregation-sources.mjs` (reads Project store markdown).
 - First visit to Market Feed auto-seeds **only the demo adapter** if the store is empty. Full sync runs registry portals.

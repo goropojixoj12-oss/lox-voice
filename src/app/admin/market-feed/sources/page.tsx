@@ -23,8 +23,10 @@ export default async function AdminMarketFeedSourcesPage() {
             Source registry
           </h1>
           <p className="mt-2 max-w-3xl text-sm text-[var(--color-muted)]">
-            {sources.length} catalog URLs ({portals} portals). {enabled} enabled for sync — default
-            is ~19 top portal entry points; Facebook/Telegram stay off until manual/API import.
+            {sources.length} catalog URLs ({portals} portals). {enabled} enabled — batched cron polls{" "}
+            ~12 sources per run (portals + agencies). Facebook/Telegram show{" "}
+            <span className="text-[var(--color-accent-soft)]">blocked</span> until API/manual import;
+            &quot;connected&quot; means registered + last sync status, not guaranteed live listings.
             Back to{" "}
             <Link href="/admin/market-feed" className="text-[var(--color-accent)] hover:underline">
               listings

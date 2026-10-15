@@ -14,6 +14,12 @@ export type SyncSummary = {
   adaptersRun: string[];
   sourcesRun: string[];
   sourcesAttempted: number;
+  batchSize?: number;
+  syncCursor?: {
+    nextIndex: number;
+    totalEnabled: number;
+    updatedAt: string;
+  };
   fetched: number;
   created: number;
   updated: number;
@@ -57,6 +63,9 @@ export async function runAggregationSync(options?: {
   adapterIds?: string[];
   /** When false, skip registry portal polling (demo-only seed). */
   includeRegistry?: boolean;
+  batchSize?: number;
+  /** Process all enabled registry rows in one run (may exceed serverless timeout). */
+  fullCycle?: boolean;
 }): Promise<SyncSummary> {
   const includeRegistry = options?.includeRegistry !== false;
   const onlyDemo =
@@ -71,6 +80,8 @@ export async function runAggregationSync(options?: {
   const adaptersRun: string[] = [];
   let sourcesRun: string[] = [];
   let sourcesAttempted = 0;
+  let registryBatchSize: number | undefined;
+  let syncCursor: SyncSummary["syncCursor"];
 
   if (onlyDemo) {
     const demo = aggregationAdapters.find((a) => a.id === "demo");
@@ -95,9 +106,14 @@ export async function runAggregationSync(options?: {
 
     if (includeRegistry) {
       try {
-        const registry = await syncEnabledRegistryPortals();
+        const registry = await syncEnabledRegistryPortals({
+          batchSize: options?.batchSize,
+          fullCycle: options?.fullCycle,
+        });
         sourcesAttempted = registry.sourcesAttempted;
         sourcesRun = registry.sourcesRun;
+        registryBatchSize = registry.batchSize;
+        syncCursor = registry.cursor;
         drafts.push(...registry.drafts);
         warnings.push(...registry.warnings);
       } catch (err) {
@@ -191,6 +207,8 @@ export async function runAggregationSync(options?: {
     adaptersRun,
     sourcesRun,
     sourcesAttempted,
+    batchSize: registryBatchSize,
+    syncCursor,
     fetched: drafts.length,
     created,
     updated,

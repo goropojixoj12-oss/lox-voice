@@ -155,9 +155,35 @@ export type AggregationSourceOverride = { enabled: boolean };
 export type AggregationSourceRuntimeRow = {
   lastRun: string | null;
   itemsFetched: number;
-  status: "idle" | "ok" | "error" | "adapter_needed" | "skipped";
+  status:
+    | "idle"
+    | "ok"
+    | "error"
+    | "adapter_needed"
+    | "fetch_error"
+    | "blocked"
+    | "skipped";
   message: string | null;
 };
+
+const SYNC_CURSOR_FILE = "aggregation-sync-cursor.json";
+
+export type AggregationSyncCursorRow = {
+  nextIndex: number;
+  totalEnabled: number;
+  updatedAt: string;
+};
+
+export async function getAggregationSyncCursor(): Promise<AggregationSyncCursorRow | null> {
+  const row = await readJson<AggregationSyncCursorRow | null>(SYNC_CURSOR_FILE, null);
+  return row;
+}
+
+export async function saveAggregationSyncCursor(
+  cursor: AggregationSyncCursorRow,
+): Promise<void> {
+  await writeJson(SYNC_CURSOR_FILE, cursor);
+}
 
 export async function getAggregationSourceOverrides(): Promise<
   Record<string, AggregationSourceOverride>

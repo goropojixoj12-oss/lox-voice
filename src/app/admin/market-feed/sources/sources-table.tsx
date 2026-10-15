@@ -17,6 +17,8 @@ function statusBadge(status: AggregationSourceView["runtime"]["status"]) {
     ok: "bg-emerald-950/60 text-emerald-300",
     error: "bg-red-950/60 text-red-300",
     adapter_needed: "bg-amber-950/60 text-amber-200",
+    fetch_error: "bg-red-950/50 text-red-200",
+    blocked: "bg-violet-950/50 text-violet-200",
     skipped: "bg-[var(--color-secondary)] text-[var(--color-muted)]",
   };
   return (
