@@ -3,8 +3,11 @@ import { fetchKnownPortalAdapter } from "../adapters/html-portal";
 import { fetchGenericSourceUrl } from "../adapters/generic-fetch";
 import type { AggregationSourceCatalogEntry, AggregationSourceStatus } from "./types";
 import {
-  DEFAULT_SYNC_BATCH_SIZE,
   getEnabledSourcesForSync,
+  mapWithConcurrency,
+  resolveSyncBatchSize,
+  resolveSyncFetchConcurrency,
+  resolveSyncMaxDurationMs,
   sliceBatch,
   type SyncCursor,
 } from "./sync-batch";
@@ -65,13 +68,13 @@ export async function syncEnabledRegistryPortals(options?: {
 }): Promise<RegistrySyncResult> {
   const batchSize = options?.fullCycle
     ? Number.MAX_SAFE_INTEGER
-    : (options?.batchSize ?? DEFAULT_SYNC_BATCH_SIZE);
+    : resolveSyncBatchSize(options?.batchSize);
 
   const allEnabled = await getEnabledSourcesForSync();
   const stored = await getAggregationSyncCursor();
   const startIndex = stored?.nextIndex ?? 0;
 
-  const { batch, nextIndex } = options?.fullCycle
+  const { batch, nextIndex: plannedNextIndex } = options?.fullCycle
     ? { batch: allEnabled, nextIndex: 0 }
     : sliceBatch(allEnabled, startIndex, batchSize);
 
@@ -81,45 +84,71 @@ export async function syncEnabledRegistryPortals(options?: {
   const adapterHostsRun = new Set<string>();
   const genericHostsRun = new Set<string>();
 
-  for (const source of batch) {
-    sourcesRun.push(source.id);
-    const now = new Date().toISOString();
+  const startedAt = Date.now();
+  const maxDurationMs = resolveSyncMaxDurationMs();
+  const concurrency = resolveSyncFetchConcurrency();
+  let processedCount = 0;
 
-    const social = socialStatus(source.type);
-    if (social) {
-      await saveAggregationSourceRuntime(source.id, {
-        lastRun: now,
-        itemsFetched: 0,
-        status: social.status,
-        message: social.message,
-      });
-      continue;
-    }
+  const withinBudget = () => Date.now() - startedAt < maxDurationMs;
 
-    try {
-      const result = await syncOnePollableSource(source, adapterHostsRun, genericHostsRun);
-      drafts.push(...result.items);
-      warnings.push(...result.warnings);
-      await saveAggregationSourceRuntime(source.id, {
-        lastRun: now,
-        itemsFetched: result.items.length,
-        status: result.status,
-        message: result.message,
-      });
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "sync failed";
-      warnings.push(`${source.id}: ${msg}`);
-      await saveAggregationSourceRuntime(source.id, {
-        lastRun: now,
-        itemsFetched: 0,
-        status: "fetch_error",
-        message: msg,
-      });
-    }
+  await mapWithConcurrency(
+    batch,
+    concurrency,
+    async (source) => {
+      if (!withinBudget()) {
+        return;
+      }
+      processedCount += 1;
+      sourcesRun.push(source.id);
+      const now = new Date().toISOString();
+
+      const social = socialStatus(source.type);
+      if (social) {
+        await saveAggregationSourceRuntime(source.id, {
+          lastRun: now,
+          itemsFetched: 0,
+          status: social.status,
+          message: social.message,
+        });
+        return;
+      }
+
+      try {
+        const result = await syncOnePollableSource(source, adapterHostsRun, genericHostsRun);
+        drafts.push(...result.items);
+        warnings.push(...result.warnings);
+        await saveAggregationSourceRuntime(source.id, {
+          lastRun: now,
+          itemsFetched: result.items.length,
+          status: result.status,
+          message: result.message,
+        });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "sync failed";
+        warnings.push(`${source.id}: ${msg}`);
+        await saveAggregationSourceRuntime(source.id, {
+          lastRun: now,
+          itemsFetched: 0,
+          status: "fetch_error",
+          message: msg,
+        });
+      }
+    },
+    withinBudget,
+  );
+
+  if (processedCount < batch.length && !options?.fullCycle) {
+    warnings.push(
+      `Stopped after ${processedCount}/${batch.length} sources (${maxDurationMs}ms budget)`,
+    );
   }
 
+  const nextIndex = options?.fullCycle
+    ? 0
+    : (startIndex + processedCount) % (allEnabled.length || 1);
+
   const cursor: SyncCursor = {
-    nextIndex,
+    nextIndex: options?.fullCycle ? plannedNextIndex : nextIndex,
     totalEnabled: allEnabled.length,
     updatedAt: new Date().toISOString(),
   };
@@ -128,7 +157,7 @@ export async function syncEnabledRegistryPortals(options?: {
   }
 
   return {
-    sourcesAttempted: batch.length,
+    sourcesAttempted: processedCount,
     drafts,
     warnings,
     sourcesRun,

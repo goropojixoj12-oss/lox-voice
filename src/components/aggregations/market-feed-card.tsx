@@ -24,7 +24,10 @@ export function MarketFeedCard({
   const admin = showAdminMeta && isAdminListing(listing);
 
   return (
-    <article className="seaps-card group flex w-full flex-row items-stretch gap-3 overflow-hidden rounded-[var(--radius-lg)] p-3 transition hover:border-[rgba(240,215,140,0.75)] sm:gap-4 sm:p-4">
+    <article
+      data-market-feed-card="row"
+      className="market-feed-row seaps-card group flex w-full max-w-none flex-row items-stretch gap-3 overflow-hidden rounded-[var(--radius-lg)] p-3 transition hover:border-[rgba(240,215,140,0.75)] sm:gap-4 sm:p-4"
+    >
       <Link
         href={href}
         className="relative h-auto w-[104px] shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-mist)] sm:w-[140px] md:w-[180px]"
@@ -130,7 +133,10 @@ export function MarketFeedGrid({
   showAdminMeta?: boolean;
 }) {
   return (
-    <div className="flex w-full max-w-none flex-col gap-4 sm:gap-5">
+    <div
+      data-market-feed-layout="horizontal-list"
+      className="market-feed-list flex w-full max-w-none flex-col gap-4 sm:gap-5"
+    >
       {items.map((listing) => (
         <MarketFeedCard
           key={listing.id}

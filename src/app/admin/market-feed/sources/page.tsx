@@ -23,8 +23,10 @@ export default async function AdminMarketFeedSourcesPage() {
             Source registry
           </h1>
           <p className="mt-2 max-w-3xl text-sm text-[var(--color-muted)]">
-            {sources.length} catalog URLs ({portals} portals). {enabled} enabled — batched cron polls{" "}
-            ~12 sources per run (portals + agencies). Facebook/Telegram show{" "}
+            {sources.length} catalog URLs ({portals} portals). {enabled} enabled — batched cron polls
+            ~24 sources per run (parallel fetches, 52s cap). At a 5-minute Vercel cron that is
+            roughly ~2.5 hours for a full rotation of all enabled URLs; Hobby may run less often.
+            Facebook/Telegram show{" "}
             <span className="text-[var(--color-accent-soft)]">blocked</span> until API/manual import;
             &quot;connected&quot; means registered + last sync status, not guaranteed live listings.
             Back to{" "}
