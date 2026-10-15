@@ -8,10 +8,14 @@ import { clientKey, rateLimit } from "@/lib/rate-limit";
  * Admin session OR `Authorization: Bearer $AGGREGATION_SYNC_SECRET` (for cron).
  */
 async function authorize(request: Request): Promise<boolean> {
-  const secret = process.env.AGGREGATION_SYNC_SECRET;
-  if (secret) {
-    const auth = request.headers.get("authorization");
-    if (auth === `Bearer ${secret}`) return true;
+  const auth = request.headers.get("authorization");
+  const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
+  if (bearer) {
+    const secrets = [
+      process.env.AGGREGATION_SYNC_SECRET,
+      process.env.CRON_SECRET,
+    ].filter(Boolean) as string[];
+    if (secrets.some((s) => bearer === s)) return true;
   }
   const session = await requireRole(["admin"]);
   return Boolean(session);

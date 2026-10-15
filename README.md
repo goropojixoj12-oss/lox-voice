@@ -54,7 +54,11 @@ curl -X POST http://127.0.0.1:43123/api/aggregations/sync \
 
 - Adapters: **demo** (always seeds sample Cambodia listings), plus soft HTML polls for `realestate.com.kh` and `khmer24` property paths (fallback samples when blocked/SPA).
 - Dedupes by `externalId` or hash of `title|price|location`.
-- Rate-limited. Set `AGGREGATION_SYNC_SECRET` for cron/webhook auth without a browser session.
+- Rate-limited. Set `AGGREGATION_SYNC_SECRET` (or Vercel `CRON_SECRET`) for cron/webhook auth without a browser session.
+- **Automatic sync (every 1 minute, UTC):**
+  - **Netlify (primary):** `netlify/functions/aggregation-sync-scheduled.ts` calls `GET /api/aggregations/sync` with `Authorization: Bearer …` on schedule `* * * * *`. Set `AGGREGATION_SYNC_SECRET` (or `CRON_SECRET`) in site env. Runs on published production deploys only.
+  - **Vercel:** `vercel.json` cron hits the same path every minute when `CRON_SECRET` or `AGGREGATION_SYNC_SECRET` is set. **Hobby** plans only allow once-per-day crons — use Netlify, upgrade to Pro, or an external scheduler (e.g. cron-job.org) calling GET/POST with Bearer secret.
+  - Locally, use **Sync now** in Admin → Market Feed or curl POST/GET above.
 - First visit to Market Feed auto-seeds the demo adapter if the store is empty (`.data/aggregated-listings.json` or `/tmp/seaps-data`).
 
 ### Facebook / Telegram
@@ -68,4 +72,8 @@ We do not scrape private messages or bypass platform login walls.
 
 ## Deploy
 
-Connect the GitHub repository to Vercel, then add your custom domain (for example `vps1.store`) in Vercel → Settings → Domains.
+**Netlify (recommended):** Connect the GitHub repo, build command `npm run build`, env `AGGREGATION_SYNC_SECRET`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`. Scheduled sync: `netlify.toml` + `netlify/functions/`.
+
+**Vercel (optional):** Same env vars; `vercel.json` registers the 1-minute cron on Pro/Enterprise.
+
+Add your custom domain (for example `vps1.store`) in the host’s domain settings.
