@@ -1,6 +1,6 @@
 /**
  * Local smoke test: run one aggregation sync (filesystem storage).
- * Usage: node scripts/run-aggregation-sync.mjs [--demo-only]
+ * Usage: npx tsx scripts/run-aggregation-sync.mjs [--demo-only]
  */
 import { pathToFileURL } from "node:url";
 import path from "node:path";

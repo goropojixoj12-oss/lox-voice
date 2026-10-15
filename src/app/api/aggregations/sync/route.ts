@@ -11,7 +11,9 @@ import {
  * Pull from registered adapters (demo + public HTML portals), dedupe, store.
  * Admin session OR `Authorization: Bearer $AGGREGATION_SYNC_SECRET` (for cron).
  */
-async function authorize(request: Request): Promise<boolean> {
+type SyncAuth = { ok: true; viaAdminSession: boolean } | { ok: false };
+
+async function authorize(request: Request): Promise<SyncAuth> {
   const auth = request.headers.get("authorization");
   const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
   if (bearer) {
@@ -19,15 +21,22 @@ async function authorize(request: Request): Promise<boolean> {
       process.env.AGGREGATION_SYNC_SECRET,
       process.env.CRON_SECRET,
     ].filter(Boolean) as string[];
-    if (secrets.some((s) => bearer === s)) return true;
+    if (secrets.some((s) => bearer === s)) return { ok: true, viaAdminSession: false };
   }
   const session = await requireRole(["admin"]);
-  return Boolean(session);
+  if (session) return { ok: true, viaAdminSession: true };
+  return { ok: false };
 }
 
 async function handle(request: Request) {
+  const auth = await authorize(request);
+  if (!auth.ok) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const limited = rateLimit(clientKey(request, "agg-sync"), {
-    limit: 8,
+    // Admin “full import” loops many batches from the browser; cron stays tight.
+    limit: auth.viaAdminSession ? 120 : 8,
     windowMs: 60_000,
   });
   if (!limited.ok) {
@@ -35,10 +44,6 @@ async function handle(request: Request) {
       { error: "Rate limited", retryAfterSec: limited.retryAfterSec },
       { status: 429, headers: { "Retry-After": String(limited.retryAfterSec) } },
     );
-  }
-
-  if (!(await authorize(request))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const url = new URL(request.url);
