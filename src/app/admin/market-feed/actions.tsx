@@ -19,7 +19,11 @@ function formatSyncMessage(data: AggregationSyncResponse): string {
     data.adaptersRun && data.adaptersRun.length > 0
       ? ` · adapters: ${data.adaptersRun.length}`
       : "";
-  return `Synced: fetched ${data.fetched ?? 0}, +${data.created ?? 0} new, ${data.updated ?? 0} updated → ${data.total ?? 0} total · ${data.sourcesAttempted ?? 0} registry source(s)${adapters}${backend}${warnPreview}`;
+  const filtered =
+    data.skippedNonRe && data.skippedNonRe > 0
+      ? ` · ${data.skippedNonRe} non-RE filtered at ingest`
+      : "";
+  return `Synced: fetched ${data.fetched ?? 0}, +${data.created ?? 0} new, ${data.updated ?? 0} updated → ${data.total ?? 0} total${filtered} · ${data.sourcesAttempted ?? 0} registry source(s)${adapters}${backend}${warnPreview}`;
 }
 
 export function AdminMarketFeedActions() {

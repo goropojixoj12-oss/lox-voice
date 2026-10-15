@@ -62,6 +62,13 @@ export default async function AdminMarketFeedPage() {
             Without that, cron sync and imports do not accumulate across serverless instances.
           </p>
         ) : null}
+        <p className="max-w-3xl rounded-md border border-[var(--color-border)] bg-[var(--color-secondary)]/40 px-3 py-2 text-[var(--color-muted)]">
+          <strong className="text-[var(--color-accent-soft)]">Ingest filter:</strong> sync and
+          imports drop jobs, vehicles, phones, and similar junk before save (same rules as{" "}
+          <em>Remove non-RE listings</em>). See{" "}
+          <code className="text-[var(--color-accent-soft)]">docs/market-feed-ingest-filters.md</code>
+          .
+        </p>
         {syncMeta ? (
           <p>
             Last sync:{" "}
@@ -74,7 +81,11 @@ export default async function AdminMarketFeedPage() {
               <>
                 {" "}
                 · +{syncMeta.lastCreated} new, {syncMeta.lastUpdated} updated → {syncMeta.lastTotal}{" "}
-                total · {syncMeta.lastSourcesAttempted} source(s) polled
+                total
+                {(syncMeta.lastSkippedNonRe ?? 0) > 0
+                  ? ` · ${syncMeta.lastSkippedNonRe} non-RE skipped at ingest`
+                  : ""}{" "}
+                · {syncMeta.lastSourcesAttempted} source(s) polled
               </>
             )}
             {syncMeta.lastWarnings.length > 0 ? (

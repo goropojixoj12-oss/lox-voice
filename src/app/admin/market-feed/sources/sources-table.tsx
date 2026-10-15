@@ -25,7 +25,8 @@ const STATUS_HINT: Partial<Record<AggregationSourceView["runtime"]["status"], st
   idle:
     "Source is turned on for batched sync; no poll has finished yet (not the same as turned off).",
   blocked: "Social/monitoring URL — automated poll is not available.",
-  skipped: "Monitoring-only URL — no automated scrape.",
+  skipped:
+    "Not polled — monitoring-only URL or non–real-estate list path (ingest filter).",
 };
 
 function statusBadge(status: AggregationSourceView["runtime"]["status"]) {
@@ -246,7 +247,17 @@ export function AdminSourcesTable({ initialSources, onEnabledCountChange }: Prop
                     ? new Date(s.runtime.lastRun).toLocaleString("en-GB")
                     : "—"}
                 </td>
-                <td className="px-3 py-2 align-top tabular-nums">{s.runtime.itemsFetched}</td>
+                <td className="px-3 py-2 align-top tabular-nums">
+                  {s.runtime.itemsFetched}
+                  {(s.runtime.itemsSkippedNonRe ?? 0) > 0 ? (
+                    <span
+                      className="ml-1 text-xs text-[var(--color-muted)]"
+                      title="Non–real-estate headlines rejected at ingest"
+                    >
+                      (+{s.runtime.itemsSkippedNonRe} filtered)
+                    </span>
+                  ) : null}
+                </td>
                 <td className="px-3 py-2 align-top">{statusBadge(s.runtime.status)}</td>
               </tr>
             ))}

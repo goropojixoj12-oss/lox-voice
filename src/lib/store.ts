@@ -121,6 +121,7 @@ export type { AggregationSourceOverride } from "@/lib/aggregations/sources/enabl
 export type AggregationSourceRuntimeRow = {
   lastRun: string | null;
   itemsFetched: number;
+  itemsSkippedNonRe?: number;
   status:
     | "idle"
     | "ok"
@@ -203,6 +204,7 @@ export type AggregationSyncMeta = {
   lastCreated: number;
   lastUpdated: number;
   lastFetched: number;
+  lastSkippedNonRe?: number;
   lastTotal: number;
   lastSourcesAttempted: number;
   lastWarnings: string[];

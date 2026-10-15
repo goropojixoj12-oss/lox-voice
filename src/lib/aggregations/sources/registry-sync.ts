@@ -1,4 +1,5 @@
 import type { AggregatedDraft } from "../adapters/types";
+import { shouldSkipRegistrySourceUrl } from "../ingest-filter";
 import { fetchKnownPortalAdapter } from "../adapters/html-portal";
 import { fetchGenericSourceUrl } from "../adapters/generic-fetch";
 import type { AggregationSourceCatalogEntry, AggregationSourceStatus } from "./types";
@@ -20,6 +21,8 @@ import {
 export type RegistrySyncResult = {
   sourcesAttempted: number;
   drafts: AggregatedDraft[];
+  /** Headlines rejected at parse time before entering the sync merge. */
+  skippedNonRe: number;
   warnings: string[];
   sourcesRun: string[];
   batchSize: number;
@@ -80,6 +83,7 @@ export async function syncEnabledRegistryPortals(options?: {
 
   const drafts: AggregatedDraft[] = [];
   const warnings: string[] = [];
+  let skippedNonRe = 0;
   const sourcesRun: string[] = [];
   const adapterHostsRun = new Set<string>();
   const genericHostsRun = new Set<string>();
@@ -114,12 +118,26 @@ export async function syncEnabledRegistryPortals(options?: {
       }
 
       try {
+        if (shouldSkipRegistrySourceUrl(source.url)) {
+          warnings.push(`${source.id}: skipped — list URL matches non–real-estate path filter`);
+          await saveAggregationSourceRuntime(source.id, {
+            lastRun: now,
+            itemsFetched: 0,
+            itemsSkippedNonRe: 0,
+            status: "skipped",
+            message: "Non–real-estate URL path — not polled (ingest filter)",
+          });
+          return;
+        }
+
         const result = await syncOnePollableSource(source, adapterHostsRun, genericHostsRun);
         drafts.push(...result.items);
+        skippedNonRe += result.skippedNonRe;
         warnings.push(...result.warnings);
         await saveAggregationSourceRuntime(source.id, {
           lastRun: now,
           itemsFetched: result.items.length,
+          itemsSkippedNonRe: result.skippedNonRe,
           status: result.status,
           message: result.message,
         });
@@ -159,6 +177,7 @@ export async function syncEnabledRegistryPortals(options?: {
   return {
     sourcesAttempted: processedCount,
     drafts,
+    skippedNonRe,
     warnings,
     sourcesRun,
     batchSize,
@@ -173,6 +192,7 @@ async function syncOnePollableSource(
 ): Promise<{
   items: AggregatedDraft[];
   warnings: string[];
+  skippedNonRe: number;
   status: AggregationSourceStatus;
   message: string | null;
 }> {
@@ -181,19 +201,23 @@ async function syncOnePollableSource(
       return {
         items: [],
         warnings: [`${source.id}: adapter ${source.adapterId} already ran this cycle`],
+        skippedNonRe: 0,
         status: "ok",
         message: "Deduped — same dedicated adapter as another enabled URL",
       };
     }
     adapterHostsRun.add(source.adapterId);
     const dedicated = await fetchKnownPortalAdapter(source.adapterId);
+    const skippedNonRe = dedicated.skippedNonRe ?? 0;
+    const status =
+      dedicated.status === "ok" && dedicated.items.length === 0 && skippedNonRe === 0
+        ? "adapter_needed"
+        : dedicated.status;
     return {
       items: dedicated.items,
       warnings: dedicated.warnings,
-      status:
-        dedicated.status === "ok" && dedicated.items.length === 0
-          ? "adapter_needed"
-          : dedicated.status,
+      skippedNonRe,
+      status,
       message: dedicated.message,
     };
   }
@@ -203,6 +227,7 @@ async function syncOnePollableSource(
     return {
       items: [],
       warnings: [`${source.id}: host ${host} already polled this cycle`],
+      skippedNonRe: 0,
       status: "ok",
       message: "Deduped — same hostname as another enabled URL this batch",
     };
@@ -215,10 +240,17 @@ async function syncOnePollableSource(
     listUrl: source.url,
   });
 
+  const skippedNonRe = generic.skippedNonRe;
+  const status =
+    generic.status === "ok" && generic.items.length === 0 && skippedNonRe === 0
+      ? "adapter_needed"
+      : generic.status;
+
   return {
     items: generic.items,
     warnings: generic.warnings,
-    status: generic.status,
+    skippedNonRe,
+    status,
     message: generic.message,
   };
 }

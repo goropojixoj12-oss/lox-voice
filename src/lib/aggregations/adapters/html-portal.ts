@@ -155,6 +155,7 @@ const portalById = new Map(PORTALS.map((p) => [p.id, p]));
 export async function fetchKnownPortalAdapter(adapterId: string): Promise<{
   items: AggregatedDraft[];
   warnings: string[];
+  skippedNonRe: number;
   status: "ok" | "adapter_needed" | "fetch_error" | "blocked";
   message: string | null;
 }> {
@@ -163,6 +164,7 @@ export async function fetchKnownPortalAdapter(adapterId: string): Promise<{
     return {
       items: [],
       warnings: [`Unknown portal adapter id: ${adapterId}`],
+      skippedNonRe: 0,
       status: "adapter_needed",
       message: "Unknown dedicated adapter",
     };
@@ -175,6 +177,7 @@ export async function fetchKnownPortalAdapter(adapterId: string): Promise<{
   return {
     items: result.items,
     warnings: result.warnings,
+    skippedNonRe: result.skippedNonRe,
     status: result.status,
     message: result.message,
   };
@@ -191,6 +194,7 @@ export async function fetchGenericPortalUrl(input: {
     items: result.items,
     warnings: result.warnings,
     adapterNeeded: result.adapterNeeded,
+    skippedNonRe: result.skippedNonRe,
     status: result.status,
     message: result.message,
   };

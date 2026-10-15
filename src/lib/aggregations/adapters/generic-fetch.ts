@@ -1,4 +1,6 @@
 import { photoUrl } from "@/lib/media";
+import { draftToRelevanceInput } from "@/lib/aggregations/ingest-filter";
+import { shouldRejectListingAtIngest } from "@/lib/aggregations/relevance";
 import { sanitizeDescription } from "@/lib/aggregations/sanitize";
 import type { AggregatedDraft } from "./types";
 
@@ -10,6 +12,8 @@ const FETCH_TIMEOUT_MS = 6_000;
 export type GenericFetchOutcome = {
   items: AggregatedDraft[];
   warnings: string[];
+  /** Listings dropped by ingest RE filter (jobs, cars, phones, etc.). */
+  skippedNonRe: number;
   /** When true, a dedicated site parser would help (empty or weak parse). */
   adapterNeeded: boolean;
   /** ok | fetch_error | blocked | adapter_needed */
@@ -54,9 +58,15 @@ function draftFromTitle(
   };
 }
 
-function extractFromHtml(html: string, sourceName: string, listUrl: string, sourceId: string): AggregatedDraft[] {
+function extractFromHtml(
+  html: string,
+  sourceName: string,
+  listUrl: string,
+  sourceId: string,
+): { items: AggregatedDraft[]; skippedNonRe: number } {
   const drafts: AggregatedDraft[] = [];
   const seen = new Set<string>();
+  let skippedNonRe = 0;
 
   const pushTitle = (raw: string, extra?: Partial<AggregatedDraft>) => {
     const t = raw.replace(/\s+/g, " ").trim();
@@ -64,9 +74,12 @@ function extractFromHtml(html: string, sourceName: string, listUrl: string, sour
     const key = t.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
-    drafts.push(
-      draftFromTitle(t, sourceName, listUrl, sourceId, drafts.length, extra),
-    );
+    const draft = draftFromTitle(t, sourceName, listUrl, sourceId, drafts.length, extra);
+    if (shouldRejectListingAtIngest(draftToRelevanceInput(draft))) {
+      skippedNonRe += 1;
+      return;
+    }
+    drafts.push(draft);
   };
 
   // JSON-LD Product / RealEstateListing / Offer
@@ -127,25 +140,34 @@ function extractFromHtml(html: string, sourceName: string, listUrl: string, sour
     }
   }
 
-  return drafts.slice(0, 8);
+  return { items: drafts.slice(0, 8), skippedNonRe };
 }
 
-function extractFromRss(xml: string, sourceName: string, feedUrl: string, sourceId: string): AggregatedDraft[] {
+function extractFromRss(
+  xml: string,
+  sourceName: string,
+  feedUrl: string,
+  sourceId: string,
+): { items: AggregatedDraft[]; skippedNonRe: number } {
   const drafts: AggregatedDraft[] = [];
+  let skippedNonRe = 0;
   const itemRe = /<item[\s\S]*?<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>[\s\S]*?(?:<link>([^<]+)<\/link>)?[\s\S]*?<\/item>/gi;
   let m: RegExpExecArray | null;
   while ((m = itemRe.exec(xml)) !== null && drafts.length < 10) {
     const title = m[1].replace(/<[^>]+>/g, "").trim();
     const link = m[2]?.trim() || feedUrl;
     if (title.length >= 8) {
-      drafts.push(
-        draftFromTitle(title, sourceName, link, sourceId, drafts.length, {
-          description: `RSS item from ${sourceName}.`,
-        }),
-      );
+      const draft = draftFromTitle(title, sourceName, link, sourceId, drafts.length, {
+        description: `RSS item from ${sourceName}.`,
+      });
+      if (shouldRejectListingAtIngest(draftToRelevanceInput(draft))) {
+        skippedNonRe += 1;
+        continue;
+      }
+      drafts.push(draft);
     }
   }
-  return drafts;
+  return { items: drafts, skippedNonRe };
 }
 
 async function fetchText(url: string, signal: AbortSignal): Promise<{ ok: boolean; status: number; text: string }> {
@@ -202,6 +224,7 @@ export async function fetchGenericSourceUrl(input: {
       const blocked = primary.status === 403 || primary.status === 429;
       return {
         items: [],
+        skippedNonRe: 0,
         warnings: [`${input.sourceId}: HTTP ${primary.status}`],
         adapterNeeded: !blocked,
         status: blocked ? "blocked" : "fetch_error",
@@ -214,6 +237,7 @@ export async function fetchGenericSourceUrl(input: {
     if (looksBlocked(primary.text, primary.status)) {
       return {
         items: [],
+        skippedNonRe: 0,
         warnings: [`${input.sourceId}: bot wall or captcha detected`],
         adapterNeeded: true,
         status: "blocked",
@@ -221,7 +245,14 @@ export async function fetchGenericSourceUrl(input: {
       };
     }
 
-    let items = extractFromHtml(primary.text, input.sourceName, input.listUrl, input.sourceId);
+    let htmlExtract = extractFromHtml(
+      primary.text,
+      input.sourceName,
+      input.listUrl,
+      input.sourceId,
+    );
+    let items = htmlExtract.items;
+    let skippedNonRe = htmlExtract.skippedNonRe;
 
     if (items.length === 0) {
       const feeds = discoverFeedUrls(primary.text, input.listUrl);
@@ -230,7 +261,14 @@ export async function fetchGenericSourceUrl(input: {
         try {
           const feed = await fetchText(feedUrl, controller.signal);
           if (feed.ok && feed.text.includes("<item")) {
-            items = extractFromRss(feed.text, input.sourceName, feedUrl, input.sourceId);
+            const rssExtract = extractFromRss(
+              feed.text,
+              input.sourceName,
+              feedUrl,
+              input.sourceId,
+            );
+            items = rssExtract.items;
+            skippedNonRe += rssExtract.skippedNonRe;
             if (items.length > 0) {
               warnings.push(`${input.sourceId}: parsed ${items.length} item(s) from RSS`);
             }
@@ -241,9 +279,23 @@ export async function fetchGenericSourceUrl(input: {
       }
     }
 
+    if (items.length === 0 && skippedNonRe > 0) {
+      return {
+        items: [],
+        skippedNonRe,
+        warnings: [
+          `${input.sourceId}: ingest filter rejected ${skippedNonRe} non–real-estate headline(s)`,
+        ],
+        adapterNeeded: false,
+        status: "ok",
+        message: `Ingest filter: ${skippedNonRe} non–real-estate item(s) skipped (not adapter needed)`,
+      };
+    }
+
     if (items.length === 0) {
       return {
         items: [],
+        skippedNonRe: 0,
         warnings: [
           `${input.sourceId}: adapter needed — no listing headings, JSON-LD, or RSS items parsed`,
         ],
@@ -253,18 +305,26 @@ export async function fetchGenericSourceUrl(input: {
       };
     }
 
+    if (skippedNonRe > 0) {
+      warnings.push(
+        `${input.sourceId}: ingest filter skipped ${skippedNonRe} non–real-estate headline(s)`,
+      );
+    }
+
     return {
       items,
+      skippedNonRe,
       warnings,
       adapterNeeded: false,
       status: "ok",
-      message: null,
+      message: skippedNonRe > 0 ? `${skippedNonRe} non–real-estate headline(s) filtered at ingest` : null,
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "fetch failed";
     const isAbort = err instanceof Error && err.name === "AbortError";
     return {
       items: [],
+      skippedNonRe: 0,
       warnings: [`${input.sourceId}: ${msg}`],
       adapterNeeded: true,
       status: "fetch_error",

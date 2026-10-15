@@ -22,6 +22,39 @@ export function isDemoAggregatedListing(listing: AggregatedListing): boolean {
   );
 }
 
+/** Strong RE signals — weak words like "sale" alone are not enough at ingest. */
+const STRONG_INCLUDE_PATTERNS: RegExp[] = [
+  /\breal[\s-]?estate\b/i,
+  /\bproperty\b/i,
+  /\bproperties\b/i,
+  /\bapartment\b/i,
+  /\bcondo(?:minium)?\b/i,
+  /\bvilla\b/i,
+  /\btownhouse\b/i,
+  /\bshophouse\b/i,
+  /\bhouse\b/i,
+  /\bhome\b/i,
+  /\bland\b/i,
+  /\bplot\b/i,
+  /\bborey\b/i,
+  /\bwarehouse\b/i,
+  /\boffice\b/i,
+  /\bcommercial\b/i,
+  /\bretail\b/i,
+  /\bbedroom\b/i,
+  /\bbr\b/i,
+  /\bb\d+\/?\s*b\d*\b/i,
+  /\bsqm\b/i,
+  /\bm²\b/i,
+  /\bm2\b/i,
+  /\bផ្ទះ\b/u,
+  /\bដី\b/u,
+  /\bជួល\b/u,
+  /\bលក់\b/u,
+  /\bអាគារ\b/u,
+  /\bflat\b/i,
+];
+
 const INCLUDE_PATTERNS: RegExp[] = [
   /\breal[\s-]?estate\b/i,
   /\bproperty\b/i,
@@ -116,10 +149,34 @@ export type RealEstateRelevanceResult =
   | { keep: true; reason: string }
   | { keep: false; reason: string };
 
-function haystack(listing: AggregatedListing): string {
-  return [listing.title, listing.description, listing.location ?? "", listing.sourceUrl ?? "", listing.sourceName]
+/** Minimal fields used by ingest + prune classifiers. */
+export type ListingRelevanceInput = {
+  title: string;
+  description: string;
+  location?: string | null;
+  sourceUrl?: string | null;
+  sourceName: string;
+  propertyType?: PropertyType | null;
+  externalId?: string;
+};
+
+function haystackFromInput(input: ListingRelevanceInput): string {
+  return [
+    input.title,
+    input.description,
+    input.location ?? "",
+    input.sourceUrl ?? "",
+    input.sourceName,
+  ]
     .join(" ")
     .toLowerCase();
+}
+
+function isDemoRelevanceInput(input: ListingRelevanceInput): boolean {
+  return (
+    (input.externalId?.startsWith("demo:") ?? false) ||
+    (input.sourceUrl?.includes("example.local/demo") ?? false)
+  );
 }
 
 function matchesAny(text: string, patterns: RegExp[]): boolean {
@@ -129,19 +186,19 @@ function matchesAny(text: string, patterns: RegExp[]): boolean {
 /**
  * Conservative classifier: remove only when non-RE signals are clear and no RE signal overrides.
  */
-export function classifyRealEstateRelevance(
-  listing: AggregatedListing,
+export function classifyListingRelevance(
+  input: ListingRelevanceInput,
 ): RealEstateRelevanceResult {
-  if (isDemoAggregatedListing(listing)) {
+  if (isDemoRelevanceInput(input)) {
     return { keep: true, reason: "demo_seed" };
   }
 
-  if (listing.propertyType && RE_PROPERTY_TYPES.has(listing.propertyType)) {
+  if (input.propertyType && RE_PROPERTY_TYPES.has(input.propertyType)) {
     return { keep: true, reason: "property_type_set" };
   }
 
-  const url = listing.sourceUrl ?? "";
-  const text = haystack(listing);
+  const url = input.sourceUrl ?? "";
+  const text = haystackFromInput(input);
   const urlExclude = url ? matchesAny(url, URL_EXCLUDE_PATTERNS) : false;
   const urlInclude = url ? matchesAny(url, URL_INCLUDE_PATTERNS) : false;
   const textInclude = matchesAny(text, INCLUDE_PATTERNS);
@@ -160,6 +217,83 @@ export function classifyRealEstateRelevance(
   }
 
   return { keep: true, reason: "unclear_default_keep" };
+}
+
+export function classifyRealEstateRelevance(
+  listing: AggregatedListing,
+): RealEstateRelevanceResult {
+  if (isDemoAggregatedListing(listing)) {
+    return { keep: true, reason: "demo_seed" };
+  }
+  return classifyListingRelevance({
+    title: listing.title,
+    description: listing.description,
+    location: listing.location,
+    sourceUrl: listing.sourceUrl,
+    sourceName: listing.sourceName,
+    propertyType: listing.propertyType,
+    externalId: listing.externalId,
+  });
+}
+
+export function isRealEstateListing(input: ListingRelevanceInput): boolean {
+  return classifyListingRelevance(input).keep;
+}
+
+/**
+ * Stricter than prune: non-RE keyword hits reject unless property type, demo, RE URL,
+ * or strong RE keywords (not bare "for sale" / "rent" on a car/job/phone headline).
+ */
+export function classifyIngestRelevance(
+  input: ListingRelevanceInput,
+): RealEstateRelevanceResult {
+  if (isDemoRelevanceInput(input)) {
+    return { keep: true, reason: "demo_seed" };
+  }
+
+  if (input.propertyType && RE_PROPERTY_TYPES.has(input.propertyType)) {
+    return { keep: true, reason: "property_type_set" };
+  }
+
+  const url = input.sourceUrl ?? "";
+  const text = haystackFromInput(input);
+  const urlInclude = url ? matchesAny(url, URL_INCLUDE_PATTERNS) : false;
+  const urlExclude = url ? matchesAny(url, URL_EXCLUDE_PATTERNS) : false;
+  const strongInclude = matchesAny(text, STRONG_INCLUDE_PATTERNS);
+  const textExclude = matchesAny(text, EXCLUDE_PATTERNS);
+
+  if (urlInclude || strongInclude) {
+    return {
+      keep: true,
+      reason: urlInclude ? "url_re_signal" : "strong_text_re_signal",
+    };
+  }
+
+  if (urlExclude) {
+    return { keep: false, reason: "url_non_re_category" };
+  }
+
+  if (textExclude) {
+    return { keep: false, reason: "text_non_re_keywords" };
+  }
+
+  return classifyListingRelevance(input);
+}
+
+export function shouldRejectListingAtIngest(input: ListingRelevanceInput): boolean {
+  return !classifyIngestRelevance(input).keep;
+}
+
+/** Conservative reject check (same as prune). */
+export function shouldRejectListing(input: ListingRelevanceInput): boolean {
+  return !classifyListingRelevance(input).keep;
+}
+
+/** Registry list URLs that point at jobs/cars/etc. — skip fetch entirely. */
+export function isBlockedNonRealEstateListUrl(url: string): boolean {
+  if (!url.trim()) return false;
+  if (matchesAny(url, URL_INCLUDE_PATTERNS)) return false;
+  return matchesAny(url, URL_EXCLUDE_PATTERNS);
 }
 
 export function isRealEstateAggregatedListing(listing: AggregatedListing): boolean {

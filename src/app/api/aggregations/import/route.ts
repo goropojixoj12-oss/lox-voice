@@ -100,7 +100,7 @@ export async function POST(request: Request) {
     location,
   });
 
-  const result = await importAggregatedDraft({
+  const importResult = await importAggregatedDraft({
     title: data.title,
     description: sanitizeDescription(data.description),
     price,
@@ -115,8 +115,23 @@ export async function POST(request: Request) {
     externalId,
   });
 
+  if ("rejected" in importResult) {
+    return NextResponse.json(
+      {
+        error: "Listing rejected by ingest filter (not real estate)",
+        reason: importResult.reason,
+        hint: "Set propertyType to a RE type or include clear property keywords in title/description.",
+      },
+      { status: 422 },
+    );
+  }
+
   return NextResponse.json(
-    { ok: true, created: result.created, listing: result.listing },
-    { status: result.created ? 201 : 200 },
+    {
+      ok: true,
+      created: importResult.created,
+      listing: importResult.listing,
+    },
+    { status: importResult.created ? 201 : 200 },
   );
 }

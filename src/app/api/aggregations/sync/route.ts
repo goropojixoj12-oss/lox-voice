@@ -76,6 +76,7 @@ async function handle(request: Request) {
         lastCreated: summary.created,
         lastUpdated: summary.updated,
         lastFetched: summary.fetched,
+        lastSkippedNonRe: summary.skippedNonRe,
         lastTotal: summary.total,
         lastSourcesAttempted: summary.sourcesAttempted,
         lastWarnings: warnings.slice(0, 20),

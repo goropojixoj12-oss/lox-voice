@@ -56,6 +56,7 @@ curl -X POST http://127.0.0.1:43123/api/aggregations/sync \
 - **Connected** = registered in JSON + last sync status (`ok`, `adapter_needed`, `fetch_error`, `blocked`, `skipped`) — not a guarantee of live listings on every site.
 - Batched sync: **24 sources per cron run** by default (`AGGREGATION_BATCH_SIZE`, max 50), up to **4** parallel fetches (`AGGREGATION_SYNC_CONCURRENCY`), **52s** wall-clock cap (`AGGREGATION_SYNC_MAX_MS`). Cursor advances by sources actually processed. Query `?batchSize=30` or `?fullCycle=1` (admin; may timeout). ~773 enabled URLs ≈ **32 runs** → **~2.5 h** full rotation at a **5-minute** cron.
 - **18** dedicated portal adapters (realestate.com.kh, khmer24, FazWaz, BongThom, DotProperty, …) plus generic HTML/RSS/JSON-LD heuristics for other portals and agencies. **No fake fallback listings.**
+- **Ingest filter:** non–real-estate junk (jobs, cars, phones, …) is rejected before save; see `docs/market-feed-ingest-filters.md`. Smoke: `npx tsx scripts/smoke-ingest-filters.mjs`.
 - Facebook/Telegram rows sync to status `blocked` (manual import / future API only).
 - Dedupes by `externalId` or hash of `title|price|location`.
 - Rate-limited. Set `AGGREGATION_SYNC_SECRET` (or Vercel `CRON_SECRET`) for cron/webhook auth without a browser session.

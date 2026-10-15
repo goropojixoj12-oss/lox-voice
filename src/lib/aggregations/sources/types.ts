@@ -34,6 +34,8 @@ export interface AggregationSourcesCatalog {
 export interface AggregationSourceRuntime {
   lastRun: string | null;
   itemsFetched: number;
+  /** Headlines dropped by ingest RE filter on the last poll. */
+  itemsSkippedNonRe?: number;
   status: AggregationSourceStatus;
   message: string | null;
 }

@@ -4,6 +4,7 @@ export type AggregationSyncResponse = {
   created?: number;
   updated?: number;
   fetched?: number;
+  skippedNonRe?: number;
   total?: number;
   sourcesAttempted?: number;
   adaptersRun?: string[];

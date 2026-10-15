@@ -7,6 +7,8 @@ import type { AggregatedListing } from "@/lib/types";
 import { aggregationAdapters } from "./adapters";
 import type { AggregatedDraft } from "./adapters/types";
 import { resolveExternalId, shouldReplaceExisting } from "./dedupe";
+import { draftToRelevanceInput, filterIngestDrafts } from "./ingest-filter";
+import { shouldRejectListingAtIngest } from "./relevance";
 import { sanitizeDescription } from "./sanitize";
 import { syncEnabledRegistryPortals } from "./sources/registry-sync";
 
@@ -24,6 +26,8 @@ export type SyncSummary = {
   created: number;
   updated: number;
   skipped: number;
+  /** Drafts rejected by ingest RE filter (jobs, cars, phones, etc.). */
+  skippedNonRe: number;
   total: number;
   warnings: string[];
 };
@@ -82,6 +86,7 @@ export async function runAggregationSync(options?: {
   let sourcesAttempted = 0;
   let registryBatchSize: number | undefined;
   let syncCursor: SyncSummary["syncCursor"];
+  let registrySkippedNonRe = 0;
 
   if (onlyDemo) {
     const demo = aggregationAdapters.find((a) => a.id === "demo");
@@ -115,6 +120,7 @@ export async function runAggregationSync(options?: {
         registryBatchSize = registry.batchSize;
         syncCursor = registry.cursor;
         drafts.push(...registry.drafts);
+        registrySkippedNonRe = registry.skippedNonRe;
         warnings.push(...registry.warnings);
       } catch (err) {
         const msg = err instanceof Error ? err.message : "registry sync failed";
@@ -136,12 +142,16 @@ export async function runAggregationSync(options?: {
     ]),
   );
 
+  const ingestFiltered = filterIngestDrafts(drafts);
+  let skippedNonRe = ingestFiltered.skippedNonRe + registrySkippedNonRe;
+  const ingestDrafts = ingestFiltered.kept;
+
   let created = 0;
   let updated = 0;
   let skipped = 0;
   const now = new Date().toISOString();
 
-  for (const draft of drafts) {
+  for (const draft of ingestDrafts) {
     if (!draft.title?.trim()) {
       skipped += 1;
       continue;
@@ -213,15 +223,26 @@ export async function runAggregationSync(options?: {
     created,
     updated,
     skipped,
+    skippedNonRe,
     total: next.length,
-    warnings,
+    warnings:
+      skippedNonRe > 0
+        ? [
+            `Ingest filter: skipped ${skippedNonRe} non–real-estate draft(s) before save`,
+            ...warnings,
+          ]
+        : warnings,
   };
 }
 
 /** Upsert a single manually pasted / webhook listing. */
 export async function importAggregatedDraft(
   draft: AggregatedDraft,
-): Promise<{ listing: AggregatedListing; created: boolean }> {
+): Promise<{ listing: AggregatedListing; created: boolean } | { rejected: true; reason: string }> {
+  if (shouldRejectListingAtIngest(draftToRelevanceInput(draft))) {
+    return { rejected: true as const, reason: "non_real_estate_ingest_filter" };
+  }
+
   const now = new Date().toISOString();
   const incoming = draftToListing(draft, now);
   const all = await getAggregatedListings();
