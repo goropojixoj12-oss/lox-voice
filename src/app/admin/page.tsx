@@ -17,7 +17,6 @@ const links = [
   { href: "/admin/listings", label: "Listings moderation" },
   { href: "/admin/market-feed", label: "Market Feed (sources & contacts)" },
   { href: "/admin/market-feed/sources", label: "Market Feed · source registry" },
-  { href: "/admin/market-feed/sources", label: "Market Feed · source registry" },
   { href: "/admin/agencies", label: "Agencies" },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/articles", label: "Articles" },
@@ -68,7 +67,7 @@ export default async function AdminPage() {
           <Link
             key={link.href}
             href={link.href}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-white px-4 py-3 font-medium hover:border-[var(--color-primary)]"
+            className="seaps-admin-nav-link"
           >
             {link.label}
           </Link>

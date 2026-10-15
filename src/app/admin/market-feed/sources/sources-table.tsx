@@ -13,11 +13,11 @@ const TYPE_LABEL: Record<string, string> = {
 
 function statusBadge(status: AggregationSourceView["runtime"]["status"]) {
   const styles: Record<string, string> = {
-    idle: "bg-zinc-100 text-zinc-700",
-    ok: "bg-emerald-100 text-emerald-800",
-    error: "bg-red-100 text-red-800",
-    adapter_needed: "bg-amber-100 text-amber-900",
-    skipped: "bg-zinc-100 text-zinc-600",
+    idle: "bg-[var(--color-secondary)] text-[var(--color-muted)]",
+    ok: "bg-emerald-950/60 text-emerald-300",
+    error: "bg-red-950/60 text-red-300",
+    adapter_needed: "bg-amber-950/60 text-amber-200",
+    skipped: "bg-[var(--color-secondary)] text-[var(--color-muted)]",
   };
   return (
     <span
@@ -73,7 +73,7 @@ export function AdminSourcesTable({ initialSources }: Props) {
     <div className="mt-8">
       <div className="flex flex-wrap gap-3">
         <select
-          className="rounded border border-[var(--color-border)] bg-white px-3 py-2 text-sm"
+          className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text)]"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
@@ -88,7 +88,7 @@ export function AdminSourcesTable({ initialSources }: Props) {
         <input
           type="search"
           placeholder="Search name or URL…"
-          className="min-w-[220px] flex-1 rounded border border-[var(--color-border)] px-3 py-2 text-sm"
+          className="min-w-[220px] flex-1 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text)] placeholder:text-[var(--color-muted)]"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -97,9 +97,9 @@ export function AdminSourcesTable({ initialSources }: Props) {
         </p>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)]">
+      <div className="mt-4 overflow-x-auto rounded-[var(--radius-lg)] seaps-card">
         <table className="min-w-full text-left text-sm">
-          <thead className="border-b border-[var(--color-border)] bg-zinc-50/80">
+          <thead className="border-b border-[var(--color-border)] bg-[var(--color-secondary)]">
             <tr>
               <th className="px-3 py-2 font-semibold">On</th>
               <th className="px-3 py-2 font-semibold">Name</th>
