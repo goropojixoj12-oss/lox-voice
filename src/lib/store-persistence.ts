@@ -1,4 +1,4 @@
-import { head, put } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import { kv } from "@vercel/kv";
 import { promises as fs } from "fs";
 import os from "os";
@@ -8,6 +8,13 @@ export type StorePersistenceBackend = "kv" | "blob" | "filesystem";
 
 const BLOB_PREFIX = "seaps-data";
 const KV_PREFIX = "seaps:store:";
+
+/** Private Blob stores require `access: 'private'` on put/get (Vercel quickstart). */
+const BLOB_ACCESS = ((): "public" | "private" => {
+  const raw = envTrim("BLOB_ACCESS") ?? envTrim("VERCEL_BLOB_ACCESS");
+  if (raw === "public" || raw === "private") return raw;
+  return "private";
+})();
 
 function envTrim(name: string): string | undefined {
   const raw = process.env[name];
@@ -176,10 +183,13 @@ async function writeToKv(file: string, raw: string): Promise<void> {
 async function readFromBlob(file: string): Promise<string | null> {
   try {
     const auth = blobCommandAuth();
-    const meta = await head(blobPathname(file), auth);
-    const res = await fetch(meta.url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return await res.text();
+    const result = await get(blobPathname(file), {
+      access: BLOB_ACCESS,
+      useCache: false,
+      ...auth,
+    });
+    if (!result || result.statusCode !== 200 || !result.stream) return null;
+    return await new Response(result.stream).text();
   } catch {
     return null;
   }
@@ -187,7 +197,7 @@ async function readFromBlob(file: string): Promise<string | null> {
 
 async function writeToBlob(file: string, raw: string): Promise<void> {
   await put(blobPathname(file), raw, {
-    access: "public",
+    access: BLOB_ACCESS,
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",

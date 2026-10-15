@@ -70,16 +70,22 @@ async function handle(request: Request) {
       );
     }
 
-    await saveAggregationSyncMeta({
-      lastRunAt: new Date().toISOString(),
-      lastCreated: summary.created,
-      lastUpdated: summary.updated,
-      lastFetched: summary.fetched,
-      lastTotal: summary.total,
-      lastSourcesAttempted: summary.sourcesAttempted,
-      lastWarnings: warnings.slice(0, 20),
-      lastError: null,
-    });
+    try {
+      await saveAggregationSyncMeta({
+        lastRunAt: new Date().toISOString(),
+        lastCreated: summary.created,
+        lastUpdated: summary.updated,
+        lastFetched: summary.fetched,
+        lastTotal: summary.total,
+        lastSourcesAttempted: summary.sourcesAttempted,
+        lastWarnings: warnings.slice(0, 20),
+        lastError: null,
+      });
+    } catch (metaErr) {
+      const metaMessage =
+        metaErr instanceof Error ? metaErr.message : "failed to save sync metadata";
+      throw new Error(`Sync completed but metadata write failed: ${metaMessage}`);
+    }
 
     return NextResponse.json({
       ok: true,
