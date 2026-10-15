@@ -507,3 +507,48 @@ font font {
   box-shadow: none !important;
 }
 
+/* Leaflet map pins (price chips) */
+.seaps-leaflet-map {
+  z-index: 0;
+}
+
+.seaps-leaflet-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  background: #1a3050;
+  font: inherit;
+}
+
+.seaps-map-pin {
+  background: transparent !important;
+  border: none !important;
+}
+
+.seaps-map-pin__btn {
+  display: inline-flex;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+
+.seaps-map-pin__btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.seaps-map-pin__btn.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #0b1c33;
+}
+
