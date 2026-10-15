@@ -80,6 +80,14 @@ export default async function AdminMarketFeedPage() {
             {syncMeta.lastWarnings.length > 0 ? (
               <span> · {syncMeta.lastWarnings.length} warning(s)</span>
             ) : null}
+            {syncMeta.lastPruneAt ? (
+              <span>
+                {" "}
+                · last prune:{" "}
+                {new Date(syncMeta.lastPruneAt).toLocaleString("en-GB", { timeZone: "UTC" })} UTC
+                ({syncMeta.lastPruneRemovedCount ?? 0} removed)
+              </span>
+            ) : null}
           </p>
         ) : (
           <p>No successful cron/admin sync recorded yet. Set CRON_SECRET (or AGGREGATION_SYNC_SECRET) for Vercel cron.</p>

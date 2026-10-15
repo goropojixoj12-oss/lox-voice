@@ -191,6 +191,13 @@ export async function saveAggregationSourceRuntime(
 
 const SYNC_META_FILE = "aggregation-sync-meta.json";
 
+export type AggregationPruneRemovedEntry = {
+  id: string;
+  title: string;
+  reason: string;
+  sourceUrl: string | null;
+};
+
 export type AggregationSyncMeta = {
   lastRunAt: string | null;
   lastCreated: number;
@@ -201,6 +208,10 @@ export type AggregationSyncMeta = {
   lastWarnings: string[];
   lastError: string | null;
   storageBackend: StorePersistenceBackend;
+  /** Last admin/script prune of non–real-estate aggregated listings. */
+  lastPruneAt?: string | null;
+  lastPruneRemovedCount?: number;
+  lastPruneRemoved?: AggregationPruneRemovedEntry[];
 };
 
 export async function getAggregationSyncMeta(): Promise<AggregationSyncMeta | null> {

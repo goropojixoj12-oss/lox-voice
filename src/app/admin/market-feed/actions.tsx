@@ -26,6 +26,7 @@ export function AdminMarketFeedActions() {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [fullBusy, setFullBusy] = useState(false);
+  const [pruneBusy, setPruneBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -85,7 +86,46 @@ export function AdminMarketFeedActions() {
     }
   }
 
-  const anyBusy = busy || fullBusy;
+  async function pruneNonRe() {
+    if (
+      !window.confirm(
+        "Remove aggregated listings that are clearly not real estate (jobs, cars, phones, etc.)? Demo property seeds are kept. When unsure, listings stay.",
+      )
+    ) {
+      return;
+    }
+    setPruneBusy(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/aggregations/prune", { method: "POST" });
+      const data = (await res.json()) as {
+        error?: string;
+        removed?: number;
+        before?: number;
+        after?: number;
+        criteria?: string;
+        removedEntries?: { id: string; title: string; reason: string }[];
+      };
+      if (!res.ok) {
+        setMessage(data.error ?? `Prune failed (${res.status})`);
+        return;
+      }
+      const sample =
+        data.removedEntries && data.removedEntries.length > 0
+          ? ` · e.g. “${data.removedEntries[0]?.title}” (${data.removedEntries[0]?.reason})`
+          : "";
+      setMessage(
+        `Prune: ${data.before ?? "?"} → ${data.after ?? "?"} (${data.removed ?? 0} removed)${sample}`,
+      );
+      router.refresh();
+    } catch {
+      setMessage("Network error during prune");
+    } finally {
+      setPruneBusy(false);
+    }
+  }
+
+  const anyBusy = busy || fullBusy || pruneBusy;
 
   return (
     <div className="flex flex-col items-stretch gap-2 sm:items-end">
@@ -101,6 +141,15 @@ export function AdminMarketFeedActions() {
           title="Runs batched sync until all enabled registry sources are polled once (keep tab open ~15–30 min)"
         >
           {fullBusy ? "Stop full import" : "Full import once"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={anyBusy}
+          onClick={pruneNonRe}
+          title="Delete imported feed items that are clearly not property (conservative heuristics)"
+        >
+          {pruneBusy ? "Pruning…" : "Remove non-RE listings"}
         </Button>
       </div>
       {message ? (
