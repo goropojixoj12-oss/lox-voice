@@ -16,7 +16,7 @@ export default function AgenciesPage() {
         title="Agency directory"
         description="Browse agencies by city, specialization, and verification status."
       />
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
         {agencies.map((agency) => (
           <AgencyCard key={agency.id} agency={agency} />
         ))}

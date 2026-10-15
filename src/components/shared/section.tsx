@@ -10,7 +10,14 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("relative bg-[var(--color-background)] py-16 md:py-20", className)}>
+    <section
+      id={id}
+      className={cn(
+        // Opaque bg + clip: keeps card shadows/glows/hovers from painting onto the next section
+        "relative isolate overflow-clip bg-[var(--color-background)] py-16 md:py-20",
+        className,
+      )}
+    >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
     </section>
   );

@@ -242,7 +242,8 @@ canvas {
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
   animation: seapsGoldFlow 6.6s linear infinite;
-  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.28));
+  /* Prefer text-shadow-sized glow; keep filter mild so it does not paint past section pads */
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
 }
 
 /* Icon-only / SVG hosts: keep currentColor gold + living glow */

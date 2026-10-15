@@ -16,7 +16,7 @@ export default function ProjectsPage() {
         title="New homes and residential projects"
         description="Each project page separates moderated facts from developer-provided claims."
       />
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid items-stretch gap-5 lg:grid-cols-3">
         {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}

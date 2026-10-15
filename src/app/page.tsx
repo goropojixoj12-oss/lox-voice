@@ -111,7 +111,7 @@ export default async function HomePage() {
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
               Featured
             </h3>
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid items-stretch gap-5 md:grid-cols-3">
               {featured.map((property) => (
                 <PropertyCard
                   key={property.id}
@@ -137,7 +137,7 @@ export default async function HomePage() {
           title="Popular cities and districts"
           description="Popular Cambodian cities and districts with active listing counts."
         />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {cities.map((city) => (
             <Link
               key={city.slug}
@@ -177,7 +177,7 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <div className="grid gap-5 lg:grid-cols-3">
+        <div className="grid items-stretch gap-5 lg:grid-cols-3">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
@@ -195,7 +195,7 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {marketStats.map((stat) => (
             <div
               key={stat.id}
@@ -249,7 +249,7 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
           {agencies.map((agency) => (
             <AgencyCard key={agency.id} agency={agency} />
           ))}
