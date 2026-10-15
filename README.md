@@ -59,9 +59,9 @@ curl -X POST http://127.0.0.1:43123/api/aggregations/sync \
 - Facebook/Telegram rows sync to status `blocked` (manual import / future API only).
 - Dedupes by `externalId` or hash of `title|price|location`.
 - Rate-limited. Set `AGGREGATION_SYNC_SECRET` (or Vercel `CRON_SECRET`) for cron/webhook auth without a browser session.
-- **Automatic sync (every 5 minutes on Vercel config, UTC):**
+- **Automatic sync:**
   - **Netlify (primary):** `netlify/functions/aggregation-sync-scheduled.ts` → `GET /api/aggregations/sync` with `Authorization: Bearer …` (every minute).
-  - **Vercel:** `vercel.json` cron `*/5 * * * *` when secrets are set. **Hobby** may not honor sub-hour crons — use Netlify, upgrade to Pro/Enterprise, or an external scheduler.
+  - **Vercel (Hobby):** `vercel.json` cron `0 3 * * *` (once daily, 03:00 UTC) when secrets are set. **Hobby allows at most one cron invocation per day** — for sub-hour sync use Netlify, Vercel Pro/Enterprise (e.g. `*/5 * * * *`), or an external scheduler hitting `GET /api/aggregations/sync` with Bearer auth.
   - Locally: **Sync now** in Admin → Market Feed or curl POST/GET above.
 - Regenerate catalog JSON: `node scripts/build-aggregation-sources.mjs` (reads Project store markdown).
 - First visit to Market Feed auto-seeds **only the demo adapter** if the store is empty. Full sync runs registry portals.
@@ -79,7 +79,7 @@ We do not scrape private messages or bypass platform login walls.
 ### Market Feed production checklist (Vercel @ vps1.store)
 
 1. **Persistent storage (required)** — In the Vercel project, add **Blob** or **Redis/Upstash** from Storage/Marketplace and **Redeploy**. Without this, `/tmp` is per-instance and the public feed stays empty even when cron runs.
-2. **Cron auth** — Set `CRON_SECRET` (and/or `AGGREGATION_SYNC_SECRET`) in Production env. Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` to `GET /api/aggregations/sync` every 5 minutes (`vercel.json`).
+2. **Cron auth** — Set `CRON_SECRET` (and/or `AGGREGATION_SYNC_SECRET`) in Production env. Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` to `GET /api/aggregations/sync` once daily at 03:00 UTC on Hobby (`vercel.json`); use **Sync now** or curl for ad-hoc runs.
 3. **Verify after deploy** — `curl -s https://www.vps1.store/api/aggregations/status` should show `storageBackend` ≠ `filesystem` (or `ephemeralFilesystem: false`) and `total` > 0 after sync.
 4. **Manual sync once** — Sign in as admin → **Market Feed** → **Sync now** (or `curl -H "Authorization: Bearer $CRON_SECRET" -X POST https://www.vps1.store/api/aggregations/sync`).
 5. **Expectations** — Demo + ~18 portal adapters always run; registry adds up to 24 URLs per cron batch. Many of 773 sites need dedicated parsers or return zero rows; that is normal.
@@ -97,6 +97,6 @@ We do not scrape private messages or bypass platform login walls.
 
 Scheduled aggregation sync: `netlify.toml` + `netlify/functions/aggregation-sync-scheduled.ts` (`* * * * *`).
 
-**Vercel (optional):** Set the same env vars in **Production**. Set `CRON_SECRET` and/or `AGGREGATION_SYNC_SECRET` to the same value you expect on the Bearer header. `vercel.json` registers the 1-minute cron on **Pro/Enterprise** (Hobby: daily cron limit only).
+**Vercel (optional):** Set the same env vars in **Production**. Set `CRON_SECRET` and/or `AGGREGATION_SYNC_SECRET` to the same value you expect on the Bearer header. `vercel.json` uses **`0 3 * * *`** (daily) so **Hobby** deploys succeed; on **Pro/Enterprise** you may change the schedule to `*/5 * * * *` or similar for frequent sync.
 
 Add your custom domain (for example `vps1.store`) in the host’s domain settings.
