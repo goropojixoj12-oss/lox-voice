@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function MarketFeedPage() {
   // Public route: never throw on store/seed failures (serverless FS, cold start).
@@ -57,7 +58,10 @@ export default async function MarketFeedPage() {
           to pull adapters.
         </div>
       ) : (
-        <MarketFeedGrid items={items} basePath="/market-feed" />
+        <>
+          {/* MARKET-FEED-LAYOUT:horizontal-v3 — deploy verification (view page source) */}
+          <MarketFeedGrid items={items} basePath="/market-feed" />
+        </>
       )}
     </div>
   );

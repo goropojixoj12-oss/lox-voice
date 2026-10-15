@@ -13,6 +13,7 @@ import { AdminImportClient } from "./import-client";
 export const metadata: Metadata = { title: "Admin · Market Feed" };
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function AdminMarketFeedPage() {
   await ensureAggregationsSeeded();
