@@ -150,7 +150,7 @@ canvas {
   background-image: var(--gold-flow);
   background-size: 340% 100%;
   background-color: #d4af37;
-  animation: seapsGoldFlow 2.2s linear infinite;
+  animation: seapsGoldFlow 6.6s linear infinite;
 }
 
 .seaps-btn-gold::after {
@@ -167,7 +167,7 @@ canvas {
   );
   background-size: 260% 100%;
   background-repeat: no-repeat;
-  animation: seapsBtnShine 2.2s linear infinite;
+  animation: seapsBtnShine 6.6s linear infinite;
   will-change: background-position;
 }
 
@@ -182,7 +182,7 @@ canvas {
     linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
     var(--gold-flow) border-box;
   background-size: 100% 100%, 340% 100%;
-  animation: seapsGoldBorderFlow 2.2s linear infinite;
+  animation: seapsGoldBorderFlow 6.6s linear infinite;
   color: transparent;
   box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 18px rgba(212, 175, 55, 0.12);
 }
@@ -194,7 +194,7 @@ canvas {
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: seapsGoldFlow 2.2s linear infinite;
+  animation: seapsGoldFlow 6.6s linear infinite;
 }
 
 /* Keep GT <font> wrappers from painting solid color over clipped gold */
@@ -220,7 +220,7 @@ canvas {
     transparent 58%
   );
   background-size: 260% 100%;
-  animation: seapsBtnShine 2.3s linear infinite;
+  animation: seapsBtnShine 6.9s linear infinite;
 }
 
 /*
@@ -237,7 +237,7 @@ canvas {
   background-clip: text !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-  animation: seapsGoldFlow 2.2s linear infinite;
+  animation: seapsGoldFlow 6.6s linear infinite;
   filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.28));
 }
 
@@ -249,7 +249,7 @@ canvas {
   background-clip: border-box !important;
   color: #d4af37;
   -webkit-text-fill-color: #d4af37;
-  animation: seapsGoldIconPulse 2.4s ease-in-out infinite;
+  animation: seapsGoldIconPulse 7.2s ease-in-out infinite;
 }
 
 .hover\:text-\[var\(--color-accent\)\]:hover:not(:has(svg)),
@@ -260,7 +260,7 @@ canvas {
   background-clip: text !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-  animation: seapsGoldFlow 2s linear infinite;
+  animation: seapsGoldFlow 6s linear infinite;
 }
 
 .hover\:text-\[var\(--color-accent\)\]:hover:has(svg),
@@ -270,7 +270,7 @@ canvas {
   background-clip: border-box !important;
   color: #f0d78c;
   -webkit-text-fill-color: #f0d78c;
-  animation: seapsGoldIconPulse 1.8s ease-in-out infinite;
+  animation: seapsGoldIconPulse 5.4s ease-in-out infinite;
 }
 
 /* Gold fills (chips, progress, badges) */
@@ -278,7 +278,7 @@ canvas {
   background-color: transparent !important;
   background-image: var(--gold-flow) !important;
   background-size: 340% 100% !important;
-  animation: seapsGoldFlow 2.2s linear infinite;
+  animation: seapsGoldFlow 6.6s linear infinite;
 }
 
 /* Gold borders / rings — luminous pulse (keeps existing backgrounds intact) */
@@ -288,7 +288,7 @@ canvas {
 .border-\[var\(--color-accent\)\]\/40,
 .seaps-gold-border {
   border-color: rgba(232, 198, 90, 0.7) !important;
-  animation: seapsGoldRing 2.4s ease-in-out infinite;
+  animation: seapsGoldRing 7.2s ease-in-out infinite;
 }
 
 .hover\:border-\[var\(--color-accent\)\]:hover {
@@ -297,7 +297,7 @@ canvas {
 }
 
 .seaps-gold-shine {
-  animation: seapsGoldRing 2.4s ease-in-out infinite;
+  animation: seapsGoldRing 7.2s ease-in-out infinite;
 }
 
 ::selection {
