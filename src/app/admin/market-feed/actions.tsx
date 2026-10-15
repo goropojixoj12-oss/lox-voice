@@ -20,6 +20,7 @@ export function AdminMarketFeedActions() {
         created?: number;
         updated?: number;
         total?: number;
+        sourcesAttempted?: number;
         warnings?: string[];
       };
       if (!res.ok) {
