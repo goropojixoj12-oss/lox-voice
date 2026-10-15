@@ -84,6 +84,23 @@ We do not scrape private messages or bypass platform login walls.
 4. **Manual sync once** — Sign in as admin → **Market Feed** → **Sync now** (one batch), or **Full import once** to poll all ~773 enabled registry sources in chained batches without curl. Alternatively: `curl -H "Authorization: Bearer $CRON_SECRET" -X POST 'https://www.vps1.store/api/aggregations/sync?batchSize=50'`.
 5. **Expectations** — Demo + ~18 portal adapters always run; registry adds up to 24 URLs per cron batch. Many of 773 sites need dedicated parsers or return zero rows; that is normal.
 
+## Deploy path
+
+**Vercel production:** `main` on GitHub [`goropojixoj12-oss/lox-voice`](https://github.com/goropojixoj12-oss/lox-voice) → Vercel. That repo is the only deploy trigger for production (e.g. `vps1.store`).
+
+| Remote   | Role |
+| -------- | ---- |
+| `github` | Public GitHub repo — **must** receive every production change |
+| `origin` | Cursor cloud mirror — optional sync; **not** wired to Vercel |
+
+After commits on `main`, run:
+
+```bash
+./scripts/push-production.sh
+```
+
+Agents and CI must not treat work as done until `git push` to **`github`** succeeds. Для Vercel продакшена пуш в `github`, а не только в `origin`.
+
 ## Deploy
 
 **Netlify (recommended):** Connect the GitHub repo, set build command `npm run build`, and in **production** env set at least:

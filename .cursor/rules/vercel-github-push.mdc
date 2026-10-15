@@ -1,0 +1,26 @@
+---
+description: After every commit, push main to github (Vercel production) and origin; never finish without a successful github push
+alwaysApply: true
+---
+
+# Vercel production: push GitHub, not only origin
+
+**Production source of truth:** [goropojixoj12-oss/lox-voice](https://github.com/goropojixoj12-oss/lox-voice) on GitHub (`github` remote), branch `main`. Vercel production deploys from that repo.
+
+**`origin`** is the Cursor/cloud mirror (`origin.cursor.com`). Pushing only `origin` does **not** update Vercel.
+
+## After ANY commit on this project
+
+1. Run **`./scripts/push-production.sh`** (preferred), or equivalently:
+   - `git push -u github main` (required)
+   - `git push -u origin main` if the `origin` remote exists
+2. Confirm **`git push` to `github` succeeded** (exit code 0, no errors).
+3. Do **not** mark the task complete, tell the user work is shipped, or assume Vercel updated until `github/main` has the commit.
+
+## Feature branches
+
+When work lands on `main` (merge or direct commit on `main`), still push **`github main`**. For long-lived feature branches, push the branch to both remotes if needed, but **production verification is always `github/main`.**
+
+## If push fails
+
+Fix auth/network/permissions, retry until `github` push succeeds. Report the blocker to the user if you cannot resolve it.
