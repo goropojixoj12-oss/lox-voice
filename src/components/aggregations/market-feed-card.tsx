@@ -24,41 +24,42 @@ export function MarketFeedCard({
   const admin = showAdminMeta && isAdminListing(listing);
 
   return (
-    <article className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]">
-      <div className="relative aspect-[4/3] bg-[var(--color-mist)]">
-        <Link href={href} className="absolute inset-0">
-          {photo ? (
-            photo.startsWith("/") ? (
-              <Image
-                src={photo}
-                alt={listing.title}
-                fill
-                className="object-cover transition duration-500 group-hover:scale-[1.02]"
-                sizes="(max-width:768px) 100vw, 33vw"
-              />
-            ) : (
-              // eslint-disable-next-line @next/next/no-img-element -- external aggregated URLs
-              <img
-                src={photo}
-                alt={listing.title}
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-              />
-            )
+    <article className="seaps-card group grid grid-cols-[104px_1fr] gap-3 overflow-hidden rounded-[var(--radius-lg)] p-3 transition hover:border-[rgba(240,215,140,0.75)] sm:grid-cols-[140px_1fr] sm:gap-4 sm:p-4 md:grid-cols-[180px_1fr]">
+      <Link
+        href={href}
+        className="relative aspect-[4/3] shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-mist)] sm:aspect-square"
+      >
+        {photo ? (
+          photo.startsWith("/") ? (
+            <Image
+              src={photo}
+              alt={listing.title}
+              fill
+              className="object-cover transition duration-500 group-hover:scale-[1.02]"
+              sizes="(max-width:640px) 104px, (max-width:768px) 140px, 180px"
+            />
           ) : (
-            <div className="flex h-full items-center justify-center text-sm text-[var(--color-muted)]">
-              No photo
-            </div>
-          )}
-        </Link>
+            // eslint-disable-next-line @next/next/no-img-element -- external aggregated URLs
+            <img
+              src={photo}
+              alt={listing.title}
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+            />
+          )
+        ) : (
+          <div className="flex h-full items-center justify-center px-1 text-center text-[10px] text-[var(--color-muted)] sm:text-xs">
+            No photo
+          </div>
+        )}
         {listing.propertyType ? (
-          <span className="absolute left-3 top-3 rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-accent-soft)]">
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-[var(--color-primary)] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[var(--color-accent-soft)] sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-[10px]">
             {propertyTypeLabels[listing.propertyType]}
           </span>
         ) : null}
-      </div>
-      <div className="flex flex-col gap-2 p-4 md:p-5">
+      </Link>
+      <div className="flex min-w-0 flex-col gap-1.5 sm:gap-2">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-xl font-semibold tracking-tight text-[var(--color-accent-soft)]">
+          <p className="text-lg font-semibold tracking-tight text-[var(--color-accent-soft)] sm:text-xl">
             {listing.price != null
               ? formatPrice(listing.price, listing.currency)
               : "Price on request"}
@@ -127,7 +128,7 @@ export function MarketFeedGrid({
   showAdminMeta?: boolean;
 }) {
   return (
-    <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="flex flex-col gap-4 sm:gap-5">
       {items.map((listing) => (
         <MarketFeedCard
           key={listing.id}
