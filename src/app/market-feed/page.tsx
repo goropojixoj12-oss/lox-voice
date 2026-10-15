@@ -22,10 +22,14 @@ export default async function MarketFeedPage() {
   try {
     await ensureAggregationsSeeded();
     items = toPublicAggregatedListings(await getAggregatedListings());
+  } catch {
+    items = [];
+  }
+  try {
     const counts = await countEnabledSourcesByType();
     enabledSources = counts.total;
   } catch {
-    items = [];
+    enabledSources = 0;
   }
 
   return (

@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { runAggregationSync } from "@/lib/aggregations/sync";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
+import {
+  getStorePersistenceBackend,
+  saveAggregationSyncMeta,
+} from "@/lib/store";
 
 /**
  * Pull from registered adapters (demo + public HTML portals), dedupe, store.
@@ -47,12 +51,51 @@ async function handle(request: Request) {
   const batchSize = batchParam ? Math.min(50, Math.max(1, Number(batchParam))) : undefined;
   const fullCycle = url.searchParams.get("fullCycle") === "1";
 
-  const summary = await runAggregationSync({
-    adapterIds,
-    batchSize: Number.isFinite(batchSize) ? batchSize : undefined,
-    fullCycle,
-  });
-  return NextResponse.json({ ok: true, ...summary });
+  try {
+    const summary = await runAggregationSync({
+      adapterIds,
+      batchSize: Number.isFinite(batchSize) ? batchSize : undefined,
+      fullCycle,
+    });
+
+    const warnings = [...summary.warnings];
+    if (getStorePersistenceBackend() === "filesystem") {
+      warnings.unshift(
+        "Storage is ephemeral JSON on disk (/tmp on Vercel). Connect Vercel Blob or Redis (KV_REST_API_*) so listings persist across instances.",
+      );
+    }
+
+    await saveAggregationSyncMeta({
+      lastRunAt: new Date().toISOString(),
+      lastCreated: summary.created,
+      lastUpdated: summary.updated,
+      lastFetched: summary.fetched,
+      lastTotal: summary.total,
+      lastSourcesAttempted: summary.sourcesAttempted,
+      lastWarnings: warnings.slice(0, 20),
+      lastError: null,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      storageBackend: getStorePersistenceBackend(),
+      ...summary,
+      warnings,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "sync failed";
+    await saveAggregationSyncMeta({
+      lastRunAt: new Date().toISOString(),
+      lastCreated: 0,
+      lastUpdated: 0,
+      lastFetched: 0,
+      lastTotal: 0,
+      lastSourcesAttempted: 0,
+      lastWarnings: [],
+      lastError: message,
+    }).catch(() => undefined);
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
+  }
 }
 
 export async function GET(request: Request) {

@@ -65,7 +65,7 @@ curl -X POST http://127.0.0.1:43123/api/aggregations/sync \
   - Locally: **Sync now** in Admin → Market Feed or curl POST/GET above.
 - Regenerate catalog JSON: `node scripts/build-aggregation-sources.mjs` (reads Project store markdown).
 - First visit to Market Feed auto-seeds **only the demo adapter** if the store is empty. Full sync runs registry portals.
-- Storage is JSON on disk (`.data/` locally, `/tmp/seaps-data` on serverless). Not shared across instances — use Postgres/KV for production scale.
+- Storage: JSON via **Redis** (`KV_REST_API_*`), **Vercel Blob** (`BLOB_READ_WRITE_TOKEN`), or filesystem (`.data/` locally, `/tmp/seaps-data` on serverless). On Vercel without Blob/Redis, each instance has its own empty `/tmp` — cron imports will not show up on the public feed. Attach Blob or Redis in the Vercel project, redeploy, then run **Sync now** once.
 
 ### Facebook / Telegram
 

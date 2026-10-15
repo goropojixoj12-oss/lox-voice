@@ -21,6 +21,7 @@ export function AdminMarketFeedActions() {
         updated?: number;
         total?: number;
         sourcesAttempted?: number;
+        storageBackend?: string;
         warnings?: string[];
       };
       if (!res.ok) {
@@ -31,8 +32,9 @@ export function AdminMarketFeedActions() {
         data.warnings && data.warnings.length > 0
           ? ` · ${data.warnings.length} warning(s)`
           : "";
+      const backend = data.storageBackend ? ` · storage: ${data.storageBackend}` : "";
       setMessage(
-        `Synced: +${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.total ?? 0} total · ${data.sourcesAttempted ?? 0} portal source(s)${warn}`,
+        `Synced: +${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.total ?? 0} total · ${data.sourcesAttempted ?? 0} portal source(s)${backend}${warn}`,
       );
       router.refresh();
     } catch {

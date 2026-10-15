@@ -1,60 +1,22 @@
-import { promises as fs } from "fs";
-import os from "os";
-import path from "path";
 import { nanoid } from "nanoid";
+import {
+  readStoreJson,
+  resolveStorePersistenceBackend,
+  writeStoreJson,
+  type StorePersistenceBackend,
+} from "@/lib/store-persistence";
 import type { AggregatedListing, Inquiry, Property, SavedSearch } from "@/lib/types";
 
-/**
- * Prefer project-local `.data` when the filesystem is writable (local/dev).
- * On Vercel and other serverless hosts cwd is read-only, so fall back to tmp.
- */
-function preferredDataDirs(): string[] {
-  const local = path.join(process.cwd(), ".data");
-  const tmp = path.join(os.tmpdir(), "seaps-data");
-  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-    return [tmp, local];
-  }
-  return [local, tmp];
-}
-
-let resolvedDataDir: string | null = null;
-
-async function getDataDir(): Promise<string> {
-  if (resolvedDataDir) return resolvedDataDir;
-
-  for (const dir of preferredDataDirs()) {
-    try {
-      await fs.mkdir(dir, { recursive: true });
-      const probe = path.join(dir, `.write-probe-${process.pid}`);
-      await fs.writeFile(probe, "ok", "utf8");
-      await fs.unlink(probe).catch(() => undefined);
-      resolvedDataDir = dir;
-      return dir;
-    } catch {
-      // try next candidate
-    }
-  }
-
-  // Last resort — still point at tmp so callers have a path; reads/writes
-  // are individually guarded below.
-  resolvedDataDir = path.join(os.tmpdir(), "seaps-data");
-  return resolvedDataDir;
-}
-
 async function readJson<T>(file: string, fallback: T): Promise<T> {
-  try {
-    const dir = await getDataDir();
-    const raw = await fs.readFile(path.join(dir, file), "utf8");
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
+  return readStoreJson(file, fallback);
 }
 
 async function writeJson<T>(file: string, data: T) {
-  const dir = await getDataDir();
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(path.join(dir, file), JSON.stringify(data, null, 2), "utf8");
+  await writeStoreJson(file, data);
+}
+
+export function getStorePersistenceBackend(): StorePersistenceBackend {
+  return resolveStorePersistenceBackend();
 }
 
 export async function getRuntimeListings() {
@@ -219,4 +181,31 @@ export async function saveAggregationSourceRuntime(
   const all = await getAggregationSourceRuntimeMap();
   all[sourceId] = row;
   await writeJson(SOURCE_RUNTIME_FILE, all);
+}
+
+const SYNC_META_FILE = "aggregation-sync-meta.json";
+
+export type AggregationSyncMeta = {
+  lastRunAt: string | null;
+  lastCreated: number;
+  lastUpdated: number;
+  lastFetched: number;
+  lastTotal: number;
+  lastSourcesAttempted: number;
+  lastWarnings: string[];
+  lastError: string | null;
+  storageBackend: StorePersistenceBackend;
+};
+
+export async function getAggregationSyncMeta(): Promise<AggregationSyncMeta | null> {
+  return readJson<AggregationSyncMeta | null>(SYNC_META_FILE, null);
+}
+
+export async function saveAggregationSyncMeta(
+  meta: Omit<AggregationSyncMeta, "storageBackend">,
+): Promise<void> {
+  await writeJson(SYNC_META_FILE, {
+    ...meta,
+    storageBackend: resolveStorePersistenceBackend(),
+  });
 }

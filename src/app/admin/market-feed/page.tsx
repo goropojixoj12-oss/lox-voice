@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketFeedGrid } from "@/components/aggregations/market-feed-card";
 import { ensureAggregationsSeeded } from "@/lib/aggregations/ensure-seeded";
-import { getAggregatedListings } from "@/lib/store";
+import {
+  getAggregatedListings,
+  getAggregationSyncMeta,
+  getStorePersistenceBackend,
+} from "@/lib/store";
 import { AdminMarketFeedActions } from "./actions";
 import { AdminImportClient } from "./import-client";
 
@@ -12,7 +16,11 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminMarketFeedPage() {
   await ensureAggregationsSeeded();
-  const items = await getAggregatedListings();
+  const [items, syncMeta] = await Promise.all([
+    getAggregatedListings(),
+    getAggregationSyncMeta(),
+  ]);
+  const storageBackend = getStorePersistenceBackend();
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -43,7 +51,39 @@ export default async function AdminMarketFeedPage() {
         <AdminMarketFeedActions />
       </div>
 
-      <p className="mt-6 text-sm text-[var(--color-muted)]">{items.length} aggregated listings</p>
+      <div className="mt-6 space-y-2 text-sm text-[var(--color-muted)]">
+        <p>{items.length} aggregated listings · storage: {storageBackend}</p>
+        {storageBackend === "filesystem" ? (
+          <p className="max-w-3xl rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-amber-100/90">
+            Production on Vercel uses ephemeral <code>/tmp</code> unless you attach{" "}
+            <strong>Vercel Blob</strong> (<code>BLOB_READ_WRITE_TOKEN</code>) or{" "}
+            <strong>Redis</strong> (<code>KV_REST_API_URL</code> / <code>KV_REST_API_TOKEN</code>).
+            Without that, cron sync and imports do not accumulate across serverless instances.
+          </p>
+        ) : null}
+        {syncMeta ? (
+          <p>
+            Last sync:{" "}
+            {syncMeta.lastRunAt
+              ? new Date(syncMeta.lastRunAt).toLocaleString("en-GB", { timeZone: "UTC" }) + " UTC"
+              : "—"}
+            {syncMeta.lastError ? (
+              <span className="text-red-300"> · error: {syncMeta.lastError}</span>
+            ) : (
+              <>
+                {" "}
+                · +{syncMeta.lastCreated} new, {syncMeta.lastUpdated} updated → {syncMeta.lastTotal}{" "}
+                total · {syncMeta.lastSourcesAttempted} source(s) polled
+              </>
+            )}
+            {syncMeta.lastWarnings.length > 0 ? (
+              <span> · {syncMeta.lastWarnings.length} warning(s)</span>
+            ) : null}
+          </p>
+        ) : (
+          <p>No successful cron/admin sync recorded yet. Set CRON_SECRET (or AGGREGATION_SYNC_SECRET) for Vercel cron.</p>
+        )}
+      </div>
 
       {items.length === 0 ? (
         <div className="mt-6 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] p-10 text-[var(--color-muted)]">
