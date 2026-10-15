@@ -73,7 +73,7 @@ export async function runAggregationSync(options?: {
 
   const adapters = options?.adapterIds?.length
     ? aggregationAdapters.filter((a) => options.adapterIds!.includes(a.id))
-    : [];
+    : aggregationAdapters;
 
   const warnings: string[] = [];
   const drafts: AggregatedDraft[] = [];

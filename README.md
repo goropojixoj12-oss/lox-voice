@@ -76,6 +76,14 @@ True zero-delay scrape of Facebook Groups, Marketplace, and Telegram for 600+ so
 
 We do not scrape private messages or bypass platform login walls.
 
+### Market Feed production checklist (Vercel @ vps1.store)
+
+1. **Persistent storage (required)** — In the Vercel project, add **Blob** or **Redis/Upstash** from Storage/Marketplace and **Redeploy**. Without this, `/tmp` is per-instance and the public feed stays empty even when cron runs.
+2. **Cron auth** — Set `CRON_SECRET` (and/or `AGGREGATION_SYNC_SECRET`) in Production env. Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` to `GET /api/aggregations/sync` every 5 minutes (`vercel.json`).
+3. **Verify after deploy** — `curl -s https://www.vps1.store/api/aggregations/status` should show `storageBackend` ≠ `filesystem` (or `ephemeralFilesystem: false`) and `total` > 0 after sync.
+4. **Manual sync once** — Sign in as admin → **Market Feed** → **Sync now** (or `curl -H "Authorization: Bearer $CRON_SECRET" -X POST https://www.vps1.store/api/aggregations/sync`).
+5. **Expectations** — Demo + ~18 portal adapters always run; registry adds up to 24 URLs per cron batch. Many of 773 sites need dedicated parsers or return zero rows; that is normal.
+
 ## Deploy
 
 **Netlify (recommended):** Connect the GitHub repo, set build command `npm run build`, and in **production** env set at least:

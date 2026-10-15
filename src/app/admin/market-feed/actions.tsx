@@ -19,8 +19,10 @@ export function AdminMarketFeedActions() {
         error?: string;
         created?: number;
         updated?: number;
+        fetched?: number;
         total?: number;
         sourcesAttempted?: number;
+        adaptersRun?: string[];
         storageBackend?: string;
         warnings?: string[];
       };
@@ -28,13 +30,17 @@ export function AdminMarketFeedActions() {
         setMessage(data.error ?? `Sync failed (${res.status})`);
         return;
       }
-      const warn =
+      const warnPreview =
         data.warnings && data.warnings.length > 0
-          ? ` · ${data.warnings.length} warning(s)`
+          ? ` · warnings: ${data.warnings.slice(0, 3).join(" | ")}${data.warnings.length > 3 ? " …" : ""}`
           : "";
       const backend = data.storageBackend ? ` · storage: ${data.storageBackend}` : "";
+      const adapters =
+        data.adaptersRun && data.adaptersRun.length > 0
+          ? ` · adapters: ${data.adaptersRun.length}`
+          : "";
       setMessage(
-        `Synced: +${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.total ?? 0} total · ${data.sourcesAttempted ?? 0} portal source(s)${backend}${warn}`,
+        `Synced: fetched ${data.fetched ?? 0}, +${data.created ?? 0} new, ${data.updated ?? 0} updated → ${data.total ?? 0} total · ${data.sourcesAttempted ?? 0} registry source(s)${adapters}${backend}${warnPreview}`,
       );
       router.refresh();
     } catch {

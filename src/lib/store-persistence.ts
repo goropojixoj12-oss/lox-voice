@@ -9,12 +9,34 @@ export type StorePersistenceBackend = "kv" | "blob" | "filesystem";
 const BLOB_PREFIX = "seaps-data";
 const KV_PREFIX = "seaps:store:";
 
+/** @vercel/kv reads KV_REST_*; Vercel Redis integration often exposes Upstash names only. */
+function ensureKvEnvAliases(): void {
+  if (!process.env.KV_REST_API_URL?.trim() && process.env.UPSTASH_REDIS_REST_URL?.trim()) {
+    process.env.KV_REST_API_URL = process.env.UPSTASH_REDIS_REST_URL.trim();
+  }
+  if (!process.env.KV_REST_API_TOKEN?.trim() && process.env.UPSTASH_REDIS_REST_TOKEN?.trim()) {
+    process.env.KV_REST_API_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN.trim();
+  }
+}
+ensureKvEnvAliases();
+
 function kvConfigured(): boolean {
-  return Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+  return Boolean(process.env.KV_REST_API_URL?.trim() && process.env.KV_REST_API_TOKEN?.trim());
+}
+
+function blobToken(): string | null {
+  const candidates = [
+    process.env.BLOB_READ_WRITE_TOKEN,
+    process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
+  ];
+  for (const raw of candidates) {
+    if (raw?.trim()) return raw.trim();
+  }
+  return null;
 }
 
 function blobConfigured(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  return blobToken() != null;
 }
 
 export function resolveStorePersistenceBackend(): StorePersistenceBackend {
@@ -73,7 +95,8 @@ async function writeToKv(file: string, raw: string): Promise<void> {
 
 async function readFromBlob(file: string): Promise<string | null> {
   try {
-    const meta = await head(blobPathname(file));
+    const token = blobToken();
+    const meta = await head(blobPathname(file), token ? { token } : undefined);
     const res = await fetch(meta.url, { cache: "no-store" });
     if (!res.ok) return null;
     return await res.text();
@@ -83,11 +106,13 @@ async function readFromBlob(file: string): Promise<string | null> {
 }
 
 async function writeToBlob(file: string, raw: string): Promise<void> {
+  const token = blobToken();
   await put(blobPathname(file), raw, {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
+    ...(token ? { token } : {}),
   });
 }
 
