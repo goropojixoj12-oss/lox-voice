@@ -285,8 +285,8 @@ export function AdvancedFilters({
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-xs font-medium transition",
                   active
-                    ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-text)]",
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[#0B1C33]"
+                    : "border-[var(--color-border)] bg-[var(--color-mist)] text-[var(--color-text)] hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent-soft)]",
                 )}
               >
                 {amenity.label}

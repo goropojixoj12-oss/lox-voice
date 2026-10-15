@@ -18,9 +18,9 @@ export function PropertyMap({
   if (brand.mapProvider === "none" || !process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     return (
       <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[linear-gradient(160deg,#dfe8e3,#f4efe7_45%,#e7dfd3)]">
-        <div className="border-b border-[var(--color-border)] bg-white/80 px-4 py-3 text-sm text-[var(--color-muted)]">
+        <div className="border-b border-[var(--color-border)] bg-[var(--color-surface)]/95 px-4 py-3 text-sm text-[var(--color-text)]">
           Interactive map provider is not configured. Showing a schematic pin board instead.
-          Set <code className="mx-1">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable Mapbox.
+          Set <code className="mx-1 text-[var(--color-accent-soft)]">NEXT_PUBLIC_MAPBOX_TOKEN</code> to enable Mapbox.
         </div>
         <div className="relative min-h-[420px] p-4">
           {items.map((property, index) => {
