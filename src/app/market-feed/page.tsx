@@ -7,7 +7,7 @@ import { toPublicAggregatedListings } from "@/lib/aggregations/sanitize";
 import { getAggregatedListings } from "@/lib/store";
 
 export const metadata: Metadata = {
-  title: "Market Feed · Рынок",
+  title: "Market Feed",
   description:
     "Aggregated Cambodia property listings from public market sources. Contact details and original publishers are hidden on the public feed.",
 };
@@ -27,9 +27,9 @@ export default async function MarketFeedPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <SectionHeader
-        eyebrow="Рынок · Market Feed"
-        title="Сводка рынка Cambodia"
-        description="Свежие объявления, собранные с публичных порталов и ручного импорта. На этой странице нет телефонов, email и названий источников — только объект."
+        eyebrow="Market Feed"
+        title="Cambodia market overview"
+        description="Fresh listings aggregated from public portals and manual import. No phones, emails, or source names on this page — only the property."
       />
       <p className="mb-6 text-sm text-[var(--color-muted)]">
         {items.length} listing{items.length === 1 ? "" : "s"} · updated via polling adapters. Admins

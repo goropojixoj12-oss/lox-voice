@@ -40,7 +40,7 @@ Translation uses the hidden Google Website Translator (network). Browser/OS loca
 
 ## Market Feed (aggregation)
 
-Public page: [/market-feed](http://127.0.0.1:43123/market-feed) («Рынок» / Market Feed) — cards with title, price, location, type, and photo previews. **No** phone/email/messenger and **no** source name/URL on the public UI or `GET /api/aggregations`.
+Public page: [/market-feed](http://127.0.0.1:43123/market-feed) — cards with title, price, location, type, and photo previews. **No** phone/email/messenger and **no** source name/URL on the public UI or `GET /api/aggregations`.
 
 Admin (sign in as `admin@seaps.com.kh`): [/admin/market-feed](http://127.0.0.1:43123/admin/market-feed) — same list with contacts + source + original URL. JSON: `GET /api/aggregations/admin` (admin session required).
 

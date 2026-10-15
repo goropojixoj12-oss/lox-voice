@@ -54,7 +54,7 @@ export default async function MarketFeedDetailPage({ params }: Props) {
 
       <article className="mt-6">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-accent)]">
-          Рынок · Market Feed
+          Market Feed
         </p>
         <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)] md:text-4xl">
           {listing.title}
