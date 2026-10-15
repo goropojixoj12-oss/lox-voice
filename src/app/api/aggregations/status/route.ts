@@ -4,6 +4,7 @@ import {
   getAggregationSyncMeta,
   getStorePersistenceBackend,
 } from "@/lib/store";
+import { getStorePersistenceEnvFlags } from "@/lib/store-persistence";
 
 /** Public health snapshot for Market Feed (no contacts / secrets). */
 export async function GET() {
@@ -12,10 +13,12 @@ export async function GET() {
     getAggregationSyncMeta(),
   ]);
   const storageBackend = getStorePersistenceBackend();
+  const env = getStorePersistenceEnvFlags();
   return NextResponse.json({
     total: items.length,
     storageBackend,
-    ephemeralFilesystem: storageBackend === "filesystem" && Boolean(process.env.VERCEL),
+    ephemeralFilesystem: storageBackend === "filesystem" && env.isVercelRuntime,
+    env,
     sync: meta
       ? {
           lastRunAt: meta.lastRunAt,

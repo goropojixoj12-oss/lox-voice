@@ -9,34 +9,114 @@ export type StorePersistenceBackend = "kv" | "blob" | "filesystem";
 const BLOB_PREFIX = "seaps-data";
 const KV_PREFIX = "seaps:store:";
 
+function envTrim(name: string): string | undefined {
+  const raw = process.env[name];
+  if (typeof raw !== "string") return undefined;
+  const trimmed = raw.trim();
+  return trimmed === "" ? undefined : trimmed;
+}
+
 /** @vercel/kv reads KV_REST_*; Vercel Redis integration often exposes Upstash names only. */
 function ensureKvEnvAliases(): void {
-  if (!process.env.KV_REST_API_URL?.trim() && process.env.UPSTASH_REDIS_REST_URL?.trim()) {
-    process.env.KV_REST_API_URL = process.env.UPSTASH_REDIS_REST_URL.trim();
+  if (!envTrim("KV_REST_API_URL") && envTrim("UPSTASH_REDIS_REST_URL")) {
+    process.env.KV_REST_API_URL = envTrim("UPSTASH_REDIS_REST_URL")!;
   }
-  if (!process.env.KV_REST_API_TOKEN?.trim() && process.env.UPSTASH_REDIS_REST_TOKEN?.trim()) {
-    process.env.KV_REST_API_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN.trim();
+  if (!envTrim("KV_REST_API_TOKEN") && envTrim("UPSTASH_REDIS_REST_TOKEN")) {
+    process.env.KV_REST_API_TOKEN = envTrim("UPSTASH_REDIS_REST_TOKEN")!;
   }
 }
 ensureKvEnvAliases();
 
+function kvUrl(): string | undefined {
+  return (
+    envTrim("KV_REST_API_URL") ??
+    envTrim("UPSTASH_REDIS_REST_URL") ??
+    envTrim("VERCEL_KV_REST_API_URL")
+  );
+}
+
+function kvToken(): string | undefined {
+  return (
+    envTrim("KV_REST_API_TOKEN") ??
+    envTrim("UPSTASH_REDIS_REST_TOKEN") ??
+    envTrim("VERCEL_KV_REST_API_TOKEN")
+  );
+}
+
 function kvConfigured(): boolean {
-  return Boolean(process.env.KV_REST_API_URL?.trim() && process.env.KV_REST_API_TOKEN?.trim());
+  return Boolean(kvUrl() && kvToken());
 }
 
 function blobToken(): string | null {
   const candidates = [
-    process.env.BLOB_READ_WRITE_TOKEN,
-    process.env.VERCEL_BLOB_READ_WRITE_TOKEN,
-  ];
-  for (const raw of candidates) {
-    if (raw?.trim()) return raw.trim();
+    "BLOB_READ_WRITE_TOKEN",
+    "VERCEL_BLOB_READ_WRITE_TOKEN",
+  ] as const;
+  for (const name of candidates) {
+    const value = envTrim(name);
+    if (value) return value;
   }
   return null;
 }
 
+function blobStoreId(): string | null {
+  const value = envTrim("BLOB_STORE_ID") ?? envTrim("VERCEL_BLOB_STORE_ID");
+  return value ?? null;
+}
+
+/** Vercel Blob OIDC: store id + runtime OIDC (no read-write token required). */
+function blobOidcConfigured(): boolean {
+  if (!blobStoreId()) return false;
+  if (envTrim("VERCEL_OIDC_TOKEN")) return true;
+  return process.env.VERCEL === "1";
+}
+
 function blobConfigured(): boolean {
-  return blobToken() != null;
+  if (blobToken() != null) return true;
+  return blobOidcConfigured();
+}
+
+export type StorePersistenceEnvFlags = {
+  hasKvUrl: boolean;
+  hasKvToken: boolean;
+  hasBlobToken: boolean;
+  hasBlobStoreId: boolean;
+  hasBlobWebhookPublicKey: boolean;
+  hasVercelOidcToken: boolean;
+  isVercelRuntime: boolean;
+  blobOidcEligible: boolean;
+};
+
+export function getStorePersistenceEnvFlags(): StorePersistenceEnvFlags {
+  const hasBlobStoreId = blobStoreId() != null;
+  const hasVercelOidcToken = Boolean(envTrim("VERCEL_OIDC_TOKEN"));
+  const isVercelRuntime = process.env.VERCEL === "1";
+  return {
+    hasKvUrl: Boolean(kvUrl()),
+    hasKvToken: Boolean(kvToken()),
+    hasBlobToken: blobToken() != null,
+    hasBlobStoreId,
+    hasBlobWebhookPublicKey: Boolean(envTrim("BLOB_WEBHOOK_PUBLIC_KEY")),
+    hasVercelOidcToken,
+    isVercelRuntime,
+    blobOidcEligible: hasBlobStoreId && (hasVercelOidcToken || isVercelRuntime),
+  };
+}
+
+type BlobCommandAuth = {
+  token?: string;
+  storeId?: string;
+  oidcToken?: string;
+};
+
+/** Options for @vercel/blob when token and/or OIDC + store id are configured. */
+function blobCommandAuth(): BlobCommandAuth {
+  const token = blobToken();
+  if (token) return { token };
+  const storeId = blobStoreId();
+  if (!storeId) return {};
+  const oidcToken = envTrim("VERCEL_OIDC_TOKEN");
+  return oidcToken ? { storeId, oidcToken } : { storeId };
 }
 
 export function resolveStorePersistenceBackend(): StorePersistenceBackend {
@@ -95,8 +175,8 @@ async function writeToKv(file: string, raw: string): Promise<void> {
 
 async function readFromBlob(file: string): Promise<string | null> {
   try {
-    const token = blobToken();
-    const meta = await head(blobPathname(file), token ? { token } : undefined);
+    const auth = blobCommandAuth();
+    const meta = await head(blobPathname(file), auth);
     const res = await fetch(meta.url, { cache: "no-store" });
     if (!res.ok) return null;
     return await res.text();
@@ -106,13 +186,12 @@ async function readFromBlob(file: string): Promise<string | null> {
 }
 
 async function writeToBlob(file: string, raw: string): Promise<void> {
-  const token = blobToken();
   await put(blobPathname(file), raw, {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
-    ...(token ? { token } : {}),
+    ...blobCommandAuth(),
   });
 }
 
