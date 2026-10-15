@@ -31,7 +31,7 @@ export function AdminMarketFeedActions() {
           ? ` · ${data.warnings.length} warning(s)`
           : "";
       setMessage(
-        `Synced: +${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.total ?? 0} total${warn}`,
+        `Synced: +${data.created ?? 0} new, ${data.updated ?? 0} updated, ${data.total ?? 0} total · ${data.sourcesAttempted ?? 0} portal source(s)${warn}`,
       );
       router.refresh();
     } catch {

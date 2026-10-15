@@ -184,3 +184,77 @@ function makePortalAdapter(portal: PortalConfig): AggregationAdapter {
 }
 
 export const htmlPortalAdapters: AggregationAdapter[] = PORTALS.map(makePortalAdapter);
+
+const portalById = new Map(PORTALS.map((p) => [p.id, p]));
+
+/** Run a built-in portal adapter by id (realestate-com-kh, khmer24-property, …). */
+export async function fetchKnownPortalAdapter(adapterId: string): Promise<{
+  items: AggregatedDraft[];
+  warnings: string[];
+}> {
+  const portal = portalById.get(adapterId);
+  if (!portal) {
+    return {
+      items: [],
+      warnings: [`Unknown portal adapter id: ${adapterId}`],
+    };
+  }
+  return fetchPortal(portal);
+}
+
+/** Lightweight poll for registry URLs without a dedicated parser. No fallback samples. */
+export async function fetchGenericPortalUrl(input: {
+  sourceId: string;
+  sourceName: string;
+  listUrl: string;
+}): Promise<{
+  items: AggregatedDraft[];
+  warnings: string[];
+  adapterNeeded: boolean;
+}> {
+  const pseudo: PortalConfig = {
+    id: input.sourceId,
+    label: input.sourceName,
+    sourceName: input.sourceName,
+    listUrl: input.listUrl,
+    fallback: [],
+  };
+
+  const warnings: string[] = [];
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8_000);
+
+  try {
+    const res = await fetch(input.listUrl, {
+      signal: controller.signal,
+      headers: {
+        "User-Agent": USER_AGENT,
+        Accept: "text/html,application/xhtml+xml",
+      },
+      redirect: "follow",
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      warnings.push(`${input.sourceId}: HTTP ${res.status}`);
+      return { items: [], warnings, adapterNeeded: true };
+    }
+
+    const html = await res.text();
+    const live = extractDraftsFromHtml(html, pseudo);
+    if (live.length === 0) {
+      warnings.push(
+        `${input.sourceId}: adapter needed — fetched HTML but no listing headings parsed`,
+      );
+      return { items: [], warnings, adapterNeeded: true };
+    }
+
+    return { items: live, warnings, adapterNeeded: false };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "fetch failed";
+    warnings.push(`${input.sourceId}: ${msg}`);
+    return { items: [], warnings, adapterNeeded: true };
+  } finally {
+    clearTimeout(timer);
+  }
+}

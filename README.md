@@ -52,14 +52,17 @@ curl -X POST http://127.0.0.1:43123/api/aggregations/sync \
   -H "Authorization: Bearer $AGGREGATION_SYNC_SECRET"
 ```
 
-- Adapters: **demo** (always seeds sample Cambodia listings), plus soft HTML polls for `realestate.com.kh` and `khmer24` property paths (fallback samples when blocked/SPA).
+- **Source registry:** `src/data/aggregation-sources.json` (773 URLs from Project catalog). Admin → **Market Feed → source registry** to enable/disable. Default: **19** top portal entry URLs; Facebook/Telegram/agencies off until later phases.
+- Sync polls **enabled portal** rows: dedicated HTML adapters for `realestate.com.kh` and `khmer24`; other enabled portals get a lightweight fetch (status `adapter_needed` when parse fails — no crash).
 - Dedupes by `externalId` or hash of `title|price|location`.
 - Rate-limited. Set `AGGREGATION_SYNC_SECRET` (or Vercel `CRON_SECRET`) for cron/webhook auth without a browser session.
 - **Automatic sync (every 1 minute, UTC):**
-  - **Netlify (primary):** `netlify/functions/aggregation-sync-scheduled.ts` calls `GET /api/aggregations/sync` with `Authorization: Bearer …` on schedule `* * * * *`. Set `AGGREGATION_SYNC_SECRET` (or `CRON_SECRET`) in site env. Runs on published production deploys only.
-  - **Vercel:** `vercel.json` cron hits the same path every minute when `CRON_SECRET` or `AGGREGATION_SYNC_SECRET` is set. **Hobby** plans only allow once-per-day crons — use Netlify, upgrade to Pro, or an external scheduler (e.g. cron-job.org) calling GET/POST with Bearer secret.
-  - Locally, use **Sync now** in Admin → Market Feed or curl POST/GET above.
-- First visit to Market Feed auto-seeds the demo adapter if the store is empty (`.data/aggregated-listings.json` or `/tmp/seaps-data`).
+  - **Netlify (primary):** `netlify/functions/aggregation-sync-scheduled.ts` → `GET /api/aggregations/sync` with `Authorization: Bearer …` on schedule `* * * * *` (Netlify’s minimum interval).
+  - **Vercel:** `vercel.json` cron same path (`* * * * *`) when secrets are set. **Hobby** plans only allow once-per-day crons — use Netlify, upgrade to Pro/Enterprise, or an external scheduler calling GET/POST with Bearer secret.
+  - Locally: **Sync now** in Admin → Market Feed or curl POST/GET above.
+- Regenerate catalog JSON: `node scripts/build-aggregation-sources.mjs` (reads Project store markdown).
+- First visit to Market Feed auto-seeds **only the demo adapter** if the store is empty. Full sync runs registry portals.
+- Storage is JSON on disk (`.data/` locally, `/tmp/seaps-data` on serverless). Not shared across instances — use Postgres/KV for production scale.
 
 ### Facebook / Telegram
 
@@ -72,8 +75,17 @@ We do not scrape private messages or bypass platform login walls.
 
 ## Deploy
 
-**Netlify (recommended):** Connect the GitHub repo, build command `npm run build`, env `AGGREGATION_SYNC_SECRET`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`. Scheduled sync: `netlify.toml` + `netlify/functions/`.
+**Netlify (recommended):** Connect the GitHub repo, set build command `npm run build`, and in **production** env set at least:
 
-**Vercel (optional):** Same env vars; `vercel.json` registers the 1-minute cron on Pro/Enterprise.
+| Variable | Purpose |
+| -------- | ------- |
+| `AGGREGATION_SYNC_SECRET` | Bearer token for scheduled sync (generate a long random string) |
+| `CRON_SECRET` | Optional alias; Netlify scheduler and `/api/aggregations/sync` accept either secret |
+| `AUTH_SECRET` | Session signing |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL (e.g. `https://www.vps1.store`) |
+
+Scheduled aggregation sync: `netlify.toml` + `netlify/functions/aggregation-sync-scheduled.ts` (`* * * * *`).
+
+**Vercel (optional):** Set the same env vars in **Production**. Set `CRON_SECRET` and/or `AGGREGATION_SYNC_SECRET` to the same value you expect on the Bearer header. `vercel.json` registers the 1-minute cron on **Pro/Enterprise** (Hobby: daily cron limit only).
 
 Add your custom domain (for example `vps1.store`) in the host’s domain settings.

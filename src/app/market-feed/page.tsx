@@ -4,6 +4,7 @@ import { MarketFeedGrid } from "@/components/aggregations/market-feed-card";
 import { SectionHeader } from "@/components/shared/section";
 import { ensureAggregationsSeeded } from "@/lib/aggregations/ensure-seeded";
 import { toPublicAggregatedListings } from "@/lib/aggregations/sanitize";
+import { countEnabledSourcesByType } from "@/lib/aggregations/sources/catalog";
 import { getAggregatedListings } from "@/lib/store";
 
 export const metadata: Metadata = {
@@ -17,9 +18,12 @@ export const dynamic = "force-dynamic";
 export default async function MarketFeedPage() {
   // Public route: never throw on store/seed failures (serverless FS, cold start).
   let items: ReturnType<typeof toPublicAggregatedListings> = [];
+  let enabledSources = 0;
   try {
     await ensureAggregationsSeeded();
     items = toPublicAggregatedListings(await getAggregatedListings());
+    const counts = await countEnabledSourcesByType();
+    enabledSources = counts.total;
   } catch {
     items = [];
   }
@@ -32,8 +36,10 @@ export default async function MarketFeedPage() {
         description="Fresh listings aggregated from public portals and manual import. No phones, emails, or source names on this page — only the property."
       />
       <p className="mb-6 text-sm text-[var(--color-muted)]">
-        {items.length} listing{items.length === 1 ? "" : "s"} · updated via polling adapters. Admins
-        see contacts and source links in{" "}
+        {items.length} listing{items.length === 1 ? "" : "s"} from{" "}
+        {enabledSources > 0 ? enabledSources : "—"} enabled catalog source
+        {enabledSources === 1 ? "" : "s"} (portals polled on schedule). Admins see contacts and
+        source links in{" "}
         <Link href="/admin/market-feed" className="text-[var(--color-accent)] hover:underline">
           Admin → Market Feed
         </Link>

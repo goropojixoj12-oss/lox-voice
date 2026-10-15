@@ -12,7 +12,10 @@ export async function ensureAggregationsSeeded(): Promise<void> {
   if (existing.length > 0) return;
 
   if (!seedPromise) {
-    seedPromise = runAggregationSync({ adapterIds: ["demo"] })
+    seedPromise = runAggregationSync({
+      adapterIds: ["demo"],
+      includeRegistry: false,
+    })
       .then(() => undefined)
       .catch(() => {
         seedPromise = null;

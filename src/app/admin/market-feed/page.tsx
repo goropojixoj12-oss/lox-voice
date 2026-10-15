@@ -30,7 +30,14 @@ export default async function AdminMarketFeedPage() {
               /market-feed
             </Link>{" "}
             page, but with phone / email / messenger and original source URL so you can find the
-            publisher. Public visitors never see these fields.
+            publisher. Public visitors never see these fields. Manage the{" "}
+            <Link
+              href="/admin/market-feed/sources"
+              className="text-[var(--color-accent)] hover:underline"
+            >
+              773-source registry
+            </Link>{" "}
+            (enable/disable portals).
           </p>
         </div>
         <AdminMarketFeedActions />

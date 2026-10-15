@@ -1,5 +1,6 @@
 /**
- * Netlify Scheduled Function: GET /api/aggregations/sync every 20 minutes (UTC).
+ * Netlify Scheduled Function: GET /api/aggregations/sync every minute (UTC).
+ * Netlify scheduled functions support cron down to * * * * * (once per minute).
  * Requires AGGREGATION_SYNC_SECRET (or CRON_SECRET) and site URL (URL / DEPLOY_PRIME_URL).
  */
 export default async () => {
@@ -50,5 +51,5 @@ export default async () => {
 };
 
 export const config = {
-  schedule: "*/20 * * * *",
+  schedule: "* * * * *",
 };

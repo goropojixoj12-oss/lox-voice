@@ -146,3 +146,51 @@ export async function upsertAggregatedListing(listing: AggregatedListing) {
   await writeJson(AGGREGATED_FILE, all);
   return listing;
 }
+
+const SOURCE_OVERRIDES_FILE = "aggregation-source-overrides.json";
+const SOURCE_RUNTIME_FILE = "aggregation-source-runtime.json";
+
+export type AggregationSourceOverride = { enabled: boolean };
+
+export type AggregationSourceRuntimeRow = {
+  lastRun: string | null;
+  itemsFetched: number;
+  status: "idle" | "ok" | "error" | "adapter_needed" | "skipped";
+  message: string | null;
+};
+
+export async function getAggregationSourceOverrides(): Promise<
+  Record<string, AggregationSourceOverride>
+> {
+  return readJson<Record<string, AggregationSourceOverride>>(
+    SOURCE_OVERRIDES_FILE,
+    {},
+  );
+}
+
+export async function setAggregationSourceEnabled(
+  sourceId: string,
+  enabled: boolean,
+): Promise<void> {
+  const all = await getAggregationSourceOverrides();
+  all[sourceId] = { enabled };
+  await writeJson(SOURCE_OVERRIDES_FILE, all);
+}
+
+export async function getAggregationSourceRuntimeMap(): Promise<
+  Record<string, AggregationSourceRuntimeRow>
+> {
+  return readJson<Record<string, AggregationSourceRuntimeRow>>(
+    SOURCE_RUNTIME_FILE,
+    {},
+  );
+}
+
+export async function saveAggregationSourceRuntime(
+  sourceId: string,
+  row: AggregationSourceRuntimeRow,
+): Promise<void> {
+  const all = await getAggregationSourceRuntimeMap();
+  all[sourceId] = row;
+  await writeJson(SOURCE_RUNTIME_FILE, all);
+}

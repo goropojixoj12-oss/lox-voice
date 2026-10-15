@@ -8,9 +8,12 @@ import { aggregationAdapters } from "./adapters";
 import type { AggregatedDraft } from "./adapters/types";
 import { resolveExternalId, shouldReplaceExisting } from "./dedupe";
 import { sanitizeDescription } from "./sanitize";
+import { syncEnabledRegistryPortals } from "./sources/registry-sync";
 
 export type SyncSummary = {
   adaptersRun: string[];
+  sourcesRun: string[];
+  sourcesAttempted: number;
   fetched: number;
   created: number;
   updated: number;
@@ -52,24 +55,55 @@ function draftToListing(draft: AggregatedDraft, now: string): AggregatedListing 
 
 export async function runAggregationSync(options?: {
   adapterIds?: string[];
+  /** When false, skip registry portal polling (demo-only seed). */
+  includeRegistry?: boolean;
 }): Promise<SyncSummary> {
+  const includeRegistry = options?.includeRegistry !== false;
+  const onlyDemo =
+    options?.adapterIds?.length === 1 && options.adapterIds[0] === "demo";
+
   const adapters = options?.adapterIds?.length
     ? aggregationAdapters.filter((a) => options.adapterIds!.includes(a.id))
-    : aggregationAdapters;
+    : [];
 
   const warnings: string[] = [];
   const drafts: AggregatedDraft[] = [];
   const adaptersRun: string[] = [];
+  let sourcesRun: string[] = [];
+  let sourcesAttempted = 0;
 
-  for (const adapter of adapters) {
-    adaptersRun.push(adapter.id);
-    try {
-      const result = await adapter.fetchDrafts();
+  if (onlyDemo) {
+    const demo = aggregationAdapters.find((a) => a.id === "demo");
+    if (demo) {
+      adaptersRun.push(demo.id);
+      const result = await demo.fetchDrafts();
       drafts.push(...result.items);
       warnings.push(...result.warnings);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "unknown error";
-      warnings.push(`${adapter.id}: crashed — ${msg}`);
+    }
+  } else {
+    for (const adapter of adapters) {
+      adaptersRun.push(adapter.id);
+      try {
+        const result = await adapter.fetchDrafts();
+        drafts.push(...result.items);
+        warnings.push(...result.warnings);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "unknown error";
+        warnings.push(`${adapter.id}: crashed — ${msg}`);
+      }
+    }
+
+    if (includeRegistry) {
+      try {
+        const registry = await syncEnabledRegistryPortals();
+        sourcesAttempted = registry.sourcesAttempted;
+        sourcesRun = registry.sourcesRun;
+        drafts.push(...registry.drafts);
+        warnings.push(...registry.warnings);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "registry sync failed";
+        warnings.push(`registry: ${msg}`);
+      }
     }
   }
 
@@ -155,6 +189,8 @@ export async function runAggregationSync(options?: {
 
   return {
     adaptersRun,
+    sourcesRun,
+    sourcesAttempted,
     fetched: drafts.length,
     created,
     updated,

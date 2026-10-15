@@ -16,6 +16,8 @@ const links = [
   { href: "/admin/users", label: "Users" },
   { href: "/admin/listings", label: "Listings moderation" },
   { href: "/admin/market-feed", label: "Market Feed (sources & contacts)" },
+  { href: "/admin/market-feed/sources", label: "Market Feed · source registry" },
+  { href: "/admin/market-feed/sources", label: "Market Feed · source registry" },
   { href: "/admin/agencies", label: "Agencies" },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/articles", label: "Articles" },
