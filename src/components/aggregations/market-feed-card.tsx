@@ -24,40 +24,42 @@ export function MarketFeedCard({
   const admin = showAdminMeta && isAdminListing(listing);
 
   return (
-    <article className="seaps-card group grid grid-cols-[104px_1fr] gap-3 overflow-hidden rounded-[var(--radius-lg)] p-3 transition hover:border-[rgba(240,215,140,0.75)] sm:grid-cols-[140px_1fr] sm:gap-4 sm:p-4 md:grid-cols-[180px_1fr]">
+    <article className="seaps-card group flex w-full flex-row items-stretch gap-3 overflow-hidden rounded-[var(--radius-lg)] p-3 transition hover:border-[rgba(240,215,140,0.75)] sm:gap-4 sm:p-4">
       <Link
         href={href}
-        className="relative aspect-[4/3] shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-mist)] sm:aspect-square"
+        className="relative h-auto w-[104px] shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-mist)] sm:w-[140px] md:w-[180px]"
       >
-        {photo ? (
-          photo.startsWith("/") ? (
-            <Image
-              src={photo}
-              alt={listing.title}
-              fill
-              className="object-cover transition duration-500 group-hover:scale-[1.02]"
-              sizes="(max-width:640px) 104px, (max-width:768px) 140px, 180px"
-            />
+        <div className="relative aspect-[4/3] w-full">
+          {photo ? (
+            photo.startsWith("/") ? (
+              <Image
+                src={photo}
+                alt={listing.title}
+                fill
+                className="object-cover transition duration-500 group-hover:scale-[1.02]"
+                sizes="(max-width:640px) 104px, (max-width:768px) 140px, 180px"
+              />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element -- external aggregated URLs
+              <img
+                src={photo}
+                alt={listing.title}
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+              />
+            )
           ) : (
-            // eslint-disable-next-line @next/next/no-img-element -- external aggregated URLs
-            <img
-              src={photo}
-              alt={listing.title}
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
-            />
-          )
-        ) : (
-          <div className="flex h-full items-center justify-center px-1 text-center text-[10px] text-[var(--color-muted)] sm:text-xs">
-            No photo
-          </div>
-        )}
-        {listing.propertyType ? (
-          <span className="absolute left-1.5 top-1.5 rounded-full bg-[var(--color-primary)] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[var(--color-accent-soft)] sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-[10px]">
-            {propertyTypeLabels[listing.propertyType]}
-          </span>
-        ) : null}
+            <div className="flex h-full min-h-[78px] items-center justify-center px-1 text-center text-[10px] text-[var(--color-muted)] sm:min-h-[105px] sm:text-xs md:min-h-[135px]">
+              No photo
+            </div>
+          )}
+          {listing.propertyType ? (
+            <span className="absolute left-1.5 top-1.5 rounded-full bg-[var(--color-primary)] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[var(--color-accent-soft)] sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-[10px]">
+              {propertyTypeLabels[listing.propertyType]}
+            </span>
+          ) : null}
+        </div>
       </Link>
-      <div className="flex min-w-0 flex-col gap-1.5 sm:gap-2">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:gap-2">
         <div className="flex items-start justify-between gap-3">
           <p className="text-lg font-semibold tracking-tight text-[var(--color-accent-soft)] sm:text-xl">
             {listing.price != null
@@ -128,7 +130,7 @@ export function MarketFeedGrid({
   showAdminMeta?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:gap-5">
+    <div className="flex w-full max-w-none flex-col gap-4 sm:gap-5">
       {items.map((listing) => (
         <MarketFeedCard
           key={listing.id}
