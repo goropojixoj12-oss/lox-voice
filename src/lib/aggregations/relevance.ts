@@ -92,6 +92,11 @@ const INCLUDE_PATTERNS: RegExp[] = [
   /\bflat\b/i,
 ];
 
+/** Always junk (spam / non-listing), except demo seeds. */
+const DEFAULT_JUNK_KEYWORD_PATTERNS: RegExp[] = [/\bwife\b/i, /\bdomain\b/i];
+
+const MIN_TITLE_WORDS = 5;
+
 const EXCLUDE_PATTERNS: RegExp[] = [
   /\bcar[s]?\b/i,
   /\bvehicle[s]?\b/i,
@@ -183,6 +188,31 @@ function matchesAny(text: string, patterns: RegExp[]): boolean {
   return patterns.some((p) => p.test(text));
 }
 
+function countWords(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+/** wife / domain / title shorter than five words — default junk for ingest and prune. */
+function classifyDefaultJunk(
+  input: ListingRelevanceInput,
+): RealEstateRelevanceResult | null {
+  if (isDemoRelevanceInput(input)) {
+    return null;
+  }
+
+  const text = haystackFromInput(input);
+  if (matchesAny(text, DEFAULT_JUNK_KEYWORD_PATTERNS)) {
+    return { keep: false, reason: "default_junk_keyword" };
+  }
+
+  const titleWords = countWords(input.title);
+  if (titleWords > 0 && titleWords < MIN_TITLE_WORDS) {
+    return { keep: false, reason: "title_under_five_words" };
+  }
+
+  return null;
+}
+
 /**
  * Conservative classifier: remove only when non-RE signals are clear and no RE signal overrides.
  */
@@ -191,6 +221,11 @@ export function classifyListingRelevance(
 ): RealEstateRelevanceResult {
   if (isDemoRelevanceInput(input)) {
     return { keep: true, reason: "demo_seed" };
+  }
+
+  const defaultJunk = classifyDefaultJunk(input);
+  if (defaultJunk) {
+    return defaultJunk;
   }
 
   if (input.propertyType && RE_PROPERTY_TYPES.has(input.propertyType)) {
@@ -249,6 +284,11 @@ export function classifyIngestRelevance(
 ): RealEstateRelevanceResult {
   if (isDemoRelevanceInput(input)) {
     return { keep: true, reason: "demo_seed" };
+  }
+
+  const defaultJunk = classifyDefaultJunk(input);
+  if (defaultJunk) {
+    return defaultJunk;
   }
 
   if (input.propertyType && RE_PROPERTY_TYPES.has(input.propertyType)) {

@@ -18,6 +18,8 @@ const junk = [
   { title: "Hiring sales manager — Phnom Penh", sourceName: "test", description: "Full time job" },
   { title: "iPhone 15 Pro Max unlocked", sourceName: "test", description: "Phone mobile" },
   { title: "English tutor available", sourceName: "test", description: "Private tutoring" },
+  { title: "Cheap domain for sale today", sourceName: "test", description: "wife friendly deal" },
+  { title: "Two word title", sourceName: "test", description: "property apartment villa land" },
 ];
 
 const keep = [
@@ -28,9 +30,9 @@ const keep = [
     propertyType: "condo",
   },
   {
-    title: "Land plot Otres hillside",
+    title: "Titled land plot Otres hillside sale",
     sourceName: "test",
-    description: "Titled land for sale",
+    description: "Land for sale",
     propertyType: "land",
   },
   {
