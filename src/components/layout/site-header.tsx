@@ -13,6 +13,7 @@ const nav = [
   { href: "/rent", label: "Rent" },
   { href: "/projects", label: "New homes" },
   { href: "/commercial", label: "Commercial" },
+  { href: "/market-feed", label: "Market Feed" },
   { href: "/agencies", label: "Agencies" },
   { href: "/insights", label: "Market insights" },
 ];

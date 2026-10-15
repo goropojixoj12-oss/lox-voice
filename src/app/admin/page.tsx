@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
-import { getInquiries, getRuntimeListings } from "@/lib/store";
+import { getAggregatedListings, getInquiries, getRuntimeListings } from "@/lib/store";
 import { agencies } from "@/data/agencies";
 import { articles } from "@/data/articles";
 import { cities } from "@/data/locations";
@@ -15,6 +15,7 @@ export const metadata: Metadata = { title: "Admin" };
 const links = [
   { href: "/admin/users", label: "Users" },
   { href: "/admin/listings", label: "Listings moderation" },
+  { href: "/admin/market-feed", label: "Market Feed (sources & contacts)" },
   { href: "/admin/agencies", label: "Agencies" },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/articles", label: "Articles" },
@@ -25,7 +26,11 @@ export default async function AdminPage() {
   const session = await requireRole(["admin"]);
   if (!session) redirect("/auth/login");
 
-  const [runtime, inquiries] = await Promise.all([getRuntimeListings(), getInquiries()]);
+  const [runtime, inquiries, aggregated] = await Promise.all([
+    getRuntimeListings(),
+    getInquiries(),
+    getAggregatedListings(),
+  ]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -45,6 +50,7 @@ export default async function AdminPage() {
           ["Articles", articles.length],
           ["Cities", cities.length],
           ["Inquiries", inquiries.length],
+          ["Market Feed (aggregated)", aggregated.length],
         ].map(([label, value]) => (
           <div
             key={String(label)}

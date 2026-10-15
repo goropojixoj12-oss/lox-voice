@@ -29,6 +29,7 @@ const columns = [
     title: "Learn",
     links: [
       { href: "/insights", label: "Market insights" },
+      { href: "/market-feed", label: "Market Feed · Рынок" },
       { href: "/guides", label: "Buyer & renter guides" },
       { href: "/about", label: "About" },
       { href: "/contact", label: "Contact" },

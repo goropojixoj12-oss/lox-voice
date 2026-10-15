@@ -1,0 +1,47 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { MarketFeedGrid } from "@/components/aggregations/market-feed-card";
+import { SectionHeader } from "@/components/shared/section";
+import { ensureAggregationsSeeded } from "@/lib/aggregations/ensure-seeded";
+import { toPublicAggregatedListings } from "@/lib/aggregations/sanitize";
+import { getAggregatedListings } from "@/lib/store";
+
+export const metadata: Metadata = {
+  title: "Market Feed · Рынок",
+  description:
+    "Aggregated Cambodia property listings from public market sources. Contact details and original publishers are hidden on the public feed.",
+};
+
+export const dynamic = "force-dynamic";
+
+export default async function MarketFeedPage() {
+  await ensureAggregationsSeeded();
+  const items = toPublicAggregatedListings(await getAggregatedListings());
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <SectionHeader
+        eyebrow="Рынок · Market Feed"
+        title="Сводка рынка Cambodia"
+        description="Свежие объявления, собранные с публичных порталов и ручного импорта. На этой странице нет телефонов, email и названий источников — только объект."
+      />
+      <p className="mb-6 text-sm text-[var(--color-muted)]">
+        {items.length} listing{items.length === 1 ? "" : "s"} · updated via polling adapters. Admins
+        see contacts and source links in{" "}
+        <Link href="/admin/market-feed" className="text-[var(--color-accent)] hover:underline">
+          Admin → Market Feed
+        </Link>
+        .
+      </p>
+      {items.length === 0 ? (
+        <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] p-10 text-center text-[var(--color-muted)]">
+          Feed is empty. Run{" "}
+          <code className="text-[var(--color-accent-soft)]">GET /api/aggregations/sync</code> as admin
+          to pull adapters.
+        </div>
+      ) : (
+        <MarketFeedGrid items={items} basePath="/market-feed" />
+      )}
+    </div>
+  );
+}

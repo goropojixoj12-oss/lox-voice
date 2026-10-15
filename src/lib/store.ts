@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 import os from "os";
 import path from "path";
 import { nanoid } from "nanoid";
-import type { Inquiry, Property, SavedSearch } from "@/lib/types";
+import type { AggregatedListing, Inquiry, Property, SavedSearch } from "@/lib/types";
 
 /**
  * Prefer project-local `.data` when the filesystem is writable (local/dev).
@@ -118,4 +118,31 @@ export async function toggleFavorite(userId: string, propertyId: string) {
   all[userId] = [...current];
   await writeJson("favorites.json", all);
   return all[userId];
+}
+
+const AGGREGATED_FILE = "aggregated-listings.json";
+
+export async function getAggregatedListings(): Promise<AggregatedListing[]> {
+  return readJson<AggregatedListing[]>(AGGREGATED_FILE, []);
+}
+
+export async function saveAggregatedListings(listings: AggregatedListing[]) {
+  await writeJson(AGGREGATED_FILE, listings);
+  return listings;
+}
+
+export async function getAggregatedListingById(
+  id: string,
+): Promise<AggregatedListing | null> {
+  const all = await getAggregatedListings();
+  return all.find((l) => l.id === id) ?? null;
+}
+
+export async function upsertAggregatedListing(listing: AggregatedListing) {
+  const all = await getAggregatedListings();
+  const idx = all.findIndex((l) => l.id === listing.id || l.externalId === listing.externalId);
+  if (idx >= 0) all[idx] = listing;
+  else all.unshift(listing);
+  await writeJson(AGGREGATED_FILE, all);
+  return listing;
 }

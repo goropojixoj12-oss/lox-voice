@@ -219,6 +219,42 @@ export interface SavedSearch {
   createdAt: string;
 }
 
+/** Contacts from an external market source — admin-only on the public site. */
+export interface AggregatedContacts {
+  phone?: string;
+  email?: string;
+  messenger?: string;
+}
+
+/**
+ * Listing ingested from an external Cambodia market source (portal scrape,
+ * manual paste, or future FB/TG connector). Sensitive fields stay in storage
+ * but must never appear on public API/UI responses.
+ */
+export interface AggregatedListing {
+  id: string;
+  title: string;
+  description: string;
+  price: number | null;
+  currency: string;
+  location: string | null;
+  propertyType: PropertyType | null;
+  photos: string[];
+  publishedAt: string | null;
+  sourceName: string;
+  sourceUrl: string | null;
+  contacts: AggregatedContacts;
+  externalId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Public-safe projection — no contacts, no source identity. */
+export type PublicAggregatedListing = Omit<
+  AggregatedListing,
+  "sourceName" | "sourceUrl" | "contacts"
+>;
+
 export interface SearchFilters {
   q?: string;
   deal?: TransactionType | "all";
