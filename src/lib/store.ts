@@ -1,5 +1,9 @@
 import { nanoid } from "nanoid";
 import {
+  normalizeAggregationSourceOverrides,
+  type AggregationSourceOverride,
+} from "@/lib/aggregations/sources/enabled-state";
+import {
   readStoreJson,
   resolveStorePersistenceBackend,
   writeStoreJson,
@@ -112,7 +116,7 @@ export async function upsertAggregatedListing(listing: AggregatedListing) {
 const SOURCE_OVERRIDES_FILE = "aggregation-source-overrides.json";
 const SOURCE_RUNTIME_FILE = "aggregation-source-runtime.json";
 
-export type AggregationSourceOverride = { enabled: boolean };
+export type { AggregationSourceOverride } from "@/lib/aggregations/sources/enabled-state";
 
 export type AggregationSourceRuntimeRow = {
   lastRun: string | null;
@@ -150,10 +154,12 @@ export async function saveAggregationSyncCursor(
 export async function getAggregationSourceOverrides(): Promise<
   Record<string, AggregationSourceOverride>
 > {
-  return readJson<Record<string, AggregationSourceOverride>>(
-    SOURCE_OVERRIDES_FILE,
-    {},
-  );
+  const raw = await readJson<unknown>(SOURCE_OVERRIDES_FILE, {});
+  return normalizeAggregationSourceOverrides(raw);
+}
+
+export async function resetAggregationSourceOverrides(): Promise<void> {
+  await writeJson(SOURCE_OVERRIDES_FILE, {});
 }
 
 export async function setAggregationSourceEnabled(

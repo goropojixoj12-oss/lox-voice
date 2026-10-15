@@ -9,6 +9,7 @@ import {
   getAggregationSourceOverrides,
   getAggregationSourceRuntimeMap,
 } from "@/lib/store";
+import { resolveCatalogSourceEnabled } from "./enabled-state";
 
 const catalog = catalogJson as AggregationSourcesCatalog;
 
@@ -24,8 +25,7 @@ export async function getEnabledPortalSources(): Promise<AggregationSourceCatalo
   const overrides = await getAggregationSourceOverrides();
   return catalog.sources.filter((s) => {
     if (s.type !== "portal") return false;
-    if (s.id in overrides) return overrides[s.id].enabled;
-    return s.enabled;
+    return resolveCatalogSourceEnabled(s, overrides);
   });
 }
 
@@ -48,8 +48,7 @@ export async function countEnabledSourcesByType(): Promise<{
   };
 
   for (const s of catalog.sources) {
-    const enabled =
-      s.id in overrides ? overrides[s.id].enabled : s.enabled;
+    const enabled = resolveCatalogSourceEnabled(s, overrides);
     if (!enabled) continue;
     counts.total += 1;
     counts[s.type] += 1;
@@ -62,8 +61,7 @@ export async function getSourcesAdminView(): Promise<AggregationSourceView[]> {
   const runtimeMap = await getAggregationSourceRuntimeMap();
 
   return catalog.sources.map((s) => {
-    const enabled =
-      s.id in overrides ? overrides[s.id].enabled : s.enabled;
+    const enabled = resolveCatalogSourceEnabled(s, overrides);
     const runtime: AggregationSourceRuntime = runtimeMap[s.id] ?? {
       lastRun: null,
       itemsFetched: 0,
@@ -80,6 +78,5 @@ export async function resolveSourceEnabled(
   const entry = catalog.sources.find((s) => s.id === sourceId);
   if (!entry) return null;
   const overrides = await getAggregationSourceOverrides();
-  if (sourceId in overrides) return overrides[sourceId].enabled;
-  return entry.enabled;
+  return resolveCatalogSourceEnabled(entry, overrides);
 }

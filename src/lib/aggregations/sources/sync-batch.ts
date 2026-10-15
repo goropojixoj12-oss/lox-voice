@@ -1,6 +1,7 @@
 import type { AggregationSourceCatalogEntry } from "./types";
 import { getCatalogSources } from "./catalog";
 import { getAggregationSourceOverrides } from "@/lib/store";
+import { resolveCatalogSourceEnabled } from "./enabled-state";
 
 /** Default per cron run when AGGREGATION_BATCH_SIZE is unset (parallel fetches, ~50s cap). */
 export const DEFAULT_SYNC_BATCH_SIZE = 24;
@@ -68,10 +69,7 @@ export async function getEnabledSourcesForSync(): Promise<AggregationSourceCatal
   };
 
   return getCatalogSources()
-    .filter((s) => {
-      const enabled = s.id in overrides ? overrides[s.id].enabled : s.enabled;
-      return enabled;
-    })
+    .filter((s) => resolveCatalogSourceEnabled(s, overrides))
     .sort((a, b) => {
       const ta = typeOrder[a.type] ?? 9;
       const tb = typeOrder[b.type] ?? 9;
