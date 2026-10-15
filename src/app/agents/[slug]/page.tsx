@@ -38,7 +38,7 @@ export default async function AgentDetailPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.3fr]">
-        <aside className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+        <aside className="rounded-[var(--radius-xl)] seaps-card p-6">
           <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-full">
             <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="160px" />
           </div>

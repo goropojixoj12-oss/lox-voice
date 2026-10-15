@@ -28,7 +28,7 @@ export function DashboardNav() {
   }
 
   return (
-    <nav className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+    <nav className="seaps-card rounded-[var(--radius-lg)] p-3">
       <ul className="space-y-1">
         {links.map((link) => (
           <li key={link.href}>

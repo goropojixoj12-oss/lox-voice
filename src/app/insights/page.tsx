@@ -22,7 +22,7 @@ export default function InsightsPage() {
         {marketStats.slice(0, 3).map((stat) => (
           <div
             key={stat.id}
-            className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+            className="seaps-card rounded-[var(--radius-lg)] p-5"
           >
             <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{stat.label}</p>
             <p className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">

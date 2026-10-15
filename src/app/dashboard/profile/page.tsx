@@ -11,7 +11,7 @@ export default async function ProfilePage() {
       <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         Profile
       </h1>
-      <dl className="mt-5 max-w-lg space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+      <dl className="mt-5 max-w-lg space-y-3 rounded-[var(--radius-lg)] seaps-card p-5">
         <div>
           <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Name</dt>
           <dd className="font-semibold">{session.name}</dd>

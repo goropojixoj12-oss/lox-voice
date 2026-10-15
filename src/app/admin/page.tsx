@@ -48,7 +48,7 @@ export default async function AdminPage() {
         ].map(([label, value]) => (
           <div
             key={String(label)}
-            className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+            className="rounded-[var(--radius-lg)] seaps-card p-5"
           >
             <p className="text-sm text-[var(--color-muted)]">{label}</p>
             <p className="mt-2 text-3xl font-semibold">{value}</p>

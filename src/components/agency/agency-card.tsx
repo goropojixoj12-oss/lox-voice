@@ -4,7 +4,7 @@ import type { Agency, Agent } from "@/lib/types";
 
 export function AgencyCard({ agency }: { agency: Agency }) {
   return (
-    <article className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+    <article className="seaps-card h-full overflow-hidden rounded-[var(--radius-lg)]">
       <div className="relative h-36">
         <Image src={agency.cover} alt={`${agency.name} cover`} fill className="object-cover" sizes="400px" />
       </div>
@@ -44,7 +44,7 @@ export function AgencyCard({ agency }: { agency: Agency }) {
 
 export function AgentCard({ agent }: { agent: Agent }) {
   return (
-    <article className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <article className="seaps-card h-full rounded-[var(--radius-lg)] p-4">
       <div className="flex items-center gap-3">
         <div className="relative h-14 w-14 overflow-hidden rounded-full">
           <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="56px" />

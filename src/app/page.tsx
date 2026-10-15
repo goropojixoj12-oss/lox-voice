@@ -131,7 +131,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section className="bg-[#050d18] text-white">
+      <Section>
         <SectionHeader
           eyebrow="Geography"
           title="Popular cities and districts"
@@ -142,7 +142,7 @@ export default async function HomePage() {
             <Link
               key={city.slug}
               href={`/locations/${city.slug}`}
-              className="group relative overflow-hidden rounded-[var(--radius-xl)]"
+              className="seaps-card group relative overflow-hidden rounded-[var(--radius-xl)]"
             >
               <div className="relative aspect-[5/4]">
                 <Image
@@ -184,7 +184,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section className="bg-[var(--color-mist)]/70">
+      <Section>
         <SectionHeader
           eyebrow="Market pulse"
           title="Cambodia market indicators"
@@ -199,7 +199,7 @@ export default async function HomePage() {
           {marketStats.map((stat) => (
             <div
               key={stat.id}
-              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
+              className="seaps-card rounded-[var(--radius-lg)] p-5"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 {stat.label}
@@ -212,7 +212,7 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
-        <div className="mt-8 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="seaps-card mt-8 overflow-hidden rounded-[var(--radius-lg)]">
           <div className="border-b border-[var(--color-border)] px-5 py-3 text-sm font-semibold">
             Popular districts · $/m²
           </div>
@@ -238,7 +238,7 @@ export default async function HomePage() {
         <PropertyGrid items={videoTours} userId={session?.id} />
       </Section>
 
-      <Section className="bg-[var(--color-secondary)]/50">
+      <Section>
         <SectionHeader
           eyebrow="Professionals"
           title="Popular agencies"
@@ -270,7 +270,7 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
+          <div className="seaps-card rounded-[var(--radius-xl)] p-6">
             <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               Request a tailored shortlist
             </h2>
@@ -291,7 +291,7 @@ export default async function HomePage() {
       </Section>
 
       <Section className="pb-24">
-        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-accent)]/30 bg-[linear-gradient(135deg,#0b1c33,#122844_55%,#0b1c33)] px-6 py-12 text-white md:px-10 seaps-gold-border">
+        <div className="seaps-card overflow-hidden rounded-[var(--radius-xl)] px-6 py-12 md:px-10">
           <div className="grid gap-6 md:grid-cols-[1.2fr_auto] md:items-center">
             <div>
               <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)] md:text-4xl">

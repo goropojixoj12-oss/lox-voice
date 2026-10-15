@@ -171,7 +171,7 @@ export default async function PropertyDetailPage({
                 .map(([label, value]) => (
                   <div
                     key={String(label)}
-                    className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
+                    className="rounded-[var(--radius-md)] seaps-card px-4 py-3"
                   >
                     <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
                       {label}
@@ -219,7 +219,7 @@ export default async function PropertyDetailPage({
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <InquiryForm propertyId={property.id} propertyTitle={property.title} />
-          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+          <div className="rounded-[var(--radius-lg)] seaps-card p-4">
             <h3 className="font-semibold text-[var(--color-accent-soft)]">Share</h3>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
               Copy the page URL from your browser to share this listing, or use the inquiry form
@@ -230,7 +230,7 @@ export default async function PropertyDetailPage({
             </ButtonLink>
           </div>
           {agent ? (
-            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="rounded-[var(--radius-lg)] seaps-card p-4">
               <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Listed by</p>
               <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-accent-soft)]">
                 {agent.name}
@@ -244,7 +244,7 @@ export default async function PropertyDetailPage({
             </div>
           ) : null}
           {project ? (
-            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="rounded-[var(--radius-lg)] seaps-card p-4">
               <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Project</p>
               <Link href={`/projects/${project.slug}`} className="mt-1 block font-semibold">
                 {project.name}

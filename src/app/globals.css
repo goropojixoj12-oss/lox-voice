@@ -72,14 +72,18 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(1000px 480px at 12% -8%, rgba(212, 175, 55, 0.12), transparent 55%),
-    radial-gradient(900px 420px at 90% 0%, rgba(20, 50, 82, 0.55), transparent 50%),
-    linear-gradient(180deg, #0a182c 0%, var(--color-background) 42%, #050d18 100%);
+  background: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body), sans-serif;
   min-height: 100%;
   overflow-x: hidden;
+}
+
+/* Uniform card chrome — hairline gold outline */
+.seaps-card {
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background: var(--color-surface);
+  box-shadow: none;
 }
 
 img,

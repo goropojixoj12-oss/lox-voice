@@ -61,7 +61,7 @@ export default async function CityPage({
               <Link
                 key={district.slug}
                 href={`/locations/${guide.slug}/${district.slug}`}
-                className="group overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
+                className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)]"
               >
                 <div className="relative aspect-[16/10]">
                   <Image

@@ -6,7 +6,7 @@ export function ArticleCard({ article }: { article: Article }) {
   const href =
     article.category === "guides" ? `/guides/${article.slug}` : `/insights/${article.slug}`;
   return (
-    <article className="group grid gap-4 md:grid-cols-[180px_1fr]">
+    <article className="seaps-card group grid gap-4 overflow-hidden rounded-[var(--radius-lg)] p-3 md:grid-cols-[180px_1fr] md:p-4">
       <Link href={href} className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-md)] md:aspect-square">
         <Image
           src={article.cover}

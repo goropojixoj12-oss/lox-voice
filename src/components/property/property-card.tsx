@@ -25,7 +25,7 @@ export function PropertyCard({
 
   if (variant === "editorial") {
     return (
-      <article className="group relative overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-primary)] text-white">
+      <article className="seaps-card group relative h-full overflow-hidden rounded-[var(--radius-xl)] text-white">
         <Link href={href} className="block">
           <div className="relative aspect-[16/11]">
             <Image
@@ -54,7 +54,7 @@ export function PropertyCard({
   return (
     <article
       className={cn(
-        "group overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]",
+        "seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]",
         variant === "list" && "md:grid md:grid-cols-[280px_1fr]",
       )}
     >
@@ -149,7 +149,7 @@ export function PropertyGrid({
   userId?: string;
 }) {
   return (
-    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {items.map((property) => (
         <PropertyCard key={property.id} property={property} userId={userId} />
       ))}
@@ -165,7 +165,7 @@ export function PropertyList({
   userId?: string;
 }) {
   return (
-    <div className="grid gap-4">
+    <div className="grid items-stretch gap-4">
       {items.map((property) => (
         <PropertyCard key={property.id} property={property} variant="list" userId={userId} />
       ))}

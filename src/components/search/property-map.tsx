@@ -35,8 +35,8 @@ export function PropertyMap({
                 className={cn(
                   "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-xs font-semibold shadow-sm transition",
                   active
-                    ? "z-10 border-[var(--color-accent)] bg-[var(--color-accent)] text-white"
-                    : "border-[var(--color-primary)] bg-white text-[var(--color-accent-soft)] hover:bg-[var(--color-primary)] hover:text-white",
+                    ? "z-10 border-[var(--color-accent)] bg-[var(--color-accent)] text-[#0B1C33]"
+                    : "border-[var(--color-primary)] bg-[var(--color-surface)] text-[var(--color-accent-soft)] hover:bg-[var(--color-primary)] hover:text-white",
                 )}
                 style={{ left: `${left}%`, top: `${top}%` }}
                 title={property.title}
@@ -46,7 +46,7 @@ export function PropertyMap({
             );
           })}
           {activeId ? (
-            <div className="absolute bottom-4 left-4 right-4 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-white/95 p-3 shadow-[var(--shadow-soft)]">
+            <div className="absolute bottom-4 left-4 right-4 rounded-[var(--radius-md)] seaps-card/95 p-3 shadow-[var(--shadow-soft)]">
               {(() => {
                 const property = items.find((p) => p.id === activeId);
                 if (!property) return null;
@@ -60,7 +60,7 @@ export function PropertyMap({
                     </div>
                     <Link
                       href={`/property/${property.slug}`}
-                      className="text-sm font-semibold text-[var(--color-accent)]"
+                      className="text-sm font-semibold text-[var(--color-accent-soft)]"
                     >
                       Open
                     </Link>
@@ -75,7 +75,7 @@ export function PropertyMap({
   }
 
   return (
-    <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-white p-6 text-sm text-[var(--color-muted)]">
+    <div className="rounded-[var(--radius-lg)] seaps-card p-6 text-sm text-[var(--color-muted)]">
       Map provider selected. Configure map tokens to enable the live map widget.
     </div>
   );
