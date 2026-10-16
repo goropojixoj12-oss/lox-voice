@@ -44,13 +44,15 @@ export default async function HomePage() {
             <p className="mt-4 text-sm uppercase tracking-[0.2em] text-[var(--color-accent-soft)]">
               {brand.fullName}
             </p>
-            <h1 className="mt-5 max-w-xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
-              SEAPS is a multi-award-winning real estate, property management and investment partner
-              across South East Asia.
+            <h1 className="mt-5 max-w-2xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
+              South East Asia Property Services (SEAPS) is a multi-Award-Winning Real Estate,
+              Property Management and Investment Company, based in South East Asia.
             </h1>
-            <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-              We turn market insight into clear strategy — helping clients buy well, grow value and
-              manage portfolios with confidence.
+            <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
+              SEAPS converts market insight into clear individualised strategies by providing Buyers,
+              Sellers and Investors with comprehensive property solutions spanning every major sector
+              of the market, including Land, Residential and Commercial Properties, Property
+              Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
