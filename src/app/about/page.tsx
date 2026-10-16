@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AboutContactCta } from "@/components/about/about-contact-cta";
 import { SeapsYoutubePlayer } from "@/components/media/seaps-youtube-player";
 import { Section } from "@/components/shared/section";
 import { brand } from "@/config/brand";
@@ -118,7 +119,9 @@ export default function AboutUsPage() {
           </Link>
         </p>
 
-        <p className="mt-12 text-sm text-[var(--color-muted)]">
+        <AboutContactCta />
+
+        <p className="mt-12 text-center text-sm text-[var(--color-muted)]">
           {brand.fullName} · Cambodia · since {brand.foundedYear}
         </p>
       </article>
