@@ -3,10 +3,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { articles, getArticleBySlug } from "@/data/articles";
 
+const PUBLIC_INSIGHT_SLUGS = new Set(["seaps-since-1997", "off-plan-buying-questions-cambodia"]);
+
 export function generateStaticParams() {
-  return articles
-    .filter((a) => a.category !== "guides")
-    .map((a) => ({ slug: a.slug }));
+  return articles.filter((a) => PUBLIC_INSIGHT_SLUGS.has(a.slug)).map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({
@@ -27,7 +27,9 @@ export default async function InsightArticlePage({
 }) {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
-  if (!article || article.category === "guides") notFound();
+  if (!article || article.category === "guides" || !PUBLIC_INSIGHT_SLUGS.has(article.slug)) {
+    notFound();
+  }
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">

@@ -22,21 +22,6 @@ SEAPS surfaces verification badges and update timestamps so you can prioritize t
     relatedPropertyIds: ["p-001", "p-003"],
   },
   {
-    id: "a-002",
-    slug: "phnom-penh-rental-demand-brief",
-    title: "Phnom Penh Rental Demand: Market Brief",
-    excerpt:
-      "Long-stay demand notes for BKK 1, Daun Penh, and Toul Kork based on SEAPS listing activity.",
-    content: `Long-stay apartments in BKK 1 remain competitive for relocating professionals, while Daun Penh attracts tenants who want riverside walkability. Toul Kork continues to draw families seeking compound living with parking.
-
-When comparing asking rents, weigh building amenities, generator reliability, and commute times to common business districts rather than relying on photos alone.`,
-    cover: img("photo-1552465011-b4e21bf6e79a"),
-    category: "analysis",
-    author: "Adam James",
-    publishedAt: "2026-10-15T10:00:00.000Z",
-    relatedCitySlug: "phnom-penh",
-  },
-  {
     id: "a-003",
     slug: "off-plan-buying-questions-cambodia",
     title: "Off-Plan Buying in Cambodia: Questions Worth Asking",
@@ -50,19 +35,6 @@ On SEAPS project pages, verified facts and developer claims are listed separatel
     author: "Adam James",
     publishedAt: "2026-10-14T10:00:00.000Z",
     relatedPropertyIds: ["p-017", "p-018"],
-  },
-  {
-    id: "a-004",
-    slug: "siem-reap-neighborhood-notes",
-    title: "Siem Reap Neighborhood Notes: Svay Dangkum",
-    excerpt:
-      "A human-scale district overview for buyers prioritizing access to services without living on the busiest tourist streets.",
-    content: `Svay Dangkum rewards people who want cafés and services with quieter residential lanes nearby. Inventory mixes villas and compact apartments. This article is editorial context to support viewing trips, not a pricing index.`,
-    cover: img("photo-1528183429752-a97d14bf51b1"),
-    category: "district",
-    author: "Adam James",
-    publishedAt: "2026-10-13T10:00:00.000Z",
-    relatedCitySlug: "siem-reap",
   },
   {
     id: "a-005",
