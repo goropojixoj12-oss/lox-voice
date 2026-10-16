@@ -56,6 +56,10 @@ const nextConfig: NextConfig = {
     return [
       { source: "/agencies", destination: "/usefullinks", permanent: true },
       { source: "/agencies/:path*", destination: "/usefullinks", permanent: true },
+      { source: "/market-feed", destination: "/search", permanent: true },
+      { source: "/market-feed/:path*", destination: "/search", permanent: true },
+      { source: "/admin/market-feed", destination: "/admin", permanent: true },
+      { source: "/admin/market-feed/:path*", destination: "/admin", permanent: true },
     ];
   },
   images: {

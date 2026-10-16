@@ -86,33 +86,6 @@ body {
   box-shadow: none;
 }
 
-/* Market Feed — full-width horizontal rows (thumb left, details right) */
-.market-feed-list,
-[data-market-feed-layout="horizontal-list"] {
-  display: flex !important;
-  flex-direction: column !important;
-  flex-wrap: nowrap !important;
-  width: 100% !important;
-  max-width: none !important;
-  grid-template-columns: unset !important;
-}
-
-.market-feed-row,
-[data-market-feed-card="row"] {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: stretch !important;
-  width: 100% !important;
-  max-width: none !important;
-  grid-template-columns: unset !important;
-}
-
-.market-feed-row > a:first-of-type,
-[data-market-feed-card="row"] > a:first-of-type {
-  flex: 0 0 auto !important;
-}
-
 /* Admin dashboard quick links — same chrome as cards, readable on dark theme */
 .seaps-admin-nav-link {
   display: block;

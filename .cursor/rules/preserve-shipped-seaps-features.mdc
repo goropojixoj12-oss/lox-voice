@@ -22,7 +22,7 @@ When editing this repository, **do not overwrite or drop** previously approved w
 ### Navigation (`src/components/layout/site-header.tsx`)
 
 - First item: **About Us** → `/about`.
-- **Market Feed** → `/market-feed`.
+- **No Market Feed** in nav (removed; `/market-feed` redirects to `/search`).
 - **Useful Links** → `/usefullinks` (not `/agencies`).
 - Nav links use **`seaps-gold-text`** (living gold), with **`notranslate`** on nav.
 - Header background: `rgba(7,17,31,0.92)` fallback + optional `color-mix`.
@@ -37,12 +37,11 @@ When editing this repository, **do not overwrite or drop** previously approved w
 
 - Gold text **solid fallback** when `background-clip: text` fails.
 - **`seaps-brand-subtitle`** for hero company name (must stay visible in all browsers).
-- Market Feed **horizontal row** layout classes intact.
 
-### Security & feed (do not revert)
+### Security (do not revert)
 
 - HMAC-signed `en_session` + bcrypt passwords.
-- Market feed junk filters and private Blob persistence patterns documented in repo.
+- Private Blob persistence patterns documented in repo where used.
 
 ### About & contact
 
