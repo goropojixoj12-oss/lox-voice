@@ -56,29 +56,24 @@ export function MainSearch({
         className,
       )}
     >
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:gap-y-2">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
-          {deals.map((deal) => (
-            <button
-              key={deal.id}
-              type="button"
-              role="tab"
-              aria-selected={mode === deal.id}
-              onClick={() => setMode(deal.id)}
-              className={cn(
-                "rounded-full px-4 py-2 text-sm font-semibold transition",
-                mode === deal.id
-                  ? "bg-[var(--color-accent)] text-[#0B1C33]"
-                  : "bg-[var(--color-mist)] text-[var(--color-text)] hover:bg-[var(--color-secondary)]",
-              )}
-            >
-              {deal.label}
-            </button>
-          ))}
-        </div>
-        <p className="text-sm font-medium leading-snug text-[var(--color-accent-soft)] sm:ml-auto sm:max-w-[16rem] sm:flex-1 sm:text-right md:text-[0.9375rem]">
-          {heroSearchTagline}
-        </p>
+      <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
+        {deals.map((deal) => (
+          <button
+            key={deal.id}
+            type="button"
+            role="tab"
+            aria-selected={mode === deal.id}
+            onClick={() => setMode(deal.id)}
+            className={cn(
+              "rounded-full px-4 py-2 text-sm font-semibold transition",
+              mode === deal.id
+                ? "bg-[var(--color-accent)] text-[#0B1C33]"
+                : "bg-[var(--color-mist)] text-[var(--color-text)] hover:bg-[var(--color-secondary)]",
+            )}
+          >
+            {deal.label}
+          </button>
+        ))}
       </div>
       <form
         onSubmit={onSubmit}
@@ -159,7 +154,10 @@ export function MainSearch({
           </Select>
         </label>
         </div>
-        <div className={cn("md:col-span-6", stretch && "mt-auto pt-1")}>
+        <div className={cn("space-y-3 md:col-span-6", stretch && "mt-auto pt-1")}>
+          <p className="text-center text-sm font-medium leading-snug text-[var(--color-accent-soft)] md:text-[0.9375rem]">
+            {heroSearchTagline}
+          </p>
           <Button type="submit" className="w-full md:w-auto" size="lg">
             Search properties
           </Button>
