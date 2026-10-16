@@ -45,12 +45,12 @@ export default async function HomePage() {
               {brand.fullName}
             </p>
             <h1 className="mt-5 max-w-xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
-              Cambodia property marketplace — buy, rent, or list with local expertise since{" "}
-              {brand.foundedYear}
+              SEAPS is a multi-award-winning real estate, property management and investment partner
+              across South East Asia.
             </h1>
             <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
-              Verified listing signals, city and district filters, and agent desks across Phnom Penh,
-              Siem Reap, and the coast — one search for homes, commercial, and off-plan.
+              We turn market insight into clear strategy — helping clients buy well, grow value and
+              manage portfolios with confidence.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
