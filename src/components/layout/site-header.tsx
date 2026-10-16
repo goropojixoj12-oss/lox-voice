@@ -37,7 +37,7 @@ export function SiteHeader({
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-[var(--color-text)] transition hover:bg-[var(--color-mist)] hover:text-[var(--color-accent-soft)]"
+              className="seaps-gold-text rounded-full px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]"
             >
               {item.label}
             </Link>
@@ -88,7 +88,7 @@ export function SiteHeader({
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="rounded-[var(--radius-md)] px-3 py-3 text-base font-medium hover:bg-[var(--color-mist)]"
+              className="seaps-gold-text rounded-[var(--radius-md)] px-3 py-3 text-base font-medium transition hover:bg-[var(--color-mist)]"
             >
               {item.label}
             </Link>
