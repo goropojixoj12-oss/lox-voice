@@ -194,7 +194,8 @@ export interface CityGuide {
 export interface DemoUser {
   id: string;
   email: string;
-  password: string;
+  /** bcrypt hash — never store plaintext passwords. */
+  passwordHash: string;
   name: string;
   role: Exclude<UserRole, "guest">;
   agencyId?: string;

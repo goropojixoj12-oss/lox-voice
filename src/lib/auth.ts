@@ -1,12 +1,13 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { findUserByEmail, demoUsers } from "@/data/users";
+import { DUMMY_PASSWORD_HASH, verifyPassword } from "@/lib/password";
 import type { DemoUser, UserRole } from "@/lib/types";
 
 const SESSION_COOKIE = "en_session";
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14;
 
-export type SessionUser = Omit<DemoUser, "password">;
+export type SessionUser = Omit<DemoUser, "passwordHash">;
 
 type SessionPayload = {
   userId: string;
@@ -15,7 +16,7 @@ type SessionPayload = {
 };
 
 function toSessionUser(user: DemoUser): SessionUser {
-  const { password: _password, ...rest } = user;
+  const { passwordHash: _passwordHash, ...rest } = user;
   return rest;
 }
 
@@ -123,7 +124,13 @@ export async function getSession(): Promise<SessionUser | null> {
 
 export async function login(email: string, password: string) {
   const user = findUserByEmail(email);
-  if (!user || user.password !== password) {
+  if (!user) {
+    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    return { ok: false as const, error: "Invalid email or password" };
+  }
+
+  const match = await verifyPassword(password, user.passwordHash);
+  if (!match) {
     return { ok: false as const, error: "Invalid email or password" };
   }
 
