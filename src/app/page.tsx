@@ -1,6 +1,4 @@
 import Image from "next/image";
-import { ArticleCard } from "@/components/article/article-card";
-import { ProjectCard } from "@/components/project/project-card";
 import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
 import { HeroPromoButtons } from "@/components/home/hero-promo-buttons";
 import { HeroSocialLinks } from "@/components/home/hero-social-links";
@@ -8,10 +6,7 @@ import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section, SectionHeader } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
-import { articles } from "@/data/articles";
 import { cities } from "@/data/locations";
-import { marketStats, popularDistrictPrices } from "@/data/market";
-import { projects } from "@/data/projects";
 import { properties } from "@/data/properties";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
 import { brand } from "@/config/brand";
@@ -24,8 +19,6 @@ export default async function HomePage() {
     .slice(0, 3);
   const featured = properties.filter((p) => p.isFeatured).slice(0, 3);
   const premium = properties.filter((p) => p.isPremium).slice(0, 3);
-  const videoTours = properties.filter((p) => p.hasVideoTour).slice(0, 3);
-  const guides = articles.filter((a) => a.category === "guides" || a.category === "investor");
 
   return (
     <>
@@ -142,128 +135,23 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section>
-        <SectionHeader
-          eyebrow="Developments"
-          title="New residential projects"
-          description="Off-plan and new communities with separated developer claims and moderated facts."
-          action={
-            <ButtonLink href="/projects" variant="outline">
-              Browse projects
-            </ButtonLink>
-          }
-        />
-        <div className="grid gap-5 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
-      </Section>
-
-      <Section className="bg-[var(--color-mist)]/70">
-        <SectionHeader
-          eyebrow="Market pulse"
-          title="Cambodia market indicators"
-          description="Asking-price snapshots from current SEAPS listings across major Cambodian cities."
-          action={
-            <ButtonLink href="/insights" variant="outline">
-              Read insights
-            </ButtonLink>
-          }
-        />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {marketStats.map((stat) => (
-            <div
-              key={stat.id}
-              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-                {stat.label}
-              </p>
-              <p className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-                {stat.value}
-              </p>
-              <p className="mt-2 text-sm text-[var(--color-accent)]">{stat.change}</p>
-              <p className="mt-2 text-sm text-[var(--color-muted)]">{stat.note}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
-          <div className="border-b border-[var(--color-border)] px-5 py-3 text-sm font-semibold">
-            Popular districts · $/m²
-          </div>
-          <ul className="divide-y divide-[var(--color-border)]">
-            {popularDistrictPrices.map((row) => (
-              <li key={row.district} className="flex items-center justify-between px-5 py-3 text-sm">
-                <span>
-                  {row.district}, {row.city}
-                </span>
-                <span className="font-semibold text-[var(--color-accent-soft)]">{row.pricePerSqm}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Section>
-
-      <Section>
-        <SectionHeader
-          eyebrow="Video-ready"
-          title="Listings with video tours"
-          description="Properties with video tours available for remote viewing."
-        />
-        <PropertyGrid items={videoTours} userId={session?.id} />
-      </Section>
-
-      <Section>
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <SectionHeader
-              eyebrow="Editorial"
-              title="Guides and market notes"
-              description="Buyer guidance and analysis pages with unique copy — not auto-generated SEO filler."
-            />
-            <div className="space-y-6">
-              {guides.slice(0, 3).map((article) => (
-                <ArticleCard key={article.id} article={article} />
-              ))}
-            </div>
-          </div>
-          <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
-            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-              Request a tailored shortlist
-            </h2>
-            <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Tell us the city, budget, and must-have amenities. Our team will follow up with a
-              shortlist — with privacy consent on the contact form.
-            </p>
-            <ul className="mt-5 space-y-2 text-sm text-[var(--color-muted)]">
-              <li>· City and district preferences</li>
-              <li>· Budget and deal type (buy / rent / short stay)</li>
-              <li>· Must-have amenities and timeline</li>
-            </ul>
-            <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
-              Contact SEAPS for a shortlist
-            </ButtonLink>
-          </div>
-        </div>
-      </Section>
-
       <Section className="pb-24">
-        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-accent)]/30 bg-[linear-gradient(135deg,#0b1c33,#122844_55%,#0b1c33)] px-6 py-12 text-white md:px-10 seaps-gold-border">
-          <div className="grid gap-6 md:grid-cols-[1.2fr_auto] md:items-center">
-            <div>
-              <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)] md:text-4xl">
-                Ready to publish your property?
-              </h2>
-              <p className="mt-3 max-w-xl text-[var(--color-muted)]">
-                Use the multi-step listing wizard to draft, preview, and submit your Cambodian
-                property for moderation.
-              </p>
-            </div>
-            <ButtonLink href="/list-property" variant="accent" size="lg">
-              Start listing
-            </ButtonLink>
-          </div>
+        <div className="mx-auto max-w-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] md:max-w-2xl md:p-8">
+          <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+            Request a tailored shortlist
+          </h2>
+          <p className="mt-2 text-sm text-[var(--color-muted)]">
+            Tell us the city, budget, and must-have amenities. Our team will follow up with a
+            shortlist — with privacy consent on the contact form.
+          </p>
+          <ul className="mt-5 space-y-2 text-sm text-[var(--color-muted)]">
+            <li>· City and district preferences</li>
+            <li>· Budget and deal type (buy / rent / short stay)</li>
+            <li>· Must-have amenities and timeline</li>
+          </ul>
+          <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
+            Contact SEAPS for a shortlist
+          </ButtonLink>
         </div>
       </Section>
     </>
