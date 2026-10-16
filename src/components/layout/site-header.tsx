@@ -9,6 +9,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { href: "/about", label: "About Us" },
   { href: "/buy", label: "Buy" },
   { href: "/rent", label: "Rent" },
   { href: "/projects", label: "New homes" },

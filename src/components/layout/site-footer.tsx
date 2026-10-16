@@ -30,7 +30,7 @@ const columns = [
     links: [
       { href: "/insights", label: "Market insights" },
       { href: "/guides", label: "Buyer & renter guides" },
-      { href: "/about", label: "About" },
+      { href: "/about", label: "About Us" },
       { href: "/contact", label: "Contact" },
     ],
   },

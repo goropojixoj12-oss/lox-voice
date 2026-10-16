@@ -34,7 +34,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
       "connect-src 'self' https://translate.googleapis.com https://translate.google.com",
-      "frame-src 'self' https://translate.google.com",
+      "frame-src 'self' https://translate.google.com https://www.youtube.com https://www.youtube-nocookie.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
