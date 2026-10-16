@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AboutContactCta } from "@/components/about/about-contact-cta";
 import { PropertyGuidePdfPreview } from "@/components/property-guide/property-guide-pdf-preview";
 import { Section } from "@/components/shared/section";
 
@@ -51,6 +52,8 @@ export default function PropertyGuidePage() {
             proceeding with a transaction.
           </p>
         </aside>
+
+        <AboutContactCta />
       </article>
     </Section>
   );

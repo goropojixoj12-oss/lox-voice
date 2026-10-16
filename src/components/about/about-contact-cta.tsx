@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ContactUsModal } from "@/components/about/contact-us-modal";
 import { Button } from "@/components/ui/button";
 
-/** Gold Contact Us CTA + modal — used at the bottom of About Us. */
+/** Gold Contact Us CTA + modal — About Us, Property Guide, and other content pages. */
 export function AboutContactCta() {
   const [open, setOpen] = useState(false);
 
