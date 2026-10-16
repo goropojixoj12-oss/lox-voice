@@ -190,6 +190,12 @@ canvas {
   mix-blend-mode: screen;
 }
 
+@supports not (mask-image: url("/brand/seaps-logo.png")) {
+  .seaps-logo-shine {
+    display: none;
+  }
+}
+
 /* ——— Living gold system (buttons, text, borders, fills) ——— */
 
 .seaps-btn-gold {
@@ -239,23 +245,20 @@ canvas {
 }
 
 .seaps-btn-gold-outline > span {
-  background-image: var(--gold-flow);
-  background-size: 340% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  animation: seapsGoldFlow 6.6s linear infinite;
+  color: var(--color-accent-soft);
+  -webkit-text-fill-color: currentColor;
 }
 
-/* Keep GT <font> wrappers from painting solid color over clipped gold */
-.seaps-btn-gold-outline > span font,
-.seaps-gold-text font,
-.text-\[var\(--color-accent\)\]:not(:has(svg)) font,
-.text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font {
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  background: none !important;
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .seaps-btn-gold-outline > span {
+    background-image: var(--gold-flow);
+    background-size: 340% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: seapsGoldFlow 6.6s linear infinite;
+  }
 }
 
 .seaps-btn-gold-outline::after {
@@ -275,22 +278,68 @@ canvas {
 }
 
 /*
-  Gold text: clip flowing gradient into glyphs.
+  Gold labels that must stay readable everywhere (hero company name, etc.).
+  Never use background-clip:text here — GT and some engines drop clipped copy.
+*/
+.seaps-brand-subtitle {
+  color: var(--color-accent-soft) !important;
+  -webkit-text-fill-color: currentColor !important;
+  background: none !important;
+  background-image: none !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+  animation: seapsBrandGlow 7.2s ease-in-out infinite;
+}
+
+@keyframes seapsBrandGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(255, 244, 200, 0.55);
+  }
+}
+
+/*
+  Gold text: solid fallback first, then flowing gradient where clip is supported.
   Skip elements that host SVGs — transparent currentColor would hide icons.
 */
 .text-\[var\(--color-accent\)\]:not(:has(svg)),
 .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
 .seaps-gold-text {
-  background-image: var(--gold-flow) !important;
-  background-size: 340% 100% !important;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  animation: seapsGoldFlow 6.6s linear infinite;
-  /* Prefer text-shadow-sized glow; keep filter mild so it does not paint past section pads */
-  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
+  color: var(--color-accent-soft);
+  -webkit-text-fill-color: currentColor;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .text-\[var\(--color-accent\)\]:not(:has(svg)),
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
+  .seaps-gold-text {
+    background-image: var(--gold-flow) !important;
+    background-size: 340% 100% !important;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: seapsGoldFlow 6.6s linear infinite;
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
+  }
+
+  /* Google Translate wraps nodes in <font> — inherit clipped gradient or text vanishes */
+  .seaps-btn-gold-outline > span font,
+  .seaps-gold-text font,
+  .text-\[var\(--color-accent\)\]:not(:has(svg)) font,
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font {
+    background-image: inherit !important;
+    background-size: inherit !important;
+    background-repeat: inherit !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
 }
 
 /* Icon-only / SVG hosts: keep currentColor gold + living glow */
@@ -306,13 +355,21 @@ canvas {
 
 .hover\:text-\[var\(--color-accent\)\]:hover:not(:has(svg)),
 .hover\:text-\[var\(--color-accent-soft\)\]:hover:not(:has(svg)) {
-  background-image: var(--gold-flow) !important;
-  background-size: 340% 100% !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  animation: seapsGoldFlow 6s linear infinite;
+  color: #fff4c8;
+  -webkit-text-fill-color: currentColor;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hover\:text-\[var\(--color-accent\)\]:hover:not(:has(svg)),
+  .hover\:text-\[var\(--color-accent-soft\)\]:hover:not(:has(svg)) {
+    background-image: var(--gold-flow) !important;
+    background-size: 340% 100% !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: seapsGoldFlow 6s linear infinite;
+  }
 }
 
 .hover\:text-\[var\(--color-accent\)\]:hover:has(svg),
@@ -353,8 +410,14 @@ canvas {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background: rgba(212, 175, 55, 0.35);
   color: #fff8e7;
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
 }
 
 a {
@@ -477,11 +540,14 @@ a {
 
   .text-\[var\(--color-accent\)\]:not(:has(svg)),
   .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
-  .seaps-gold-text {
+  .seaps-gold-text,
+  .seaps-brand-subtitle {
     background-image: none !important;
     color: var(--color-accent-soft) !important;
     -webkit-text-fill-color: var(--color-accent-soft);
     filter: none;
+    animation: none !important;
+    text-shadow: none;
   }
 
   .text-\[var\(--color-accent\)\]:has(svg),

@@ -40,12 +40,12 @@ export default async function HomePage() {
         />
         <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pt-10 pb-14 sm:px-6 sm:pt-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-10 lg:px-8 lg:pt-14 lg:pb-16">
           <div className="reveal min-w-0 text-white">
-            <div className="flex w-full flex-col items-center text-center">
+            <div className="notranslate flex w-full flex-col items-center text-center">
               <SeapsLogo
                 size="hero"
                 className="h-[4.25rem] w-[6.75rem] sm:h-20 sm:w-32 md:h-[5.5rem] md:w-[8.75rem]"
               />
-              <p className="mt-3 text-sm uppercase tracking-[0.2em] text-[var(--color-accent-soft)] sm:mt-4">
+              <p className="seaps-brand-subtitle mt-3 text-sm uppercase tracking-[0.2em] sm:mt-4">
                 {brand.fullName}
               </p>
             </div>
