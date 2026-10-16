@@ -64,13 +64,24 @@ export async function normalizeAggregatedBranding(): Promise<NormalizeBrandingRe
 
   await saveAggregatedListings(next);
 
-  const meta = await getAggregationSyncMeta();
+  const prevMeta = await getAggregationSyncMeta();
+  const noteAt = new Date().toISOString();
   await saveAggregationSyncMeta({
-    ...meta,
-    lastNotes: [
-      ...(meta.lastNotes ?? []).slice(0, 4),
-      `Branding normalize ${new Date().toISOString()}: sources=${sourceNamesUpdated}, dates=${datesUpdated}`,
-    ],
+    lastRunAt: prevMeta?.lastRunAt ?? null,
+    lastCreated: prevMeta?.lastCreated ?? 0,
+    lastUpdated: prevMeta?.lastUpdated ?? 0,
+    lastFetched: prevMeta?.lastFetched ?? 0,
+    lastSkippedNonRe: prevMeta?.lastSkippedNonRe,
+    lastTotal: next.length,
+    lastSourcesAttempted: prevMeta?.lastSourcesAttempted ?? 0,
+    lastWarnings: [
+      ...(prevMeta?.lastWarnings ?? []),
+      `Branding normalize ${noteAt}: sources=${sourceNamesUpdated}, dates=${datesUpdated}`,
+    ].slice(-50),
+    lastError: prevMeta?.lastError ?? null,
+    lastPruneAt: prevMeta?.lastPruneAt,
+    lastPruneRemovedCount: prevMeta?.lastPruneRemovedCount,
+    lastPruneRemoved: prevMeta?.lastPruneRemoved,
   });
 
   return {
