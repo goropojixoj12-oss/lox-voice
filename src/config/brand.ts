@@ -14,8 +14,13 @@ export const brand = {
   foundedYear: 1997,
   country: "Cambodia",
   social: {
+    telegram: "#",
+    facebook: "#",
+    whatsapp: "#",
+    tiktok: "#",
     linkedin: "#",
-    x: "#",
+    reddit: "#",
+    wechat: "#",
     instagram: "#",
   },
   logo: {

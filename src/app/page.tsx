@@ -4,6 +4,7 @@ import { ArticleCard } from "@/components/article/article-card";
 import { ProjectCard } from "@/components/project/project-card";
 import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
 import { HeroPromoButtons } from "@/components/home/hero-promo-buttons";
+import { HeroSocialLinks } from "@/components/home/hero-social-links";
 import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section, SectionHeader } from "@/components/shared/section";
@@ -58,18 +59,7 @@ export default async function HomePage() {
               of the market, including Land, Residential and Commercial Properties, Property
               Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/buy" variant="accent">
-                Start property search
-              </ButtonLink>
-              <ButtonLink
-                href="/list-property"
-                variant="ghost"
-                className="border border-white/40 bg-white/10 text-white hover:bg-white/20"
-              >
-                List your property
-              </ButtonLink>
-            </div>
+            <HeroSocialLinks />
           </div>
           <div className="reveal w-full self-end lg:justify-self-end">
             <HeroPromoButtons />
