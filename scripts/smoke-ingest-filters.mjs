@@ -20,6 +20,8 @@ const junk = [
   { title: "English tutor available", sourceName: "test", description: "Private tutoring" },
   { title: "Cheap domain for sale today", sourceName: "test", description: "wife friendly deal" },
   { title: "Two word title", sourceName: "test", description: "property apartment villa land" },
+  { title: "Best casino offers this weekend online", sourceName: "test", description: "kasino promo" },
+  { title: "Khmerhomes forum news broker dreams", sourceName: "test", description: "organized situs hugedomain ips aps" },
 ];
 
 const keep = [

@@ -11,7 +11,7 @@ Non–real-estate headlines are **blocked at ingest** (before save/merge) via `c
 
 ## What is rejected at ingest
 
-- **Default junk:** title or text contains **`wife`** or **`domain`**; or the **title has fewer than five words** (demo seeds exempt)
+- **Default junk:** title/description/URL/source hits any of: **`wife`**, **`domain`** (substring / `*domain`), **`forum`**, **`organized`**, **`news`**, **`casino`**, **`kasino`**, **`khmerhomes`**, **`broker`**, **`dreams`**, **`situs`**, **`hugedomain`**, **`ips`**, **`aps`**; or the **title has fewer than five words** (demo seeds exempt). Same rules apply to admin **Remove non-RE listings** prune.
 - Clear **jobs**, **vehicles**, **phones/electronics**, **tutoring/visa/translation services** keywords when no RE signal is present
 - Registry **list URLs** whose path is a known non-RE category (jobs, cars, phones, …) — source is marked `skipped`, not polled
 - Parsed headlines from generic HTML/RSS that fail the classifier (counted as `skippedNonRe` / `itemsSkippedNonRe`, status `ok` — **not** `adapter_needed`)

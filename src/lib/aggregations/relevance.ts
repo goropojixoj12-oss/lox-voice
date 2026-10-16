@@ -92,8 +92,26 @@ const INCLUDE_PATTERNS: RegExp[] = [
   /\bflat\b/i,
 ];
 
-/** Always junk (spam / non-listing), except demo seeds. */
-const DEFAULT_JUNK_KEYWORD_PATTERNS: RegExp[] = [/\bwife\b/i, /\bdomain\b/i];
+/**
+ * Always junk (spam / non-listing), except demo seeds.
+ * `domain` is a substring match (*domain) so hugedomain / mydomain match too.
+ */
+const DEFAULT_JUNK_KEYWORD_PATTERNS: RegExp[] = [
+  /\bwife\b/i,
+  /domain/i,
+  /\bforum\b/i,
+  /\borganized\b/i,
+  /\bnews\b/i,
+  /\bcasino\b/i,
+  /\bkasino\b/i,
+  /\bkhmerhomes\b/i,
+  /\bbroker\b/i,
+  /\bdreams\b/i,
+  /\bsitus\b/i,
+  /\bhugedomain\b/i,
+  /\bips\b/i,
+  /\baps\b/i,
+];
 
 const MIN_TITLE_WORDS = 5;
 
@@ -128,6 +146,9 @@ const URL_EXCLUDE_PATTERNS: RegExp[] = [
   /\/(?:cars?|vehicles?|motors?|motorbikes?|motorcycles?)(?:\/|$|\?)/i,
   /\/(?:phones?|mobiles?|electronics?|computers?)(?:\/|$|\?)/i,
   /\/(?:services?|business-services)(?:\/|$|\?)/i,
+  /\/(?:forum|forums|news|casino|kasino)(?:\/|$|\?)/i,
+  /domain/i,
+  /khmerhomes/i,
   /khmer24\.com\/en\/c-(?!property)[a-z0-9-]+\.html/i,
   /bongthom\.com\/en\/classifieds\/(?!property)/i,
 ];
