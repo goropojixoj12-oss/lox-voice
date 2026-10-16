@@ -5,12 +5,12 @@ const heroPromoClass =
 
 export function HeroPromoButtons() {
   return (
-    <div className="mb-4 grid gap-3 sm:grid-cols-2">
+    <div className="-mt-1 mb-7 grid gap-3 sm:grid-cols-2 sm:-mt-2">
       <ButtonLink href="/sale" variant="accent" size="lg" className={heroPromoClass}>
-        Sale Your Property
+        Sell your property
       </ButtonLink>
       <ButtonLink href="/inquires" variant="accent" size="lg" className={heroPromoClass}>
-        ALL INQUIRES
+        All enquiries
       </ButtonLink>
     </div>
   );
