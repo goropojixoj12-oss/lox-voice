@@ -24,6 +24,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/map",
     "/about",
     "/contact",
+    "/sale",
+    "/inquires",
     "/privacy",
     "/terms",
     "/property-guide",

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArticleCard } from "@/components/article/article-card";
 import { ProjectCard } from "@/components/project/project-card";
 import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
+import { HeroPromoButtons } from "@/components/home/hero-promo-buttons";
 import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section, SectionHeader } from "@/components/shared/section";
@@ -71,25 +72,8 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="reveal w-full self-end lg:justify-self-end">
+            <HeroPromoButtons />
             <MainSearch />
-            <div className="mt-4 flex flex-wrap gap-2">
-              {[
-                { href: "/buy?type=apartment", label: "Apartments" },
-                { href: "/buy?type=villa", label: "Villas" },
-                { href: "/rent", label: "Long-term rent" },
-                { href: "/projects", label: "New projects" },
-                { href: "/locations/phnom-penh", label: "Phnom Penh" },
-                { href: "/locations/siem-reap", label: "Siem Reap" },
-              ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-full bg-white/15 px-3 py-1.5 text-sm text-white backdrop-blur transition hover:bg-white/25"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </section>
