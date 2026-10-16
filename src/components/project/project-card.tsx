@@ -6,7 +6,7 @@ import { formatPrice } from "@/lib/utils";
 export function ProjectCard({ project }: { project: DevelopmentProject }) {
   const cover = project.images.find((i) => i.isCover) ?? project.images[0];
   return (
-    <article className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+    <article className="seaps-card h-full overflow-hidden rounded-[var(--radius-xl)]">
       <Link href={`/projects/${project.slug}`} className="relative block aspect-[16/11]">
         <Image src={cover.url} alt={cover.alt} fill className="object-cover" sizes="33vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

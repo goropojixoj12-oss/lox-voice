@@ -101,7 +101,7 @@ export async function POST(request: Request) {
       lng: 0,
     },
     ownerId: session.role === "owner" ? session.id : undefined,
-    agentId: session.role === "agent" ? "agent-maya" : undefined,
+    agentId: session.role === "agent" ? "agent-sokha" : undefined,
     agencyId: session.agencyId,
     publishedAt: now,
     updatedAt: now,

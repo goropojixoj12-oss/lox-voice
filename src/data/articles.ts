@@ -17,8 +17,8 @@ Look for inconsistencies between room counts and area. Ask whether furnishings a
 SEAPS surfaces verification badges and update timestamps so you can prioritize trustworthy inventory across Cambodia.`,
     cover: img("photo-1560518883-ce09059eeffa"),
     category: "guides",
-    author: "SEAPS Editorial",
-    publishedAt: "2026-03-18T10:00:00.000Z",
+    author: "Adam James",
+    publishedAt: "2026-10-16T10:00:00.000Z",
     relatedPropertyIds: ["p-001", "p-003"],
   },
   {
@@ -32,8 +32,8 @@ SEAPS surfaces verification badges and update timestamps so you can prioritize t
 When comparing asking rents, weigh building amenities, generator reliability, and commute times to common business districts rather than relying on photos alone.`,
     cover: img("photo-1552465011-b4e21bf6e79a"),
     category: "analysis",
-    author: "Market Desk",
-    publishedAt: "2026-04-01T09:00:00.000Z",
+    author: "Adam James",
+    publishedAt: "2026-10-15T10:00:00.000Z",
     relatedCitySlug: "phnom-penh",
   },
   {
@@ -47,8 +47,8 @@ When comparing asking rents, weigh building amenities, generator reliability, an
 On SEAPS project pages, verified facts and developer claims are listed separately so you can see which statements are moderated and which come from marketing materials.`,
     cover: img("photo-1503387762-592deb58ef4e"),
     category: "investor",
-    author: "Projects Desk",
-    publishedAt: "2026-03-26T11:00:00.000Z",
+    author: "Adam James",
+    publishedAt: "2026-10-14T10:00:00.000Z",
     relatedPropertyIds: ["p-017", "p-018"],
   },
   {
@@ -60,8 +60,8 @@ On SEAPS project pages, verified facts and developer claims are listed separatel
     content: `Svay Dangkum rewards people who want cafés and services with quieter residential lanes nearby. Inventory mixes villas and compact apartments. This article is editorial context to support viewing trips, not a pricing index.`,
     cover: img("photo-1528183429752-a97d14bf51b1"),
     category: "district",
-    author: "City Desk",
-    publishedAt: "2026-03-10T12:00:00.000Z",
+    author: "Adam James",
+    publishedAt: "2026-10-13T10:00:00.000Z",
     relatedCitySlug: "siem-reap",
   },
   {
@@ -75,8 +75,8 @@ On SEAPS project pages, verified facts and developer claims are listed separatel
 Verification is not a guarantee of purchase success. It is a signal that key listing fields and ownership claims passed moderation checks. Premium marks highlight additional review depth on selected inventory.`,
     cover: img("photo-1454165804606-c3d57bc86b40"),
     category: "news",
-    author: "SEAPS Team",
-    publishedAt: "2026-04-04T08:00:00.000Z",
+    author: "Adam James",
+    publishedAt: "2026-10-12T10:00:00.000Z",
   },
 ];
 

@@ -79,7 +79,7 @@ export function InquiryForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+      className="seaps-card space-y-3 rounded-[var(--radius-lg)] p-4"
       noValidate
     >
       <div>
