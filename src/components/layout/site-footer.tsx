@@ -19,7 +19,7 @@ const columns = [
   {
     title: "Professionals",
     links: [
-      { href: "/agencies", label: "Agencies" },
+      { href: "/agencies", label: "Useful Links" },
       { href: "/list-property", label: "List a property" },
       { href: "/dashboard", label: "Owner & agent desk" },
       { href: "/auth/login", label: "Sign in" },
@@ -29,7 +29,6 @@ const columns = [
     title: "Learn",
     links: [
       { href: "/insights", label: "Market insights" },
-      { href: "/market-feed", label: "Market Feed" },
       { href: "/guides", label: "Buyer & renter guides" },
       { href: "/about", label: "About" },
       { href: "/contact", label: "Contact" },

@@ -13,8 +13,7 @@ const nav = [
   { href: "/rent", label: "Rent" },
   { href: "/projects", label: "New homes" },
   { href: "/commercial", label: "Commercial" },
-  { href: "/market-feed", label: "Market Feed" },
-  { href: "/agencies", label: "Agencies" },
+  { href: "/agencies", label: "Useful Links" },
   { href: "/insights", label: "Market insights" },
 ];
 
@@ -26,25 +25,25 @@ export function SiteHeader({
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 overflow-x-hidden border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
+    <header className="sticky top-0 z-50 overflow-x-hidden border-b border-[var(--color-border)]/80 bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)] backdrop-blur-md">
       <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
         <Link href="/" className="group shrink-0 notranslate" aria-label="SEAPS home">
           <SeapsLogo size="header" />
         </Link>
 
-        <nav className="notranslate hidden items-center gap-1 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
           {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="seaps-gold-text rounded-full px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]"
+              className="rounded-full px-3 py-2 text-sm font-medium text-[var(--color-text)] transition hover:bg-[var(--color-mist)] hover:text-[var(--color-accent-soft)]"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="notranslate hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <LanguageSwitcher />
           {userName ? (
             <ButtonLink href="/dashboard" variant="ghost" size="sm">
@@ -62,7 +61,7 @@ export function SiteHeader({
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-accent-soft)] md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-accent-soft)] lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -75,7 +74,7 @@ export function SiteHeader({
       <div
         id="mobile-nav"
         className={cn(
-          "notranslate border-t border-[var(--color-border)] bg-[var(--color-background)] md:hidden",
+          "border-t border-[var(--color-border)] bg-[var(--color-background)] lg:hidden",
           open ? "block" : "hidden",
         )}
       >
@@ -88,7 +87,7 @@ export function SiteHeader({
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="seaps-gold-text rounded-[var(--radius-md)] px-3 py-3 text-base font-medium transition hover:bg-[var(--color-mist)]"
+              className="rounded-[var(--radius-md)] px-3 py-3 text-base font-medium hover:bg-[var(--color-mist)]"
             >
               {item.label}
             </Link>
