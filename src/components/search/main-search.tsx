@@ -9,11 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-const deals: { id: TransactionType | "invest"; label: string; deal: TransactionType }[] = [
+const deals: { id: TransactionType; label: string; deal: TransactionType }[] = [
   { id: "sale", label: "Buy", deal: "sale" },
   { id: "rent", label: "Rent", deal: "rent" },
-  { id: "invest", label: "Invest", deal: "sale" },
 ];
+
+const heroSearchTagline =
+  "The country's top real estate from Cambodia's best market broker";
 
 const types = Object.entries(propertyTypeLabels).slice(0, 8);
 
@@ -38,7 +40,6 @@ export function MainSearch({
     const deal = deals.find((d) => d.id === mode)?.deal ?? "sale";
     const params = new URLSearchParams();
     params.set("deal", deal);
-    if (mode === "invest") params.set("sort", "relevance");
     if (city) params.set("city", city);
     if (type) params.set("type", type);
     if (minPrice) params.set("minPrice", minPrice);
@@ -55,24 +56,29 @@ export function MainSearch({
         className,
       )}
     >
-      <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
-        {deals.map((deal) => (
-          <button
-            key={deal.id}
-            type="button"
-            role="tab"
-            aria-selected={mode === deal.id}
-            onClick={() => setMode(deal.id)}
-            className={cn(
-              "rounded-full px-4 py-2 text-sm font-semibold transition",
-              mode === deal.id
-                ? "bg-[var(--color-accent)] text-[#0B1C33]"
-                : "bg-[var(--color-mist)] text-[var(--color-text)] hover:bg-[var(--color-secondary)]",
-            )}
-          >
-            {deal.label}
-          </button>
-        ))}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:gap-y-2">
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
+          {deals.map((deal) => (
+            <button
+              key={deal.id}
+              type="button"
+              role="tab"
+              aria-selected={mode === deal.id}
+              onClick={() => setMode(deal.id)}
+              className={cn(
+                "rounded-full px-4 py-2 text-sm font-semibold transition",
+                mode === deal.id
+                  ? "bg-[var(--color-accent)] text-[#0B1C33]"
+                  : "bg-[var(--color-mist)] text-[var(--color-text)] hover:bg-[var(--color-secondary)]",
+              )}
+            >
+              {deal.label}
+            </button>
+          ))}
+        </div>
+        <p className="text-sm font-medium leading-snug text-[var(--color-accent-soft)] sm:ml-auto sm:max-w-[16rem] sm:flex-1 sm:text-right md:text-[0.9375rem]">
+          {heroSearchTagline}
+        </p>
       </div>
       <form
         onSubmit={onSubmit}
