@@ -80,8 +80,8 @@ export function SiteHeader({
               Sign in
             </ButtonLink>
           )}
-          <ButtonLink href="/list-property" variant="accent" size="sm">
-            List a property
+          <ButtonLink href="/contact" variant="accent" size="sm">
+            Contact Us
           </ButtonLink>
         </div>
 
@@ -130,8 +130,8 @@ export function SiteHeader({
             <ButtonLink href={userName ? "/dashboard" : "/auth/login"} variant="outline">
               {userName ? "Dashboard" : "Sign in"}
             </ButtonLink>
-            <ButtonLink href="/list-property" variant="accent">
-              List a property
+            <ButtonLink href="/contact" variant="accent">
+              Contact Us
             </ButtonLink>
           </div>
         </div>
