@@ -5,7 +5,7 @@ const heroPromoClass =
 
 export function HeroPromoButtons() {
   return (
-    <div className="-mt-1 mb-7 grid gap-3 sm:grid-cols-2 sm:-mt-2">
+    <div className="mb-4 grid shrink-0 gap-3 sm:mb-5 sm:grid-cols-2">
       <ButtonLink href="/sale" variant="accent" size="lg" className={heroPromoClass}>
         Sell your property
       </ButtonLink>

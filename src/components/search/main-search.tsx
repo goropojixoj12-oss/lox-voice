@@ -17,7 +17,14 @@ const deals: { id: TransactionType | "invest"; label: string; deal: TransactionT
 
 const types = Object.entries(propertyTypeLabels).slice(0, 8);
 
-export function MainSearch({ className }: { className?: string }) {
+export function MainSearch({
+  className,
+  stretch,
+}: {
+  className?: string;
+  /** Fill hero column height; keeps the submit button at the bottom. */
+  stretch?: boolean;
+}) {
   const router = useRouter();
   const [mode, setMode] = useState<(typeof deals)[number]["id"]>("sale");
   const [city, setCity] = useState("");
@@ -41,7 +48,13 @@ export function MainSearch({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn("seaps-card rounded-[var(--radius-xl)] bg-[var(--color-surface)]/95 p-4 backdrop-blur md:p-5", className)}>
+    <div
+      className={cn(
+        "seaps-card rounded-[var(--radius-xl)] bg-[var(--color-surface)]/95 p-4 backdrop-blur md:p-5",
+        stretch && "flex min-h-0 flex-1 flex-col",
+        className,
+      )}
+    >
       <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
         {deals.map((deal) => (
           <button
@@ -61,7 +74,13 @@ export function MainSearch({ className }: { className?: string }) {
           </button>
         ))}
       </div>
-      <form onSubmit={onSubmit} className="grid gap-3 md:grid-cols-6">
+      <form
+        onSubmit={onSubmit}
+        className={cn(
+          stretch ? "flex min-h-0 flex-1 flex-col gap-3" : "grid gap-3 md:grid-cols-6",
+        )}
+      >
+        <div className={cn(stretch && "grid gap-3 md:grid-cols-6", !stretch && "contents")}>
         <label className="md:col-span-2">
           <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
             City or district
@@ -133,7 +152,8 @@ export function MainSearch({ className }: { className?: string }) {
             ))}
           </Select>
         </label>
-        <div className="md:col-span-6">
+        </div>
+        <div className={cn("md:col-span-6", stretch && "mt-auto pt-1")}>
           <Button type="submit" className="w-full md:w-auto" size="lg">
             Search properties
           </Button>

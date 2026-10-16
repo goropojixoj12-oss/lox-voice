@@ -1,4 +1,5 @@
 import { brand } from "@/config/brand";
+import { cn } from "@/lib/utils";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -23,9 +24,15 @@ const networks = [
   { key: "instagram" as const, label: "Instagram", Icon: InstagramIcon },
 ];
 
-export function HeroSocialLinks() {
+export function HeroSocialLinks({ className }: { className?: string }) {
   return (
-    <ul className="mt-8 flex flex-wrap items-center gap-2.5 sm:gap-3" aria-label="SEAPS on social media">
+    <ul
+      className={cn(
+        "mt-8 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3",
+        className,
+      )}
+      aria-label="SEAPS on social media"
+    >
       {networks.map(({ key, label, Icon }) => {
         const href = brand.social[key];
         const isPlaceholder = !href || href === "#";
