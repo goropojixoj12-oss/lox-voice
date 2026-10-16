@@ -50,13 +50,16 @@ export function SiteHeader({
   const closeMobile = () => setOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 overflow-x-hidden border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
+    <header className="sticky top-0 z-[100] overflow-visible border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
       <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
         <Link href="/" className="group shrink-0 notranslate" aria-label="SEAPS home">
           <SeapsLogo size="header" />
         </Link>
 
-        <nav className="notranslate hidden items-center gap-0.5 md:flex" aria-label="Primary">
+        <nav
+          className="notranslate relative z-[1] hidden items-center gap-0.5 overflow-visible md:flex"
+          aria-label="Primary"
+        >
           {nav.map((entry) =>
             entry.type === "dropdown" ? (
               <NavMenuDropdown key={entry.label} entry={entry} variant="desktop" />

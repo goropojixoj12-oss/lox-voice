@@ -27,7 +27,7 @@ export function NavMenuDropdown({
 }) {
   if (variant === "desktop") {
     return (
-      <div className="group relative">
+      <div className="group relative z-[1] hover:z-[110] focus-within:z-[110]">
         <Link href={entry.href} className={cn(linkClass, "inline-flex items-center gap-0.5")}>
           {entry.label}
           <ChevronDown
@@ -36,10 +36,10 @@ export function NavMenuDropdown({
           />
         </Link>
         <div
-          className="invisible absolute left-0 top-full z-50 min-w-[11rem] pt-1 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+          className="invisible absolute left-0 top-full z-[110] min-w-[11rem] pt-1 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
           role="menu"
         >
-          <div className="seaps-card rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-background)] py-1 shadow-lg">
+          <div className="seaps-card rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-background)] py-1 shadow-[0_16px_48px_rgba(0,0,0,0.45)]">
             {entry.items.map((item) => (
               <Link
                 key={item.href + item.label}

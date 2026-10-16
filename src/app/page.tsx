@@ -29,7 +29,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative min-h-[min(84vh,780px)] overflow-hidden">
+      <section className="relative z-0 min-h-[min(84vh,780px)] overflow-hidden">
         <BackgroundVideo
           eager
           src="/videos/hero-banner.mp4"
