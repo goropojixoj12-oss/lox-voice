@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ArticleCard } from "@/components/article/article-card";
 import { ProjectCard } from "@/components/project/project-card";
 import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
@@ -114,33 +113,31 @@ export default async function HomePage() {
         <SectionHeader
           eyebrow="Geography"
           title="Popular cities and districts"
-          description="Popular Cambodian cities and districts with active listing counts."
+          description="Six Cambodian cities and districts featured on SEAPS."
         />
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {cities.map((city) => (
-            <Link
+          {cities.slice(0, 6).map((city) => (
+            <div
               key={city.slug}
-              href={`/locations/${city.slug}`}
-              className="group relative overflow-hidden rounded-[var(--radius-xl)]"
+              className="relative overflow-hidden rounded-[var(--radius-xl)]"
+              aria-label={city.name}
             >
               <div className="relative aspect-[5/4]">
                 <Image
                   src={city.image}
-                  alt={city.name}
+                  alt=""
                   fill
-                  className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                  className="object-cover"
                   sizes="33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
               </div>
               <div className="absolute inset-x-0 bottom-0 p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-white/70">{city.country}</p>
-                <h3 className="mt-1 font-[family-name:var(--font-display)] text-3xl">{city.name}</h3>
-                <p className="mt-2 text-sm text-white/80">
-                  {city.listingCount} listings · {city.blurb}
-                </p>
+                <h3 className="font-[family-name:var(--font-display)] text-3xl text-white">
+                  {city.name}
+                </h3>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </Section>
