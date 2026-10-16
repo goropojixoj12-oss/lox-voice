@@ -49,7 +49,7 @@ function buildDemoDrafts(): AggregatedDraft[] {
       sourceUrl: "https://example.local/demo/rent-bassac",
       contacts: {
         phone: "+855 96 111 2233",
-        messenger: "Facebook Messenger — Demo Agent",
+        messenger: "Facebook Messenger — Adam James",
       },
       externalId: "demo:rent-bassac-002",
     },
