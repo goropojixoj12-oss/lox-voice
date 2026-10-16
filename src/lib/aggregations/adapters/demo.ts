@@ -23,7 +23,7 @@ function buildDemoDrafts(): AggregatedDraft[] {
         photoUrl("photo-1560448204-e02f11c3d0e2"),
       ],
       publishedAt: iso(2),
-      sourceName: "Demo Cambodia Portal",
+      sourceName: "SEAPS Market Feed",
       sourceUrl: "https://example.local/demo/condo-bkk1",
       contacts: {
         phone: "+855 12 345 678",
@@ -45,7 +45,7 @@ function buildDemoDrafts(): AggregatedDraft[] {
         photoUrl("photo-1512917774080-9991f1c4c750"),
       ],
       publishedAt: iso(5),
-      sourceName: "Demo Cambodia Portal",
+      sourceName: "SEAPS Market Feed",
       sourceUrl: "https://example.local/demo/rent-bassac",
       contacts: {
         phone: "+855 96 111 2233",
@@ -63,7 +63,7 @@ function buildDemoDrafts(): AggregatedDraft[] {
       propertyType: "townhouse",
       photos: [photoUrl("photo-1564013799919-ab600027ffc6")],
       publishedAt: iso(12),
-      sourceName: "Khmer24 Demo Mirror",
+      sourceName: "SEAPS Market Feed",
       sourceUrl: "https://example.local/demo/sr-townhouse",
       contacts: {
         phone: "+855 15 888 001",
@@ -80,8 +80,8 @@ function buildDemoDrafts(): AggregatedDraft[] {
       location: "Otres, Sihanoukville",
       propertyType: "land",
       photos: [photoUrl("photo-1500382017468-9049fed747ef")],
-      publishedAt: iso(28),
-      sourceName: "RealEstate.com.kh Demo Mirror",
+      publishedAt: iso(18),
+      sourceName: "SEAPS Market Feed",
       sourceUrl: "https://example.local/demo/otres-land",
       contacts: {
         phone: "+855 70 444 919",
@@ -101,8 +101,8 @@ function buildDemoDrafts(): AggregatedDraft[] {
         photoUrl("photo-1486406146926-c627a92ad1ab"),
         photoUrl("photo-1497366216548-37526070297c"),
       ],
-      publishedAt: iso(40),
-      sourceName: "Demo Cambodia Portal",
+      publishedAt: iso(30),
+      sourceName: "SEAPS Market Feed",
       sourceUrl: "https://example.local/demo/btb-shophouse",
       contacts: {
         email: "battambang.retail@example.local",
@@ -120,7 +120,7 @@ function buildDemoDrafts(): AggregatedDraft[] {
       propertyType: "apartment",
       photos: [photoUrl("photo-1493809842364-78817add7ffb")],
       publishedAt: iso(8),
-      sourceName: "Khmer24 Demo Mirror",
+      sourceName: "SEAPS Market Feed",
       sourceUrl: "https://example.local/demo/bkk3-studio",
       contacts: {
         messenger: "Telegram @bkk3_stays_demo",

@@ -103,7 +103,7 @@ export default async function AdminMarketFeedDetailPage({ params }: Props) {
           <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             <div>
               <dt className="text-[var(--color-muted)]">Source</dt>
-              <dd className="mt-1 font-medium">{listing.sourceName}</dd>
+              <dd className="mt-1 font-medium">SEAPS Market Feed</dd>
             </div>
             <div>
               <dt className="text-[var(--color-muted)]">Original URL</dt>

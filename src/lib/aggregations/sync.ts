@@ -8,6 +8,7 @@ import { aggregationAdapters } from "./adapters";
 import type { AggregatedDraft } from "./adapters/types";
 import { resolveExternalId, shouldReplaceExisting } from "./dedupe";
 import { draftToRelevanceInput, filterIngestDrafts } from "./ingest-filter";
+import { SEAPS_SOURCE_LABEL } from "./normalize-branding";
 import { shouldRejectListingAtIngest } from "./relevance";
 import { sanitizeDescription } from "./sanitize";
 import { syncEnabledRegistryPortals } from "./sources/registry-sync";
@@ -50,7 +51,8 @@ function draftToListing(draft: AggregatedDraft, now: string): AggregatedListing 
     propertyType: draft.propertyType,
     photos: draft.photos.filter(Boolean).slice(0, 12),
     publishedAt: draft.publishedAt,
-    sourceName: draft.sourceName,
+    // Public site never shows third-party brand names — keep original URL for admin ops.
+    sourceName: SEAPS_SOURCE_LABEL,
     sourceUrl: draft.sourceUrl,
     contacts: {
       phone: draft.contacts.phone?.trim() || undefined,

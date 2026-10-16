@@ -4,17 +4,17 @@ import { Section, SectionHeader } from "@/components/shared/section";
 import { agencies } from "@/data/agencies";
 
 export const metadata: Metadata = {
-  title: "Agencies",
-  description: "Directory of real estate agencies working with SEAPS.",
+  title: "SEAPS offices",
+  description: "SEAPS regional desks across Cambodia — Phnom Penh, Siem Reap, coastal, and commercial.",
 };
 
 export default function AgenciesPage() {
   return (
     <Section>
       <SectionHeader
-        eyebrow="Professionals"
-        title="Agency directory"
-        description="Browse agencies by city, specialization, and verification status."
+        eyebrow="SEAPS"
+        title="Our offices"
+        description="Browse SEAPS desks by city, specialization, and verification status."
       />
       <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
         {agencies.map((agency) => (

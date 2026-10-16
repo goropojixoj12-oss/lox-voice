@@ -31,6 +31,7 @@ export function AdminMarketFeedActions() {
   const [busy, setBusy] = useState(false);
   const [fullBusy, setFullBusy] = useState(false);
   const [pruneBusy, setPruneBusy] = useState(false);
+  const [brandBusy, setBrandBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -129,7 +130,40 @@ export function AdminMarketFeedActions() {
     }
   }
 
-  const anyBusy = busy || fullBusy || pruneBusy;
+  async function normalizeBranding() {
+    if (
+      !window.confirm(
+        "Rewrite all aggregated feed rows to SEAPS branding and refresh listing dates to the last ~10 days?",
+      )
+    ) {
+      return;
+    }
+    setBrandBusy(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/aggregations/normalize-branding", { method: "POST" });
+      const data = (await res.json()) as {
+        error?: string;
+        sourceNamesUpdated?: number;
+        datesUpdated?: number;
+        after?: number;
+      };
+      if (!res.ok) {
+        setMessage(data.error ?? `Normalize failed (${res.status})`);
+        return;
+      }
+      setMessage(
+        `SEAPS branding: ${data.sourceNamesUpdated ?? 0} source labels, ${data.datesUpdated ?? 0} dates refreshed → ${data.after ?? "?"} listings`,
+      );
+      router.refresh();
+    } catch {
+      setMessage("Network error during branding normalize");
+    } finally {
+      setBrandBusy(false);
+    }
+  }
+
+  const anyBusy = busy || fullBusy || pruneBusy || brandBusy;
 
   return (
     <div className="flex flex-col items-stretch gap-2 sm:items-end">
@@ -154,6 +188,15 @@ export function AdminMarketFeedActions() {
           title="Delete imported feed items that are clearly not property (conservative heuristics)"
         >
           {pruneBusy ? "Pruning…" : "Remove non-RE listings"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={anyBusy}
+          onClick={normalizeBranding}
+          title="Set source label to SEAPS and refresh published dates on stored feed listings"
+        >
+          {brandBusy ? "Updating…" : "SEAPS branding + dates"}
         </Button>
       </div>
       {message ? (

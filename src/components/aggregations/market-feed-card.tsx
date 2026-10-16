@@ -101,7 +101,7 @@ export function MarketFeedCard({
           <div className="mt-2 space-y-1 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] bg-[var(--color-mist)]/40 p-3 text-xs text-[var(--color-muted)]">
             <p>
               <span className="font-semibold text-[var(--color-accent-soft)]">Source:</span>{" "}
-              {listing.sourceName}
+              SEAPS Market Feed
               {listing.sourceUrl ? (
                 <>
                   {" · "}
