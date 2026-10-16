@@ -48,7 +48,7 @@ export default function SavedSearchesPage() {
       <p className="mt-2 text-sm text-[var(--color-muted)]">
         Restore filter sets instantly. Alert emails are prepared as an integration point, not faked.
       </p>
-      <div className="mt-6 rounded-[var(--radius-lg)] seaps-card p-4">
+      <div className="mt-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
         <Label htmlFor="search-name">Name</Label>
         <Input id="search-name" value={name} onChange={(e) => setName(e.target.value)} />
         <Button type="button" className="mt-3" onClick={saveCurrent}>

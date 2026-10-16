@@ -41,7 +41,7 @@ export function MainSearch({ className }: { className?: string }) {
   }
 
   return (
-    <div className={cn("seaps-card rounded-[var(--radius-xl)] bg-[var(--color-surface)]/95 p-4 backdrop-blur md:p-5", className)}>
+    <div className={cn("rounded-[var(--radius-xl)] border border-[var(--color-accent)]/25 bg-[var(--color-surface)]/95 p-4 shadow-[var(--shadow-lift)] backdrop-blur md:p-5 seaps-gold-border", className)}>
       <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Search intent">
         {deals.map((deal) => (
           <button

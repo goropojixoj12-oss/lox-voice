@@ -5,7 +5,7 @@ import type { AggregationSourceView } from "@/lib/aggregations/sources/types";
 
 const TYPE_LABEL: Record<string, string> = {
   portal: "Portal",
-  agency: "Agency",
+  agency: "Broker site",
   facebook: "Facebook",
   telegram: "Telegram",
   other: "Other",
@@ -172,7 +172,7 @@ export function AdminSourcesTable({ initialSources, onEnabledCountChange }: Prop
           <option value="all">All types</option>
           <option value="enabled">Enabled only</option>
           <option value="portal">Portals</option>
-          <option value="agency">Agencies</option>
+          <option value="agency">Broker sites</option>
           <option value="facebook">Facebook</option>
           <option value="telegram">Telegram</option>
           <option value="other">Other</option>

@@ -52,6 +52,12 @@ const longCache = [
 ];
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/agencies", destination: "/usefullinks", permanent: true },
+      { source: "/agencies/:path*", destination: "/usefullinks", permanent: true },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
   },
@@ -63,30 +69,6 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
-  },
-  async redirects() {
-    return [
-      {
-        source: "/agencies/mekong-habitat",
-        destination: "/agencies/seaps-phnom-penh",
-        permanent: true,
-      },
-      {
-        source: "/agencies/angkor-property-partners",
-        destination: "/agencies/seaps-siem-reap",
-        permanent: true,
-      },
-      {
-        source: "/agencies/tonle-sap-homes",
-        destination: "/agencies/seaps-coastal",
-        permanent: true,
-      },
-      {
-        source: "/agencies/royal-khmer-estates",
-        destination: "/agencies/seaps-commercial",
-        permanent: true,
-      },
-    ];
   },
   async headers() {
     return [

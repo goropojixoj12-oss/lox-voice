@@ -72,7 +72,7 @@ export default async function ProjectDetailPage({
             ].map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-[var(--radius-md)] seaps-card p-4"
+                className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
               >
                 <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{label}</p>
                 <p className="mt-1 font-semibold capitalize">{value}</p>
@@ -88,7 +88,7 @@ export default async function ProjectDetailPage({
           </section>
 
           <section className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-[var(--radius-lg)] seaps-card p-4">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
               <h3 className="font-semibold text-[var(--color-accent-soft)]">Verified / moderated notes</h3>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--color-muted)]">
                 {project.verifiedFacts.map((fact) => (
@@ -96,7 +96,7 @@ export default async function ProjectDetailPage({
                 ))}
               </ul>
             </div>
-            <div className="rounded-[var(--radius-lg)] seaps-card p-4">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
               <h3 className="font-semibold text-[var(--color-accent-soft)]">Developer-provided claims</h3>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-[var(--color-muted)]">
                 {project.developerClaims.map((fact) => (
@@ -150,7 +150,7 @@ export default async function ProjectDetailPage({
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <InquiryForm propertyId={project.id} propertyTitle={`${project.name} project inquiry`} />
-          <div className="rounded-[var(--radius-lg)] seaps-card p-4 text-sm text-[var(--color-muted)]">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-muted)]">
             Brochures and document downloads are provided when the developer supplies files.
             <Link href="/contact" className="mt-2 block text-[var(--color-accent)]">
               Contact SEAPS

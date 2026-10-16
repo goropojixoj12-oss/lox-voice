@@ -11,7 +11,7 @@ export const projects: DevelopmentProject[] = [
     id: "proj-tonle-bassac",
     slug: "tonle-bassac-residences",
     name: "Tonle Bassac Residences",
-    developer: "SEAPS Developments",
+    developer: "Bassac Urban Works",
     summary: "Mid-rise residences near Tonle Bassac with shared gardens and resident lounges.",
     description:
       "Tonle Bassac Residences combines residential floors with shaded walkways and ground-level retail for daily needs in central Phnom Penh.",
@@ -53,7 +53,7 @@ export const projects: DevelopmentProject[] = [
     id: "proj-angkor-green",
     slug: "angkor-green-courts",
     name: "Angkor Green Courts",
-    developer: "SEAPS Developments",
+    developer: "Siem Reap Living Group",
     summary: "Courtyard villas in Sala Kamraeuk with shared gardens and compound security.",
     description:
       "Angkor Green Courts is a low-rise villa community designed for families seeking quieter streets with access to Siem Reap amenities.",
@@ -89,7 +89,7 @@ export const projects: DevelopmentProject[] = [
     id: "proj-otres-horizon",
     slug: "otres-horizon",
     name: "Otres Horizon",
-    developer: "SEAPS Developments",
+    developer: "Coastal Khmer Developments",
     summary: "Coastal residences above Otres with sea-oriented balconies.",
     description:
       "Otres Horizon targets buyers seeking coastal living with managed building services and short travel time to Otres beaches.",

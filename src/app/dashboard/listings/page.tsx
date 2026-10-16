@@ -26,7 +26,7 @@ export default async function DashboardListingsPage() {
         {listings.map((listing) => (
           <li
             key={listing.id}
-            className="rounded-[var(--radius-md)] seaps-card p-4"
+            className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>

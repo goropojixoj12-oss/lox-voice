@@ -133,7 +133,7 @@ export default function ListPropertyPage() {
         Step {step + 1} of {steps.length}: {steps[step]}
       </p>
 
-      <div className="mt-6 rounded-[var(--radius-xl)] seaps-card p-5">
+      <div className="mt-6 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
         {step === 0 ? (
           <div className="grid gap-2 sm:grid-cols-3">
             {(

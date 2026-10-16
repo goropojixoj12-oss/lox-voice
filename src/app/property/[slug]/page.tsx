@@ -10,7 +10,7 @@ import { PropertyMap } from "@/components/search/property-map";
 import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
-import { getAgencyById, getAgentById } from "@/data/agencies";
+import { getAgentById } from "@/data/agencies";
 import { getProjectById } from "@/data/projects";
 import {
   getPropertyBySlug,
@@ -74,7 +74,6 @@ export default async function PropertyDetailPage({
 
   const session = await getSession();
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
-  const agency = property.agencyId ? getAgencyById(property.agencyId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
 
@@ -171,7 +170,7 @@ export default async function PropertyDetailPage({
                 .map(([label, value]) => (
                   <div
                     key={String(label)}
-                    className="rounded-[var(--radius-md)] seaps-card px-4 py-3"
+                    className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
                   >
                     <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
                       {label}
@@ -200,7 +199,7 @@ export default async function PropertyDetailPage({
                 {property.amenities.map((amenity) => (
                   <li
                     key={amenity}
-                    className="rounded-full border border-[var(--color-border)] bg-[var(--color-mist)] px-3 py-1.5 text-sm text-[var(--color-text)]"
+                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
                   >
                     {amenityLabels[amenity]}
                   </li>
@@ -219,7 +218,7 @@ export default async function PropertyDetailPage({
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <InquiryForm propertyId={property.id} propertyTitle={property.title} />
-          <div className="rounded-[var(--radius-lg)] seaps-card p-4">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <h3 className="font-semibold text-[var(--color-accent-soft)]">Share</h3>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
               Copy the page URL from your browser to share this listing, or use the inquiry form
@@ -230,21 +229,16 @@ export default async function PropertyDetailPage({
             </ButtonLink>
           </div>
           {agent ? (
-            <div className="rounded-[var(--radius-lg)] seaps-card p-4">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
               <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Listed by</p>
               <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-accent-soft)]">
                 {agent.name}
               </Link>
               <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
-              {agency ? (
-                <Link href={`/agencies/${agency.slug}`} className="mt-2 block text-sm text-[var(--color-accent)]">
-                  {agency.name}
-                </Link>
-              ) : null}
             </div>
           ) : null}
           {project ? (
-            <div className="rounded-[var(--radius-lg)] seaps-card p-4">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
               <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Project</p>
               <Link href={`/projects/${project.slug}`} className="mt-1 block font-semibold">
                 {project.name}

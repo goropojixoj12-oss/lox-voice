@@ -1,14 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArticleCard } from "@/components/article/article-card";
-import { AgencyCard } from "@/components/agency/agency-card";
 import { ProjectCard } from "@/components/project/project-card";
 import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
 import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section, SectionHeader } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
-import { agencies } from "@/data/agencies";
 import { articles } from "@/data/articles";
 import { cities } from "@/data/locations";
 import { marketStats, popularDistrictPrices } from "@/data/market";
@@ -30,7 +28,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative min-h-[min(84vh,780px)] overflow-hidden">
+      <section className="relative min-h-[min(88vh,820px)] overflow-hidden">
         <BackgroundVideo
           eager
           src="/videos/hero-banner.mp4"
@@ -38,26 +36,19 @@ export default async function HomePage() {
           poster="/videos/hero-banner.jpg"
           overlayClassName="bg-[linear-gradient(105deg,rgba(7,17,31,0.9)_0%,rgba(11,28,51,0.7)_48%,rgba(11,28,51,0.4)_100%)]"
         />
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pt-10 pb-14 sm:px-6 sm:pt-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-10 lg:px-8 lg:pt-14 lg:pb-16">
-          <div className="reveal min-w-0 text-white">
-            <div className="notranslate flex w-full flex-col items-center text-center">
-              <SeapsLogo
-                size="hero"
-                className="h-[4.25rem] w-[6.75rem] sm:h-20 sm:w-32 md:h-[5.5rem] md:w-[8.75rem]"
-              />
-              <p className="seaps-brand-subtitle mt-3 text-sm uppercase tracking-[0.2em] sm:mt-4">
-                {brand.fullName}
-              </p>
-            </div>
-            <h1 className="mt-5 max-w-2xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
-              South East Asia Property Services (SEAPS) is a multi-Award-Winning Real Estate,
-              Property Management and Investment Company, based in South East Asia.
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-28">
+          <div className="reveal text-white">
+            <SeapsLogo size="hero" />
+            <p className="mt-4 text-sm uppercase tracking-[0.2em] text-[var(--color-accent-soft)]">
+              {brand.fullName}
+            </p>
+            <h1 className="mt-5 max-w-xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
+              Cambodia property marketplace — buy, rent, or list with local expertise since{" "}
+              {brand.foundedYear}
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
-              SEAPS converts market insight into clear individualised strategies by providing Buyers,
-              Sellers and Investors with comprehensive property solutions spanning every major sector
-              of the market, including Land, Residential and Commercial Properties, Property
-              Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
+            <p className="mt-4 max-w-lg text-base text-white/75 md:text-lg">
+              Verified listing signals, city and district filters, and agent desks across Phnom Penh,
+              Siem Reap, and the coast — one search for homes, commercial, and off-plan.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
@@ -72,7 +63,7 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="reveal w-full self-end lg:justify-self-end">
+          <div className="reveal self-end">
             <MainSearch />
             <div className="mt-4 flex flex-wrap gap-2">
               {[
@@ -118,7 +109,7 @@ export default async function HomePage() {
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
               Featured
             </h3>
-            <div className="grid items-stretch gap-5 md:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-3">
               {featured.map((property) => (
                 <PropertyCard
                   key={property.id}
@@ -138,18 +129,18 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      <Section>
+      <Section className="bg-[#050d18] text-white">
         <SectionHeader
           eyebrow="Geography"
           title="Popular cities and districts"
           description="Popular Cambodian cities and districts with active listing counts."
         />
-        <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {cities.map((city) => (
             <Link
               key={city.slug}
               href={`/locations/${city.slug}`}
-              className="seaps-card group relative overflow-hidden rounded-[var(--radius-xl)]"
+              className="group relative overflow-hidden rounded-[var(--radius-xl)]"
             >
               <div className="relative aspect-[5/4]">
                 <Image
@@ -184,14 +175,14 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <div className="grid items-stretch gap-5 lg:grid-cols-3">
+        <div className="grid gap-5 lg:grid-cols-3">
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
         </div>
       </Section>
 
-      <Section>
+      <Section className="bg-[var(--color-mist)]/70">
         <SectionHeader
           eyebrow="Market pulse"
           title="Cambodia market indicators"
@@ -202,11 +193,11 @@ export default async function HomePage() {
             </ButtonLink>
           }
         />
-        <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {marketStats.map((stat) => (
             <div
               key={stat.id}
-              className="seaps-card rounded-[var(--radius-lg)] p-5"
+              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 {stat.label}
@@ -219,7 +210,7 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
-        <div className="seaps-card mt-8 overflow-hidden rounded-[var(--radius-lg)]">
+        <div className="mt-8 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
           <div className="border-b border-[var(--color-border)] px-5 py-3 text-sm font-semibold">
             Popular districts · $/m²
           </div>
@@ -246,24 +237,6 @@ export default async function HomePage() {
       </Section>
 
       <Section>
-        <SectionHeader
-          eyebrow="Professionals"
-          title="Popular agencies"
-          description="Verified and pending agency profiles with specializations and territory notes."
-          action={
-            <ButtonLink href="/agencies" variant="outline">
-              Agency directory
-            </ButtonLink>
-          }
-        />
-        <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {agencies.map((agency) => (
-            <AgencyCard key={agency.id} agency={agency} />
-          ))}
-        </div>
-      </Section>
-
-      <Section>
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <SectionHeader
@@ -277,7 +250,7 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="seaps-card rounded-[var(--radius-xl)] p-6">
+          <div className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)]">
             <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               Request a tailored shortlist
             </h2>
@@ -298,7 +271,7 @@ export default async function HomePage() {
       </Section>
 
       <Section className="pb-24">
-        <div className="seaps-card overflow-hidden rounded-[var(--radius-xl)] px-6 py-12 md:px-10">
+        <div className="overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-accent)]/30 bg-[linear-gradient(135deg,#0b1c33,#122844_55%,#0b1c33)] px-6 py-12 text-white md:px-10 seaps-gold-border">
           <div className="grid gap-6 md:grid-cols-[1.2fr_auto] md:items-center">
             <div>
               <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)] md:text-4xl">

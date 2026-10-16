@@ -40,7 +40,7 @@ export function LoadingState({ label = "Loading listings…" }: { label?: string
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="animate-pulse overflow-hidden rounded-[var(--radius-lg)] seaps-card"
+          className="animate-pulse overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
         >
           <div className="aspect-[4/3] bg-[var(--color-secondary)]" />
           <div className="space-y-3 p-4">

@@ -56,12 +56,12 @@ export default async function CityPage({
           <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             Districts
           </h2>
-          <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {guide.districts.map((district) => (
               <Link
                 key={district.slug}
                 href={`/locations/${guide.slug}/${district.slug}`}
-                className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)]"
+                className="group overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
               >
                 <div className="relative aspect-[16/10]">
                   <Image

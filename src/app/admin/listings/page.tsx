@@ -27,7 +27,7 @@ export default async function AdminListingsPage() {
           pending.map((listing) => (
             <li
               key={listing.id}
-              className="rounded-[var(--radius-md)] seaps-card p-4"
+              className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <Link href={`/property/${listing.slug}`} className="font-semibold">
                 {listing.title}

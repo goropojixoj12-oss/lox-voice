@@ -20,7 +20,7 @@ export default async function MapPage({ searchParams }: Props) {
     <CatalogPage
       searchParams={searchParams}
       title="Map search"
-      description="Use the Map view toggle to synchronize pins with the listing list. OpenStreetMap is used by default; set NEXT_PUBLIC_MAPBOX_TOKEN to switch to Mapbox later."
+      description="Use the Map view toggle to synchronize pins with the listing list. Mapbox activates when a token is configured."
     />
   );
 }

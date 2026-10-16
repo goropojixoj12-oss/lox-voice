@@ -19,7 +19,7 @@ const columns = [
   {
     title: "Professionals",
     links: [
-      { href: "/agencies", label: "Useful Links" },
+      { href: "/usefullinks", label: "Useful Links" },
       { href: "/list-property", label: "List a property" },
       { href: "/dashboard", label: "Owner & agent desk" },
       { href: "/auth/login", label: "Sign in" },

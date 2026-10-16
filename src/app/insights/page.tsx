@@ -18,11 +18,11 @@ export default function InsightsPage() {
         title="Market insights and reports"
         description="Market notes and guides for buyers, renters, and investors in Cambodia."
       />
-      <div className="mb-10 grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {marketStats.slice(0, 3).map((stat) => (
           <div
             key={stat.id}
-            className="seaps-card rounded-[var(--radius-lg)] p-5"
+            className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
           >
             <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{stat.label}</p>
             <p className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">

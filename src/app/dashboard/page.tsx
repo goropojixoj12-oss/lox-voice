@@ -31,7 +31,7 @@ export default async function DashboardPage() {
           <Link
             key={card.label}
             href={card.href}
-            className="rounded-[var(--radius-lg)] seaps-card p-5"
+            className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
           >
             <p className="text-sm text-[var(--color-muted)]">{card.label}</p>
             <p className="mt-2 font-[family-name:var(--font-display)] text-3xl">{card.value}</p>
