@@ -7,15 +7,38 @@ import { SeapsLogo } from "@/components/brand/seaps-logo";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  NavMenuDropdown,
+  NavMenuLink,
+  type NavEntry,
+} from "@/components/layout/nav-menu-dropdown";
 
-const nav = [
-  { href: "/about", label: "About Us" },
-  { href: "/buy", label: "Buy" },
-  { href: "/rent", label: "Rent" },
-  { href: "/projects", label: "New homes" },
-  { href: "/commercial", label: "Commercial" },
-  { href: "/usefullinks", label: "Useful Links" },
-  { href: "/insights", label: "Market insights" },
+const dealSubmenu = (prefix: "buy" | "rent") =>
+  [
+    { href: `/${prefix}/land`, label: "Land" },
+    { href: `/${prefix}/residential`, label: "Residential" },
+    { href: "/commercial", label: "Commercial" },
+  ] as const;
+
+const nav: NavEntry[] = [
+  { type: "link", href: "/about", label: "About Us" },
+  {
+    type: "dropdown",
+    label: "Buy",
+    href: "/buy/residential",
+    items: [...dealSubmenu("buy")],
+  },
+  {
+    type: "dropdown",
+    label: "Rent",
+    href: "/rent/residential",
+    items: [...dealSubmenu("rent")],
+  },
+  { type: "link", href: "/projects", label: "Projects/Developments" },
+  { type: "link", href: "/usefullinks", label: "Useful Links" },
+  { type: "link", href: "/insights", label: "Market insights" },
+  { type: "link", href: "/property-guide", label: "Property Guide" },
+  { type: "link", href: "/careers", label: "Careers" },
 ];
 
 export function SiteHeader({
@@ -24,6 +47,7 @@ export function SiteHeader({
   userName?: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const closeMobile = () => setOpen(false);
 
   return (
     <header className="sticky top-0 z-50 overflow-x-hidden border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
@@ -32,16 +56,14 @@ export function SiteHeader({
           <SeapsLogo size="header" />
         </Link>
 
-        <nav className="notranslate hidden items-center gap-1 md:flex" aria-label="Primary">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="seaps-gold-text rounded-full px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="notranslate hidden items-center gap-0.5 md:flex" aria-label="Primary">
+          {nav.map((entry) =>
+            entry.type === "dropdown" ? (
+              <NavMenuDropdown key={entry.label} entry={entry} variant="desktop" />
+            ) : (
+              <NavMenuLink key={entry.href} href={entry.href} label={entry.label} variant="desktop" />
+            ),
+          )}
         </nav>
 
         <div className="notranslate hidden items-center gap-2 md:flex">
@@ -83,16 +105,24 @@ export function SiteHeader({
           <div className="mb-2">
             <LanguageSwitcher className="w-full [&_select]:w-full [&_select]:max-w-none" />
           </div>
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className="seaps-gold-text rounded-[var(--radius-md)] px-3 py-3 text-base font-medium transition hover:bg-[var(--color-mist)]"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {nav.map((entry) =>
+            entry.type === "dropdown" ? (
+              <NavMenuDropdown
+                key={entry.label}
+                entry={entry}
+                variant="mobile"
+                onNavigate={closeMobile}
+              />
+            ) : (
+              <NavMenuLink
+                key={entry.href}
+                href={entry.href}
+                label={entry.label}
+                variant="mobile"
+                onNavigate={closeMobile}
+              />
+            ),
+          )}
           <div className="mt-2 grid gap-2">
             <ButtonLink href={userName ? "/dashboard" : "/auth/login"} variant="outline">
               {userName ? "Dashboard" : "Sign in"}

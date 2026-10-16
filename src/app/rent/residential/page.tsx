@@ -8,20 +8,20 @@ type Props = {
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   return catalogRouteMetadata({
-    path: "/rent",
+    path: "/rent/residential",
     title: "Homes for rent",
-    description: "Long-term rental listings across Cambodia.",
+    description: "Long-term residential rental listings across Cambodia.",
     searchParams: await searchParams,
   });
 }
 
-export default async function RentPage({ searchParams }: Props) {
+export default async function RentResidentialPage({ searchParams }: Props) {
   return (
     <CatalogPage
       searchParams={searchParams}
       deal="rent"
       title="Long-term rentals"
-      description="Monthly rentals for apartments, condos, offices, and commercial suites."
+      description="Monthly rentals for apartments, condos, and residential homes."
     />
   );
 }

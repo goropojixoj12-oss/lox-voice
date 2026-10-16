@@ -60,6 +60,8 @@ const nextConfig: NextConfig = {
       { source: "/market-feed/:path*", destination: "/search", permanent: true },
       { source: "/admin/market-feed", destination: "/admin", permanent: true },
       { source: "/admin/market-feed/:path*", destination: "/admin", permanent: true },
+      { source: "/buy", destination: "/buy/residential", permanent: true },
+      { source: "/rent", destination: "/rent/residential", permanent: true },
     ];
   },
   images: {

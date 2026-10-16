@@ -7,10 +7,10 @@ const columns = [
   {
     title: "Explore",
     links: [
-      { href: "/buy", label: "Buy" },
-      { href: "/rent", label: "Rent" },
+      { href: "/buy/residential", label: "Buy" },
+      { href: "/rent/residential", label: "Rent" },
       { href: "/short-stay", label: "Short stay" },
-      { href: "/projects", label: "New homes" },
+      { href: "/projects", label: "Projects/Developments" },
       { href: "/commercial", label: "Commercial" },
       { href: "/land", label: "Land" },
       { href: "/map", label: "Map search" },

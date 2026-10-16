@@ -4,8 +4,8 @@ import { Section, SectionHeader } from "@/components/shared/section";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
-  title: "New homes & developments",
-  description: "Browse residential projects with construction stages and unit ranges.",
+  title: "Projects & developments",
+  description: "Browse residential projects and developments with construction stages and unit ranges.",
 };
 
 export default function ProjectsPage() {

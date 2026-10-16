@@ -22,6 +22,10 @@ When editing this repository, **do not overwrite or drop** previously approved w
 ### Navigation (`src/components/layout/site-header.tsx`)
 
 - First item: **About Us** → `/about`.
+- **Buy** / **Rent** dropdowns: Land, Residential, Commercial (Commercial → `/commercial`; no top-level Commercial item).
+- Residential catalogs: `/buy/residential`, `/rent/residential` (`/buy` and `/rent` redirect).
+- **Projects/Developments** → `/projects`.
+- **Property Guide** → `/property-guide`, **Careers** → `/careers`.
 - **No Market Feed** in nav (removed; `/market-feed` redirects to `/search`).
 - **Useful Links** → `/usefullinks` (not `/agencies`).
 - Nav links use **`seaps-gold-text`** (living gold), with **`notranslate`** on nav.

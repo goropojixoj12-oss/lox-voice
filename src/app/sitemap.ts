@@ -10,8 +10,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "",
     "/search",
-    "/buy",
-    "/rent",
+    "/buy/residential",
+    "/buy/land",
+    "/rent/residential",
+    "/rent/land",
     "/short-stay",
     "/projects",
     "/commercial",
@@ -24,6 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/contact",
     "/privacy",
     "/terms",
+    "/property-guide",
+    "/careers",
   ].map((path) => ({
     url: `${brand.url}${path}`,
     lastModified: new Date(),
