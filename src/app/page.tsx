@@ -38,29 +38,28 @@ export default async function HomePage() {
           poster="/videos/hero-banner.jpg"
           overlayClassName="bg-[linear-gradient(105deg,rgba(7,17,31,0.9)_0%,rgba(11,28,51,0.7)_48%,rgba(11,28,51,0.4)_100%)]"
         />
-        <div className="relative mx-auto max-w-7xl px-4 pt-10 pb-14 sm:px-6 sm:pt-12 lg:px-8 lg:pt-14 lg:pb-16">
-          <div className="reveal flex flex-col items-center text-center text-white">
-            <SeapsLogo
-              size="hero"
-              className="h-[4.25rem] w-[6.75rem] sm:h-20 sm:w-32 md:h-[5.5rem] md:w-[8.75rem]"
-            />
-            <p className="mt-3 max-w-xl text-xs uppercase tracking-[0.2em] text-[var(--color-accent-soft)] sm:mt-4 sm:text-sm">
-              {brand.fullName}
-            </p>
-          </div>
-          <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-10">
-          <div className="reveal text-center text-white lg:text-left">
-            <h1 className="mx-auto max-w-2xl text-2xl font-medium leading-snug text-white/92 md:text-3xl lg:mx-0">
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-4 pt-10 pb-14 sm:px-6 sm:pt-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start lg:gap-10 lg:px-8 lg:pt-14 lg:pb-16">
+          <div className="reveal min-w-0 text-white">
+            <div className="flex w-full flex-col items-center text-center">
+              <SeapsLogo
+                size="hero"
+                className="h-[4.25rem] w-[6.75rem] sm:h-20 sm:w-32 md:h-[5.5rem] md:w-[8.75rem]"
+              />
+              <p className="mt-3 text-sm uppercase tracking-[0.2em] text-[var(--color-accent-soft)] sm:mt-4">
+                {brand.fullName}
+              </p>
+            </div>
+            <h1 className="mt-5 max-w-2xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
               South East Asia Property Services (SEAPS) is a multi-Award-Winning Real Estate,
               Property Management and Investment Company, based in South East Asia.
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-base text-white/75 md:text-lg lg:mx-0">
+            <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
               SEAPS converts market insight into clear individualised strategies by providing Buyers,
               Sellers and Investors with comprehensive property solutions spanning every major sector
               of the market, including Land, Residential and Commercial Properties, Property
               Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
+            <div className="mt-8 flex flex-wrap gap-3">
               <ButtonLink href="/buy" variant="accent">
                 Start property search
               </ButtonLink>
@@ -73,9 +72,9 @@ export default async function HomePage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="reveal mx-auto w-full max-w-xl lg:mx-0 lg:max-w-none lg:justify-self-end">
+          <div className="reveal w-full self-end lg:justify-self-end">
             <MainSearch />
-            <div className="mt-4 flex flex-wrap justify-center gap-2 lg:justify-start">
+            <div className="mt-4 flex flex-wrap gap-2">
               {[
                 { href: "/buy?type=apartment", label: "Apartments" },
                 { href: "/buy?type=villa", label: "Villas" },
@@ -93,7 +92,6 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-          </div>
           </div>
         </div>
       </section>
