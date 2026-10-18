@@ -180,7 +180,8 @@ canvas {
   background-image: var(--gold-flow);
   background-size: 340% 100%;
   background-color: #d4af37;
-  animation: seapsGoldFlow 6.6s linear infinite;
+  animation: seapsGoldFlow 4.2s linear infinite;
+  will-change: background-position;
 }
 
 .seaps-btn-gold::after {
@@ -197,7 +198,7 @@ canvas {
   );
   background-size: 260% 100%;
   background-repeat: no-repeat;
-  animation: seapsBtnShine 6.6s linear infinite;
+  animation: seapsBtnShine 4.2s linear infinite;
   will-change: background-position;
 }
 
@@ -212,7 +213,7 @@ canvas {
     linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
     var(--gold-flow) border-box;
   background-size: 100% 100%, 340% 100%;
-  animation: seapsGoldBorderFlow 6.6s linear infinite;
+  animation: seapsGoldBorderFlow 4.2s linear infinite;
   color: transparent;
   box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 18px rgba(212, 175, 55, 0.12);
 }
@@ -230,7 +231,8 @@ canvas {
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    animation: seapsGoldFlow 6.6s linear infinite;
+    animation: seapsGoldFlow 4.2s linear infinite;
+    will-change: background-position;
   }
 }
 
@@ -288,23 +290,40 @@ canvas {
 .seaps-gold-label__under {
   color: var(--color-accent);
   -webkit-text-fill-color: currentColor;
+  animation: seapsGoldTextShimmer 4.2s ease-in-out infinite;
 }
 
 .seaps-gold-label__flow {
   position: absolute;
   left: 0;
   top: 0;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
   pointer-events: none;
   user-select: none;
   white-space: inherit;
   color: transparent;
   -webkit-text-fill-color: transparent;
   background-image: var(--gold-flow);
-  background-size: 340% 100%;
+  background-size: 400% 100%;
   background-repeat: no-repeat;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: seapsGoldFlow 6.6s linear infinite;
+  animation: seapsGoldFlow 4.2s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes seapsGoldTextShimmer {
+  0%,
+  100% {
+    color: #c9a227;
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  }
+  50% {
+    color: #fff8dc;
+    text-shadow: 0 0 12px rgba(255, 244, 200, 0.55);
+  }
 }
 
 /*
@@ -323,13 +342,14 @@ canvas {
   .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
   .seaps-gold-text {
     background-image: var(--gold-flow) !important;
-    background-size: 340% 100% !important;
+    background-size: 400% 100% !important;
     background-repeat: no-repeat;
     -webkit-background-clip: text !important;
     background-clip: text !important;
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
-    animation: seapsGoldFlow 6.6s linear infinite;
+    animation: seapsGoldFlow 4.2s linear infinite;
+    will-change: background-position;
   }
 
   .seaps-gold-label__flow font,
@@ -380,7 +400,7 @@ canvas {
     background-clip: text !important;
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
-    animation: seapsGoldFlow 6s linear infinite;
+    animation: seapsGoldFlow 4.2s linear infinite;
   }
 }
 
@@ -399,7 +419,8 @@ canvas {
   background-color: transparent !important;
   background-image: var(--gold-flow) !important;
   background-size: 340% 100% !important;
-  animation: seapsGoldFlow 6.6s linear infinite;
+  animation: seapsGoldFlow 4.2s linear infinite;
+  will-change: background-position;
 }
 
 /* Gold borders / rings — luminous pulse (keeps existing backgrounds intact) */
@@ -524,52 +545,8 @@ a {
     scroll-behavior: auto;
   }
 
+  /* Keep SEAPS living gold animations — brand-critical; only trim decorative motion */
   .seaps-logo-shine,
-  .seaps-btn-gold,
-  .seaps-btn-gold::after,
-  .seaps-btn-gold-outline,
-  .seaps-btn-gold-outline::after,
-  .seaps-btn-gold-outline > span,
-  .text-\[var\(--color-accent\)\]:not(:has(svg)),
-  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
-  .text-\[var\(--color-accent\)\]:has(svg),
-  .text-\[var\(--color-accent-soft\)\]:has(svg),
-  .seaps-gold-text,
-  .seaps-gold-label__flow,
-  .bg-\[var\(--color-accent\)\],
-  .border-\[var\(--color-accent\)\],
-  .border-\[var\(--color-accent\)\]\/25,
-  .border-\[var\(--color-accent\)\]\/30,
-  .border-\[var\(--color-accent\)\]\/40,
-  .seaps-gold-border,
-  .seaps-gold-shine {
-    animation: none !important;
-  }
-
-  .seaps-btn-gold::after,
-  .seaps-btn-gold-outline::after {
-    opacity: 0;
-  }
-
-  .text-\[var\(--color-accent\)\]:not(:has(svg)),
-  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
-  .seaps-gold-text,
-  .seaps-brand-subtitle {
-    background-image: none !important;
-    color: var(--color-accent-soft) !important;
-    -webkit-text-fill-color: var(--color-accent-soft);
-    filter: none;
-    animation: none !important;
-    text-shadow: none;
-  }
-
-  .text-\[var\(--color-accent\)\]:has(svg),
-  .text-\[var\(--color-accent-soft\)\]:has(svg) {
-    color: var(--color-accent) !important;
-    -webkit-text-fill-color: var(--color-accent) !important;
-    filter: none;
-  }
-
   .reveal {
     animation: none !important;
   }
