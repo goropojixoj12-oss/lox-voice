@@ -12,7 +12,7 @@ export type NavEntry =
   | { type: "dropdown"; label: string; href: string; items: NavDropdownItem[] };
 
 const linkShellClass =
-  "rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
+  "seaps-nav-pill seaps-gold-border-flow rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
 
 const subLinkClass =
   "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
@@ -40,7 +40,7 @@ export function NavMenuDropdown({
           className="invisible absolute left-0 top-full z-[110] min-w-[11rem] pt-1 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
           role="menu"
         >
-          <div className="seaps-card rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-background)] py-1 shadow-[0_16px_48px_rgba(0,0,0,0.45)]">
+          <div className="seaps-card rounded-[var(--radius-lg)] bg-[var(--color-background)] py-1 shadow-[0_16px_48px_rgba(0,0,0,0.45)]">
             {entry.items.map((item) => (
               <Link
                 key={item.href + item.label}
