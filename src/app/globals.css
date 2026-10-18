@@ -129,7 +129,8 @@ canvas {
   height: 100% !important;
   max-width: none;
   object-fit: contain;
-  filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.35));
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4));
+  animation: seapsGoldIconPulse 6.6s ease-in-out infinite;
 }
 
 .seaps-logo-shine-wrap {
@@ -144,14 +145,15 @@ canvas {
   pointer-events: none;
   background: linear-gradient(
     115deg,
-    transparent 40%,
-    rgba(255, 248, 220, 0.2) 47%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 236, 170, 0.25) 53%,
-    transparent 60%
+    transparent 38%,
+    rgba(255, 248, 220, 0.35) 46%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 236, 170, 0.4) 54%,
+    transparent 62%
   );
   transform: translateX(-140%);
-  animation: seapsShineSweep 4.5s linear infinite;
+  animation: seapsShineSweep 3.8s linear infinite;
+  will-change: transform;
   -webkit-mask-image: url("/brand/seaps-logo.png");
   mask-image: url("/brand/seaps-logo.png");
   -webkit-mask-size: contain;
@@ -161,12 +163,6 @@ canvas {
   -webkit-mask-position: center;
   mask-position: center;
   mix-blend-mode: screen;
-}
-
-@supports not (mask-image: url("/brand/seaps-logo.png")) {
-  .seaps-logo-shine {
-    display: none;
-  }
 }
 
 /* ——— Living gold system (buttons, text, borders, fills) ——— */
@@ -546,8 +542,7 @@ a {
     scroll-behavior: auto;
   }
 
-  /* Keep SEAPS living gold animations — brand-critical; only trim decorative motion */
-  .seaps-logo-shine,
+  /* Keep SEAPS living gold + logo shine; only trim page enter motion */
   .reveal {
     animation: none !important;
   }
