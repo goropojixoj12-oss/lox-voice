@@ -57,7 +57,7 @@ export function SiteHeader({
                 Sign in
               </ButtonLink>
             )}
-            <ButtonLink href="/contact" variant="accent" size="sm" className="seaps-gold-shine">
+            <ButtonLink href="/contact" variant="accent" size="sm">
               Contact Us
             </ButtonLink>
           </div>

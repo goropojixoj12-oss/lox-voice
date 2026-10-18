@@ -6,12 +6,11 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary:
-    "seaps-btn-gold seaps-gold-shine text-[#0B1C33] shadow-[var(--shadow-soft)] hover:brightness-105",
+    "seaps-btn-gold text-[#0B1C33] shadow-[var(--shadow-soft)] hover:brightness-105",
   secondary:
     "bg-[var(--color-secondary)] text-[var(--color-text)] hover:bg-[var(--color-sand)]",
   ghost: "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-mist)]",
-  accent:
-    "seaps-btn-gold seaps-gold-shine text-[#0B1C33] shadow-[var(--shadow-lift)] hover:brightness-105",
+  accent: "seaps-btn-gold text-[#0B1C33] shadow-[var(--shadow-lift)] hover:brightness-105",
   outline: "seaps-btn-gold-outline",
 };
 

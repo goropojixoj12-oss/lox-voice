@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { LivingGold } from "@/components/brand/living-gold";
 import { cn } from "@/lib/utils";
 
 export type NavDropdownItem = { href: string; label: string };
@@ -13,6 +12,8 @@ export type NavEntry =
 
 const linkShellClass =
   "rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
+
+const goldTextClass = "seaps-gold-text inline-block";
 
 const subLinkClass =
   "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
@@ -30,7 +31,7 @@ export function NavMenuDropdown({
     return (
       <div className="group relative z-[1] hover:z-[110] focus-within:z-[110]">
         <Link href={entry.href} className={cn(linkShellClass, "inline-flex items-center gap-0.5")}>
-          <LivingGold>{entry.label}</LivingGold>
+          <span className={goldTextClass}>{entry.label}</span>
           <ChevronDown
             className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-soft)] opacity-90 transition group-hover:rotate-180"
             aria-hidden
@@ -48,7 +49,7 @@ export function NavMenuDropdown({
                 role="menuitem"
                 className={subLinkClass}
               >
-                <LivingGold>{item.label}</LivingGold>
+                <span className={goldTextClass}>{item.label}</span>
               </Link>
             ))}
           </div>
@@ -64,8 +65,8 @@ export function NavMenuDropdown({
         onClick={onNavigate}
         className="flex items-center justify-between rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold"
       >
-        <LivingGold>{entry.label}</LivingGold>
-        <ChevronDown className="h-4 w-4 opacity-70" aria-hidden />
+        <span className={goldTextClass}>{entry.label}</span>
+        <ChevronDown className="h-4 w-4 text-[var(--color-accent-soft)] opacity-70" aria-hidden />
       </Link>
       <div className="ml-3 border-l border-[var(--color-border)] pl-3">
         {entry.items.map((item) => (
@@ -75,7 +76,7 @@ export function NavMenuDropdown({
             onClick={onNavigate}
             className="block rounded-[var(--radius-md)] px-3 py-2.5 text-base font-medium transition hover:bg-[var(--color-mist)]"
           >
-            <LivingGold>{item.label}</LivingGold>
+            <span className={goldTextClass}>{item.label}</span>
           </Link>
         ))}
       </div>
@@ -97,7 +98,7 @@ export function NavMenuLink({
   if (variant === "desktop") {
     return (
       <Link href={href} className={linkShellClass}>
-        <LivingGold>{label}</LivingGold>
+        <span className={goldTextClass}>{label}</span>
       </Link>
     );
   }
@@ -107,7 +108,7 @@ export function NavMenuLink({
       onClick={onNavigate}
       className="rounded-[var(--radius-md)] px-3 py-3 text-base font-medium transition hover:bg-[var(--color-mist)]"
     >
-      <LivingGold>{label}</LivingGold>
+      <span className={goldTextClass}>{label}</span>
     </Link>
   );
 }

@@ -181,7 +181,6 @@ canvas {
   background-size: 340% 100%;
   background-color: #d4af37;
   animation: seapsGoldFlow 6.6s linear infinite;
-  will-change: background-position;
 }
 
 .seaps-btn-gold::after {
@@ -275,61 +274,21 @@ canvas {
   }
 }
 
-/* Stacked living gold — base always visible, flow layer animates on top */
-.seaps-living-gold {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
-  vertical-align: baseline;
-  line-height: inherit;
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
-}
-
-.seaps-living-gold__base {
-  color: var(--color-accent-soft);
-  -webkit-text-fill-color: currentColor;
-}
-
-.seaps-living-gold__flow {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  white-space: inherit;
-  pointer-events: none;
-  user-select: none;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  background-image: var(--gold-flow);
-  background-size: 340% 100%;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: seapsGoldFlow 6.6s linear infinite;
-  will-change: background-position;
-}
-
-/* Legacy class — same stack via component; keep solid if used alone */
-.seaps-gold-text {
-  color: var(--color-accent-soft);
-  -webkit-text-fill-color: currentColor;
-}
-
 /*
-  Gold utility classes: flowing gradient where clip works (headings, labels).
+  Gold text: solid fallback first, then flowing gradient where clip is supported.
   Skip elements that host SVGs — transparent currentColor would hide icons.
 */
 .text-\[var\(--color-accent\)\]:not(:has(svg)),
-.text-\[var\(--color-accent-soft\)\]:not(:has(svg)) {
+.text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
+.seaps-gold-text {
   color: var(--color-accent-soft);
   -webkit-text-fill-color: currentColor;
 }
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .text-\[var\(--color-accent\)\]:not(:has(svg)),
-  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)) {
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
+  .seaps-gold-text {
     background-image: var(--gold-flow) !important;
     background-size: 340% 100% !important;
     background-repeat: no-repeat;
@@ -338,13 +297,22 @@ canvas {
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
     animation: seapsGoldFlow 6.6s linear infinite;
-    will-change: background-position;
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
   }
 
-  .seaps-living-gold__flow font,
+  header nav.notranslate .seaps-gold-text,
+  #mobile-nav .seaps-gold-text {
+    display: inline-block;
+    transform: translateZ(0);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* Google Translate wraps nodes in <font> — inherit clipped gradient or text vanishes */
+  .seaps-btn-gold-outline > span font,
+  .seaps-gold-text font,
   .text-\[var\(--color-accent\)\]:not(:has(svg)) font,
-  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font,
-  .seaps-btn-gold-outline > span font {
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font {
     background-image: inherit !important;
     background-size: inherit !important;
     background-repeat: inherit !important;
@@ -536,7 +504,6 @@ a {
   .text-\[var\(--color-accent\)\]:has(svg),
   .text-\[var\(--color-accent-soft\)\]:has(svg),
   .seaps-gold-text,
-  .seaps-living-gold__flow,
   .bg-\[var\(--color-accent\)\],
   .border-\[var\(--color-accent\)\],
   .border-\[var\(--color-accent\)\]\/25,
