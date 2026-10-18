@@ -10,11 +10,13 @@ export type NavEntry =
   | { type: "link"; href: string; label: string }
   | { type: "dropdown"; label: string; href: string; items: NavDropdownItem[] };
 
-const linkClass =
-  "seaps-gold-text rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
+const linkShellClass =
+  "rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
+
+const goldLabelClass = "seaps-gold-text";
 
 const subLinkClass =
-  "seaps-gold-text seaps-nav-sub-link block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
+  "seaps-gold-text block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
 
 export function NavMenuDropdown({
   entry,
@@ -28,8 +30,8 @@ export function NavMenuDropdown({
   if (variant === "desktop") {
     return (
       <div className="group relative z-[1] hover:z-[110] focus-within:z-[110]">
-        <Link href={entry.href} className={cn(linkClass, "inline-flex items-center gap-0.5")}>
-          {entry.label}
+        <Link href={entry.href} className={cn(linkShellClass, "inline-flex items-center gap-0.5")}>
+          <span className={goldLabelClass}>{entry.label}</span>
           <ChevronDown
             className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-soft)] opacity-90 transition group-hover:rotate-180"
             aria-hidden
@@ -61,9 +63,9 @@ export function NavMenuDropdown({
       <Link
         href={entry.href}
         onClick={onNavigate}
-        className="seaps-gold-text flex items-center justify-between rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold"
+        className="flex items-center justify-between rounded-[var(--radius-md)] px-3 py-2 text-base font-semibold"
       >
-        {entry.label}
+        <span className={goldLabelClass}>{entry.label}</span>
         <ChevronDown className="h-4 w-4 opacity-70" aria-hidden />
       </Link>
       <div className="ml-3 border-l border-[var(--color-border)] pl-3">
@@ -72,7 +74,7 @@ export function NavMenuDropdown({
             key={item.href + item.label}
             href={item.href}
             onClick={onNavigate}
-            className="seaps-gold-text seaps-nav-sub-link block rounded-[var(--radius-md)] px-3 py-2.5 text-base font-medium transition hover:bg-[var(--color-mist)]"
+            className="seaps-gold-text block rounded-[var(--radius-md)] px-3 py-2.5 text-base font-medium transition hover:bg-[var(--color-mist)]"
           >
             {item.label}
           </Link>
@@ -95,8 +97,8 @@ export function NavMenuLink({
 }) {
   if (variant === "desktop") {
     return (
-      <Link href={href} className={linkClass}>
-        {label}
+      <Link href={href} className={linkShellClass}>
+        <span className={goldLabelClass}>{label}</span>
       </Link>
     );
   }

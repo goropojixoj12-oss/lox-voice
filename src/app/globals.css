@@ -274,33 +274,6 @@ canvas {
   }
 }
 
-/* Header nav top links — hairline gold rim, not a wide glow blob */
-@keyframes seapsNavGoldOutline {
-  0%,
-  100% {
-    text-shadow:
-      0 0 0.35px rgba(212, 175, 55, 0.95),
-      0 0 1px rgba(212, 175, 55, 0.4);
-  }
-  50% {
-    text-shadow:
-      0 0 0.5px rgba(255, 248, 220, 1),
-      0 0 1.5px rgba(212, 175, 55, 0.55),
-      0 0 2px rgba(212, 175, 55, 0.22);
-  }
-}
-
-header nav.notranslate > a.seaps-gold-text,
-header nav.notranslate .group > a.seaps-gold-text,
-#mobile-nav .seaps-gold-text:not(.seaps-nav-sub-link) {
-  color: var(--color-accent-soft) !important;
-  -webkit-text-fill-color: currentColor !important;
-  background-image: none !important;
-  background-clip: border-box !important;
-  -webkit-background-clip: border-box !important;
-  animation: seapsNavGoldOutline 7.2s ease-in-out infinite;
-}
-
 /*
   Gold text: solid fallback first, then flowing gradient where clip is supported.
   Skip elements that host SVGs — transparent currentColor would hide icons.
@@ -324,28 +297,16 @@ header nav.notranslate .group > a.seaps-gold-text,
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
     animation: seapsGoldFlow 6.6s linear infinite;
-    /* drop-shadow + background-clip:text hides copy in Chrome/Edge — use text-shadow */
-    text-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
   }
 
-  /* Primary nav must stay visible even if clip/translate glitches */
-  .notranslate .seaps-gold-text {
+  /* Nav + mobile menu: stable gradient clip (keep header grid layout for width) */
+  header nav.notranslate .seaps-gold-text,
+  #mobile-nav .seaps-gold-text {
+    display: inline-block;
+    transform: translateZ(0);
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-  }
-
-  /* Dropdown / submenu labels — living gold gradient */
-  header nav.notranslate [role="menu"] .seaps-gold-text,
-  #mobile-nav .seaps-gold-text.seaps-nav-sub-link {
-    background-image: var(--gold-flow) !important;
-    background-size: 340% 100% !important;
-    background-repeat: no-repeat;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-    animation: seapsGoldFlow 6.6s linear infinite;
-    text-shadow: 0 0 1px rgba(212, 175, 55, 0.35);
   }
 
   /* Google Translate wraps nodes in <font> — inherit clipped gradient or text vanishes */
@@ -550,9 +511,7 @@ a {
   .border-\[var\(--color-accent\)\]\/30,
   .border-\[var\(--color-accent\)\]\/40,
   .seaps-gold-border,
-  .seaps-gold-shine,
-  header nav.notranslate > a.seaps-gold-text,
-  header nav.notranslate .group > a.seaps-gold-text {
+  .seaps-gold-shine {
     animation: none !important;
   }
 
