@@ -23,13 +23,17 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-[100] overflow-visible border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
-      <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group shrink-0 notranslate" aria-label="SEAPS home">
+      <div className="mx-auto grid h-[4.25rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-3 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] lg:px-8">
+        <Link
+          href="/"
+          className="group shrink-0 notranslate justify-self-start md:col-start-1"
+          aria-label="SEAPS home"
+        >
           <SeapsLogo size="header" />
         </Link>
 
         <nav
-          className="notranslate relative z-[1] hidden items-center gap-0.5 overflow-visible md:flex"
+          className="notranslate relative z-[1] hidden min-w-0 items-center justify-center gap-0.5 overflow-visible md:col-start-2 md:flex md:flex-wrap md:px-2"
           aria-label="Primary"
         >
           {nav.map((entry) =>
@@ -41,32 +45,34 @@ export function SiteHeader({
           )}
         </nav>
 
-        <div className="notranslate hidden items-center gap-2 md:flex">
-          <LanguageSwitcher />
-          {userName ? (
-            <ButtonLink href="/dashboard" variant="ghost" size="sm">
-              {userName}
+        <div className="notranslate flex shrink-0 items-center justify-end gap-2 md:col-start-3">
+          <div className="hidden items-center gap-2 md:flex">
+            <LanguageSwitcher />
+            {userName ? (
+              <ButtonLink href="/dashboard" variant="ghost" size="sm">
+                {userName}
+              </ButtonLink>
+            ) : (
+              <ButtonLink href="/auth/login" variant="ghost" size="sm">
+                Sign in
+              </ButtonLink>
+            )}
+            <ButtonLink href="/contact" variant="accent" size="sm" className="seaps-gold-shine">
+              Contact Us
             </ButtonLink>
-          ) : (
-            <ButtonLink href="/auth/login" variant="ghost" size="sm">
-              Sign in
-            </ButtonLink>
-          )}
-          <ButtonLink href="/contact" variant="accent" size="sm">
-            Contact Us
-          </ButtonLink>
-        </div>
+          </div>
 
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-accent-soft)] md:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          <span className="sr-only">Toggle menu</span>
-        </button>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-accent-soft)] md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <span className="sr-only">Toggle menu</span>
+          </button>
+        </div>
       </div>
 
       <div

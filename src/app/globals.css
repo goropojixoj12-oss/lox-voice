@@ -297,7 +297,44 @@ canvas {
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
     animation: seapsGoldFlow 6.6s linear infinite;
-    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
+    /* drop-shadow + background-clip:text hides copy in Chrome/Edge — use text-shadow */
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+  }
+
+  /* Primary nav must stay visible even if clip/translate glitches */
+  .notranslate .seaps-gold-text {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /*
+    Header nav: skip background-clip:text (Chrome/Edge + flex layout can hide links).
+    Solid gold + living glow reads as “flowing gold” without vanishing menu labels.
+  */
+  header nav.notranslate .seaps-gold-text {
+    position: relative;
+    z-index: 0;
+    color: var(--color-accent-soft) !important;
+    -webkit-text-fill-color: currentColor !important;
+    background-image: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    animation: seapsBrandGlow 7.2s ease-in-out infinite;
+    text-shadow: none;
+  }
+
+  header nav.notranslate .seaps-gold-text::before {
+    content: "";
+    position: absolute;
+    inset: -4px -6px;
+    z-index: -1;
+    border-radius: 999px;
+    background-image: var(--gold-flow);
+    background-size: 340% 100%;
+    opacity: 0.35;
+    animation: seapsGoldFlow 6.6s linear infinite;
+    filter: blur(10px);
+    pointer-events: none;
   }
 
   /* Google Translate wraps nodes in <font> — inherit clipped gradient or text vanishes */
@@ -502,7 +539,12 @@ a {
   .border-\[var\(--color-accent\)\]\/30,
   .border-\[var\(--color-accent\)\]\/40,
   .seaps-gold-border,
-  .seaps-gold-shine {
+  .seaps-gold-shine,
+  header nav.notranslate .seaps-gold-text::before {
+    animation: none !important;
+  }
+
+  header nav.notranslate .seaps-gold-text {
     animation: none !important;
   }
 
