@@ -258,13 +258,6 @@ canvas {
   will-change: background-position;
 }
 
-header nav.notranslate a.seaps-nav-pill:hover,
-header nav.notranslate .group > a.seaps-nav-pill:hover {
-  background:
-    linear-gradient(var(--color-mist), var(--color-mist)) padding-box,
-    var(--gold-flow) border-box !important;
-}
-
 .seaps-gold-icon-ring.seaps-gold-border-flow {
   background:
     linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
