@@ -43,7 +43,7 @@ export function HeroSocialLinks({ className }: { className?: string }) {
               target={isPlaceholder ? undefined : "_blank"}
               rel={isPlaceholder ? undefined : "noopener noreferrer"}
               aria-label={label}
-              className="seaps-gold-icon-ring seaps-gold-border-flow inline-flex h-11 w-11 items-center justify-center rounded-full text-[var(--color-accent-soft)] shadow-[0_0_20px_rgba(212,175,55,0.15)] transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-[rgba(212,175,55,0.55)] bg-[rgba(255,255,255,0.08)] text-[var(--color-accent-soft)] transition hover:border-[rgba(240,215,140,0.85)] hover:bg-[rgba(212,175,55,0.18)] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
             >
               <Icon className={iconClass} />
             </a>

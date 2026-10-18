@@ -79,47 +79,19 @@ body {
   overflow-x: hidden;
 }
 
-/* Uniform card chrome — living gold outline (--gold-flow) */
+/* Uniform card chrome — even 1px gold hairline (no pseudo borders) */
 .seaps-card {
-  position: relative;
-  z-index: 0;
-  isolation: isolate;
-  border: none;
+  border: 1px solid rgba(212, 175, 55, 0.5);
   background-color: var(--color-surface);
   box-shadow: none;
-}
-
-.seaps-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: var(--gold-flow);
-  background-size: 400% 100%;
-  animation: seapsGoldFlow 4.2s linear infinite;
-  will-change: background-position;
-  pointer-events: none;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
 }
 
 /* Admin dashboard quick links — same chrome as cards, readable on dark theme */
 .seaps-admin-nav-link {
   display: block;
   border-radius: var(--radius-md);
-  border: 1px solid transparent;
-  background:
-    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
-    var(--gold-flow) border-box;
-  background-size: 100% 100%, 400% 100%;
-  animation: seapsGoldBorderFlow 4.2s linear infinite;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background: var(--color-surface);
   padding: 0.75rem 1rem;
   font-weight: 500;
   color: var(--color-text);
@@ -245,29 +217,6 @@ canvas {
   will-change: background-position;
   color: transparent;
   box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 18px rgba(212, 175, 55, 0.12);
-}
-
-/* Hairline animated gold rim (nav pills, icon rings, etc.) */
-.seaps-gold-border-flow {
-  border: 1px solid transparent !important;
-  background:
-    linear-gradient(var(--color-background), var(--color-background)) padding-box,
-    var(--gold-flow) border-box !important;
-  background-size: 100% 100%, 400% 100% !important;
-  animation: seapsGoldBorderFlow 4.2s linear infinite;
-  will-change: background-position;
-}
-
-.seaps-gold-icon-ring.seaps-gold-border-flow {
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.08)) padding-box,
-    var(--gold-flow) border-box !important;
-}
-
-.seaps-gold-icon-ring.seaps-gold-border-flow:hover {
-  background:
-    linear-gradient(rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.18)) padding-box,
-    var(--gold-flow) border-box !important;
 }
 
 .seaps-btn-gold-outline > span {
