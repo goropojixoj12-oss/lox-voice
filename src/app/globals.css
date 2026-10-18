@@ -274,6 +274,39 @@ canvas {
   }
 }
 
+/* Nav labels: archived --gold-flow on top + visible #d4af37 underlay (Chrome-safe) */
+.seaps-gold-label {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: baseline;
+  line-height: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.seaps-gold-label__under {
+  color: var(--color-accent);
+  -webkit-text-fill-color: currentColor;
+}
+
+.seaps-gold-label__flow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  user-select: none;
+  white-space: inherit;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-image: var(--gold-flow);
+  background-size: 340% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: seapsGoldFlow 6.6s linear infinite;
+}
+
 /*
   Gold text: solid fallback first, then flowing gradient where clip is supported.
   Skip elements that host SVGs — transparent currentColor would hide icons.
@@ -297,19 +330,17 @@ canvas {
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
     animation: seapsGoldFlow 6.6s linear infinite;
-    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.22));
   }
 
-  header nav.notranslate .seaps-gold-text,
-  #mobile-nav .seaps-gold-text {
+  .seaps-gold-label__flow font,
+  .seaps-gold-text {
     display: inline-block;
     transform: translateZ(0);
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
   }
 
   /* Google Translate wraps nodes in <font> — inherit clipped gradient or text vanishes */
   .seaps-btn-gold-outline > span font,
+  .seaps-gold-label__flow font,
   .seaps-gold-text font,
   .text-\[var\(--color-accent\)\]:not(:has(svg)) font,
   .text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font {
@@ -504,6 +535,7 @@ a {
   .text-\[var\(--color-accent\)\]:has(svg),
   .text-\[var\(--color-accent-soft\)\]:has(svg),
   .seaps-gold-text,
+  .seaps-gold-label__flow,
   .bg-\[var\(--color-accent\)\],
   .border-\[var\(--color-accent\)\],
   .border-\[var\(--color-accent\)\]\/25,
