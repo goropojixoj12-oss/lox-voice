@@ -14,7 +14,7 @@ const linkClass =
   "seaps-gold-text rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
 
 const subLinkClass =
-  "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium text-[var(--color-text)] transition hover:bg-[var(--color-mist)] hover:text-[var(--color-accent-soft)]";
+  "seaps-gold-text seaps-nav-sub-link block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
 
 export function NavMenuDropdown({
   entry,
@@ -31,7 +31,7 @@ export function NavMenuDropdown({
         <Link href={entry.href} className={cn(linkClass, "inline-flex items-center gap-0.5")}>
           {entry.label}
           <ChevronDown
-            className="h-3.5 w-3.5 opacity-80 transition group-hover:rotate-180"
+            className="h-3.5 w-3.5 shrink-0 text-[var(--color-accent-soft)] opacity-90 transition group-hover:rotate-180"
             aria-hidden
           />
         </Link>
@@ -72,7 +72,7 @@ export function NavMenuDropdown({
             key={item.href + item.label}
             href={item.href}
             onClick={onNavigate}
-            className="block rounded-[var(--radius-md)] px-3 py-2.5 text-base font-medium text-[var(--color-muted)] transition hover:bg-[var(--color-mist)] hover:text-[var(--color-accent-soft)]"
+            className="seaps-gold-text seaps-nav-sub-link block rounded-[var(--radius-md)] px-3 py-2.5 text-base font-medium transition hover:bg-[var(--color-mist)]"
           >
             {item.label}
           </Link>
