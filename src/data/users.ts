@@ -27,7 +27,7 @@ export const demoUsers: DemoUser[] = [
     email: "agent@seaps.com.kh",
     passwordHash:
       "$2b$12$RQPhXJlWKqPvrZaupgAE0OrcUjg8IzzkKTqDdmTpmv5I.k.FcFsge",
-    name: "Adam James",
+    name: "Agent1",
     role: "agent",
     agencyId: "ag-mekong",
   },
