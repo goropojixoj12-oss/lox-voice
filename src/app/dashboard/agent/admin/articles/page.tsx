@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Admin Projects" };
+export const metadata: Metadata = { title: "Admin Articles" };
 
-export default function AdminProjectsPage() {
+export default function AdminArticlesPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-        Manage projects
+        Manage articles
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        Development projects are managed for Cambodia markets. Use these tools to keep published records current.
+        Editorial content supports Cambodian market guides. Use these tools to keep published records current.
       </p>
-      <Link href="/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
+      <Link href="/dashboard/agent/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
         Back to admin overview
       </Link>
     </div>

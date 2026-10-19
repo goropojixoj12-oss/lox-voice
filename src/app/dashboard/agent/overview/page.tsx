@@ -4,6 +4,7 @@ import { AgentOverviewPanel } from "@/components/dashboard/agent-overview-panel"
 import { getAgentProfile } from "@/lib/agent-profile";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { getSession } from "@/lib/auth";
+import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -50,9 +51,13 @@ export default async function DashboardOverviewPage() {
         </h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {[
-            { label: "Favorites", value: favorites.length, href: "/favorites" },
-            { label: "Inquiries", value: inquiries.length, href: "/dashboard/inquiries" },
-            { label: "Your runtime listings", value: listings.length, href: "/dashboard/listings" },
+            { label: "Favorites", value: favorites.length, href: agentDeskPath("favorites") },
+            { label: "Inquiries", value: inquiries.length, href: agentDeskPath("inquiries") },
+            {
+              label: "Your runtime listings",
+              value: listings.length,
+              href: agentDeskPath("listings"),
+            },
           ].map((card) => (
             <Link
               key={card.label}

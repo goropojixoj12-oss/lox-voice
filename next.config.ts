@@ -58,8 +58,21 @@ const nextConfig: NextConfig = {
       { source: "/agencies/:path*", destination: "/usefullinks", permanent: true },
       { source: "/market-feed", destination: "/search", permanent: true },
       { source: "/market-feed/:path*", destination: "/search", permanent: true },
-      { source: "/admin/market-feed", destination: "/admin", permanent: true },
-      { source: "/admin/market-feed/:path*", destination: "/admin", permanent: true },
+      { source: "/admin/market-feed", destination: "/dashboard/agent/admin", permanent: true },
+      {
+        source: "/admin/market-feed/:path*",
+        destination: "/dashboard/agent/admin",
+        permanent: true,
+      },
+      { source: "/dashboard/overview", destination: "/dashboard/agent/overview", permanent: true },
+      { source: "/dashboard/profile", destination: "/dashboard/agent/profile", permanent: true },
+      { source: "/dashboard/listings", destination: "/dashboard/agent/listings", permanent: true },
+      {
+        source: "/dashboard/inquiries",
+        destination: "/dashboard/agent/inquiries",
+        permanent: true,
+      },
+      { source: "/dashboard/stats", destination: "/dashboard/agent/stats", permanent: true },
       { source: "/buy", destination: "/buy/residential", permanent: true },
       { source: "/rent", destination: "/rent/residential", permanent: true },
     ];

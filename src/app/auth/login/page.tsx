@@ -30,7 +30,7 @@ export default function LoginPage() {
       setError(data.error ?? "Sign-in failed");
       return;
     }
-    router.push("/dashboard/overview");
+    router.push("/dashboard/agent/overview");
     router.refresh();
   }
 

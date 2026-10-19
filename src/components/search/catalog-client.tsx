@@ -163,7 +163,7 @@ export function CatalogClient({
 
           <div className="rounded-[var(--radius-md)] bg-[var(--color-mist)] p-4 text-sm text-[var(--color-muted)]">
             Want alerts for this filter set?{" "}
-            <ButtonLink href="/saved-searches" variant="ghost" size="sm" className="inline px-1">
+            <ButtonLink href="/dashboard/agent/saved-searches" variant="ghost" size="sm" className="inline px-1">
               Save this search
             </ButtonLink>
           </div>

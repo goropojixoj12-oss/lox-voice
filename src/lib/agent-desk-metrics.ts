@@ -4,6 +4,7 @@ import {
   agentHasRequiredProfilePhoto,
   type AgentProfileRecord,
 } from "@/lib/agent-profile-shared";
+import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 import type { Inquiry, Property } from "@/lib/types";
 
 export type ProfileCompletionItem = {
@@ -266,7 +267,7 @@ function buildUrgentActions(
       id: "reply-inquiries",
       title: `Reply to ${newInquiries.length} new inquir${newInquiries.length === 1 ? "y" : "ies"}`,
       detail: "Target response within 2 hours to protect conversion.",
-      href: "/dashboard/inquiries",
+      href: agentDeskPath("inquiries"),
       priority: "high",
     });
   }
@@ -276,7 +277,7 @@ function buildUrgentActions(
       id: "finish-profile",
       title: "Complete agent profile",
       detail: `${100 - metrics.profileCompletionPercent}% remaining for HR verification.`,
-      href: "/dashboard/profile",
+      href: agentDeskPath("profile"),
       priority: metrics.profileCompletionPercent < 60 ? "high" : "medium",
     });
   } else if (!agentHasRequiredProfilePhoto(profile)) {
@@ -284,7 +285,7 @@ function buildUrgentActions(
       id: "upload-portrait",
       title: "Upload portrait photo",
       detail: "Required for public agent cards across SEAPS.",
-      href: "/dashboard/profile",
+      href: agentDeskPath("profile"),
       priority: "high",
     });
   }
@@ -295,7 +296,7 @@ function buildUrgentActions(
       id: "follow-up",
       title: `Follow up on ${stale.length} open thread${stale.length === 1 ? "" : "s"}`,
       detail: "Move contacted leads toward a viewing or offer.",
-      href: "/dashboard/inquiries",
+      href: agentDeskPath("inquiries"),
       priority: "medium",
     });
   }
@@ -305,7 +306,7 @@ function buildUrgentActions(
       id: "pipeline-ok",
       title: "Inbox clear — grow pipeline",
       detail: "Share listings or publish a new property to attract leads.",
-      href: "/list-property",
+      href: agentDeskPath("list-property"),
       priority: "low",
     });
   }
@@ -360,28 +361,28 @@ function buildListingHealth(
       id: "published",
       label: "Published in catalog",
       count: published,
-      href: "/dashboard/listings",
+      href: agentDeskPath("listings"),
       tone: "ok",
     },
     {
       id: "runtime",
       label: "Your runtime drafts",
       count: runtimeListings.length,
-      href: "/dashboard/listings",
+      href: agentDeskPath("listings"),
       tone: runtimeListings.length > 0 ? "neutral" : "ok",
     },
     {
       id: "media",
       label: "Needs more photos",
       count: needsMedia,
-      href: "/dashboard/listings",
+      href: agentDeskPath("listings"),
       tone: needsMedia > 0 ? "warn" : "ok",
     },
     {
       id: "featured",
       label: "Featured / premium",
       count: premium,
-      href: "/dashboard/listings",
+      href: agentDeskPath("listings"),
       tone: "neutral",
     },
   ];

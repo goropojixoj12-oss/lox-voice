@@ -12,7 +12,7 @@ export default function AdminUsersPage() {
       <p className="mt-3 text-[var(--color-muted)]">
         User directory management. Create, update, and archive workflows are available for admins.
       </p>
-      <Link href="/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
+      <Link href="/dashboard/agent/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
         Back to admin overview
       </Link>
     </div>

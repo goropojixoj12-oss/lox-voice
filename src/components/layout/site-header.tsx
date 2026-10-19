@@ -49,7 +49,7 @@ export function SiteHeader({
           <div className="hidden items-center gap-2 md:flex">
             <LanguageSwitcher />
             {userName ? (
-              <ButtonLink href="/dashboard/overview" variant="ghost" size="sm">
+              <ButtonLink href="/dashboard/agent/overview" variant="ghost" size="sm">
                 {userName}
               </ButtonLink>
             ) : (
@@ -105,7 +105,7 @@ export function SiteHeader({
             ),
           )}
           <div className="mt-2 grid gap-2">
-            <ButtonLink href={userName ? "/dashboard/overview" : "/auth/login"} variant="outline">
+            <ButtonLink href={userName ? "/dashboard/agent/overview" : "/auth/login"} variant="outline">
               {userName ? "Dashboard" : "Sign in"}
             </ButtonLink>
             <ButtonLink href="/contact" variant="accent">

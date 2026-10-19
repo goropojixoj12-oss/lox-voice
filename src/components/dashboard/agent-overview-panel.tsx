@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { ProfileCompletionRing } from "@/components/dashboard/profile-completion-ring";
 import type { AgentOverviewBundle } from "@/lib/agent-desk-metrics";
+import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 import { cn } from "@/lib/utils";
 
 function formatUsd(amount: number): string {
@@ -35,13 +36,13 @@ export function AgentOverviewPanel({ bundle }: { bundle: AgentOverviewBundle }) 
           Live data: profile, inquiries, listings · Pipeline & calendar: desk estimates
         </p>
         <div className="flex flex-wrap gap-2">
-          <ButtonLink href="/list-property" variant="accent" size="sm">
+          <ButtonLink href={agentDeskPath("list-property")} variant="accent" size="sm">
             New listing
           </ButtonLink>
-          <ButtonLink href="/dashboard/inquiries" variant="outline" size="sm">
+          <ButtonLink href={agentDeskPath("inquiries")} variant="outline" size="sm">
             Inbox
           </ButtonLink>
-          <ButtonLink href="/dashboard/profile" variant="outline" size="sm">
+          <ButtonLink href={agentDeskPath("profile")} variant="outline" size="sm">
             Profile
           </ButtonLink>
         </div>
@@ -193,7 +194,7 @@ export function AgentOverviewPanel({ bundle }: { bundle: AgentOverviewBundle }) 
           </div>
           {metrics.profileCompletionPercent < 100 ? (
             <Link
-              href="/dashboard/profile"
+              href={agentDeskPath("profile")}
               className="mt-4 inline-block text-sm font-medium text-[var(--color-accent-soft)] underline-offset-2 hover:underline"
             >
               Finish your agent profile →
