@@ -2,18 +2,32 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { ANALYTICS_SESSION_COOKIE } from "@/lib/analytics-session";
+
+function readCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const part = document.cookie
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${name}=`));
+  if (!part) return null;
+  return decodeURIComponent(part.slice(name.length + 1));
+}
 
 function sessionKey(): string {
+  const fromCookie = readCookie(ANALYTICS_SESSION_COOKIE);
+  if (fromCookie && fromCookie.length >= 8) return fromCookie;
+
   const key = "seaps-analytics-session";
   try {
     let id = sessionStorage.getItem(key);
     if (!id) {
-      id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      id = crypto.randomUUID();
       sessionStorage.setItem(key, id);
     }
     return id;
   } catch {
-    return "anonymous";
+    return crypto.randomUUID();
   }
 }
 

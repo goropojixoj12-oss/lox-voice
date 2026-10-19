@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  ANALYTICS_COOKIE_MAX_AGE,
+  ANALYTICS_SESSION_COOKIE,
+} from "@/lib/analytics-session";
+import { isAnalyticsPath } from "@/lib/analytics-paths";
 import { appendPageView } from "@/lib/admin-store";
 
 const schema = z.object({
   path: z.string().min(1).max(512),
   sessionKey: z.string().min(1).max(64),
   referrer: z.string().max(512).optional(),
+  source: z.enum(["client", "server"]).optional(),
 });
 
 export async function POST(request: Request) {
@@ -19,9 +25,33 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
-  if (parsed.data.path.startsWith("/api")) {
+  if (!isAnalyticsPath(parsed.data.path)) {
     return NextResponse.json({ ok: true });
   }
-  await appendPageView(parsed.data);
-  return NextResponse.json({ ok: true });
+
+  let sessionKey = parsed.data.sessionKey;
+  const cookieSid = request.headers
+    .get("cookie")
+    ?.split(";")
+    .map((p) => p.trim())
+    .find((p) => p.startsWith(`${ANALYTICS_SESSION_COOKIE}=`))
+    ?.slice(ANALYTICS_SESSION_COOKIE.length + 1);
+  if (cookieSid && cookieSid.length >= 8) {
+    sessionKey = decodeURIComponent(cookieSid);
+  }
+
+  await appendPageView({
+    path: parsed.data.path,
+    sessionKey,
+    referrer: parsed.data.referrer,
+  });
+
+  const res = NextResponse.json({ ok: true });
+  res.cookies.set(ANALYTICS_SESSION_COOKIE, sessionKey, {
+    path: "/",
+    maxAge: ANALYTICS_COOKIE_MAX_AGE,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  return res;
 }

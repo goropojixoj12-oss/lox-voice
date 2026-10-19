@@ -14,48 +14,23 @@ const TASKS_FILE = "admin-tasks.json";
 const COMMENTS_FILE = "admin-comments.json";
 const LEGAL_FILE = "admin-legal-docs.json";
 
-const ANALYTICS_SEED_PATHS = [
-  "/",
-  "/search",
-  "/buy/residential",
-  "/rent/residential",
-  "/property/luxury-3-bedroom-2-full-bathroom-sFDuO",
-  "/projects",
-  "/guides",
-  "/list-property",
-  "/dashboard/agent/overview",
-];
+const DEDUPE_MS = 4000;
 
-function seedPageViewsIfEmpty(events: PageViewEvent[]): PageViewEvent[] {
-  if (events.length > 0) return events;
-  const now = Date.now();
-  const out: PageViewEvent[] = [];
-  for (let day = 0; day < 14; day++) {
-    const sessions = 8 + (day % 5);
-    for (let s = 0; s < sessions; s++) {
-      const sessionKey = `seed-${day}-${s}`;
-      const depth = 2 + ((day + s) % 4);
-      for (let p = 0; p < depth; p++) {
-        const path = ANALYTICS_SEED_PATHS[(day + s + p) % ANALYTICS_SEED_PATHS.length]!;
-        out.push({
-          id: nanoid(8),
-          path,
-          at: new Date(now - day * 86400000 - s * 3600000 - p * 120000).toISOString(),
-          sessionKey,
-        });
-      }
-    }
+function isRealPageView(event: PageViewEvent): boolean {
+  return !event.sessionKey.startsWith("seed-");
+}
+
+async function loadRealPageViews(): Promise<PageViewEvent[]> {
+  const raw = await readStoreJson<PageViewEvent[]>(PAGE_VIEWS_FILE, []);
+  const real = raw.filter(isRealPageView);
+  if (real.length !== raw.length) {
+    await writeStoreJson(PAGE_VIEWS_FILE, real);
   }
-  return out;
+  return real;
 }
 
 export async function getPageViewEvents(): Promise<PageViewEvent[]> {
-  const raw = await readStoreJson<PageViewEvent[]>(PAGE_VIEWS_FILE, []);
-  const events = seedPageViewsIfEmpty(raw);
-  if (raw.length === 0 && events.length > 0) {
-    await writeStoreJson(PAGE_VIEWS_FILE, events);
-  }
-  return events;
+  return loadRealPageViews();
 }
 
 export async function appendPageView(input: {
@@ -63,16 +38,31 @@ export async function appendPageView(input: {
   sessionKey: string;
   referrer?: string;
 }): Promise<void> {
-  const events = await readStoreJson<PageViewEvent[]>(PAGE_VIEWS_FILE, []);
+  if (input.sessionKey.startsWith("seed-")) return;
+
+  const path = input.path.slice(0, 512);
+  const sessionKey = input.sessionKey.slice(0, 64);
+  const now = Date.now();
+
+  const events = await loadRealPageViews();
+  const last = events[events.length - 1];
+  if (
+    last &&
+    last.path === path &&
+    last.sessionKey === sessionKey &&
+    now - new Date(last.at).getTime() < DEDUPE_MS
+  ) {
+    return;
+  }
+
   events.push({
     id: nanoid(10),
-    path: input.path.slice(0, 512),
-    sessionKey: input.sessionKey.slice(0, 64),
+    path,
+    sessionKey,
     referrer: input.referrer?.slice(0, 512),
     at: new Date().toISOString(),
   });
-  const trimmed = events.slice(-8000);
-  await writeStoreJson(PAGE_VIEWS_FILE, trimmed);
+  await writeStoreJson(PAGE_VIEWS_FILE, events.slice(-8000));
 }
 
 export async function getAdminTasks(): Promise<AdminTask[]> {

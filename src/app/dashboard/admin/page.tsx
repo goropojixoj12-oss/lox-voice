@@ -24,10 +24,17 @@ export default async function AdminAnalyticsPage() {
           Site analytics
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Visits, session depth, and top paths (last {report.periodDays} days). Live traffic is
-          recorded on each page view; seeded history fills empty stores.
+          Real traffic only (last {report.periodDays} days): each HTML visit and in-app route change
+          on the public site and dashboard is recorded. No demo or seeded numbers.
         </p>
       </div>
+
+      {report.totalViews === 0 ? (
+        <p className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-4 text-sm text-[var(--color-muted)]">
+          No page views recorded yet. Open a few pages on the site in another tab, then refresh this
+          report.
+        </p>
+      ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
@@ -55,13 +62,21 @@ export default async function AdminAnalyticsPage() {
               </tr>
             </thead>
             <tbody>
-              {report.topPages.map((row) => (
-                <tr key={row.path} className="border-t border-[var(--color-border)]">
-                  <td className="py-2 font-mono text-xs">{row.path}</td>
-                  <td className="py-2 text-right">{row.views}</td>
-                  <td className="py-2 text-right">{row.share}%</td>
+              {report.topPages.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="py-4 text-[var(--color-muted)]">
+                    No paths yet.
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                report.topPages.map((row) => (
+                  <tr key={row.path} className="border-t border-[var(--color-border)]">
+                    <td className="py-2 font-mono text-xs">{row.path}</td>
+                    <td className="py-2 text-right">{row.views}</td>
+                    <td className="py-2 text-right">{row.share}%</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </section>

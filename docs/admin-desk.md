@@ -15,7 +15,7 @@ Separate from the agent desk (`/dashboard/agent`). After sign-in, **admin** user
 
 ## Data
 
-- Page views: `analytics-pageviews.json` (+ live beacon on navigation)
+- Page views: `analytics-pageviews.json` — real visits only (middleware on HTML loads + client beacon on SPA navigations). Legacy seed rows are purged automatically.
 - Tasks & comments: `admin-tasks.json`, `admin-comments.json`
 - Legal catalog: `admin-legal-docs.json` (seeded on first load)
 
