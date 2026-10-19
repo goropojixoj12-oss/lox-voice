@@ -159,19 +159,23 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
             Portrait missing — upload your photo below to publish your public agent profile.
           </p>
         ) : null}
-        <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-start">
+        <div className="mt-5 flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
           {linkedAgent ? (
-            <AgentAvatar
-              key={portraitDoc?.uploadedAt ?? profile.updatedAt}
-              agent={linkedAgent}
-              size="lg"
-            />
+            <div className="flex flex-col items-center gap-2 sm:shrink-0">
+              <AgentAvatar
+                key={portraitDoc?.uploadedAt ?? profile.updatedAt}
+                agent={linkedAgent}
+                displayName={fullName}
+                size="lg"
+              />
+              <p className="text-center text-sm font-medium text-[var(--color-text)]">{fullName}</p>
+            </div>
           ) : (
-            <div className="flex h-40 w-40 items-center justify-center rounded-full border border-dashed border-[var(--color-border)] text-xs text-[var(--color-muted)]">
+            <div className="flex h-40 w-40 shrink-0 items-center justify-center rounded-full border border-dashed border-[var(--color-border)] text-xs text-[var(--color-muted)]">
               Preview after link
             </div>
           )}
-          <div className="min-w-0 flex-1">
+          <div className="w-full min-w-0 flex-1 sm:pt-2">
             {portraitDoc ? (
               <p className="text-sm text-[var(--color-muted)]">
                 Current file: <span className="font-medium text-[var(--color-text)]">{portraitDoc.fileName}</span>
