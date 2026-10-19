@@ -73,6 +73,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       { source: "/dashboard/stats", destination: "/dashboard/agent/stats", permanent: true },
+      {
+        source: "/dashboard/agent/list-property",
+        destination: "/dashboard/agent/list-property/step1",
+        permanent: false,
+      },
       { source: "/buy", destination: "/buy/residential", permanent: true },
       { source: "/rent", destination: "/rent/residential", permanent: true },
     ];

@@ -4,11 +4,12 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   formatDealSelection,
   ListPropertyDealStep,
@@ -231,11 +232,20 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
     submit,
   } = useListPropertyWizard();
 
+  const pathname = usePathname();
   const step = Math.min(LIST_PROPERTY_STEP_COUNT - 1, Math.max(0, stepIndex));
   const progress = ((step + 1) / LIST_PROPERTY_STEP_COUNT) * 100;
+  const currentStepPath = listPropertyStepPath(step + 1);
+
+  useEffect(() => {
+    if (pathname !== currentStepPath) {
+      router.replace(currentStepPath);
+    }
+  }, [currentStepPath, pathname, router]);
 
   function goToStep(index: number) {
-    router.push(listPropertyStepPath(index + 1));
+    const href = listPropertyStepPath(index + 1);
+    router.replace(href);
   }
 
   return (

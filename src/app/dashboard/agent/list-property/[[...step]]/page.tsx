@@ -8,12 +8,19 @@ import {
 export default async function ListPropertyStepPage({
   params,
 }: {
-  params: Promise<{ step: string }>;
+  params: Promise<{ step?: string[] }>;
 }) {
-  const { step: stepSlug } = await params;
-  const stepIndex = parseListPropertyStepSlug(stepSlug);
+  const { step: segments } = await params;
+  const slug = segments?.[0];
+
+  if (!slug) {
+    redirect(LIST_PROPERTY_WIZARD_ENTRY);
+  }
+
+  const stepIndex = parseListPropertyStepSlug(slug);
   if (stepIndex == null) {
     redirect(LIST_PROPERTY_WIZARD_ENTRY);
   }
+
   return <ListPropertyWizard stepIndex={stepIndex} />;
 }
