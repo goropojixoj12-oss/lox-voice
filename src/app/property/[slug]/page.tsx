@@ -19,6 +19,7 @@ import {
 } from "@/data/properties";
 import { getAllProperties } from "@/lib/catalog";
 import { getSession } from "@/lib/auth";
+import { canViewListing, isPublicListing } from "@/lib/listing-access";
 import {
   amenityLabels,
   furnishingLabels,
@@ -30,7 +31,7 @@ import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
   const all = await getAllProperties();
-  return all.map((p) => ({ slug: p.slug }));
+  return all.filter((p) => p.status === "published").map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -39,8 +40,15 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
+  const all = await getAllProperties();
+  const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
   if (!property) return { title: "Property not found" };
+  if (!isPublicListing(property)) {
+    return {
+      title: "Listing preview",
+      robots: { index: false, follow: false },
+    };
+  }
   const path = `/property/${property.slug}`;
   return {
     title: property.title,
@@ -74,30 +82,42 @@ export default async function PropertyDetailPage({
   if (!property) notFound();
 
   const session = await getSession();
+  if (!canViewListing(property, session)) notFound();
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
+  const showPublicSeo = isPublicListing(property);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <PropertyJsonLd
-        title={property.title}
-        description={property.summary}
-        url={`/property/${property.slug}`}
-        image={property.images[0]?.url}
-        price={property.price}
-        currency={property.currency}
-        locality={property.location.district}
-        region={property.location.city}
-      />
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", url: "/" },
-          { name: "Search", url: "/search" },
-          { name: property.location.city, url: `/locations/${property.location.citySlug}` },
-          { name: property.title, url: `/property/${property.slug}` },
-        ]}
-      />
+      {!showPublicSeo ? (
+        <p className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/40 bg-[var(--color-mist)] px-4 py-3 text-sm text-[var(--color-text)]">
+          This listing is <strong>{property.status}</strong> and is not visible in public search until
+          an admin approves it.
+        </p>
+      ) : null}
+      {showPublicSeo ? (
+        <>
+          <PropertyJsonLd
+            title={property.title}
+            description={property.summary}
+            url={`/property/${property.slug}`}
+            image={property.images[0]?.url}
+            price={property.price}
+            currency={property.currency}
+            locality={property.location.district}
+            region={property.location.city}
+          />
+          <BreadcrumbJsonLd
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Search", url: "/search" },
+              { name: property.location.city, url: `/locations/${property.location.citySlug}` },
+              { name: property.title, url: `/property/${property.slug}` },
+            ]}
+          />
+        </>
+      ) : null}
       <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
         <Link href="/" className="hover:text-[var(--color-accent-soft)]">
           Home

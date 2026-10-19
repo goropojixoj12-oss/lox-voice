@@ -36,6 +36,11 @@ export async function saveRuntimeListing(listing: Property) {
   return listing;
 }
 
+export async function getRuntimeListingById(id: string) {
+  const listings = await getRuntimeListings();
+  return listings.find((l) => l.id === id) ?? null;
+}
+
 export async function getInquiries() {
   return readJson<Inquiry[]>("inquiries.json", []);
 }

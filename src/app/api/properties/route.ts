@@ -12,7 +12,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get("city");
   const all = await getAllProperties();
-  const items = city ? all.filter((p) => p.location.citySlug === city) : all;
+  const published = all.filter((p) => p.status === "published");
+  const items = city ? published.filter((p) => p.location.citySlug === city) : published;
   return NextResponse.json({ items, total: items.length });
 }
 
@@ -129,6 +130,7 @@ export async function POST(request: Request) {
       lat: 0,
       lng: 0,
     },
+    createdByUserId: session.id,
     ownerId: session.role === "owner" ? session.id : undefined,
     agentId: session.role === "agent" ? "agent-sokha" : undefined,
     agencyId: session.agencyId,

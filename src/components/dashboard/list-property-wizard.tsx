@@ -188,9 +188,8 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
       setError("Could not submit listing. Check required fields and try again.");
       return;
     }
-    const data = (await res.json()) as { listing: { slug: string } };
     clearListPropertyDraft();
-    router.push(`/property/${data.listing.slug}`);
+    router.push("/dashboard/agent/listings?submitted=pending");
   }, [form, mediaItems, router]);
 
   const value = useMemo(

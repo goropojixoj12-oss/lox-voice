@@ -103,6 +103,8 @@ export interface Property {
   agentId?: string;
   agencyId?: string;
   ownerId?: string;
+  /** Platform user who submitted the listing (moderation queue). */
+  createdByUserId?: string;
   projectId?: string;
   publishedAt: string;
   updatedAt: string;
