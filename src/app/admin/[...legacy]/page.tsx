@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
 export default async function LegacyAdminSubpathRedirect({
   params,
@@ -7,5 +7,5 @@ export default async function LegacyAdminSubpathRedirect({
   params: Promise<{ legacy: string[] }>;
 }) {
   const { legacy } = await params;
-  redirect(agentDeskPath("admin", ...legacy));
+  redirect(adminDeskPath(...legacy));
 }

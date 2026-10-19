@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminListingModerationForm } from "@/components/dashboard/admin-listing-moderation-form";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { getRuntimeListingById } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Review listing" };
@@ -18,7 +19,7 @@ export default async function AdminListingReviewPage({
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <Link
-        href="/dashboard/agent/admin/listings"
+        href={adminDeskPath("listings")}
         className="text-sm text-[var(--color-accent-soft)] hover:underline"
       >
         ← Back to moderation queue

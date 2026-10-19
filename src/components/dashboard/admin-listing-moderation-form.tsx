@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import type { Property } from "@/lib/types";
 
 export function AdminListingModerationForm({ listing }: { listing: Property }) {
@@ -37,7 +38,7 @@ export function AdminListingModerationForm({ listing }: { listing: Property }) {
       setError(data.error ?? "Could not update listing");
       return;
     }
-    router.push("/dashboard/agent/admin/listings");
+    router.push(adminDeskPath("listings"));
     router.refresh();
   }
 

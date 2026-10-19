@@ -8,16 +8,16 @@ import { cities } from "@/data/locations";
 import { projects } from "@/data/projects";
 import { properties } from "@/data/properties";
 import { demoUsers } from "@/data/users";
-import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
 export const metadata: Metadata = { title: "Admin" };
 
 const links = [
-  { href: agentDeskPath("admin", "users"), label: "Users" },
-  { href: agentDeskPath("admin", "listings"), label: "Listings moderation" },
-  { href: agentDeskPath("admin", "projects"), label: "Projects" },
-  { href: agentDeskPath("admin", "articles"), label: "Articles" },
-  { href: agentDeskPath("admin", "locations"), label: "Locations" },
+  { href: adminDeskPath("users"), label: "Users" },
+  { href: adminDeskPath("listings"), label: "Listings moderation" },
+  { href: adminDeskPath("projects"), label: "Projects" },
+  { href: adminDeskPath("articles"), label: "Articles" },
+  { href: adminDeskPath("locations"), label: "Locations" },
 ];
 
 export default async function AdminPage() {

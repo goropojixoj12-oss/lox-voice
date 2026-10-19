@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
 export const metadata: Metadata = { title: "Admin Locations" };
 
@@ -12,7 +13,7 @@ export default function AdminLocationsPage() {
       <p className="mt-3 text-[var(--color-muted)]">
         City and district guides cover Cambodia. Use these tools to keep published records current.
       </p>
-      <Link href="/dashboard/agent/admin" className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
+      <Link href={adminDeskPath()} className="mt-6 inline-block text-sm font-semibold text-[var(--color-accent)]">
         Back to admin overview
       </Link>
     </div>

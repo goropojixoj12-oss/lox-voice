@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { getRuntimeListings } from "@/lib/store";
 import { properties } from "@/data/properties";
 
@@ -46,7 +47,7 @@ export default async function AdminListingsPage() {
                     </p>
                   </div>
                   <Link
-                    href={`/dashboard/agent/admin/listings/${listing.id}`}
+                    href={adminDeskPath("listings", listing.id)}
                     className="rounded-full bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[#0B1C33]"
                   >
                     Review & edit
@@ -66,7 +67,7 @@ export default async function AdminListingsPage() {
               <li key={listing.id}>
                 {listing.title} ·{" "}
                 <Link
-                  href={`/dashboard/agent/admin/listings/${listing.id}`}
+                  href={adminDeskPath("listings", listing.id)}
                   className="text-[var(--color-accent-soft)] underline"
                 >
                   Re-open
