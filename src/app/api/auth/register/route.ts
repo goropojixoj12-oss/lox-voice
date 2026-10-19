@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         "buyer@seaps.com.kh",
         "owner@seaps.com.kh",
         "agent@seaps.com.kh",
-        "admin@seaps.com.kh",
+        "ceo@seaps.asia",
       ],
     },
     { status: 501 },
