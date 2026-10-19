@@ -59,7 +59,7 @@ function FlipbookPreview({
       ) : (
         frames.map((url, i) => (
           <Image
-            key={url}
+            key={`${i}-${url}`}
             src={url}
             alt={alt}
             fill

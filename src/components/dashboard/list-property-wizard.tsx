@@ -37,6 +37,13 @@ import {
   listingMediaToPropertyPayload,
   type ListingMediaItem,
 } from "@/lib/list-property-media";
+import {
+  firstInvalidListPropertyStep,
+  formatListingApiIssues,
+  listPropertyStepErrorMessage,
+  normalizeListPropertyFormForSubmit,
+  validateListPropertyStep,
+} from "@/lib/list-property-validation";
 import { cn } from "@/lib/utils";
 
 type ListPropertyForm = ListPropertyDraftForm;
@@ -115,64 +122,45 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
   );
 
   const validateStep = useCallback(
-    (stepIndex: number) => {
-      switch (stepIndex) {
-        case 0:
-          return dealSelection != null;
-        case 1:
-          return Boolean(
-            isWorldCountryCode(form.countryCode) &&
-              form.city &&
-              form.district &&
-              form.commune.trim().length >= 2 &&
-              form.address.length >= 3,
-          );
-        case 2:
-          return Number(form.price) > 0;
-        case 3:
-          return (
-            form.title.length >= 8 &&
-            form.summary.length >= 12 &&
-            form.description.length >= 40
-          );
-        case 4:
-          return mediaItems.some((m) => m.kind === "image");
-        case 5:
-          return form.contactName.length >= 2 && form.contactEmail.includes("@");
-        default:
-          return true;
-      }
-    },
+    (stepIndex: number) => validateListPropertyStep(stepIndex, form, dealSelection, mediaItems),
     [dealSelection, form, mediaItems],
   );
 
   const submit = useCallback(async () => {
+    const invalid = firstInvalidListPropertyStep(form, dealSelection, mediaItems);
+    if (invalid != null) {
+      setError(listPropertyStepErrorMessage(invalid));
+      router.replace(listPropertyStepPath(invalid + 1));
+      return;
+    }
+
     setLoading(true);
     setError("");
-    const media = listingMediaToPropertyPayload(mediaItems, form.title || "Listing");
+    const payloadForm = normalizeListPropertyFormForSubmit(form);
+    const media = listingMediaToPropertyPayload(mediaItems, payloadForm.title || "Listing");
     const res = await fetch("/api/properties", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: form.title,
-        summary: form.summary,
-        description: `${form.description}\n\nContact preference: ${form.contactName} · ${form.contactEmail}`,
-        transactionType: form.transactionType,
-        propertyType: form.propertyType,
-        price: Number(form.price),
-        currency: form.currency,
-        pricePeriod: form.transactionType === "sale" ? null : form.pricePeriod || "month",
-        bedrooms: form.bedrooms === "" ? null : Number(form.bedrooms),
-        bathrooms: form.bathrooms === "" ? null : Number(form.bathrooms),
-        areaSqm: form.areaSqm === "" ? null : Number(form.areaSqm),
-        countryCode: form.countryCode,
-        city: form.city,
-        citySlug: form.citySlug,
-        district: form.district,
-        districtSlug: form.districtSlug,
-        commune: form.commune,
-        communeSlug: form.communeSlug,
-        address: form.address,
+        title: payloadForm.title,
+        summary: payloadForm.summary,
+        description: `${payloadForm.description}\n\nContact preference: ${payloadForm.contactName} · ${payloadForm.contactEmail}`,
+        transactionType: payloadForm.transactionType,
+        propertyType: payloadForm.propertyType,
+        price: Number(payloadForm.price),
+        currency: payloadForm.currency,
+        pricePeriod: payloadForm.transactionType === "sale" ? null : payloadForm.pricePeriod || "month",
+        bedrooms: payloadForm.bedrooms === "" ? null : Number(payloadForm.bedrooms),
+        bathrooms: payloadForm.bathrooms === "" ? null : Number(payloadForm.bathrooms),
+        areaSqm: payloadForm.areaSqm === "" ? null : Number(payloadForm.areaSqm),
+        countryCode: payloadForm.countryCode,
+        city: payloadForm.city,
+        citySlug: payloadForm.citySlug,
+        district: payloadForm.district,
+        districtSlug: payloadForm.districtSlug,
+        commune: payloadForm.commune,
+        communeSlug: payloadForm.communeSlug,
+        address: payloadForm.address,
         images: media.images,
         videos: media.videos,
         cardPreviewVideoUrl: media.cardPreviewVideoUrl,
@@ -185,12 +173,18 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
       return;
     }
     if (!res.ok) {
-      setError("Could not submit listing. Check required fields and try again.");
+      const data = (await res.json().catch(() => ({}))) as { error?: string; issues?: unknown };
+      const detail = formatListingApiIssues(data.issues);
+      setError(
+        detail ??
+          data.error ??
+          "Could not submit listing. Check required fields and try again.",
+      );
       return;
     }
     clearListPropertyDraft();
     router.push("/dashboard/agent/listings?submitted=pending");
-  }, [form, mediaItems, router]);
+  }, [dealSelection, form, mediaItems, router]);
 
   const value = useMemo(
     () => ({
@@ -250,13 +244,21 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
     }
   }, [currentStepPath, pathname, router]);
 
+  useEffect(() => {
+    const invalid = firstInvalidListPropertyStep(form, dealSelection, mediaItems);
+    if (invalid == null || invalid >= step) return;
+    setError(listPropertyStepErrorMessage(invalid));
+    goToStep(invalid);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- redirect once per invalid earlier step
+  }, [step, form, dealSelection, mediaItems]);
+
   function goToStep(index: number) {
     const href = listPropertyStepPath(index + 1);
     router.replace(href);
   }
 
   return (
-    <div className="max-w-3xl">
+    <div className="notranslate max-w-3xl">
       <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         List a property
       </h1>
@@ -358,9 +360,10 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
               />
             </div>
             <div>
-              <Label htmlFor="commune">Commune</Label>
+              <Label htmlFor="commune">Commune (required)</Label>
               <Input
                 id="commune"
+                required
                 value={form.commune}
                 onChange={(e) => {
                   update("commune", e.target.value);
@@ -370,9 +373,10 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
               />
             </div>
             <div>
-              <Label htmlFor="address">Address / area note</Label>
+              <Label htmlFor="address">Address / area note (required)</Label>
               <Input
                 id="address"
+                required
                 value={form.address}
                 onChange={(e) => update("address", e.target.value)}
                 placeholder="Street or neighborhood descriptor"
@@ -590,11 +594,7 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
               type="button"
               onClick={() => {
                 if (!validateStep(step)) {
-                  setError(
-                    step === 0
-                      ? "Choose a deal type and category to continue."
-                      : "Please complete the required fields for this step.",
-                  );
+                  setError(listPropertyStepErrorMessage(step));
                   return;
                 }
                 setError("");

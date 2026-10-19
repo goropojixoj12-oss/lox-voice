@@ -120,6 +120,7 @@ export function ListPropertyMediaStep({
     const next = [...items];
     let done = 0;
 
+    const failures: string[] = [];
     for (const file of files) {
       setProgress(`Uploading ${done + 1} / ${files.length}: ${file.name}`);
       try {
@@ -130,10 +131,18 @@ export function ListPropertyMediaStep({
         next.push(item);
         onChange([...next]);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Upload failed");
-        break;
+        failures.push(
+          `${file.name}: ${e instanceof Error ? e.message : "Upload failed"}`,
+        );
       }
       done += 1;
+    }
+    if (failures.length) {
+      setError(
+        failures.length === files.length
+          ? failures[0]!
+          : `Some files failed (${failures.length}/${files.length}): ${failures[0]}`,
+      );
     }
 
     setProgress("");
@@ -162,7 +171,7 @@ export function ListPropertyMediaStep({
   const videoCount = items.filter((i) => i.kind === "video").length;
 
   return (
-    <div className="space-y-4">
+    <div className="notranslate space-y-4">
       <p className="text-sm text-[var(--color-muted)]">
         Upload many photos and videos for this listing. Cards across the site autoplay a{" "}
         <strong className="text-[var(--color-text)]">looping preview</strong>: your chosen preview

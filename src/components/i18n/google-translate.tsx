@@ -66,10 +66,23 @@ function scheduleApplyGoogleLang(googleLang: string) {
  * Invisible Google Website Translator — all languages enabled.
  * Menu (EN/KM/ZH/JA) overrides; otherwise every page follows browser/OS locale.
  */
+function isDashboardPath(pathname: string): boolean {
+  return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+}
+
 export function GoogleTranslate() {
   const pathname = usePathname();
+  const translateEnabled = !isDashboardPath(pathname);
 
   useEffect(() => {
+    if (!translateEnabled) {
+      document.documentElement.classList.add("notranslate");
+      document.documentElement.lang = SITE_SOURCE_LANG;
+      return () => {
+        document.documentElement.classList.remove("notranslate");
+      };
+    }
+    document.documentElement.classList.remove("notranslate");
     window.googleTranslateElementInit = () => {
       if (!window.google?.translate?.TranslateElement) return;
       // No includedLanguages limit → Google can target any language.
@@ -88,10 +101,12 @@ export function GoogleTranslate() {
     if (window.google?.translate?.TranslateElement) {
       window.googleTranslateElementInit();
     }
-  }, []);
+  }, [translateEnabled]);
 
   // Re-apply on every client route so SPA pages stay translated.
   useEffect(() => {
+    if (!translateEnabled) return;
+
     const lang = resolveGoogleTargetLang();
     scheduleApplyGoogleLang(lang);
 
@@ -108,7 +123,11 @@ export function GoogleTranslate() {
       observer.disconnect();
       if (debounce) clearTimeout(debounce);
     };
-  }, [pathname]);
+  }, [pathname, translateEnabled]);
+
+  if (!translateEnabled) {
+    return null;
+  }
 
   return (
     <>
