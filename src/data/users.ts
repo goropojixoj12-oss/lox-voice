@@ -33,10 +33,10 @@ export const demoUsers: DemoUser[] = [
   },
   {
     id: "user-admin",
-    email: "admin@seaps.com.kh",
+    email: "ceo@seaps.asia",
     passwordHash:
-      "$2b$12$p1Vr/AKybhyYo2XlHQd6a.i6LqV//gkiTsftbCd9L6Kl/STgjtt/2",
-    name: "Adam James",
+      "$2b$12$SbWirmamu/u3LkIH.BzOBOA2F2T1kZuGyPV8G7.H6icJhtp0.KxNm",
+    name: "SEAPS CEO",
     role: "admin",
   },
 ];

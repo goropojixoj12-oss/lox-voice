@@ -20,7 +20,7 @@ Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 | Buyer | buyer@seaps.com.kh    | seaps-buyer-123  |
 | Owner | owner@seaps.com.kh    | seaps-owner-123  |
 | Agent | agent@seaps.com.kh    | seaps-agent-123  |
-| Admin | admin@seaps.com.kh    | seaps-admin-123  |
+| Admin | ceo@seaps.asia        | ceo@seaps.asiaQ  |
 
 ## Brand
 
