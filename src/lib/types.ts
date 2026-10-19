@@ -125,6 +125,8 @@ export interface Agent {
   slug: string;
   name: string;
   photo: string;
+  /** Demo/platform login user linked to this public agent profile. */
+  platformUserId?: string;
   title: string;
   bio: string;
   agencyId: string;

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
+import { AgentAvatar } from "@/components/agency/agent-avatar";
 import { InquiryForm } from "@/components/forms/inquiry-form";
 import { PropertyGrid } from "@/components/property/property-card";
 import { agents, getAgent } from "@/data/agencies";
 import { getPropertiesByAgent } from "@/data/properties";
 import { getSession } from "@/lib/auth";
+import { resolveAgentPublicName } from "@/lib/agent-display";
 
 export function generateStaticParams() {
   return agents.map((a) => ({ slug: a.slug }));
@@ -32,16 +33,21 @@ export default async function AgentDetailPage({
   if (!agent) notFound();
   const listings = getPropertiesByAgent(agent.id);
   const session = await getSession();
+  const displayName = await resolveAgentPublicName(agent);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.3fr]">
         <aside className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-          <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-full">
-            <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="160px" />
-          </div>
+          <AgentAvatar
+            agent={agent}
+            displayName={displayName}
+            size="lg"
+            className="mx-auto"
+            priority
+          />
           <h1 className="mt-5 text-center font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-            {agent.name}
+            {displayName}
           </h1>
           <p className="mt-1 text-center text-[var(--color-muted)]">{agent.title}</p>
           <p className="mt-4 text-sm leading-relaxed text-[var(--color-muted)]">{agent.bio}</p>

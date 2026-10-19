@@ -10,6 +10,7 @@ import { PropertyMap } from "@/components/search/property-map";
 import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
+import { AgentListingSnippet } from "@/components/agency/agent-listing-snippet";
 import { getAgentById } from "@/data/agencies";
 import { getProjectById } from "@/data/projects";
 import {
@@ -230,11 +231,7 @@ export default async function PropertyDetailPage({
           </div>
           {agent ? (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Listed by</p>
-              <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-accent-soft)]">
-                {agent.name}
-              </Link>
-              <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
+              <AgentListingSnippet agent={agent} />
             </div>
           ) : null}
           {project ? (

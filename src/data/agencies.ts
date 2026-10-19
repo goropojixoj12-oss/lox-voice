@@ -83,7 +83,8 @@ export const agents: Agent[] = [
   {
     id: "agent-sokha",
     slug: "sokha-meas",
-    name: "Adam James",
+    name: "Agent1",
+    platformUserId: "user-agent",
     photo: img("photo-1573496359142-b8d87734a5a2", 600),
     title: "Senior Buyer Advisor",
     bio: "Adam James helps relocating families find secure, walkable homes in central Phnom Penh with SEAPS.",

@@ -132,6 +132,11 @@ export function resolveStorePersistenceBackend(): StorePersistenceBackend {
   return "filesystem";
 }
 
+/** True when Vercel Blob (token or OIDC) can store binary agent uploads. */
+export function isBlobStorageAvailable(): boolean {
+  return blobConfigured();
+}
+
 function preferredDataDirs(): string[] {
   const local = path.join(process.cwd(), ".data");
   const tmp = path.join(os.tmpdir(), "seaps-data");
