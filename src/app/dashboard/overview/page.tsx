@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AgentOverviewPanel } from "@/components/dashboard/agent-overview-panel";
 import { getAgentProfile } from "@/lib/agent-profile";
-import { buildAgentDeskMetrics } from "@/lib/agent-desk-metrics";
+import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { getSession } from "@/lib/auth";
 import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
 
@@ -19,13 +19,18 @@ export default async function DashboardOverviewPage() {
   ]);
 
   const isAgentDesk = session.role === "agent" || session.role === "admin";
-  let agentMetrics = null;
+  let agentOverview = null;
   if (isAgentDesk) {
     const profile = await getAgentProfile(session.id, {
       name: session.name,
       email: session.email,
     });
-    agentMetrics = buildAgentDeskMetrics(session.id, profile);
+    agentOverview = buildAgentOverviewBundle(
+      session.id,
+      profile,
+      inquiries,
+      listings,
+    );
   }
 
   return (
@@ -37,7 +42,7 @@ export default async function DashboardOverviewPage() {
         Role: {session.role}. Manage favorites, inquiries, and your listings from this desk.
       </p>
 
-      {agentMetrics ? <AgentOverviewPanel metrics={agentMetrics} /> : null}
+      {agentOverview ? <AgentOverviewPanel bundle={agentOverview} /> : null}
 
       <div className="mt-8">
         <h2 className="font-[family-name:var(--font-display)] text-xl text-[var(--color-accent-soft)]">
