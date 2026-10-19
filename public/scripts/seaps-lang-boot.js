@@ -45,30 +45,29 @@
     }
   }
 
+  function cookieRootDomain(hostname) {
+    if (hostname.indexOf(".") === -1) return null;
+    var parts = hostname.split(".");
+    if (parts.length < 2) return null;
+    return "." + parts.slice(-2).join(".");
+  }
+
   function clearGoogTrans() {
-    var host = location.hostname;
     var expire = "Thu, 01 Jan 1970 00:00:00 GMT";
     document.cookie = "googtrans=; expires=" + expire + "; path=/";
-    document.cookie = "googtrans=; expires=" + expire + "; path=/; domain=" + host;
-    if (host.indexOf(".") !== -1) {
-      document.cookie =
-        "googtrans=; expires=" + expire + "; path=/; domain=." + host.replace(/^www\./, "");
+    var root = cookieRootDomain(location.hostname);
+    if (root) {
+      document.cookie = "googtrans=; expires=" + expire + "; path=/; domain=" + root;
     }
   }
 
   function setGoogTrans(target) {
     var value = "/" + SOURCE + "/" + target;
-    var maxAge = "; max-age=31536000";
-    var host = location.hostname;
+    var maxAge = "; max-age=31536000; SameSite=Lax";
     document.cookie = "googtrans=" + value + "; path=/" + maxAge;
-    document.cookie = "googtrans=" + value + "; path=/; domain=" + host + maxAge;
-    if (host.indexOf(".") !== -1) {
-      document.cookie =
-        "googtrans=" +
-        value +
-        "; path=/; domain=." +
-        host.replace(/^www\./, "") +
-        maxAge;
+    var root = cookieRootDomain(location.hostname);
+    if (root) {
+      document.cookie = "googtrans=" + value + "; path=/; domain=" + root + maxAge;
     }
   }
 

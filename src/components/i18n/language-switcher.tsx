@@ -1,6 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   LANG_STORAGE_KEY,
   googleCodeFor,
@@ -12,24 +20,30 @@ import {
 } from "@/config/languages";
 import { cn } from "@/lib/utils";
 
+function cookieRootDomain(hostname: string): string | null {
+  if (!hostname.includes(".")) return null;
+  const parts = hostname.split(".");
+  if (parts.length < 2) return null;
+  return `.${parts.slice(-2).join(".")}`;
+}
+
 function clearGoogTransCookies() {
   const host = window.location.hostname;
   const expire = "Thu, 01 Jan 1970 00:00:00 GMT";
   document.cookie = `googtrans=; expires=${expire}; path=/`;
-  document.cookie = `googtrans=; expires=${expire}; path=/; domain=${host}`;
-  if (host.includes(".")) {
-    document.cookie = `googtrans=; expires=${expire}; path=/; domain=.${host.replace(/^www\./, "")}`;
+  const root = cookieRootDomain(host);
+  if (root) {
+    document.cookie = `googtrans=; expires=${expire}; path=/; domain=${root}`;
   }
 }
 
 function setGoogTransCookie(googleTarget: string) {
   const value = `/en/${googleTarget}`;
-  const maxAge = "; max-age=31536000";
-  const host = window.location.hostname;
+  const maxAge = "; max-age=31536000; SameSite=Lax";
   document.cookie = `googtrans=${value}; path=/${maxAge}`;
-  document.cookie = `googtrans=${value}; path=/; domain=${host}${maxAge}`;
-  if (host.includes(".")) {
-    document.cookie = `googtrans=${value}; path=/; domain=.${host.replace(/^www\./, "")}${maxAge}`;
+  const root = cookieRootDomain(window.location.hostname);
+  if (root) {
+    document.cookie = `googtrans=${value}; path=/; domain=${root}${maxAge}`;
   }
 }
 
@@ -50,7 +64,16 @@ function displayNameForGoogleLang(code: string): string {
   }
 }
 
-export function LanguageSwitcher({ className }: { className?: string }) {
+type LanguageSwitcherState = {
+  selectValue: string;
+  showAutoOption: boolean;
+  autoGoogle: string;
+  onChange: (next: string) => void;
+};
+
+const LanguageSwitcherContext = createContext<LanguageSwitcherState | null>(null);
+
+function useLanguageSwitcherState(): LanguageSwitcherState {
   const [manual, setManual] = useState<SiteLangCode | null>(null);
   const [autoGoogle, setAutoGoogle] = useState("en");
 
@@ -65,7 +88,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   }, []);
 
   const autoAsSite = useMemo(() => googleLangToSiteLang(autoGoogle), [autoGoogle]);
-  const selectValue = manual ?? autoAsSite ?? "__auto__";
+  const selectValue = manual ?? autoAsSite ?? "en";
   const showAutoOption = !manual && !autoAsSite && autoGoogle !== "en";
 
   const onChange = (next: string) => {
@@ -87,18 +110,47 @@ export function LanguageSwitcher({ className }: { className?: string }) {
     window.location.reload();
   };
 
+  return { selectValue, showAutoOption, autoGoogle, onChange };
+}
+
+export function LanguageSwitcherProvider({ children }: { children: ReactNode }) {
+  const state = useLanguageSwitcherState();
   return (
-    <label className={cn("notranslate inline-flex items-center", className)}>
+    <LanguageSwitcherContext.Provider value={state}>{children}</LanguageSwitcherContext.Provider>
+  );
+}
+
+function useLanguageSwitcherContext(): LanguageSwitcherState {
+  const ctx = useContext(LanguageSwitcherContext);
+  if (!ctx) {
+    throw new Error("LanguageSwitcherSelect must be used within LanguageSwitcherProvider");
+  }
+  return ctx;
+}
+
+function LanguageSelect({
+  id,
+  className,
+  selectValue,
+  showAutoOption,
+  autoGoogle,
+  onChange,
+}: {
+  id: string;
+  className?: string;
+} & LanguageSwitcherState) {
+  return (
+    <label htmlFor={id} className={cn("notranslate inline-flex items-center", className)}>
       <span className="sr-only">Language</span>
       <select
-        id="lang"
+        id={id}
         className="h-10 max-w-[10.5rem] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)]"
         value={selectValue}
         aria-label="Language"
         onChange={(e) => onChange(e.target.value)}
       >
         {showAutoOption ? (
-          <option value="__auto__">{displayNameForGoogleLang(autoGoogle)}</option>
+          <option value="en">{displayNameForGoogleLang(autoGoogle)} (auto)</option>
         ) : null}
         {siteLanguages.map((item) => (
           <option key={item.code} value={item.code}>
@@ -108,4 +160,22 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       </select>
     </label>
   );
+}
+
+export function LanguageSwitcherSelect({
+  id,
+  className,
+}: {
+  id: string;
+  className?: string;
+}) {
+  const state = useLanguageSwitcherContext();
+  return <LanguageSelect id={id} className={className} {...state} />;
+}
+
+/** Standalone switcher (single instance, own state). */
+export function LanguageSwitcher({ className }: { className?: string }) {
+  const state = useLanguageSwitcherState();
+  const uid = useId();
+  return <LanguageSelect id={`${uid}-lang`} className={className} {...state} />;
 }
