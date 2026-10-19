@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/states";
-import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 import { getRuntimeListings } from "@/lib/store";
 
 export const metadata: Metadata = { title: "My listings" };
@@ -13,7 +13,7 @@ export default async function DashboardListingsPage() {
       <EmptyState
         title="No runtime listings yet"
         description="Create a listing with the wizard. Your submissions appear here after save."
-        actionHref={agentDeskPath("list-property")}
+        actionHref={LIST_PROPERTY_WIZARD_ENTRY}
         actionLabel="Create listing"
       />
     );
@@ -38,7 +38,7 @@ export default async function DashboardListingsPage() {
                   Status: {listing.status} · {listing.location.city}
                 </p>
               </div>
-              <Link href={agentDeskPath("list-property")} className="text-sm text-[var(--color-accent)]">
+              <Link href={LIST_PROPERTY_WIZARD_ENTRY} className="text-sm text-[var(--color-accent)]">
                 Create another
               </Link>
             </div>

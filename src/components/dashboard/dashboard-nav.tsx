@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { agentDeskPath, AGENT_DESK_BASE } from "@/lib/dashboard-agent-paths";
+import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -15,13 +16,16 @@ const links: { href: string; label: string; roles?: UserRole[] }[] = [
   { href: agentDeskPath("stats"), label: "Stats" },
   { href: agentDeskPath("favorites"), label: "Favorites" },
   { href: agentDeskPath("saved-searches"), label: "Saved searches" },
-  { href: agentDeskPath("list-property"), label: "Create listing" },
+  { href: LIST_PROPERTY_WIZARD_ENTRY, label: "Create listing" },
   { href: agentDeskPath("admin"), label: "Admin", roles: ["admin"] },
 ];
 
 function isNavActive(pathname: string, href: string): boolean {
   if (pathname === href) return true;
   if (href === agentDeskPath("overview") && pathname === "/dashboard") return true;
+  if (href === LIST_PROPERTY_WIZARD_ENTRY && pathname.startsWith(`${AGENT_DESK_BASE}/list-property`)) {
+    return true;
+  }
   if (href !== agentDeskPath("overview") && pathname.startsWith(`${href}/`)) return true;
   return false;
 }

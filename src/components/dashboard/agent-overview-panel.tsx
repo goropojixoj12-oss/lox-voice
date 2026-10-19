@@ -3,6 +3,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { ProfileCompletionRing } from "@/components/dashboard/profile-completion-ring";
 import type { AgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 import { cn } from "@/lib/utils";
 
 function formatUsd(amount: number): string {
@@ -36,7 +37,7 @@ export function AgentOverviewPanel({ bundle }: { bundle: AgentOverviewBundle }) 
           Live data: profile, inquiries, listings · Pipeline & calendar: desk estimates
         </p>
         <div className="flex flex-wrap gap-2">
-          <ButtonLink href={agentDeskPath("list-property")} variant="accent" size="sm">
+          <ButtonLink href={LIST_PROPERTY_WIZARD_ENTRY} variant="accent" size="sm">
             New listing
           </ButtonLink>
           <ButtonLink href={agentDeskPath("inquiries")} variant="outline" size="sm">

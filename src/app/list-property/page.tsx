@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 
 export default function LegacyListPropertyRedirect() {
-  redirect(agentDeskPath("list-property"));
+  redirect(LIST_PROPERTY_WIZARD_ENTRY);
 }

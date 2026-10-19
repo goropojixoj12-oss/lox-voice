@@ -5,6 +5,7 @@ import {
   type AgentProfileRecord,
 } from "@/lib/agent-profile-shared";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 import type { Inquiry, Property } from "@/lib/types";
 
 export type ProfileCompletionItem = {
@@ -306,7 +307,7 @@ function buildUrgentActions(
       id: "pipeline-ok",
       title: "Inbox clear — grow pipeline",
       detail: "Share listings or publish a new property to attract leads.",
-      href: agentDeskPath("list-property"),
+      href: LIST_PROPERTY_WIZARD_ENTRY,
       priority: "low",
     });
   }
