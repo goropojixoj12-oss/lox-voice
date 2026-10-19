@@ -74,7 +74,7 @@ const nextConfig: NextConfig = {
         destination: "/dashboard/admin/:path*",
         permanent: true,
       },
-      { source: "/dashboard/overview", destination: "/dashboard/agent/overview", permanent: true },
+      { source: "/dashboard/overview", destination: "/dashboard", permanent: false },
       { source: "/dashboard/profile", destination: "/dashboard/agent/profile", permanent: true },
       { source: "/dashboard/listings", destination: "/dashboard/agent/listings", permanent: true },
       {

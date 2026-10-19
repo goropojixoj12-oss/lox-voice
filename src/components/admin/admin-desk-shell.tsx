@@ -65,12 +65,6 @@ export function AdminDeskShell({
           >
             Public site
           </Link>
-          <Link
-            href="/dashboard/agent/overview"
-            className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm hover:border-[var(--color-accent)]"
-          >
-            Agent desk preview
-          </Link>
         </div>
       </div>
 

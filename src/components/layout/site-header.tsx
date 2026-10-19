@@ -14,13 +14,25 @@ import {
   NavMenuDropdown,
   NavMenuLink,
 } from "@/components/layout/nav-menu-dropdown";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
+import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import type { UserRole } from "@/lib/types";
 import { primaryNav as nav } from "@/components/layout/site-nav-config";
+
+function deskHomeHref(role: UserRole | undefined, signedIn: boolean): string {
+  if (!signedIn) return "/auth/login";
+  if (role === "admin") return adminDeskPath();
+  return agentDeskPath("overview");
+}
 
 export function SiteHeader({
   userName,
+  userRole,
 }: {
   userName?: string | null;
+  userRole?: UserRole | null;
 }) {
+  const deskHref = deskHomeHref(userRole ?? undefined, Boolean(userName));
   const [open, setOpen] = useState(false);
   const closeMobile = () => setOpen(false);
   const langIds = useId();
@@ -54,7 +66,7 @@ export function SiteHeader({
             <div className="hidden items-center gap-2 md:flex">
               <LanguageSwitcherSelect id={`${langIds}-desktop`} />
               {userName ? (
-                <ButtonLink href="/dashboard/agent/overview" variant="ghost" size="sm">
+                <ButtonLink href={deskHref} variant="ghost" size="sm">
                   {userName}
                 </ButtonLink>
               ) : (
@@ -113,7 +125,7 @@ export function SiteHeader({
               ),
             )}
             <div className="mt-2 grid gap-2">
-              <ButtonLink href={userName ? "/dashboard/agent/overview" : "/auth/login"} variant="outline">
+              <ButtonLink href={deskHref} variant="outline">
                 {userName ? "Dashboard" : "Sign in"}
               </ButtonLink>
               <ButtonLink href="/contact" variant="accent">

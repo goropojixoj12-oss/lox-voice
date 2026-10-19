@@ -104,7 +104,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Script src="/scripts/seaps-lang-boot.js" strategy="beforeInteractive" />
         <GoogleTranslate />
         <PageViewBeacon />
-        <SiteHeader userName={session?.name} />
+        <SiteHeader userName={session?.name} userRole={session?.role} />
         <main className="flex-1">{children}</main>
         <SiteFooter />
         <MobileStickyCta />
