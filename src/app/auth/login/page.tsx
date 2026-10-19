@@ -30,7 +30,10 @@ export default function LoginPage() {
       setError(data.error ?? "Sign-in failed");
       return;
     }
-    router.push("/dashboard/agent/overview");
+    const data = (await res.json()) as { user?: { role?: string } };
+    const dest =
+      data.user?.role === "admin" ? "/dashboard/admin" : "/dashboard/agent/overview";
+    router.push(dest);
     router.refresh();
   }
 

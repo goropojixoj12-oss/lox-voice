@@ -1,68 +1,96 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { requireRole } from "@/lib/auth";
-import { getInquiries, getRuntimeListings } from "@/lib/store";
-import { articles } from "@/data/articles";
-import { cities } from "@/data/locations";
-import { projects } from "@/data/projects";
-import { properties } from "@/data/properties";
-import { demoUsers } from "@/data/users";
+import { buildAnalyticsReport } from "@/lib/admin-analytics";
+import { getPageViewEvents, getAdminTasks } from "@/lib/admin-store";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
+import { getRuntimeListings } from "@/lib/store";
 
-export const metadata: Metadata = { title: "Admin" };
+export const metadata: Metadata = { title: "Executive analytics" };
 
-const links = [
-  { href: adminDeskPath("users"), label: "Users" },
-  { href: adminDeskPath("listings"), label: "Listings moderation" },
-  { href: adminDeskPath("projects"), label: "Projects" },
-  { href: adminDeskPath("articles"), label: "Articles" },
-  { href: adminDeskPath("locations"), label: "Locations" },
-];
-
-export default async function AdminPage() {
-  const session = await requireRole(["admin"]);
-  if (!session) redirect("/auth/login");
-
-  const [runtime, inquiries] = await Promise.all([getRuntimeListings(), getInquiries()]);
+export default async function AdminAnalyticsPage() {
+  const [events, tasks, runtime] = await Promise.all([
+    getPageViewEvents(),
+    getAdminTasks(),
+    getRuntimeListings(),
+  ]);
+  const report = buildAnalyticsReport(events, 30);
+  const pending = runtime.filter((l) => l.status === "pending").length;
+  const openTasks = tasks.filter((t) => t.status !== "done").length;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
-        Admin panel
-      </h1>
-      <p className="mt-2 text-[var(--color-muted)]">
-        Server-gated to the admin role. Platform counts below reflect current inventory and activity.
-      </p>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="space-y-8">
+      <div>
+        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+          Site analytics
+        </h1>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">
+          Visits, session depth, and top paths (last {report.periodDays} days). Live traffic is
+          recorded on each page view; seeded history fills empty stores.
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          ["Users", demoUsers.length],
-          ["Published seed listings", properties.length],
-          ["Runtime listings", runtime.length],
-          ["Projects", projects.length],
-          ["Articles", articles.length],
-          ["Cities", cities.length],
-          ["Inquiries", inquiries.length],
+          ["Page views", report.totalViews],
+          ["Unique sessions", report.uniqueSessions],
+          ["Avg. depth", report.avgDepth],
+          ["Pending listings", pending],
         ].map(([label, value]) => (
-          <div
-            key={String(label)}
-            className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
-          >
-            <p className="text-sm text-[var(--color-muted)]">{label}</p>
-            <p className="mt-2 text-3xl font-semibold">{value}</p>
+          <div key={String(label)} className="seaps-card rounded-[var(--radius-lg)] p-4">
+            <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{label}</p>
+            <p className="mt-1 text-2xl font-semibold">{value}</p>
           </div>
         ))}
       </div>
-      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-white px-4 py-3 font-medium hover:border-[var(--color-primary)]"
-          >
-            {link.label}
-          </Link>
-        ))}
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="seaps-card rounded-[var(--radius-lg)] p-5">
+          <h2 className="text-lg font-semibold">Top pages</h2>
+          <table className="mt-3 w-full text-sm">
+            <thead>
+              <tr className="text-left text-[var(--color-muted)]">
+                <th className="pb-2">Path</th>
+                <th className="pb-2 text-right">Views</th>
+                <th className="pb-2 text-right">Share</th>
+              </tr>
+            </thead>
+            <tbody>
+              {report.topPages.map((row) => (
+                <tr key={row.path} className="border-t border-[var(--color-border)]">
+                  <td className="py-2 font-mono text-xs">{row.path}</td>
+                  <td className="py-2 text-right">{row.views}</td>
+                  <td className="py-2 text-right">{row.share}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section className="seaps-card rounded-[var(--radius-lg)] p-5">
+          <h2 className="text-lg font-semibold">Recent activity</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {report.recentPaths.map((r) => (
+              <li key={`${r.at}-${r.path}`} className="flex justify-between gap-2">
+                <span className="truncate font-mono text-xs">{r.path}</span>
+                <span className="shrink-0 text-[var(--color-muted)]">
+                  {new Date(r.at).toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 grid gap-2 text-sm">
+            <Link href={adminDeskPath("staff")} className="font-semibold text-[var(--color-accent-soft)] hover:underline">
+              Staff & performance →
+            </Link>
+            <Link href={adminDeskPath("legal")} className="font-semibold text-[var(--color-accent-soft)] hover:underline">
+              Legal library →
+            </Link>
+            <Link href={adminDeskPath("listings")} className="font-semibold text-[var(--color-accent-soft)] hover:underline">
+              Moderate {pending} pending listing{pending === 1 ? "" : "s"} →
+            </Link>
+            <p className="text-[var(--color-muted)]">{openTasks} open staff task(s)</p>
+          </div>
+        </section>
       </div>
     </div>
   );

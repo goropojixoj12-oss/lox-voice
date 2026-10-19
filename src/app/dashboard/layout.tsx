@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { DashboardNav } from "@/components/dashboard/dashboard-nav";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -16,15 +16,10 @@ export default async function DashboardLayout({
   if (!session) redirect("/auth/login");
 
   return (
-    <div className="notranslate mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8">
-      <aside>
-        <p className="mb-3 text-sm text-[var(--color-muted)]">
-          Signed in as <span className="font-semibold text-[var(--color-text)]">{session.name}</span>{" "}
-          ({session.role})
-        </p>
-        <DashboardNav role={session.role} />
-      </aside>
-      <div>{children}</div>
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
+      <DashboardShell role={session.role} userName={session.name}>
+        {children}
+      </DashboardShell>
     </div>
   );
 }

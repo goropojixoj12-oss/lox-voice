@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
+import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 import { GoogleTranslate } from "@/components/i18n/google-translate";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -102,6 +103,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <OrganizationJsonLd />
         <Script src="/scripts/seaps-lang-boot.js" strategy="beforeInteractive" />
         <GoogleTranslate />
+        <PageViewBeacon />
         <SiteHeader userName={session?.name} />
         <main className="flex-1">{children}</main>
         <SiteFooter />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AdminCommentsPanel } from "@/components/admin/admin-comments-panel";
 import { AdminListingModerationForm } from "@/components/dashboard/admin-listing-moderation-form";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { getRuntimeListingById } from "@/lib/store";
@@ -32,6 +33,12 @@ export default async function AdminListingReviewPage({
       </p>
       <div className="mt-6 rounded-[var(--radius-xl)] seaps-card p-5 md:p-6">
         <AdminListingModerationForm listing={listing} />
+      </div>
+      <div className="mt-6">
+        <AdminCommentsPanel
+          subject={{ type: "listing", id: listing.id }}
+          title="Moderation notes (internal)"
+        />
       </div>
       <p className="mt-4 text-sm text-[var(--color-muted)]">
         <Link href={`/property/${listing.slug}`} className="text-[var(--color-accent-soft)] underline">
