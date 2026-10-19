@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const links = [
+const links: { href: string; label: string; roles?: UserRole[] }[] = [
   { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/listings", label: "Listings" },
   { href: "/dashboard/inquiries", label: "Inquiries" },
@@ -14,10 +15,10 @@ const links = [
   { href: "/favorites", label: "Favorites" },
   { href: "/saved-searches", label: "Saved searches" },
   { href: "/list-property", label: "Create listing" },
-  { href: "/admin", label: "Admin" },
+  { href: "/admin", label: "Admin", roles: ["admin"] },
 ];
 
-export function DashboardNav() {
+export function DashboardNav({ role }: { role: UserRole }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -30,7 +31,9 @@ export function DashboardNav() {
   return (
     <nav className="seaps-card rounded-[var(--radius-lg)] p-3">
       <ul className="space-y-1">
-        {links.map((link) => (
+        {links
+          .filter((link) => !link.roles || link.roles.includes(role))
+          .map((link) => (
           <li key={link.href}>
             <Link
               href={link.href}
@@ -44,7 +47,7 @@ export function DashboardNav() {
               {link.label}
             </Link>
           </li>
-        ))}
+          ))}
       </ul>
       <Button type="button" variant="outline" className="mt-3 w-full" onClick={signOut}>
         Sign out

@@ -22,7 +22,7 @@ export default async function DashboardLayout({
           Signed in as <span className="font-semibold text-[var(--color-text)]">{session.name}</span>{" "}
           ({session.role})
         </p>
-        <DashboardNav />
+        <DashboardNav role={session.role} />
       </aside>
       <div>{children}</div>
     </div>
