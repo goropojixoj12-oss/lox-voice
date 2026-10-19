@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
 import { saveRuntimeListing } from "@/lib/store";
+import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import { slugify } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 
@@ -39,6 +40,10 @@ const createSchema = z.object({
   bedrooms: z.number().nullable(),
   bathrooms: z.number().nullable(),
   areaSqm: z.number().nullable(),
+  countryCode: z
+    .string()
+    .length(2)
+    .refine((code) => isWorldCountryCode(code.toUpperCase()), { message: "Invalid country" }),
   city: z.string().min(2),
   citySlug: z.string().min(2),
   district: z.string().min(2),
@@ -62,6 +67,10 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data;
+  const countryRow = getCountryByCode(data.countryCode);
+  if (!countryRow) {
+    return NextResponse.json({ error: "Invalid country" }, { status: 400 });
+  }
   const now = new Date().toISOString();
   const listing: Property = {
     id: `runtime-${nanoid(8)}`,
@@ -92,8 +101,8 @@ export async function POST(request: Request) {
       },
     ],
     location: {
-      country: "Cambodia",
-      countrySlug: "cambodia",
+      country: countryRow.name,
+      countrySlug: countrySlugFromName(countryRow.name),
       city: data.city,
       citySlug: data.citySlug,
       district: data.district,

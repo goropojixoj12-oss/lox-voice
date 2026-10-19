@@ -23,12 +23,19 @@ import {
   LIST_PROPERTY_STEP_LABELS,
   listPropertyStepPath,
 } from "@/lib/list-property-steps";
+import {
+  DEFAULT_COUNTRY_CODE,
+  getCountryByCode,
+  isWorldCountryCode,
+  worldCountries,
+} from "@/data/countries";
 import type { PropertyType, TransactionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type ListPropertyForm = {
   transactionType: TransactionType;
   propertyType: PropertyType;
+  countryCode: string;
   city: string;
   citySlug: string;
   district: string;
@@ -76,6 +83,7 @@ function useListPropertyWizard() {
 const defaultForm: ListPropertyForm = {
   transactionType: "sale",
   propertyType: "apartment",
+  countryCode: DEFAULT_COUNTRY_CODE,
   city: "Phnom Penh",
   citySlug: "phnom-penh",
   district: "BKK 1",
@@ -135,7 +143,8 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
           return dealSelection != null;
         case 1:
           return Boolean(
-            form.city &&
+            isWorldCountryCode(form.countryCode) &&
+              form.city &&
               form.district &&
               form.commune.trim().length >= 2 &&
               form.address.length >= 3,
@@ -177,6 +186,7 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
         bedrooms: form.bedrooms === "" ? null : Number(form.bedrooms),
         bathrooms: form.bathrooms === "" ? null : Number(form.bathrooms),
         areaSqm: form.areaSqm === "" ? null : Number(form.areaSqm),
+        countryCode: form.countryCode,
         city: form.city,
         citySlug: form.citySlug,
         district: form.district,
@@ -323,6 +333,21 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
 
         {step === 1 ? (
           <div className="grid gap-3">
+            <div>
+              <Label htmlFor="list-country">Country</Label>
+              <Select
+                id="list-country"
+                className="notranslate max-h-none"
+                value={form.countryCode}
+                onChange={(e) => update("countryCode", e.target.value.toUpperCase())}
+              >
+                {worldCountries.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
             <div>
               <Label htmlFor="city">City</Label>
               <Input
@@ -503,6 +528,9 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
             <p>
               {form.address}
               {form.commune ? `, ${form.commune}` : ""}, {form.district}, {form.city}
+              {getCountryByCode(form.countryCode)
+                ? `, ${getCountryByCode(form.countryCode)!.name}`
+                : ""}
             </p>
             <p>
               {form.price} {form.currency}
