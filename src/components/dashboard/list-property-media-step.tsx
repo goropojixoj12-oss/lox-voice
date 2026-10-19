@@ -1,24 +1,81 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
+import { nanoid } from "nanoid";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/input";
+import { BLOB_PREFIX } from "@/lib/listing-media-constants";
+import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
+import { listingMediaPublicUrl, sanitizeListingFileName } from "@/lib/listing-media-constants";
 import type { ListingMediaItem } from "@/lib/list-property-media";
 import { cn } from "@/lib/utils";
 
-async function uploadOne(file: File): Promise<ListingMediaItem> {
+async function uploadViaServer(file: File): Promise<ListingMediaItem> {
   const body = new FormData();
   body.set("file", file);
   const res = await fetch("/api/dashboard/list-property/media", {
     method: "POST",
     body,
   });
+  const data = (await res.json().catch(() => ({}))) as {
+    error?: string;
+    item?: ListingMediaItem;
+  };
   if (!res.ok) {
-    const data = (await res.json().catch(() => ({}))) as { error?: string };
     throw new Error(data.error ?? "Upload failed");
   }
-  const data = (await res.json()) as { item: ListingMediaItem };
+  if (!data.item) throw new Error("Upload failed");
   return data.item;
+}
+
+async function uploadViaBlobClient(file: File, userId: string): Promise<ListingMediaItem> {
+  const mime = inferMimeType(file);
+  const kind = mediaKindFromMime(mime);
+  if (!kind) {
+    throw new Error("Use JPG, PNG, WebP, GIF, MP4, MOV, or WebM files.");
+  }
+  const safeName = sanitizeListingFileName(file.name || "upload");
+  const storageKey = `${userId}/${nanoid(10)}-${safeName}`;
+  const pathname = `${BLOB_PREFIX}/${storageKey}`;
+
+  await upload(pathname, file, {
+    access: "private",
+    handleUploadUrl: "/api/dashboard/list-property/media/client-upload",
+    multipart: file.size > 4.5 * 1024 * 1024,
+    contentType: mime,
+  });
+
+  return {
+    id: nanoid(8),
+    kind,
+    url: listingMediaPublicUrl(storageKey),
+    storageKey,
+    name: file.name,
+    size: file.size,
+  };
+}
+
+async function uploadOne(file: File, userId: string | null): Promise<ListingMediaItem> {
+  if (userId) {
+    try {
+      return await uploadViaBlobClient(file, userId);
+    } catch (clientError) {
+      if (file.size <= 4.5 * 1024 * 1024) {
+        try {
+          return await uploadViaServer(file);
+        } catch (serverError) {
+          const msg =
+            clientError instanceof Error ? clientError.message : "Upload failed";
+          const serverMsg =
+            serverError instanceof Error ? serverError.message : "Upload failed";
+          throw new Error(`${msg} (${serverMsg})`);
+        }
+      }
+      throw clientError;
+    }
+  }
+  return uploadViaServer(file);
 }
 
 export function ListPropertyMediaStep({
@@ -31,12 +88,32 @@ export function ListPropertyMediaStep({
   listingTitle: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data: { user?: { id?: string } | null }) => {
+        setUserId(data.user?.id ?? null);
+      })
+      .catch(() => setUserId(null))
+      .finally(() => setSessionReady(true));
+  }, []);
+
   async function handleFiles(fileList: FileList | null) {
     if (!fileList?.length) return;
+    if (!sessionReady) {
+      setError("Still loading your session — try again in a moment.");
+      return;
+    }
+    if (!userId) {
+      setError("Sign in again to upload photos and videos.");
+      return;
+    }
     setError("");
     setBusy(true);
     const files = Array.from(fileList);
@@ -46,7 +123,7 @@ export function ListPropertyMediaStep({
     for (const file of files) {
       setProgress(`Uploading ${done + 1} / ${files.length}: ${file.name}`);
       try {
-        const item = await uploadOne(file);
+        const item = await uploadOne(file, userId);
         if (item.kind === "image" && !next.some((m) => m.kind === "image" && m.isCover)) {
           item.isCover = true;
         }
@@ -92,8 +169,8 @@ export function ListPropertyMediaStep({
         video, or — if you only upload photos — a fast flipbook (like YouTube hover previews, but
         always on). For {listingTitle ? `"${listingTitle}"` : "this listing"} you can add all{" "}
         <strong className="text-[var(--color-text)]">50 photos</strong> and{" "}
-        <strong className="text-[var(--color-text)]">2 videos</strong> here; uploads run one file
-        at a time (photos up to 12MB each, videos up to 80MB).
+        <strong className="text-[var(--color-text)]">2 videos</strong> here. Large files upload
+        directly to storage (up to 12MB per photo, 80MB per video).
       </p>
 
       <div
@@ -105,11 +182,11 @@ export function ListPropertyMediaStep({
         <input
           ref={inputRef}
           type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
+          accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime,.jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,.mov"
           multiple
           className="sr-only"
           id="listing-media-files"
-          disabled={busy}
+          disabled={busy || !sessionReady}
           onChange={(e) => void handleFiles(e.target.files)}
         />
         <Label htmlFor="listing-media-files" className="cursor-pointer">

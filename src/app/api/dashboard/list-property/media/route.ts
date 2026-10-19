@@ -2,21 +2,15 @@ import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import {
-  sanitizeListingFileName,
-  writeListingMediaFile,
-} from "@/lib/listing-media-files";
+  LISTING_MEDIA_MAX_IMAGE_BYTES,
+  LISTING_MEDIA_MAX_VIDEO_BYTES,
+} from "@/lib/listing-media-constants";
+import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
+import { sanitizeListingFileName } from "@/lib/listing-media-constants";
+import { writeListingMediaFile } from "@/lib/listing-media-files";
 
-const MAX_IMAGE_BYTES = 12 * 1024 * 1024;
-const MAX_VIDEO_BYTES = 80 * 1024 * 1024;
-
-const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime"]);
-
-function mediaKind(mime: string): "image" | "video" | null {
-  if (IMAGE_TYPES.has(mime)) return "image";
-  if (VIDEO_TYPES.has(mime) || mime.startsWith("video/")) return "video";
-  return null;
-}
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -27,47 +21,55 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const form = await request.formData();
-  const file = form.get("file");
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "File is required" }, { status: 400 });
-  }
+  try {
+    const form = await request.formData();
+    const file = form.get("file");
+    if (!(file instanceof File)) {
+      return NextResponse.json({ error: "File is required" }, { status: 400 });
+    }
 
-  const mime = file.type || "application/octet-stream";
-  const kind = mediaKind(mime);
-  if (!kind) {
-    return NextResponse.json(
-      { error: "Use JPG, PNG, WebP, GIF, MP4, or WebM files." },
-      { status: 400 },
-    );
-  }
+    const mime = inferMimeType(file);
+    const kind = mediaKindFromMime(mime);
+    if (!kind) {
+      return NextResponse.json(
+        { error: "Use JPG, PNG, WebP, GIF, MP4, MOV, or WebM files." },
+        { status: 400 },
+      );
+    }
 
-  const maxBytes = kind === "video" ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
-  if (file.size > maxBytes) {
-    return NextResponse.json(
-      {
-        error:
-          kind === "video"
-            ? "Video must be 80MB or smaller."
-            : "Each photo must be 12MB or smaller.",
+    const maxBytes =
+      kind === "video" ? LISTING_MEDIA_MAX_VIDEO_BYTES : LISTING_MEDIA_MAX_IMAGE_BYTES;
+    if (file.size > maxBytes) {
+      return NextResponse.json(
+        {
+          error:
+            kind === "video"
+              ? "Video must be 80MB or smaller. Use client upload for large files."
+              : "Each photo must be 12MB or smaller.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const safeName = sanitizeListingFileName(file.name || "upload");
+    const storageKey = `${session.id}/${nanoid(10)}-${safeName}`;
+    const saved = await writeListingMediaFile(storageKey, bytes, mime);
+
+    return NextResponse.json({
+      item: {
+        id: nanoid(8),
+        kind,
+        url: saved.url,
+        storageKey: saved.storageKey,
+        name: file.name,
+        size: file.size,
       },
-      { status: 400 },
-    );
+    });
+  } catch (error) {
+    console.error("listing media upload failed", error);
+    const message =
+      error instanceof Error ? error.message : "Upload failed. Try again or use a smaller file.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const bytes = Buffer.from(await file.arrayBuffer());
-  const safeName = sanitizeListingFileName(file.name || "upload");
-  const storageKey = `${session.id}/${nanoid(10)}-${safeName}`;
-  const saved = await writeListingMediaFile(storageKey, bytes, mime);
-
-  return NextResponse.json({
-    item: {
-      id: nanoid(8),
-      kind,
-      url: saved.url,
-      storageKey: saved.storageKey,
-      name: file.name,
-      size: file.size,
-    },
-  });
 }

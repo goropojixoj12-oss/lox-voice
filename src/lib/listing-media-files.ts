@@ -2,10 +2,16 @@ import { del, get, put } from "@vercel/blob";
 import { promises as fs } from "fs";
 import os from "os";
 import path from "path";
+import {
+  BLOB_PREFIX,
+  listingMediaPublicUrl,
+  sanitizeListingFileName,
+} from "@/lib/listing-media-constants";
 import { isBlobStorageAvailable } from "@/lib/store-persistence";
 
-const BLOB_PREFIX = "seaps-listings";
 const LOCAL_DIR_NAME = "listing-media";
+
+export { listingMediaPublicUrl, sanitizeListingFileName };
 
 function blobAuth(): { token?: string; storeId?: string; oidcToken?: string } {
   const token =
@@ -20,7 +26,7 @@ function blobAuth(): { token?: string; storeId?: string; oidcToken?: string } {
   return {};
 }
 
-function useBlob(): boolean {
+export function useListingMediaBlob(): boolean {
   return isBlobStorageAvailable();
 }
 
@@ -35,7 +41,7 @@ async function localMediaRoot(): Promise<string> {
   return local;
 }
 
-function blobPathname(storageKey: string): string {
+export function blobPathnameForStorageKey(storageKey: string): string {
   return `${BLOB_PREFIX}/${storageKey}`;
 }
 
@@ -43,31 +49,20 @@ function localFilePath(storageKey: string): Promise<string> {
   return localMediaRoot().then((dir) => path.join(dir, storageKey.replace(/\//g, "__")));
 }
 
-export function listingMediaPublicUrl(storageKey: string): string {
-  return `/api/listings/media/${storageKey
-    .split("/")
-    .map((part) => encodeURIComponent(part))
-    .join("/")}`;
-}
-
-export function sanitizeListingFileName(name: string): string {
-  return name.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-").slice(0, 120);
-}
-
 export async function writeListingMediaFile(
   storageKey: string,
   bytes: Buffer,
   contentType: string,
 ): Promise<{ url: string; storageKey: string }> {
-  if (useBlob()) {
-    const result = await put(blobPathname(storageKey), bytes, {
-      access: "public",
+  if (useListingMediaBlob()) {
+    await put(blobPathnameForStorageKey(storageKey), bytes, {
+      access: "private",
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType,
       ...blobAuth(),
     });
-    return { url: result.url, storageKey };
+    return { url: listingMediaPublicUrl(storageKey), storageKey };
   }
   const filePath = await localFilePath(storageKey);
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -79,10 +74,10 @@ export async function writeListingMediaFile(
 export async function readListingMediaFile(
   storageKey: string,
 ): Promise<{ bytes: Buffer; contentType: string } | null> {
-  if (useBlob()) {
+  if (useListingMediaBlob()) {
     try {
-      const result = await get(blobPathname(storageKey), {
-        access: "public",
+      const result = await get(blobPathnameForStorageKey(storageKey), {
+        access: "private",
         useCache: false,
         ...blobAuth(),
       });
@@ -120,9 +115,9 @@ export async function readListingMediaFile(
 }
 
 export async function deleteListingMediaFile(storageKey: string): Promise<void> {
-  if (useBlob()) {
+  if (useListingMediaBlob()) {
     try {
-      await del(blobPathname(storageKey), blobAuth());
+      await del(blobPathnameForStorageKey(storageKey), blobAuth());
     } catch {
       /* ignore */
     }
