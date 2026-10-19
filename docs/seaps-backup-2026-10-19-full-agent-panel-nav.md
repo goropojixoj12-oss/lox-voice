@@ -3,7 +3,7 @@
 | Field | Value |
 | ----- | ----- |
 | **Tag** | `backup/2026-10-19-full-agent-panel-nav` |
-| **Commit** | `10058a4` |
+| **Commit** | `95ab620` (archives built at `10058a4`; tag tracks latest restore doc) |
 | **Branch** | `main` |
 | **Production** | https://www.vps1.store |
 | **GitHub** | `goropojixoj12-oss/lox-voice` |
@@ -16,7 +16,7 @@ Tag pushed to `github` and `origin`.
 git clone https://github.com/goropojixoj12-oss/lox-voice.git seaps-restore
 cd seaps-restore
 git fetch origin tag backup/2026-10-19-full-agent-panel-nav
-git checkout 10058a4
+git checkout 95ab620
 npm ci
 npm run build
 ```
