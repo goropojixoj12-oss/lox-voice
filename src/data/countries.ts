@@ -1000,16 +1000,16 @@ export const worldCountries = [
   }
 ] as const;
 
-const byCode = new Map(worldCountries.map((c) => [c.code, c] as const));
-
 export const DEFAULT_COUNTRY_CODE = "KH" satisfies WorldCountryCode;
 
 export function getCountryByCode(code: string) {
-  return byCode.get(code.toUpperCase());
+  const upper = code.toUpperCase();
+  return worldCountries.find((c) => c.code === upper);
 }
 
 export function isWorldCountryCode(code: string): code is WorldCountryCode {
-  return byCode.has(code.toUpperCase());
+  const upper = code.toUpperCase();
+  return worldCountries.some((c) => c.code === upper);
 }
 
 export function countrySlugFromName(name: string): string {
