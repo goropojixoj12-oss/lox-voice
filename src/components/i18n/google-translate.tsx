@@ -25,25 +25,46 @@ function applyGoogleCombo(googleLang: string) {
   const combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
   if (!combo) return false;
 
-  const target = !googleLang || googleLang === "en" ? SITE_SOURCE_LANG : googleLang;
+  if (!googleLang || googleLang === "en") {
+    const original =
+      Array.from(combo.options).find((o) => o.value === "")?.value ??
+      Array.from(combo.options).find((o) => o.value === SITE_SOURCE_LANG)?.value ??
+      "";
+    if (combo.value === original) return true;
+    combo.value = original;
+    combo.dispatchEvent(new Event("change"));
+    return true;
+  }
 
-  const hasOption = Array.from(combo.options).some((o) => o.value === target);
-  if (!hasOption && target !== SITE_SOURCE_LANG) {
+  const hasOption = Array.from(combo.options).some((o) => o.value === googleLang);
+  if (!hasOption) {
     const opt = document.createElement("option");
-    opt.value = target;
-    opt.text = target;
+    opt.value = googleLang;
+    opt.text = googleLang;
     combo.appendChild(opt);
   }
 
-  if (combo.value === target) return true;
-  combo.value = target;
+  if (combo.value === googleLang) return true;
+  combo.value = googleLang;
   combo.dispatchEvent(new Event("change"));
   return true;
 }
 
+function scheduleApplyGoogleLang(googleLang: string) {
+  let tries = 0;
+  const tick = () => {
+    tries += 1;
+    if (applyGoogleCombo(googleLang) || tries > 40) return;
+    window.setTimeout(tick, 50);
+  };
+  tick();
+  window.setTimeout(() => applyGoogleCombo(googleLang), 350);
+  window.setTimeout(() => applyGoogleCombo(googleLang), 900);
+}
+
 /**
  * Invisible Google Website Translator — all languages enabled.
- * Menu (EN/KM/ZH/JA) only overrides; auto uses any browser/OS locale.
+ * Menu (EN/KM/ZH/JA) overrides; otherwise every page follows browser/OS locale.
  */
 export function GoogleTranslate() {
   const pathname = usePathname();
@@ -61,7 +82,7 @@ export function GoogleTranslate() {
         },
         "google_translate_element",
       );
-      window.setTimeout(() => applyGoogleCombo(resolveGoogleTargetLang()), 0);
+      window.setTimeout(() => scheduleApplyGoogleLang(resolveGoogleTargetLang()), 0);
     };
 
     if (window.google?.translate?.TranslateElement) {
@@ -72,15 +93,21 @@ export function GoogleTranslate() {
   // Re-apply on every client route so SPA pages stay translated.
   useEffect(() => {
     const lang = resolveGoogleTargetLang();
-    if (lang === "en") return;
+    scheduleApplyGoogleLang(lang);
 
-    let tries = 0;
-    const tick = () => {
-      tries += 1;
-      if (applyGoogleCombo(lang) || tries > 24) return;
-      window.setTimeout(tick, 40);
+    const main = document.querySelector("main");
+    if (!main || lang === "en") return;
+
+    let debounce: ReturnType<typeof setTimeout> | undefined;
+    const observer = new MutationObserver(() => {
+      if (debounce) clearTimeout(debounce);
+      debounce = setTimeout(() => applyGoogleCombo(lang), 120);
+    });
+    observer.observe(main, { childList: true, subtree: true });
+    return () => {
+      observer.disconnect();
+      if (debounce) clearTimeout(debounce);
     };
-    tick();
   }, [pathname]);
 
   return (

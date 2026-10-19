@@ -71,6 +71,20 @@
     }
   }
 
+  function preferredBrowserGoogleLang() {
+    var list = [];
+    if (navigator.languages && navigator.languages.length) {
+      for (var i = 0; i < navigator.languages.length; i++) list.push(navigator.languages[i]);
+    }
+    if (navigator.language) list.push(navigator.language);
+    if (navigator.userLanguage) list.push(navigator.userLanguage);
+    for (var j = 0; j < list.length; j++) {
+      var code = mapBrowserToGoogle(list[j]);
+      if (code !== "en") return code;
+    }
+    return mapBrowserToGoogle(list[0] || "en");
+  }
+
   var forced = readForced();
   var googleLang;
 
@@ -78,12 +92,7 @@
     googleLang = siteToGoogle(forced);
     window.__SEAPS_LANG__ = forced;
   } else {
-    var nav =
-      (navigator.languages && navigator.languages[0]) ||
-      navigator.language ||
-      navigator.userLanguage ||
-      "en";
-    googleLang = mapBrowserToGoogle(nav);
+    googleLang = preferredBrowserGoogleLang();
     window.__SEAPS_LANG__ = "auto";
   }
 

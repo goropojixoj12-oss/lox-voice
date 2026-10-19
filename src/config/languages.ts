@@ -19,6 +19,9 @@ export type SiteLangCode = (typeof siteLanguages)[number]["code"];
 
 export const LANG_STORAGE_KEY = "seaps-lang";
 
+/** Header select value: follow browser until user picks EN/KM/ZH/JA. */
+export const LANG_AUTO_SELECT_VALUE = "auto" as const;
+
 export function googleCodeFor(siteCode: SiteLangCode): string {
   const row = siteLanguages.find((l) => l.code === siteCode);
   return row?.google ?? "en";
@@ -32,6 +35,19 @@ export function isSiteLangCode(value: string | null | undefined): value is SiteL
  * Map any browser/OS locale to a Google Translate language code.
  * Not limited to the four menu languages.
  */
+/** First non-English preference from the browser/OS language list. */
+export function preferredBrowserGoogleLang(): string {
+  if (typeof navigator === "undefined") return "en";
+  const list = [...(navigator.languages ?? []), navigator.language].filter(
+    (locale): locale is string => Boolean(locale),
+  );
+  for (const locale of list) {
+    const code = mapBrowserToGoogleLang(locale);
+    if (code !== "en") return code;
+  }
+  return mapBrowserToGoogleLang(list[0] ?? "en");
+}
+
 export function mapBrowserToGoogleLang(locale: string | undefined | null): string {
   if (!locale) return "en";
   const raw = locale.replace(/_/g, "-");
@@ -76,7 +92,5 @@ export function resolveGoogleTargetLang(): string {
   if (typeof window.__SEAPS_GOOGLE_LANG__ === "string" && window.__SEAPS_GOOGLE_LANG__) {
     return window.__SEAPS_GOOGLE_LANG__;
   }
-  return mapBrowserToGoogleLang(
-    navigator.languages?.[0] || navigator.language || "en",
-  );
+  return preferredBrowserGoogleLang();
 }

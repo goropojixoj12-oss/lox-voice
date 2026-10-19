@@ -10,11 +10,12 @@ import {
   type ReactNode,
 } from "react";
 import {
+  LANG_AUTO_SELECT_VALUE,
   LANG_STORAGE_KEY,
   googleCodeFor,
   googleLangToSiteLang,
   isSiteLangCode,
-  mapBrowserToGoogleLang,
+  preferredBrowserGoogleLang,
   siteLanguages,
   type SiteLangCode,
 } from "@/config/languages";
@@ -50,9 +51,7 @@ function setGoogTransCookie(googleTarget: string) {
 function browserGoogleLang(): string {
   if (typeof window === "undefined") return "en";
   if (window.__SEAPS_GOOGLE_LANG__) return window.__SEAPS_GOOGLE_LANG__;
-  return mapBrowserToGoogleLang(
-    navigator.languages?.[0] || navigator.language || "en",
-  );
+  return preferredBrowserGoogleLang();
 }
 
 function displayNameForGoogleLang(code: string): string {
@@ -66,7 +65,6 @@ function displayNameForGoogleLang(code: string): string {
 
 type LanguageSwitcherState = {
   selectValue: string;
-  showAutoOption: boolean;
   autoGoogle: string;
   onChange: (next: string) => void;
 };
@@ -88,10 +86,26 @@ function useLanguageSwitcherState(): LanguageSwitcherState {
   }, []);
 
   const autoAsSite = useMemo(() => googleLangToSiteLang(autoGoogle), [autoGoogle]);
-  const selectValue = manual ?? autoAsSite ?? "en";
-  const showAutoOption = !manual && !autoAsSite && autoGoogle !== "en";
+  const selectValue = manual ?? autoAsSite ?? LANG_AUTO_SELECT_VALUE;
 
   const onChange = (next: string) => {
+    if (next === LANG_AUTO_SELECT_VALUE) {
+      setManual(null);
+      try {
+        localStorage.removeItem(LANG_STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
+      const google = preferredBrowserGoogleLang();
+      if (google === "en") {
+        clearGoogTransCookies();
+      } else {
+        setGoogTransCookie(google);
+      }
+      window.location.reload();
+      return;
+    }
+
     if (!isSiteLangCode(next)) return;
 
     setManual(next);
@@ -110,7 +124,7 @@ function useLanguageSwitcherState(): LanguageSwitcherState {
     window.location.reload();
   };
 
-  return { selectValue, showAutoOption, autoGoogle, onChange };
+  return { selectValue, autoGoogle, onChange };
 }
 
 export function LanguageSwitcherProvider({ children }: { children: ReactNode }) {
@@ -132,26 +146,28 @@ function LanguageSelect({
   id,
   className,
   selectValue,
-  showAutoOption,
   autoGoogle,
   onChange,
 }: {
   id: string;
   className?: string;
 } & LanguageSwitcherState) {
+  const autoLabel =
+    autoGoogle === "en"
+      ? "Auto · browser (English)"
+      : `Auto · ${displayNameForGoogleLang(autoGoogle)}`;
+
   return (
     <label htmlFor={id} className={cn("notranslate inline-flex items-center", className)}>
       <span className="sr-only">Language</span>
       <select
         id={id}
-        className="h-10 max-w-[10.5rem] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)]"
+        className="h-10 max-w-[11.5rem] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-text)]"
         value={selectValue}
         aria-label="Language"
         onChange={(e) => onChange(e.target.value)}
       >
-        {showAutoOption ? (
-          <option value="en">{displayNameForGoogleLang(autoGoogle)} (auto)</option>
-        ) : null}
+        <option value={LANG_AUTO_SELECT_VALUE}>{autoLabel}</option>
         {siteLanguages.map((item) => (
           <option key={item.code} value={item.code}>
             {item.label}
