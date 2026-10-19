@@ -29,33 +29,16 @@ import {
   isWorldCountryCode,
   worldCountries,
 } from "@/data/countries";
-import type { PropertyType, TransactionType } from "@/lib/types";
+import {
+  clearListPropertyDraft,
+  listPropertyDefaultForm,
+  loadListPropertyDraft,
+  saveListPropertyDraft,
+  type ListPropertyDraftForm,
+} from "@/lib/list-property-draft";
 import { cn } from "@/lib/utils";
 
-type ListPropertyForm = {
-  transactionType: TransactionType;
-  propertyType: PropertyType;
-  countryCode: string;
-  city: string;
-  citySlug: string;
-  district: string;
-  districtSlug: string;
-  commune: string;
-  communeSlug: string;
-  address: string;
-  price: string;
-  currency: string;
-  pricePeriod: "" | "month" | "night" | "year";
-  bedrooms: string;
-  bathrooms: string;
-  areaSqm: string;
-  title: string;
-  summary: string;
-  description: string;
-  imageUrl: string;
-  contactName: string;
-  contactEmail: string;
-};
+type ListPropertyForm = ListPropertyDraftForm;
 
 type WizardContextValue = {
   form: ListPropertyForm;
@@ -80,37 +63,27 @@ function useListPropertyWizard() {
   return ctx;
 }
 
-const defaultForm: ListPropertyForm = {
-  transactionType: "sale",
-  propertyType: "apartment",
-  countryCode: DEFAULT_COUNTRY_CODE,
-  city: "Phnom Penh",
-  citySlug: "phnom-penh",
-  district: "BKK 1",
-  districtSlug: "bkk-1",
-  commune: "",
-  communeSlug: "",
-  address: "",
-  price: "",
-  currency: "USD",
-  pricePeriod: "",
-  bedrooms: "2",
-  bathrooms: "1",
-  areaSqm: "80",
-  title: "",
-  summary: "",
-  description: "",
-  imageUrl: "/media/photos/photo-1502672260266-1c1ef2d93688.jpg",
-  contactName: "",
-  contactEmail: "",
-};
-
 export function ListPropertyWizardProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [form, setForm] = useState<ListPropertyForm>(defaultForm);
+  const [form, setForm] = useState<ListPropertyForm>(listPropertyDefaultForm);
   const [dealSelection, setDealSelection] = useState<DealSelection | null>(null);
+  const [draftReady, setDraftReady] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const draft = loadListPropertyDraft();
+    if (draft) {
+      setForm(draft.form);
+      setDealSelection(draft.dealSelection);
+    }
+    setDraftReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady) return;
+    saveListPropertyDraft({ form, dealSelection });
+  }, [dealSelection, draftReady, form]);
 
   const update = useCallback(<K extends keyof ListPropertyForm>(key: K, value: ListPropertyForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -208,6 +181,7 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
       return;
     }
     const data = (await res.json()) as { listing: { slug: string } };
+    clearListPropertyDraft();
     router.push(`/property/${data.listing.slug}`);
   }, [form, router]);
 
@@ -276,7 +250,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
         Seven-step wizard with validation and moderation status. Each step has its own link you can
-        bookmark or share within your desk.
+        bookmark or share within your desk. Your entries are saved automatically in this browser as
+        you go.
       </p>
 
       <nav
