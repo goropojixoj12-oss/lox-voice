@@ -7,7 +7,7 @@ import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const links: { href: string; label: string; roles?: UserRole[] }[] = [
-  { href: "/dashboard", label: "Overview" },
+  { href: "/dashboard/overview", label: "Overview" },
   { href: "/dashboard/listings", label: "Listings" },
   { href: "/dashboard/inquiries", label: "Inquiries" },
   { href: "/dashboard/profile", label: "Profile" },
@@ -39,7 +39,8 @@ export function DashboardNav({ role }: { role: UserRole }) {
               href={link.href}
               className={cn(
                 "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition",
-                pathname === link.href
+                pathname === link.href ||
+                  (link.href === "/dashboard/overview" && pathname === "/dashboard")
                   ? "bg-[var(--color-primary)] text-white"
                   : "hover:bg-[var(--color-mist)]",
               )}
