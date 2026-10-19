@@ -43,6 +43,8 @@ const createSchema = z.object({
   citySlug: z.string().min(2),
   district: z.string().min(2),
   districtSlug: z.string().min(2),
+  commune: z.string().min(2),
+  communeSlug: z.string().min(2),
   address: z.string().min(3),
   imageUrl: z.string().url(),
 });
@@ -96,6 +98,8 @@ export async function POST(request: Request) {
       citySlug: data.citySlug,
       district: data.district,
       districtSlug: data.districtSlug,
+      commune: data.commune,
+      communeSlug: data.communeSlug,
       address: data.address,
       lat: 0,
       lng: 0,

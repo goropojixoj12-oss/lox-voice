@@ -54,6 +54,8 @@ export interface LocationRef {
   citySlug: string;
   district: string;
   districtSlug: string;
+  commune?: string;
+  communeSlug?: string;
   address: string;
   lat: number;
   lng: number;

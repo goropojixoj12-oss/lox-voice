@@ -33,6 +33,8 @@ type ListPropertyForm = {
   citySlug: string;
   district: string;
   districtSlug: string;
+  commune: string;
+  communeSlug: string;
   address: string;
   price: string;
   currency: string;
@@ -78,6 +80,8 @@ const defaultForm: ListPropertyForm = {
   citySlug: "phnom-penh",
   district: "BKK 1",
   districtSlug: "bkk-1",
+  commune: "",
+  communeSlug: "",
   address: "",
   price: "",
   currency: "USD",
@@ -130,7 +134,12 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
         case 0:
           return dealSelection != null;
         case 1:
-          return Boolean(form.city && form.district && form.address.length >= 3);
+          return Boolean(
+            form.city &&
+              form.district &&
+              form.commune.trim().length >= 2 &&
+              form.address.length >= 3,
+          );
         case 2:
           return Number(form.price) > 0;
         case 3:
@@ -172,6 +181,8 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
         citySlug: form.citySlug,
         district: form.district,
         districtSlug: form.districtSlug,
+        commune: form.commune,
+        communeSlug: form.communeSlug,
         address: form.address,
         imageUrl: form.imageUrl,
       }),
@@ -335,6 +346,18 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
               />
             </div>
             <div>
+              <Label htmlFor="commune">Commune</Label>
+              <Input
+                id="commune"
+                value={form.commune}
+                onChange={(e) => {
+                  update("commune", e.target.value);
+                  update("communeSlug", e.target.value.toLowerCase().replace(/\s+/g, "-"));
+                }}
+                placeholder="Sangkat / commune name"
+              />
+            </div>
+            <div>
               <Label htmlFor="address">Address / area note</Label>
               <Input
                 id="address"
@@ -478,7 +501,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
             <p className="text-lg font-semibold">{form.title || "Untitled listing"}</p>
             <p>{dealSelection ? formatDealSelection(dealSelection) : form.transactionType}</p>
             <p>
-              {form.address}, {form.district}, {form.city}
+              {form.address}
+              {form.commune ? `, ${form.commune}` : ""}, {form.district}, {form.city}
             </p>
             <p>
               {form.price} {form.currency}
