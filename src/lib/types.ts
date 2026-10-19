@@ -68,6 +68,14 @@ export interface PropertyImage {
   isCover?: boolean;
 }
 
+export interface PropertyVideo {
+  id: string;
+  url: string;
+  label?: string;
+  /** card_preview = autoplay loop on listing cards */
+  role?: "tour" | "card_preview";
+}
+
 export interface Property {
   id: string;
   slug: string;
@@ -89,6 +97,8 @@ export interface Property {
   furnishing: Furnishing | null;
   amenities: AmenityKey[];
   images: PropertyImage[];
+  videos?: PropertyVideo[];
+  cardPreviewVideoUrl?: string | null;
   location: LocationRef;
   agentId?: string;
   agencyId?: string;

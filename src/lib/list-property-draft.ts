@@ -1,9 +1,10 @@
 import type { DealSelection } from "@/components/dashboard/list-property-deal-step";
 import { DEFAULT_COUNTRY_CODE, isWorldCountryCode } from "@/data/countries";
+import type { ListingMediaItem } from "@/lib/list-property-media";
 import type { PropertyType, TransactionType } from "@/lib/types";
 
 export const LIST_PROPERTY_DRAFT_KEY = "seaps-list-property-draft";
-const DRAFT_VERSION = 1;
+const DRAFT_VERSION = 2;
 
 export type ListPropertyDraftForm = {
   transactionType: TransactionType;
@@ -35,6 +36,7 @@ export type ListPropertyDraft = {
   updatedAt: string;
   form: ListPropertyDraftForm;
   dealSelection: DealSelection | null;
+  mediaItems: ListingMediaItem[];
 };
 
 export const listPropertyDefaultForm: ListPropertyDraftForm = {
@@ -150,6 +152,31 @@ function parseForm(value: unknown): ListPropertyDraftForm {
   };
 }
 
+function parseMediaItems(value: unknown): ListingMediaItem[] {
+  if (!Array.isArray(value)) return [];
+  const out: ListingMediaItem[] = [];
+  for (const row of value) {
+    if (!isRecord(row)) continue;
+    const kind = row.kind;
+    const url = row.url;
+    const name = row.name;
+    const id = row.id;
+    if (kind !== "image" && kind !== "video") continue;
+    if (typeof url !== "string" || typeof name !== "string" || typeof id !== "string") continue;
+    out.push({
+      id,
+      kind,
+      url,
+      name,
+      storageKey: typeof row.storageKey === "string" ? row.storageKey : undefined,
+      size: typeof row.size === "number" ? row.size : undefined,
+      isCover: row.isCover === true,
+      isCardPreview: row.isCardPreview === true,
+    });
+  }
+  return out;
+}
+
 export function loadListPropertyDraft(): ListPropertyDraft | null {
   if (typeof window === "undefined") return null;
   try {
@@ -157,12 +184,14 @@ export function loadListPropertyDraft(): ListPropertyDraft | null {
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     if (!isRecord(parsed)) return null;
-    if (parsed.version !== DRAFT_VERSION) return null;
+    const version = parsed.version;
+    if (version !== 1 && version !== DRAFT_VERSION) return null;
     return {
       version: DRAFT_VERSION,
       updatedAt: pickString(parsed, "updatedAt", new Date().toISOString()),
       form: parseForm(parsed.form),
       dealSelection: parseDealSelection(parsed.dealSelection),
+      mediaItems: version === DRAFT_VERSION ? parseMediaItems(parsed.mediaItems) : [],
     };
   } catch {
     return null;
@@ -172,6 +201,7 @@ export function loadListPropertyDraft(): ListPropertyDraft | null {
 export function saveListPropertyDraft(payload: {
   form: ListPropertyDraftForm;
   dealSelection: DealSelection | null;
+  mediaItems: ListingMediaItem[];
 }): void {
   if (typeof window === "undefined") return;
   const draft: ListPropertyDraft = {
@@ -179,6 +209,7 @@ export function saveListPropertyDraft(payload: {
     updatedAt: new Date().toISOString(),
     form: payload.form,
     dealSelection: payload.dealSelection,
+    mediaItems: payload.mediaItems,
   };
   try {
     window.localStorage.setItem(LIST_PROPERTY_DRAFT_KEY, JSON.stringify(draft));

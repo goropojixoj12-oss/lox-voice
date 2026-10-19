@@ -16,6 +16,8 @@ import {
   listingCategoryToPropertyType,
   type DealSelection,
 } from "@/components/dashboard/list-property-deal-step";
+import { ListPropertyMediaStep } from "@/components/dashboard/list-property-media-step";
+import { ListingCardPreview, listingPreviewFromMedia } from "@/components/property/listing-card-preview";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import {
@@ -23,12 +25,7 @@ import {
   LIST_PROPERTY_STEP_LABELS,
   listPropertyStepPath,
 } from "@/lib/list-property-steps";
-import {
-  DEFAULT_COUNTRY_CODE,
-  getCountryByCode,
-  isWorldCountryCode,
-  worldCountries,
-} from "@/data/countries";
+import { getCountryByCode, isWorldCountryCode, worldCountries } from "@/data/countries";
 import {
   clearListPropertyDraft,
   listPropertyDefaultForm,
@@ -36,6 +33,10 @@ import {
   saveListPropertyDraft,
   type ListPropertyDraftForm,
 } from "@/lib/list-property-draft";
+import {
+  listingMediaToPropertyPayload,
+  type ListingMediaItem,
+} from "@/lib/list-property-media";
 import { cn } from "@/lib/utils";
 
 type ListPropertyForm = ListPropertyDraftForm;
@@ -43,6 +44,8 @@ type ListPropertyForm = ListPropertyDraftForm;
 type WizardContextValue = {
   form: ListPropertyForm;
   update: <K extends keyof ListPropertyForm>(key: K, value: ListPropertyForm[K]) => void;
+  mediaItems: ListingMediaItem[];
+  setMediaItems: (items: ListingMediaItem[]) => void;
   dealSelection: DealSelection | null;
   applyDealSelection: (next: DealSelection) => void;
   error: string;
@@ -66,6 +69,7 @@ function useListPropertyWizard() {
 export function ListPropertyWizardProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [form, setForm] = useState<ListPropertyForm>(listPropertyDefaultForm);
+  const [mediaItems, setMediaItems] = useState<ListingMediaItem[]>([]);
   const [dealSelection, setDealSelection] = useState<DealSelection | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const [error, setError] = useState("");
@@ -76,14 +80,15 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
     if (draft) {
       setForm(draft.form);
       setDealSelection(draft.dealSelection);
+      setMediaItems(draft.mediaItems);
     }
     setDraftReady(true);
   }, []);
 
   useEffect(() => {
     if (!draftReady) return;
-    saveListPropertyDraft({ form, dealSelection });
-  }, [dealSelection, draftReady, form]);
+    saveListPropertyDraft({ form, dealSelection, mediaItems });
+  }, [dealSelection, draftReady, form, mediaItems]);
 
   const update = useCallback(<K extends keyof ListPropertyForm>(key: K, value: ListPropertyForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -131,19 +136,20 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
             form.description.length >= 40
           );
         case 4:
-          return form.imageUrl.startsWith("http") || form.imageUrl.startsWith("/media/");
+          return mediaItems.some((m) => m.kind === "image");
         case 5:
           return form.contactName.length >= 2 && form.contactEmail.includes("@");
         default:
           return true;
       }
     },
-    [dealSelection, form],
+    [dealSelection, form, mediaItems],
   );
 
   const submit = useCallback(async () => {
     setLoading(true);
     setError("");
+    const media = listingMediaToPropertyPayload(mediaItems, form.title || "Listing");
     const res = await fetch("/api/properties", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -167,7 +173,9 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
         commune: form.commune,
         communeSlug: form.communeSlug,
         address: form.address,
-        imageUrl: form.imageUrl,
+        images: media.images,
+        videos: media.videos,
+        cardPreviewVideoUrl: media.cardPreviewVideoUrl,
       }),
     });
     setLoading(false);
@@ -183,12 +191,14 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
     const data = (await res.json()) as { listing: { slug: string } };
     clearListPropertyDraft();
     router.push(`/property/${data.listing.slug}`);
-  }, [form, router]);
+  }, [form, mediaItems, router]);
 
   const value = useMemo(
     () => ({
       form,
       update,
+      mediaItems,
+      setMediaItems,
       dealSelection,
       applyDealSelection,
       error,
@@ -204,6 +214,7 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
       error,
       form,
       loading,
+      mediaItems,
       submit,
       update,
       validateStep,
@@ -218,6 +229,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
   const {
     form,
     update,
+    mediaItems,
+    setMediaItems,
     dealSelection,
     applyDealSelection,
     error,
@@ -460,17 +473,57 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
         ) : null}
 
         {step === 4 ? (
-          <div>
-            <Label htmlFor="imageUrl">Cover image URL</Label>
-            <Input
-              id="imageUrl"
-              value={form.imageUrl}
-              onChange={(e) => update("imageUrl", e.target.value)}
+          <div className="space-y-4">
+            <ListPropertyMediaStep
+              items={mediaItems}
+              onChange={setMediaItems}
+              listingTitle={form.title}
             />
-            <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Local path like /media/photos/….jpg or a full https URL. Recommended: under 5MB,
-              jpg/png/webp.
-            </p>
+            {mediaItems.length > 0 ? (
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                  Card preview (site-wide)
+                </p>
+                <div className="relative aspect-[4/3] max-w-sm overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)]">
+                  <ListingCardPreview
+                    property={{
+                      ...listingPreviewFromMedia(form.title || "Listing", mediaItems),
+                      id: "draft",
+                      slug: "draft",
+                      summary: "",
+                      description: "",
+                      transactionType: form.transactionType,
+                      propertyType: form.propertyType,
+                      status: "draft",
+                      verification: "unverified",
+                      sellerType: "agent",
+                      price: 0,
+                      currency: form.currency,
+                      pricePeriod: null,
+                      bedrooms: null,
+                      bathrooms: null,
+                      areaSqm: null,
+                      landSqm: null,
+                      furnishing: null,
+                      amenities: [],
+                      location: {
+                        country: "",
+                        countrySlug: "",
+                        city: form.city,
+                        citySlug: form.citySlug,
+                        district: form.district,
+                        districtSlug: form.districtSlug,
+                        address: form.address,
+                        lat: 0,
+                        lng: 0,
+                      },
+                      publishedAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString(),
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
 

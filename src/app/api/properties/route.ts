@@ -51,7 +51,27 @@ const createSchema = z.object({
   commune: z.string().min(2),
   communeSlug: z.string().min(2),
   address: z.string().min(3),
-  imageUrl: z.string().url(),
+  images: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        url: z.string().min(1),
+        alt: z.string().min(1),
+        isCover: z.boolean().optional(),
+      }),
+    )
+    .min(1),
+  videos: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        url: z.string().min(1),
+        label: z.string().optional(),
+        role: z.enum(["tour", "card_preview"]).optional(),
+      }),
+    )
+    .optional(),
+  cardPreviewVideoUrl: z.string().nullable().optional(),
 });
 
 export async function POST(request: Request) {
@@ -92,14 +112,10 @@ export async function POST(request: Request) {
     landSqm: null,
     furnishing: null,
     amenities: [],
-    images: [
-      {
-        id: "cover",
-        url: data.imageUrl,
-        alt: data.title,
-        isCover: true,
-      },
-    ],
+    images: data.images,
+    videos: data.videos,
+    cardPreviewVideoUrl: data.cardPreviewVideoUrl ?? null,
+    hasVideoTour: Boolean(data.videos?.length),
     location: {
       country: countryRow.name,
       countrySlug: countrySlugFromName(countryRow.name),

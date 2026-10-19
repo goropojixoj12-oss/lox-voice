@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ListingCardPreview } from "@/components/property/listing-card-preview";
 import { Bath, BedDouble, LandPlot, Maximize2 } from "lucide-react";
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
@@ -20,7 +20,6 @@ export function PropertyCard({
   variant?: "grid" | "list" | "editorial";
   userId?: string;
 }) {
-  const cover = property.images.find((i) => i.isCover) ?? property.images[0];
   const href = `/property/${property.slug}`;
 
   if (variant === "editorial") {
@@ -28,11 +27,9 @@ export function PropertyCard({
       <article className="seaps-card group relative h-full overflow-hidden rounded-[var(--radius-xl)] text-white">
         <Link href={href} className="block">
           <div className="relative aspect-[16/11]">
-            <Image
-              src={cover.url}
-              alt={cover.alt}
-              fill
-              className="object-cover transition duration-700 group-hover:scale-[1.03]"
+            <ListingCardPreview
+              property={property}
+              className="transition duration-700 group-hover:scale-[1.03]"
               sizes="(max-width:768px) 100vw, 33vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
@@ -59,12 +56,10 @@ export function PropertyCard({
       )}
     >
       <div className={cn("relative aspect-[4/3]", variant === "list" && "md:aspect-auto md:min-h-full")}>
-        <Link href={href} className="absolute inset-0">
-          <Image
-            src={cover.url}
-            alt={cover.alt}
-            fill
-            className="object-cover transition duration-500 group-hover:scale-[1.02]"
+        <Link href={href} className="absolute inset-0 overflow-hidden">
+          <ListingCardPreview
+            property={property}
+            className="transition duration-500 group-hover:scale-[1.02]"
             sizes="(max-width:768px) 100vw, 33vw"
           />
         </Link>
