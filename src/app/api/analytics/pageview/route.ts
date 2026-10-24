@@ -7,6 +7,8 @@ import {
 import { isAnalyticsPath } from "@/lib/analytics-paths";
 import { appendPageView } from "@/lib/admin-store";
 
+export const runtime = "nodejs";
+
 const schema = z.object({
   path: z.string().min(1).max(512),
   sessionKey: z.string().min(1).max(64),
@@ -40,11 +42,16 @@ export async function POST(request: Request) {
     sessionKey = decodeURIComponent(cookieSid);
   }
 
-  await appendPageView({
-    path: parsed.data.path,
-    sessionKey,
-    referrer: parsed.data.referrer,
-  });
+  try {
+    await appendPageView({
+      path: parsed.data.path,
+      sessionKey,
+      referrer: parsed.data.referrer,
+    });
+  } catch (error) {
+    console.error("[analytics/pageview] persist failed", error);
+    return NextResponse.json({ error: "Analytics storage unavailable" }, { status: 503 });
+  }
 
   const res = NextResponse.json({ ok: true });
   res.cookies.set(ANALYTICS_SESSION_COOKIE, sessionKey, {

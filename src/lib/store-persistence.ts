@@ -118,12 +118,16 @@ type BlobCommandAuth = {
 
 /** Options for @vercel/blob when token and/or OIDC + store id are configured. */
 function blobCommandAuth(): BlobCommandAuth {
-  const token = blobToken();
-  if (token) return { token };
   const storeId = blobStoreId();
+  const token = blobToken();
+  if (token) {
+    return storeId ? { token, storeId } : { token };
+  }
   if (!storeId) return {};
   const oidcToken = envTrim("VERCEL_OIDC_TOKEN");
-  return oidcToken ? { storeId, oidcToken } : { storeId };
+  if (oidcToken) return { storeId, oidcToken };
+  if (process.env.VERCEL === "1") return { storeId };
+  return {};
 }
 
 export function resolveStorePersistenceBackend(): StorePersistenceBackend {
