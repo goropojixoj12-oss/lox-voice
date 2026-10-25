@@ -3,18 +3,11 @@ import Link from "next/link";
 import { buildAnalyticsReport } from "@/lib/admin-analytics";
 import { getPageViewEvents, getAdminTasks } from "@/lib/admin-store";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { getRuntimeListings } from "@/lib/store";
-
 export const metadata: Metadata = { title: "Executive analytics" };
 
 export default async function AdminAnalyticsPage() {
-  const [events, tasks, runtime] = await Promise.all([
-    getPageViewEvents(),
-    getAdminTasks(),
-    getRuntimeListings(),
-  ]);
+  const [events, tasks] = await Promise.all([getPageViewEvents(), getAdminTasks()]);
   const report = buildAnalyticsReport(events, 30);
-  const pending = runtime.filter((l) => l.status === "pending").length;
   const openTasks = tasks.filter((t) => t.status !== "done").length;
 
   return (
@@ -41,7 +34,7 @@ export default async function AdminAnalyticsPage() {
           ["Page views", report.totalViews],
           ["Unique sessions", report.uniqueSessions],
           ["Avg. depth", report.avgDepth],
-          ["Pending listings", pending],
+          ["Open tasks", openTasks],
         ].map(([label, value]) => (
           <div key={String(label)} className="seaps-card rounded-[var(--radius-lg)] p-4">
             <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">{label}</p>
@@ -99,9 +92,6 @@ export default async function AdminAnalyticsPage() {
             </Link>
             <Link href={adminDeskPath("legal")} className="font-semibold text-[var(--color-accent-soft)] hover:underline">
               Legal library →
-            </Link>
-            <Link href={adminDeskPath("listings")} className="font-semibold text-[var(--color-accent-soft)] hover:underline">
-              Moderate {pending} pending listing{pending === 1 ? "" : "s"} →
             </Link>
             <p className="text-[var(--color-muted)]">{openTasks} open staff task(s)</p>
           </div>
