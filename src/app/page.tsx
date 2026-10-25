@@ -48,7 +48,7 @@ export default async function HomePage() {
             aside={
               <>
                 <HeroPromoButtons />
-                <MainSearch stretch className="min-h-0" />
+                <MainSearch />
               </>
             }
           />
