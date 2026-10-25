@@ -20,6 +20,7 @@ export default async function BuyResidentialPage({ searchParams }: Props) {
     <CatalogPage
       searchParams={searchParams}
       deal="sale"
+      visibility="cleared"
       title="Homes for sale"
       description="Sale inventory including apartments, villas, and project units."
     />

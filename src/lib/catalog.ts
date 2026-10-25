@@ -8,11 +8,23 @@ export async function getAllProperties() {
   return [...runtime, ...properties];
 }
 
+export type CatalogVisibility = "normal" | "cleared";
+
 export async function runCatalogSearch(
   params: Record<string, string | string[] | undefined>,
   defaults?: Partial<SearchFilters>,
+  options?: { visibility?: CatalogVisibility },
 ) {
   const filters = { ...parseSearchParams(params), ...defaults };
+  if (options?.visibility === "cleared") {
+    return {
+      items: [],
+      total: 0,
+      page: filters.page ?? 1,
+      totalPages: 0,
+      filters,
+    };
+  }
   const source = await getAllProperties();
   return { ...searchProperties(filters, source), filters };
 }

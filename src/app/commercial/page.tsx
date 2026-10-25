@@ -19,6 +19,7 @@ export default async function CommercialPage({ searchParams }: Props) {
   return (
     <CatalogPage
       searchParams={searchParams}
+      visibility="cleared"
       title="Commercial property"
       description="Start from all inventory, then filter to office, retail, warehouse, or commercial."
     />
