@@ -1,4 +1,5 @@
 import type { Property } from "@/lib/types";
+import { isPublicListing } from "@/lib/listing-access";
 import { photoImage } from "@/lib/media";
 
 const img = (id: string, alt: string) => photoImage(id, alt);
@@ -33,7 +34,7 @@ export const properties: Property[] = [
       "A renovated two-bedroom apartment in Boeng Keng Kang 1. Tall windows, updated kitchen, and a balcony suited to evening breezes. Walkable to cafés along Street 308 and the riverside.",
     transactionType: "sale",
     propertyType: "apartment",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 185000,
@@ -69,7 +70,7 @@ export const properties: Property[] = [
       "A spacious villa in Toul Kork with a private garden, covered parking, and separate staff quarters. Ideal for families needing space and a quieter residential street.",
     transactionType: "sale",
     propertyType: "villa",
-    status: "published",
+    status: "draft",
     verification: "premium",
     sellerType: "agent",
     price: 485000,
@@ -105,7 +106,7 @@ export const properties: Property[] = [
       "Long-term rental with housekeeping options available through building management. Compact layout, full kitchenette, and strong walkability to Daun Penh offices.",
     transactionType: "rent",
     propertyType: "apartment",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 950,
@@ -140,7 +141,7 @@ export const properties: Property[] = [
       "A tropical villa in Svay Dangkum with outdoor dining and a private plunge pool. Minutes from Pub Street without the late-night noise of the core tourist block.",
     transactionType: "sale",
     propertyType: "villa",
-    status: "published",
+    status: "draft",
     verification: "premium",
     sellerType: "agent",
     price: 390000,
@@ -176,7 +177,7 @@ export const properties: Property[] = [
       "A practical condo for professionals working in Siem Reap. Includes parking and shared pool access within the borey.",
     transactionType: "rent",
     propertyType: "condo",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 780,
@@ -211,7 +212,7 @@ export const properties: Property[] = [
       "An Otres apartment oriented toward afternoon sea breeze. Suitable as a primary home or managed rental with clear building rules.",
     transactionType: "sale",
     propertyType: "condo",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 165000,
@@ -280,7 +281,7 @@ export const properties: Property[] = [
       "An open commercial suite in Chamkarmon suited to studios and small teams. Natural light from two elevations and a small meeting room.",
     transactionType: "rent",
     propertyType: "office",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 2200,
@@ -315,7 +316,7 @@ export const properties: Property[] = [
       "A classic shophouse shell near Daun Penh retail flow. Ground floor open for retail, upper floors for living or office conversion subject to permits.",
     transactionType: "sale",
     propertyType: "retail",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 420000,
@@ -350,7 +351,7 @@ export const properties: Property[] = [
       "A warehouse unit with roller access and mezzanine office. Suitable for light distribution serving southern Phnom Penh.",
     transactionType: "rent",
     propertyType: "warehouse",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 2800,
@@ -385,7 +386,7 @@ export const properties: Property[] = [
       "A rectangular plot positioned for residential or low-rise development subject to municipal zoning confirmation.",
     transactionType: "sale",
     propertyType: "land",
-    status: "published",
+    status: "draft",
     verification: "unverified",
     sellerType: "owner",
     price: 280000,
@@ -419,7 +420,7 @@ export const properties: Property[] = [
       "A townhouse set back from the main BKK 1 arteries, with a rooftop terrace and flexible ground-floor room for guests or work.",
     transactionType: "sale",
     propertyType: "townhouse",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 335000,
@@ -489,7 +490,7 @@ export const properties: Property[] = [
       "A character house with high ceilings and a shaded courtyard. Close to Battambang’s central services and schools.",
     transactionType: "sale",
     propertyType: "house",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "owner",
     price: 175000,
@@ -523,7 +524,7 @@ export const properties: Property[] = [
       "A breezy riverfront house for long-term tenants who want Kampot’s slower pace and evening promenade walks.",
     transactionType: "rent",
     propertyType: "house",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 650,
@@ -558,7 +559,7 @@ export const properties: Property[] = [
       "A commercial shell prepared for café or boutique use near Kep’s coastal visitor routes. Licensing remains the tenant’s responsibility.",
     transactionType: "rent",
     propertyType: "commercial",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 900,
@@ -593,7 +594,7 @@ export const properties: Property[] = [
       "An off-plan two-bedroom apartment inside Tonle Bassac Residences. Open living plan with balcony and building amenities listed on the project page.",
     transactionType: "sale",
     propertyType: "project_unit",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "developer",
     price: 168000,
@@ -629,7 +630,7 @@ export const properties: Property[] = [
       "Villa unit B3 in Angkor Green Courts with shared gardens and compound security. Construction stage and payment notes are on the project page.",
     transactionType: "sale",
     propertyType: "project_unit",
-    status: "published",
+    status: "draft",
     verification: "premium",
     sellerType: "developer",
     price: 265000,
@@ -665,7 +666,7 @@ export const properties: Property[] = [
       "A compact link house positioned for long-term tenants. Clear layout and low carrying complexity for landlords.",
     transactionType: "sale",
     propertyType: "townhouse",
-    status: "published",
+    status: "draft",
     verification: "verified",
     sellerType: "agent",
     price: 118000,
@@ -700,7 +701,7 @@ export const properties: Property[] = [
       "A penthouse with wraparound terrace and separated entertaining rooms. Flagship listing for premium buyers seeking central Phnom Penh.",
     transactionType: "sale",
     propertyType: "condo",
-    status: "published",
+    status: "draft",
     verification: "premium",
     sellerType: "agent",
     price: 780000,
@@ -738,15 +739,15 @@ export function getPropertyById(id: string) {
 }
 
 export function getPropertiesByAgency(agencyId: string) {
-  return properties.filter((p) => p.agencyId === agencyId && p.status === "published");
+  return properties.filter((p) => p.agencyId === agencyId && isPublicListing(p));
 }
 
 export function getPropertiesByAgent(agentId: string) {
-  return properties.filter((p) => p.agentId === agentId && p.status === "published");
+  return properties.filter((p) => p.agentId === agentId && isPublicListing(p));
 }
 
 export function getPropertiesByProject(projectId: string) {
-  return properties.filter((p) => p.projectId === projectId && p.status === "published");
+  return properties.filter((p) => p.projectId === projectId && isPublicListing(p));
 }
 
 export function getRelatedProperties(property: Property, limit = 3) {
@@ -754,7 +755,7 @@ export function getRelatedProperties(property: Property, limit = 3) {
     .filter(
       (p) =>
         p.id !== property.id &&
-        p.status === "published" &&
+        isPublicListing(p) &&
         (p.location.citySlug === property.location.citySlug ||
           p.propertyType === property.propertyType),
     )

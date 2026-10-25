@@ -3,6 +3,7 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
+import { isPublicListing } from "@/lib/listing-access";
 import { saveRuntimeListing } from "@/lib/store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import { slugify } from "@/lib/utils";
@@ -12,7 +13,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get("city");
   const all = await getAllProperties();
-  const published = all.filter((p) => p.status === "published");
+  const published = all.filter((p) => isPublicListing(p));
   const items = city ? published.filter((p) => p.location.citySlug === city) : published;
   return NextResponse.json({ items, total: items.length });
 }

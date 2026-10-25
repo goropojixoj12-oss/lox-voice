@@ -31,7 +31,7 @@ import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
   const all = await getAllProperties();
-  return all.filter((p) => p.status === "published").map((p) => ({ slug: p.slug }));
+  return all.filter((p) => isPublicListing(p)).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({

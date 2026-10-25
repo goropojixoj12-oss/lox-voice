@@ -1,4 +1,5 @@
 import { properties } from "@/data/properties";
+import { isPublicListing } from "@/lib/listing-access";
 import type { Property, PropertyType, SearchFilters } from "@/lib/types";
 
 const COMMERCIAL_PROPERTY_TYPES = new Set<PropertyType>([
@@ -99,7 +100,7 @@ export function filtersToQuery(filters: SearchFilters): Record<string, string> {
 }
 
 export function searchProperties(filters: SearchFilters, source: Property[] = properties) {
-  let results = source.filter((p) => p.status === "published");
+  let results = source.filter((p) => isPublicListing(p));
 
   if (filters.deal && filters.deal !== "all") {
     results = results.filter((p) => p.transactionType === filters.deal);
