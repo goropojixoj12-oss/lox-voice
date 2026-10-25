@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AgentAvatar } from "@/components/agency/agent-avatar";
 import { InquiryForm } from "@/components/forms/inquiry-form";
+import { PropertyGrid } from "@/components/property/property-card";
 import { agents, getAgent } from "@/data/agencies";
+import { getPropertiesByAgent } from "@/data/properties";
 import { getSession } from "@/lib/auth";
 import { resolveAgentPublicName } from "@/lib/agent-display";
 
@@ -29,6 +31,7 @@ export default async function AgentDetailPage({
   const { slug } = await params;
   const agent = getAgent(slug);
   if (!agent) notFound();
+  const listings = getPropertiesByAgent(agent.id);
   const session = await getSession();
   const displayName = await resolveAgentPublicName(agent);
 
@@ -61,6 +64,12 @@ export default async function AgentDetailPage({
             <InquiryForm propertyId={agent.id} propertyTitle={`Inquiry for ${agent.name}`} />
           </div>
         </aside>
+        <section>
+          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+            Listings
+          </h2>
+          <PropertyGrid items={listings} userId={session?.id} />
+        </section>
       </div>
     </div>
   );
