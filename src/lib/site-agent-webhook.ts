@@ -11,6 +11,7 @@ export function notifySiteAgentWebhook(request: SiteChangeRequest): void {
     ? `${siteUrl}/api/admin/site-requests/file?key=${encodeURIComponent(request.attachment.storageKey)}`
     : null;
 
+  const patchUrl = `${siteUrl}/api/admin/site-requests/${request.id}`;
   const body = {
     id: request.id,
     message: request.message,
@@ -19,11 +20,31 @@ export function notifySiteAgentWebhook(request: SiteChangeRequest): void {
     createdByName: request.createdByName,
     attachmentUrl,
     pullUrl: `${siteUrl}/api/admin/site-requests/pull`,
+    patchUrl,
+    repository: "https://github.com/goropojixoj12-oss/lox-voice",
+    branch: "main",
+    task: [
+      "SEAPS site change (public UI and signed-in flows only).",
+      `Request: ${request.message}`,
+      attachmentUrl ? `Screenshot: ${attachmentUrl}` : null,
+      "Implement on GitHub goropojixoj12-oss/lox-voice branch main, push github main for Vercel production.",
+      `When done, PATCH ${patchUrl} with Bearer SITE_AGENT_SECRET JSON: {"status":"done","commitUrl":"<github commit or deploy url>","agentNote":"..."}.`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
   };
+
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const webhookBearer =
+    process.env.SITE_AGENT_WEBHOOK_BEARER?.trim() ??
+    process.env.CURSOR_AUTOMATION_WEBHOOK_KEY?.trim();
+  if (webhookBearer) {
+    headers.Authorization = `Bearer ${webhookBearer}`;
+  }
 
   void fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   }).catch((error) => {
     console.error("[site-agent] webhook failed", error);
