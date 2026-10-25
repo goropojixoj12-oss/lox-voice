@@ -34,7 +34,7 @@ export default async function HomePage() {
             }
             copy={
               <>
-                <h1 className="max-w-2xl text-xl font-medium leading-snug text-white/92 md:text-2xl lg:mt-1">
+                <h1 className="max-w-2xl text-xl font-medium leading-snug text-white/92 md:text-2xl">
                   is a multi-Award-Winning Real Estate, Property Management and Investment Company,
                   based in South East Asia.
                 </h1>
