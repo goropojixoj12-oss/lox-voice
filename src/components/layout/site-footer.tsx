@@ -25,7 +25,7 @@ export function SiteFooter() {
         <div className="min-w-0">
           <SeapsLogo size="footer" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
-            South East Asia Property Services Co. Ltd
+            {brand.fullName}
             <br />
             Reg. Co. E-15-183 / 00028074
           </p>
