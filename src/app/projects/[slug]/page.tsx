@@ -3,10 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InquiryForm } from "@/components/forms/inquiry-form";
+import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
 import { amenityLabels } from "@/lib/labels";
 import { getProjectBySlug, projects } from "@/data/projects";
-import { propertyListingsEnabled } from "@/lib/listings-policy";
+import { getPropertiesByProject } from "@/data/properties";
 import { formatPrice } from "@/lib/utils";
 import { getSession } from "@/lib/auth";
 
@@ -33,6 +34,7 @@ export default async function ProjectDetailPage({
   const { slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) notFound();
+  const units = getPropertiesByProject(project.id);
   const session = await getSession();
   const cover = project.images[0];
 
@@ -117,25 +119,32 @@ export default async function ProjectDetailPage({
             </div>
           </section>
 
-          {propertyListingsEnabled() ? (
-            <section>
-              <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
-                Available units
-              </h2>
+          <section>
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
+              Available units
+            </h2>
+            {units.length ? (
+              <PropertyGrid items={units} userId={session?.id} />
+            ) : (
               <p className="text-[var(--color-muted)]">
-                Use the inquiry form for availability.
+                No individual units published yet. Use the inquiry form for availability.
               </p>
-            </section>
-          ) : null}
+            )}
+          </section>
 
           <section>
             <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Location
             </h2>
-            <PropertyMap items={[]} activeId={undefined} />
-            <p className="mt-2 text-sm text-[var(--color-muted)]">
-              {project.location.district}, {project.location.city} · {project.location.address}
-            </p>
+            <PropertyMap
+              items={units.length ? units : []}
+              activeId={units[0]?.id}
+            />
+            {!units.length ? (
+              <p className="mt-2 text-sm text-[var(--color-muted)]">
+                {project.location.district}, {project.location.city} · {project.location.address}
+              </p>
+            ) : null}
           </section>
         </div>
 
