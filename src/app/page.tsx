@@ -59,7 +59,7 @@ export default async function HomePage() {
       <Section className="pb-24">
         <div className="mx-auto max-w-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] md:max-w-2xl md:p-8">
           <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-            Personalise Your Experience with a Dedicated SEAPS Professional.
+            Personalise Your Experience with a Dedicated SEAPS Specialist.
           </h2>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
             SEAPS Agents/Representatives pride themselves on providing individual clients with a

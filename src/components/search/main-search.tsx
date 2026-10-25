@@ -157,7 +157,7 @@ export function MainSearch({
         </div>
         <div className={cn("md:col-span-6", stretch && "mt-auto pt-1")}>
           <Button type="submit" className="w-full md:w-auto" size="lg">
-            Search properties
+            Search Properties.
           </Button>
         </div>
       </form>

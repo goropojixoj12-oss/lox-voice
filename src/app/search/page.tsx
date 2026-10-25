@@ -11,7 +11,7 @@ type Props = {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   return catalogRouteMetadata({
     path: "/search",
-    title: "Search properties",
+    title: "Search Properties.",
     description: "Filter SEAPS listings by deal type, city, price, amenities, and more.",
     searchParams: await searchParams,
   });
@@ -31,7 +31,7 @@ export default async function SearchRoute({ searchParams }: Props) {
     <CatalogPage
       searchParams={searchParams}
       visibility={catalogVisibilityForDeal(deal)}
-      title="Search properties"
+      title="Search Properties."
       description="Combine filters freely. Results update in the URL so you can share or save the query."
     />
   );
