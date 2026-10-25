@@ -1,14 +1,15 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { brand } from "@/config/brand";
 
 /** Footer map slot — thin gold frame with Google Maps embed and link. */
-export function FooterLocationMap() {
+export function FooterLocationMap({ className }: { className?: string }) {
   const embedUrl = brand.googleMapsEmbedUrl;
   const mapsUrl = brand.googleMapsPlaceUrl;
   const { officeAddress } = brand;
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className={cn("flex w-full flex-col gap-3", className)}>
       <div
         className="seaps-gold-border overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-accent)]/45 bg-[rgba(5,13,24,0.6)] shadow-[inset_0_0_24px_rgba(0,0,0,0.35)]"
         aria-label="SEAPS office location on Google Maps"
@@ -35,7 +36,7 @@ export function FooterLocationMap() {
           </p>
         </Link>
       </div>
-      <address className="space-y-1 text-sm not-italic leading-relaxed text-white">
+      <address className="space-y-1.5 text-sm not-italic leading-relaxed text-white">
         <p>Address: {officeAddress.line1}</p>
         <p>{officeAddress.line2}</p>
         <p>{officeAddress.cityLine}</p>
