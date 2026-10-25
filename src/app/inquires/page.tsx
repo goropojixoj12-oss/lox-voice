@@ -1,22 +1,3 @@
-import type { Metadata } from "next";
-import { PageFeedbackForm } from "@/components/forms/page-feedback-form";
-import { Section } from "@/components/shared/section";
+import ContactPage from "@/app/contact/page";
 
-export const metadata: Metadata = {
-  title: "All inquiries",
-  description: "Send an inquiry to SEAPS.",
-};
-
-export default function InquiresPage() {
-  return (
-    <Section>
-      <div className="mx-auto max-w-xl">
-        <PageFeedbackForm
-          formId="inquires"
-          inquiryPropertyId="inquires-page"
-          inquiryPropertyTitle="All inquiries"
-        />
-      </div>
-    </Section>
-  );
-}
+export default ContactPage;
