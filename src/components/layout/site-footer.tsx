@@ -26,7 +26,7 @@ export function SiteFooter() {
         <div className="flex min-w-0 max-w-sm flex-col items-center gap-5 text-center">
           <SeapsLogo size="footer" />
           <div className="flex w-full flex-col gap-3 text-sm leading-relaxed text-[var(--color-muted)]">
-            <p>{brand.fullName}</p>
+            <p className="seaps-gold-text font-medium">{brand.fullName}</p>
             <p>Reg. Co. E-15-183 / 00028074</p>
             <p>
               <a

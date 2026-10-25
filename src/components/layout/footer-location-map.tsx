@@ -36,7 +36,7 @@ export function FooterLocationMap({ className }: { className?: string }) {
           </p>
         </Link>
       </div>
-      <address className="space-y-1.5 text-center text-sm not-italic leading-relaxed text-white">
+      <address className="space-y-1.5 text-left text-sm not-italic leading-relaxed text-white">
         <p>Address: {officeAddress.line1}</p>
         <p>{officeAddress.line2}</p>
         <p>{officeAddress.cityLine}</p>
