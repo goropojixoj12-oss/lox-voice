@@ -13,7 +13,7 @@ type SeapsLogoProps = {
 const sizeClass: Record<NonNullable<SeapsLogoProps["size"]>, string> = {
   header: "h-10 w-[62px] sm:h-11 sm:w-[70px]",
   hero: "h-14 w-[90px] sm:h-16 sm:w-[102px]",
-  footer: "h-10 w-[64px]",
+  footer: "h-11 w-[70px]",
 };
 
 export function SeapsLogo({ className, size = "header" }: SeapsLogoProps) {
