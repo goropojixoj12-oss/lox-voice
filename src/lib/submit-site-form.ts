@@ -30,9 +30,18 @@ export async function submitSiteForm(form: HTMLFormElement): Promise<SubmitSiteF
     try {
       const body = (await res.json()) as {
         error?: string;
+        code?: string;
         issues?: { path: (string | number)[]; message: string }[];
       };
-      if (body.error) error = body.error;
+      if (body.code === "smtp_not_configured") {
+        error =
+          "Отправка писем на сервере не настроена (нет SMTP_PASS в Vercel). Администратору: см. docs/smtp-forms-setup-ru.md";
+      } else if (body.code === "smtp_send_failed") {
+        error =
+          "Письмо не удалось отправить через SMTP. Проверьте пароль ящика internal@seaps.asia и настройки Hostinger.";
+      } else if (body.error) {
+        error = body.error;
+      }
       issues = body.issues;
     } catch {
       /* ignore */
