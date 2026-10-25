@@ -1,7 +1,7 @@
 import { brand } from "@/config/brand";
 import type { SiteChangeRequest } from "@/lib/site-agent-types";
 
-/** Optional: POST JSON to SITE_AGENT_WEBHOOK_URL when a request is queued (e.g. Cursor Automation). */
+/** Optional: POST JSON to SITE_AGENT_WEBHOOK_URL when a request is queued. */
 export function notifySiteAgentWebhook(request: SiteChangeRequest): void {
   const url = process.env.SITE_AGENT_WEBHOOK_URL?.trim();
   if (!url) return;

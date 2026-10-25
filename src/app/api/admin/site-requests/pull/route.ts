@@ -4,7 +4,7 @@ import { authorizeSiteAgent } from "@/lib/site-agent-auth";
 import { claimNextSiteChangeRequest } from "@/lib/site-agent-store";
 
 /**
- * Cloud agent: `GET` with `Authorization: Bearer $SITE_AGENT_SECRET` (or `CRON_SECRET`).
+ * `GET` with `Authorization: Bearer $SITE_AGENT_SECRET` (or `CRON_SECRET`).
  * Returns the oldest queued UI/auth change request and marks it `in_progress`.
  */
 export async function GET(request: Request) {

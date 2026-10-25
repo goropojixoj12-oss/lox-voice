@@ -4,7 +4,7 @@ export type SiteAgentAuth =
   | { ok: true; viaAdminSession: boolean }
   | { ok: false };
 
-/** Admin session or Bearer `SITE_AGENT_SECRET` / `CRON_SECRET` (for cloud agent pull). */
+/** Admin session or Bearer `SITE_AGENT_SECRET` / `CRON_SECRET` (for automated pull). */
 export async function authorizeSiteAgent(request: Request): Promise<SiteAgentAuth> {
   const auth = request.headers.get("authorization");
   const bearer = auth?.startsWith("Bearer ") ? auth.slice(7) : null;
