@@ -49,7 +49,7 @@ export function SiteHeader({
             <span className="relative inline-block leading-none">
               <SeapsLogo size="header" />
               <span
-                className="seaps-brand-subtitle pointer-events-none absolute bottom-[6%] left-1/2 w-[108%] -translate-x-1/2 text-center text-[0.34rem] font-semibold uppercase leading-none tracking-[0.04em] sm:text-[0.38rem]"
+                className="seaps-brand-subtitle pointer-events-none absolute bottom-[6%] left-1/2 w-[108%] -translate-x-1/2 text-center text-[0.28rem] font-semibold uppercase leading-none tracking-[0.04em] sm:text-[0.32rem]"
                 aria-hidden
               >
                 Co. Ltd.

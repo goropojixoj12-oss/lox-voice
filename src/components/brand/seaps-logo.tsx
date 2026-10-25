@@ -11,9 +11,9 @@ type SeapsLogoProps = {
 
 /** Intrinsic asset ratio ~488×310 */
 const sizeClass: Record<NonNullable<SeapsLogoProps["size"]>, string> = {
-  header: "h-10 w-[62px] sm:h-11 sm:w-[70px]",
-  hero: "h-14 w-[90px] sm:h-16 sm:w-[102px]",
-  footer: "h-[80px] w-[126px]",
+  header: "h-8 w-[50px] sm:h-9 sm:w-[56px]",
+  hero: "h-12 w-[78px] sm:h-[3.25rem] sm:w-[88px]",
+  footer: "h-[52px] w-[82px]",
 };
 
 export function SeapsLogo({ className, size = "header" }: SeapsLogoProps) {

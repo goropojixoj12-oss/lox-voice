@@ -26,9 +26,9 @@ export default async function HomePage() {
               <div className="notranslate flex w-full flex-col items-center text-center">
                 <SeapsLogo
                   size="hero"
-                  className="h-[6.25rem] w-[10rem] sm:h-[7rem] sm:w-[11.25rem] md:h-[8rem] md:w-[12.75rem]"
+                  className="h-[3.5rem] w-[5.5rem] sm:h-[4rem] sm:w-[6.25rem] md:h-[4.5rem] md:w-[7rem]"
                 />
-                <p className="seaps-brand-subtitle mt-3 text-base uppercase tracking-[0.18em] sm:mt-4 sm:text-lg md:text-xl lg:text-2xl">
+                <p className="seaps-brand-subtitle mt-2 text-[0.65rem] uppercase tracking-[0.16em] sm:mt-3 sm:text-xs">
                   {brand.fullName}
                 </p>
               </div>
@@ -62,7 +62,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] md:max-w-2xl md:p-8">
           <h2 className="text-center font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             <span className="block">Personalise Your Experience with a</span>
-            <span className="block">Dedicated SEAPS Specialist.</span>
+            <span className="block">Dedicated SEAPS Specialist</span>
           </h2>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
             SEAPS Agents/Representatives pride themselves on providing individual clients with a
