@@ -11,7 +11,7 @@ import { brand } from "@/config/brand";
 export default async function HomePage() {
   return (
     <>
-      <section className="relative z-0 min-h-[min(84vh,780px)] overflow-hidden">
+      <section className="relative z-0 min-h-[min(82vh,760px)] overflow-hidden">
         <BackgroundVideo
           eager
           src="/videos/hero-banner.mp4"
@@ -19,23 +19,25 @@ export default async function HomePage() {
           poster="/videos/hero-banner.jpg"
           overlayClassName="bg-[linear-gradient(105deg,rgba(7,17,31,0.9)_0%,rgba(11,28,51,0.7)_48%,rgba(11,28,51,0.4)_100%)]"
         />
-        <div className="relative mx-auto max-w-7xl px-4 pt-10 pb-14 sm:px-6 sm:pt-12 lg:px-8 lg:pt-14 lg:pb-16">
+        <div className="relative mx-auto max-w-7xl px-4 pt-9 pb-12 sm:px-6 sm:pt-11 lg:px-8 lg:pt-12 lg:pb-14">
           <HeroMainLayout
             className="reveal"
             copyLead={
-              <div className="notranslate flex w-full max-w-2xl flex-col items-start text-left text-justify hyphens-auto">
-                <SeapsLogo
-                  size="hero"
-                  className="h-[4.05rem] w-[6.4rem] sm:h-[4.55rem] sm:w-[7.2rem] md:h-[5.05rem] md:w-[8rem]"
-                />
-                <p className="seaps-brand-subtitle mt-2 text-[0.65rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.7125rem]">
-                  {brand.fullName}
-                </p>
-                <h1 className="notranslate mt-4 text-lg font-medium leading-snug sm:mt-5 md:text-xl lg:mt-5">
+              <div className="notranslate w-full max-w-2xl">
+                <div className="flex w-full flex-col items-start gap-2 sm:gap-2.5">
+                  <SeapsLogo
+                    size="hero"
+                    className="h-[3.875rem] w-[6.125rem] sm:h-[4.25rem] sm:w-[6.75rem] md:h-[4.625rem] md:w-[7.35rem]"
+                  />
+                  <p className="seaps-brand-subtitle w-full max-w-2xl text-left text-[0.6875rem] leading-snug uppercase tracking-[0.12em] sm:text-[0.734375rem]">
+                    {brand.fullName}
+                  </p>
+                </div>
+                <h1 className="notranslate mt-5 max-w-2xl text-left text-xl font-medium leading-snug sm:mt-6 md:text-[1.375rem] lg:leading-[1.35]">
                   <span className="seaps-gold-text block">
                     South East Asia Property Services (SEAPS)
                   </span>
-                  <span className="mt-2 block text-white/92">
+                  <span className="mt-2.5 block text-white/92">
                     is a multi-Award-Winning Real Estate, Property Management and Investment Company,
                     based in South East Asia.
                   </span>
@@ -43,7 +45,7 @@ export default async function HomePage() {
               </div>
             }
             copy={
-              <p className="max-w-2xl text-left text-justify hyphens-auto text-base text-white md:text-lg lg:mt-1">
+              <p className="max-w-2xl text-left text-justify hyphens-auto text-base leading-relaxed text-white/95 md:text-[1.0625rem] lg:mt-0.5">
                 SEAPS converts market insight into clear individualised strategies by providing Buyers,
                 Sellers and Investors with comprehensive property solutions spanning every major sector
                 of the market, including Land, Residential and Commercial Properties, Property
