@@ -65,10 +65,10 @@ export default async function HomePage() {
             Tell us the city, budget, and must-have amenities. Our team will follow up with a
             shortlist — with privacy consent on the contact form.
           </p>
-          <ul className="mt-5 space-y-2 text-sm text-[var(--color-muted)]">
-            <li>· City and district preferences</li>
-            <li>· Budget and deal type (buy / rent / short stay)</li>
-            <li>· Must-have amenities and timeline</li>
+          <p className="mt-5 text-sm text-[var(--color-muted)]">Alternatively, you can:</p>
+          <ul className="mt-2 space-y-2 text-sm text-[var(--color-muted)]">
+            <li>· Contact us via Telephone on: +855  888 714 085, or</li>
+            <li>· Reach out to us via our Social Media Platforms</li>
           </ul>
           <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
             Contact SEAPS for a shortlist
