@@ -6,6 +6,7 @@ import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
+import { brand } from "@/config/brand";
 
 export default async function HomePage() {
   return (
@@ -27,9 +28,14 @@ export default async function HomePage() {
                   size="hero"
                   className="h-[4.05rem] w-[6.4rem] sm:h-[4.55rem] sm:w-[7.2rem] md:h-[5.05rem] md:w-[8rem]"
                 />
-                <h1 className="seaps-gold-text notranslate mt-4 max-w-2xl text-lg font-medium leading-snug md:text-xl lg:mt-5">
-                  <span className="block">South East Asia Property Services (SEAPS)</span>
-                  <span className="mt-2 block">
+                <p className="seaps-brand-subtitle mt-2 text-[0.65rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.7125rem]">
+                  {brand.fullName}
+                </p>
+                <h1 className="notranslate mt-4 max-w-2xl text-lg font-medium leading-snug sm:mt-5 md:text-xl lg:mt-5">
+                  <span className="seaps-gold-text block">
+                    South East Asia Property Services (SEAPS)
+                  </span>
+                  <span className="mt-2 block text-white/92">
                     is a multi-Award-Winning Real Estate, Property Management and Investment Company,
                     based in South East Asia.
                   </span>
