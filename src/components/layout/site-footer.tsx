@@ -26,16 +26,15 @@ export function SiteFooter() {
           <SeapsLogo size="footer" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
             South East Asia Property Services Co. Ltd
+            <br />
+            Reg. Co. E-15-183 / 00028074
           </p>
-          <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
-            Property search across Cambodia
-          </p>
-          <p className="mt-3 text-sm text-[var(--color-muted)]">
+          <p className="mt-4 text-sm text-[var(--color-muted)]">
             <a
-              href={`mailto:${brand.supportEmail}`}
+              href="mailto:info@seaps.asia"
               className="font-medium text-[var(--color-accent-soft)] underline-offset-2 hover:underline"
             >
-              {brand.supportEmail}
+              info@seaps.asia
             </a>
           </p>
         </div>
