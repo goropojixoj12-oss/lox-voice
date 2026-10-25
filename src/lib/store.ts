@@ -9,7 +9,6 @@ import {
   writeStoreJson,
   type StorePersistenceBackend,
 } from "@/lib/store-persistence";
-import { propertyListingsEnabled } from "@/lib/listings-policy";
 import type { AggregatedListing, Inquiry, Property, SavedSearch } from "@/lib/types";
 
 async function readJson<T>(file: string, fallback: T): Promise<T> {
@@ -25,16 +24,10 @@ export function getStorePersistenceBackend(): StorePersistenceBackend {
 }
 
 export async function getRuntimeListings() {
-  if (!propertyListingsEnabled()) {
-    return [];
-  }
   return readJson<Property[]>("listings.json", []);
 }
 
 export async function saveRuntimeListing(listing: Property) {
-  if (!propertyListingsEnabled()) {
-    throw new Error("Property listings are disabled");
-  }
   const listings = await getRuntimeListings();
   const idx = listings.findIndex((l) => l.id === listing.id);
   if (idx >= 0) listings[idx] = listing;
@@ -101,9 +94,6 @@ export async function toggleFavorite(userId: string, propertyId: string) {
 const AGGREGATED_FILE = "aggregated-listings.json";
 
 export async function getAggregatedListings(): Promise<AggregatedListing[]> {
-  if (!propertyListingsEnabled()) {
-    return [];
-  }
   return readJson<AggregatedListing[]>(AGGREGATED_FILE, []);
 }
 
