@@ -27,13 +27,9 @@ import {
   transactionLabels,
   verificationLabels,
 } from "@/lib/labels";
-import { propertyListingsEnabled } from "@/lib/listings-policy";
 import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
-  if (!propertyListingsEnabled()) {
-    return [];
-  }
   const all = await getAllProperties();
   return all.filter((p) => isPublicListing(p)).map((p) => ({ slug: p.slug }));
 }
@@ -43,9 +39,6 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  if (!propertyListingsEnabled()) {
-    return { title: "Property not found" };
-  }
   const { slug } = await params;
   const all = await getAllProperties();
   const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
@@ -83,9 +76,6 @@ export default async function PropertyDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  if (!propertyListingsEnabled()) {
-    notFound();
-  }
   const { slug } = await params;
   const all = await getAllProperties();
   const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
