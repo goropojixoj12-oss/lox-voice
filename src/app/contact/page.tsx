@@ -79,16 +79,15 @@ export default function ContactPage() {
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
         We thank you for your contact. Please complete the fields below and upon submission, the
-        information provided will be assessed and forwarded to the most appropriate SEAPS
-        Specialist.
+        information provided will be assessed and forwarded to the most appropriate SEAPS Specialist.
       </p>
-      <p className="mt-2 text-[var(--color-muted)]">
+      <p className="mt-3 text-[var(--color-muted)]">
         Please click this link{" "}
         <a
           href={brand.googleMapsPlaceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="seaps-gold-text font-semibold underline notranslate"
+          className="seaps-gold-text font-semibold uppercase underline underline-offset-2 notranslate"
         >
           MAP
         </a>{" "}
