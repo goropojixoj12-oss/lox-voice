@@ -1,9 +1,13 @@
 import { properties } from "@/data/properties";
+import { propertyListingsEnabled } from "@/lib/listings-policy";
 import { getRuntimeListings } from "@/lib/store";
 import { parseSearchParams, searchProperties } from "@/lib/search";
 import type { SearchFilters, TransactionType } from "@/lib/types";
 
 export async function getAllProperties() {
+  if (!propertyListingsEnabled()) {
+    return [];
+  }
   const runtime = await getRuntimeListings();
   return [...runtime, ...properties];
 }
