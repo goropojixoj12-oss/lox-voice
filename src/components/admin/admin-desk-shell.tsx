@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const NAV = [
-  { href: adminDeskPath(), label: "Site analytics", match: (p: string) => p === adminDeskPath() },
+  { href: adminDeskPath(), label: "Site Analytics", match: (p: string) => p === adminDeskPath() },
   {
     href: adminDeskPath("site-changes"),
     label: "Site Changes",
@@ -15,17 +15,17 @@ const NAV = [
   },
   {
     href: adminDeskPath("staff"),
-    label: "Staff & performance",
+    label: "Staff & Performance",
     match: (p: string) => p.startsWith(adminDeskPath("staff")),
   },
   {
     href: adminDeskPath("legal"),
-    label: "Legal & contracts",
+    label: "Legal & Contracts",
     match: (p: string) => p.startsWith(adminDeskPath("legal")),
   },
   {
     href: adminDeskPath("listings"),
-    label: "Listing moderation",
+    label: "Listing Moderation",
     match: (p: string) => p.startsWith(adminDeskPath("listings")),
   },
   {
@@ -98,7 +98,7 @@ export function AdminDeskShell({
             </ul>
           </nav>
           <Button type="button" variant="outline" className="mt-4 w-full" onClick={signOut}>
-            Sign out
+            Sign Out
           </Button>
         </aside>
         <div className="min-w-0">{children}</div>

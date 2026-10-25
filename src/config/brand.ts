@@ -10,7 +10,7 @@ export const brand = {
       ? "https://www.vps1.store"
       : "http://127.0.0.1:43123"),
   locale: "en",
-  supportEmail: "sales@seaps.asia",
+  supportEmail: "info@seaps.asia",
   foundedYear: 1997,
   country: "Cambodia",
   social: {

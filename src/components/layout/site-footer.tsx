@@ -27,10 +27,7 @@ export function SiteFooter() {
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
             South East Asia Property Services Co. Ltd
           </p>
-          <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
-            Property search across Cambodia
-          </p>
-          <p className="mt-3 text-sm text-[var(--color-muted)]">
+          <p className="mt-4 text-sm text-[var(--color-muted)]">
             <a
               href={`mailto:${brand.supportEmail}`}
               className="font-medium text-[var(--color-accent-soft)] underline-offset-2 hover:underline"
