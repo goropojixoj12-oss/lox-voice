@@ -74,12 +74,12 @@ export default function ContactPage() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-14 sm:px-6 lg:px-8">
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
+      <h1 className="text-center font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Contact
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
-        We thank you for your contact. Please complete the fields below and upon submission, the
-        information provided will be assessed and forwarded to the most appropriate SEAPS Specialist.
+        Please complete the fields below and upon submission, the information provided will be
+        assessed and forwarded to the most appropriate SEAPS Specialist.
       </p>
       <p className="mt-3 text-[var(--color-muted)]">
         Please click this link{" "}
