@@ -14,12 +14,12 @@ const LOCAL_DIR_NAME = "listing-media";
 export { listingMediaPublicUrl, sanitizeListingFileName };
 
 function blobAuth(): { token?: string; storeId?: string; oidcToken?: string } {
+  const storeId =
+    process.env.BLOB_STORE_ID?.trim() || process.env.VERCEL_BLOB_STORE_ID?.trim();
   const token =
     process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
     process.env.VERCEL_BLOB_READ_WRITE_TOKEN?.trim();
-  if (token) return { token };
-  const storeId =
-    process.env.BLOB_STORE_ID?.trim() || process.env.VERCEL_BLOB_STORE_ID?.trim();
+  if (token) return storeId ? { token, storeId } : { token };
   const oidcToken = process.env.VERCEL_OIDC_TOKEN?.trim();
   if (storeId && oidcToken) return { storeId, oidcToken };
   if (storeId && process.env.VERCEL === "1") return { storeId };
