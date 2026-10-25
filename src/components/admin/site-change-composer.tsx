@@ -19,8 +19,8 @@ type SiteRequestItem = {
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  queued: "Queued for agent",
-  in_progress: "Agent working",
+  queued: "Queued",
+  in_progress: "In progress",
   done: "Done",
   failed: "Failed",
 };
@@ -82,7 +82,7 @@ export function SiteChangeComposer() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={8}
-            placeholder="Describe the UI or signed-in experience change you want (same as you would write in Cursor)…"
+            placeholder="Describe the UI or signed-in experience change you want…"
             className="w-full resize-y rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)]"
           />
         </label>
@@ -114,7 +114,7 @@ export function SiteChangeComposer() {
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         {sent ? (
-          <p className="text-sm text-[var(--color-accent-soft)]">Sent — the site agent queue received your request.</p>
+          <p className="text-sm text-[var(--color-accent-soft)]">Sent — your request is in the queue.</p>
         ) : null}
 
         <Button type="submit" variant="primary" disabled={loading || message.trim().length < 3}>

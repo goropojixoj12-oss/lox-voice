@@ -6,7 +6,7 @@ Admins send UI / signed-in experience tasks from **`/dashboard/admin/site-change
 
 Requests live in `admin-site-change-requests.json` (same Blob/KV/filesystem stack as analytics).
 
-## Cloud agent (Cursor) pickup
+## Automated pickup (optional)
 
 1. Set **`SITE_AGENT_SECRET`** (or reuse **`CRON_SECRET`**) on Vercel Production.
 2. Poll or cron **`GET /api/admin/site-requests/pull`** with  
@@ -17,7 +17,7 @@ Requests live in `admin-site-change-requests.json` (same Blob/KV/filesystem stac
 4. After deploy, **`PATCH /api/admin/site-requests/{id}`** with JSON:
    `{ "status": "done", "commitUrl": "https://github.com/...", "agentNote": "..." }`
 
-Optional: **`SITE_AGENT_WEBHOOK_URL`** receives a JSON POST when an admin sends a request (wire to Cursor Automation).
+Optional: **`SITE_AGENT_WEBHOOK_URL`** receives a JSON POST when an admin sends a request (connect your automation endpoint).
 
 ## Scope
 

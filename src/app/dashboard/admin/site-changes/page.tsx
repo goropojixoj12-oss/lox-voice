@@ -11,8 +11,8 @@ export default function AdminSiteChangesPage() {
           Site changes
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[var(--color-muted)]">
-          Send UI and signed-in experience tasks to the site agent without opening Cursor. Attach a
-          screenshot when it helps.
+          Send UI and signed-in experience change requests from here. Attach a screenshot when it
+          helps.
         </p>
       </div>
       <SiteChangeComposer />
