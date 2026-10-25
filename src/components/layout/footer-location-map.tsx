@@ -37,7 +37,7 @@ export function FooterLocationMap({ className }: { className?: string }) {
         </Link>
       </div>
       <address className="space-y-1.5 text-left text-sm not-italic leading-relaxed text-white">
-        <p className="seaps-gold-text notranslate text-base font-bold sm:text-lg">
+        <p className="seaps-gold-text notranslate text-base font-bold leading-snug sm:text-lg">
           Address: {officeAddress.line1}
         </p>
         <p>{officeAddress.line2}</p>
