@@ -141,35 +141,24 @@ export function isBlobStorageAvailable(): boolean {
   return blobConfigured();
 }
 
-function preferredDataDirs(): string[] {
-  const local = path.join(process.cwd(), ".data");
-  const tmp = path.join(os.tmpdir(), "seaps-data");
-  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-    return [tmp, local];
-  }
-  return [local, tmp];
+function isServerlessRuntime(): boolean {
+  return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 }
 
-let resolvedDataDir: string | null = null;
+/** Static path under project `.data` (trace-friendly for Next.js bundler). */
+function projectStorePath(file: string): string {
+  return path.join(process.cwd(), ".data", file);
+}
 
-async function getDataDir(): Promise<string> {
-  if (resolvedDataDir) return resolvedDataDir;
+/** Ephemeral path on serverless; tmpdir is runtime-only (opt out of static tracing). */
+function ephemeralStorePath(file: string): string {
+  return path.join(/* turbopackIgnore: true */ os.tmpdir(), "seaps-data", file);
+}
 
-  for (const dir of preferredDataDirs()) {
-    try {
-      await fs.mkdir(dir, { recursive: true });
-      const probe = path.join(dir, `.write-probe-${process.pid}`);
-      await fs.writeFile(probe, "ok", "utf8");
-      await fs.unlink(probe).catch(() => undefined);
-      resolvedDataDir = dir;
-      return dir;
-    } catch {
-      // try next candidate
-    }
-  }
-
-  resolvedDataDir = path.join(os.tmpdir(), "seaps-data");
-  return resolvedDataDir;
+function filesystemStorePaths(file: string): string[] {
+  return isServerlessRuntime()
+    ? [ephemeralStorePath(file), projectStorePath(file)]
+    : [projectStorePath(file), ephemeralStorePath(file)];
 }
 
 function blobPathname(file: string): string {
@@ -215,18 +204,28 @@ async function writeToBlob(file: string, raw: string): Promise<void> {
 }
 
 async function readFromFilesystem(file: string): Promise<string | null> {
-  try {
-    const dir = await getDataDir();
-    return await fs.readFile(path.join(dir, file), "utf8");
-  } catch {
-    return null;
+  for (const filePath of filesystemStorePaths(file)) {
+    try {
+      return await fs.readFile(filePath, "utf8");
+    } catch {
+      // try next candidate
+    }
   }
+  return null;
 }
 
 async function writeToFilesystem(file: string, raw: string): Promise<void> {
-  const dir = await getDataDir();
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(path.join(dir, file), raw, "utf8");
+  let lastError: unknown;
+  for (const filePath of filesystemStorePaths(file)) {
+    try {
+      await fs.mkdir(path.dirname(filePath), { recursive: true });
+      await fs.writeFile(filePath, raw, "utf8");
+      return;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("Failed to write store file");
 }
 
 /** Read raw JSON text for a store file. Returns null when missing. */
