@@ -1,26 +1,14 @@
-import Image from "next/image";
-import { PropertyCard, PropertyGrid } from "@/components/property/property-card";
 import { HeroMainLayout } from "@/components/home/hero-main-layout";
 import { HeroPromoButtons } from "@/components/home/hero-promo-buttons";
 import { HeroSocialLinks } from "@/components/home/hero-social-links";
 import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
-import { Section, SectionHeader } from "@/components/shared/section";
+import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
-import { cities } from "@/data/locations";
-import { properties } from "@/data/properties";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
 import { brand } from "@/config/brand";
-import { getSession } from "@/lib/auth";
 
 export default async function HomePage() {
-  const session = await getSession();
-  const newest = [...properties]
-    .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-    .slice(1, 3);
-  const featured = properties.filter((p) => p.isFeatured).slice(0, 3);
-  const premium = properties.filter((p) => p.isPremium).slice(0, 3);
-
   return (
     <>
       <section className="relative z-0 min-h-[min(84vh,780px)] overflow-hidden">
@@ -67,81 +55,6 @@ export default async function HomePage() {
           <HeroSocialLinks className="reveal mt-10 sm:mt-12" />
         </div>
       </section>
-
-      <Section>
-        <SectionHeader
-          eyebrow="Curated stock"
-          title="Recommended properties"
-          description="Recently added, featured, and premium homes across Cambodia with working favorites and filters."
-          action={
-            <ButtonLink href="/search" variant="outline">
-              View all listings
-            </ButtonLink>
-          }
-        />
-        <div className="space-y-10">
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              Recently added
-            </h3>
-            <PropertyGrid items={newest} userId={session?.id} />
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              Featured
-            </h3>
-            <div className="grid gap-5 md:grid-cols-3">
-              {featured.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  property={property}
-                  variant="editorial"
-                  userId={session?.id}
-                />
-              ))}
-            </div>
-          </div>
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
-              Premium
-            </h3>
-            <PropertyGrid items={premium} userId={session?.id} />
-          </div>
-        </div>
-      </Section>
-
-      <Section className="bg-[#050d18] text-white">
-        <SectionHeader
-          eyebrow="Geography"
-          title="Popular cities and districts"
-          description="Six Cambodian cities and districts featured on SEAPS."
-        />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {cities.slice(0, 6).map((city) => (
-            <div
-              key={city.slug}
-              className="relative overflow-hidden rounded-[var(--radius-xl)]"
-              aria-label={city.name}
-            >
-              <div className="relative aspect-[5/4]">
-                <Image
-                  src={city.image}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-              </div>
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <h3 className="font-[family-name:var(--font-display)] text-3xl text-white">
-                  {city.name}
-                </h3>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
 
       <Section className="pb-24">
         <div className="mx-auto max-w-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] md:max-w-2xl md:p-8">
