@@ -43,7 +43,7 @@ export default async function HomePage() {
               </div>
             }
             copy={
-              <p className="max-w-2xl text-justify hyphens-auto text-base text-white md:text-lg lg:mt-1">
+              <p className="max-w-2xl text-left text-justify hyphens-auto text-base text-white md:text-lg lg:mt-1">
                 SEAPS converts market insight into clear individualised strategies by providing Buyers,
                 Sellers and Investors with comprehensive property solutions spanning every major sector
                 of the market, including Land, Residential and Commercial Properties, Property
