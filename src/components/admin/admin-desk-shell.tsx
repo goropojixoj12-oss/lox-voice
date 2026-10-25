@@ -9,6 +9,11 @@ import { Button } from "@/components/ui/button";
 const NAV = [
   { href: adminDeskPath(), label: "Site analytics", match: (p: string) => p === adminDeskPath() },
   {
+    href: adminDeskPath("site-changes"),
+    label: "Site changes",
+    match: (p: string) => p.startsWith(adminDeskPath("site-changes")),
+  },
+  {
     href: adminDeskPath("staff"),
     label: "Staff & performance",
     match: (p: string) => p.startsWith(adminDeskPath("staff")),
