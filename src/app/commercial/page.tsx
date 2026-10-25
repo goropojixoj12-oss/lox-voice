@@ -19,11 +19,8 @@ export default async function CommercialPage({ searchParams }: Props) {
   return (
     <CatalogPage
       searchParams={searchParams}
-<<<<<<< HEAD
       visibility="cleared"
-=======
       defaults={{ type: "commercial" }}
->>>>>>> d9d03b3 (fix: commercial catalog defaults to commercial property types only)
       title="Commercial property"
       description="Offices, retail, warehouses, and commercial suites across Cambodia."
     />
