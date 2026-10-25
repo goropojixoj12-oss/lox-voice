@@ -50,7 +50,7 @@ export default async function HomePage() {
             aside={
               <>
                 <HeroPromoButtons />
-                <MainSearch />
+                <MainSearch className="w-full max-w-none" />
               </>
             }
           />
