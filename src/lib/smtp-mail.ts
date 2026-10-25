@@ -19,8 +19,12 @@ export type FormSubmissionMailInput = {
   attachments?: FormMailAttachment[];
 };
 
-function smtpConfigured(): boolean {
+export function isFormSmtpConfigured(): boolean {
   return Boolean(process.env.SMTP_PASS?.trim());
+}
+
+function smtpConfigured(): boolean {
+  return isFormSmtpConfigured();
 }
 
 export function getDefaultFormMailFrom(): string {
@@ -41,11 +45,22 @@ function createTransport() {
     throw new Error("SMTP_PASS is not configured");
   }
 
+  const secure =
+    process.env.SMTP_SECURE?.trim() === "false" ? false : port === 465;
+
   return nodemailer.createTransport({
     host,
     port,
-    secure: port === 465,
+    secure,
     auth: { user, pass },
+    connectionTimeout: 20_000,
+    greetingTimeout: 20_000,
+    socketTimeout: 30_000,
+    // Hostinger + some serverless hosts: prefer IPv4 for SMTP
+    ...(process.env.SMTP_FORCE_IPV4 === "true" ? { family: 4 as const } : {}),
+    tls: {
+      minVersion: "TLSv1.2",
+    },
   });
 }
 
@@ -73,7 +88,7 @@ function buildTextBody(input: FormSubmissionMailInput): string {
 
 export async function sendFormSubmissionEmail(
   input: FormSubmissionMailInput,
-): Promise<{ delivered: boolean; reason?: string }> {
+): Promise<{ delivered: boolean; reason?: string; detail?: string }> {
   if (!smtpConfigured()) {
     return { delivered: false, reason: "smtp_not_configured" };
   }
@@ -90,15 +105,23 @@ export async function sendFormSubmissionEmail(
       }))
     : undefined;
 
-  const transport = createTransport();
-  await transport.sendMail({
-    from,
-    to,
-    replyTo: input.email.trim(),
-    subject,
-    text: buildTextBody(input),
-    attachments: mailAttachments,
-  });
+  const fromHeader =
+    from.includes("<") ? from : `SEAPS website forms <${from}>`;
 
-  return { delivered: true };
+  try {
+    const transport = createTransport();
+    await transport.sendMail({
+      from: fromHeader,
+      to,
+      replyTo: input.email.trim(),
+      subject,
+      text: buildTextBody(input),
+      attachments: mailAttachments,
+    });
+    return { delivered: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[smtp-mail] send failed:", message);
+    return { delivered: false, reason: "smtp_send_failed", detail: message };
+  }
 }
