@@ -10,7 +10,7 @@ const NAV = [
   { href: adminDeskPath(), label: "Site analytics", match: (p: string) => p === adminDeskPath() },
   {
     href: adminDeskPath("site-changes"),
-    label: "Site changes",
+    label: "Site Changes",
     match: (p: string) => p.startsWith(adminDeskPath("site-changes")),
   },
   {
