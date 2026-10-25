@@ -24,7 +24,7 @@ export const primaryNav: NavEntry[] = [
   },
   { type: "link", href: "/projects", label: "Projects/Developments" },
   { type: "link", href: "/usefullinks", label: "Useful Links" },
-  { type: "link", href: "/insights", label: "Market insights" },
+  { type: "link", href: "/insights", label: "Market Insights" },
   { type: "link", href: "/property-guide", label: "Property Guide" },
   { type: "link", href: "/careers", label: "Careers" },
 ];
