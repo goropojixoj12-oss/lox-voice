@@ -1,7 +1,6 @@
 import { HeroMainLayout } from "@/components/home/hero-main-layout";
 import { HeroPromoButtons } from "@/components/home/hero-promo-buttons";
 import { HeroSocialLinks } from "@/components/home/hero-social-links";
-import { MainSearch } from "@/components/search/main-search";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
@@ -45,12 +44,7 @@ export default async function HomePage() {
                 </p>
               </>
             }
-            aside={
-              <>
-                <HeroPromoButtons />
-                <MainSearch stretch className="min-h-0" />
-              </>
-            }
+            aside={<HeroPromoButtons />}
           />
           <HeroSocialLinks className="reveal mt-10 sm:mt-12" />
         </div>
