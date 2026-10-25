@@ -77,11 +77,11 @@ export default function ContactPage() {
       <h1 className="text-center font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Contact
       </h1>
-      <p className="mt-2 text-[var(--color-muted)]">
+      <p className="mt-4 text-center leading-relaxed text-[var(--color-muted)]">
         Please complete the fields below and upon submission, the information provided will be
         assessed and forwarded to the most appropriate SEAPS Specialist.
-      </p>
-      <p className="mt-3 text-[var(--color-muted)]">
+        <br />
+        <br />
         Please click this link{" "}
         <a
           href={brand.googleMapsPlaceUrl}
