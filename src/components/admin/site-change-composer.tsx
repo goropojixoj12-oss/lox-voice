@@ -139,6 +139,11 @@ export function SiteChangeComposer() {
         </div>
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        {message.trim().length > 0 && message.trim().length < 3 ? (
+          <p className="text-sm text-[var(--color-muted)]">
+            Add a bit more detail so we can action your request (at least a few words).
+          </p>
+        ) : null}
         {sent ? (
           <p className="text-sm text-[var(--color-accent-soft)]">Sent — your request is in the queue.</p>
         ) : null}

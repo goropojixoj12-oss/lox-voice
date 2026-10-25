@@ -228,17 +228,11 @@ async function writeToFilesystem(file: string, raw: string): Promise<void> {
   throw lastError instanceof Error ? lastError : new Error("Failed to write store file");
 }
 
-/** Read raw JSON text for a store file. Returns null when missing. */
-export async function readStoreRaw(file: string): Promise<string | null> {
-  const backend = resolveStorePersistenceBackend();
-  if (backend === "kv") return readFromKv(file);
-  if (backend === "blob") return readFromBlob(file);
-  return readFromFilesystem(file);
-}
-
-/** Persist raw JSON text for a store file. */
-export async function writeStoreRaw(file: string, raw: string): Promise<void> {
-  const backend = resolveStorePersistenceBackend();
+async function writeWithBackend(
+  backend: StorePersistenceBackend,
+  file: string,
+  raw: string,
+): Promise<void> {
   if (backend === "kv") {
     await writeToKv(file, raw);
     return;
@@ -250,11 +244,90 @@ export async function writeStoreRaw(file: string, raw: string): Promise<void> {
   await writeToFilesystem(file, raw);
 }
 
+/** Backends to try on write when the primary store fails (e.g. misconfigured KV). */
+function writeBackendFallbackOrder(): StorePersistenceBackend[] {
+  const primary = resolveStorePersistenceBackend();
+  const order: StorePersistenceBackend[] = [primary];
+  if (kvConfigured() && primary !== "kv") order.push("kv");
+  if (blobConfigured() && primary !== "blob") order.push("blob");
+  if (primary !== "filesystem") order.push("filesystem");
+  return [...new Set(order)];
+}
+
+async function readAllStoreRawCandidates(file: string): Promise<string[]> {
+  const raws: string[] = [];
+  if (kvConfigured()) {
+    const value = await readFromKv(file);
+    if (value != null) raws.push(value);
+  }
+  if (blobConfigured()) {
+    const value = await readFromBlob(file);
+    if (value != null) raws.push(value);
+  }
+  const fsValue = await readFromFilesystem(file);
+  if (fsValue != null) raws.push(fsValue);
+  return raws;
+}
+
+function mergeParsedJson<T>(fallback: T, parsed: unknown[]): T {
+  if (parsed.length === 0) return fallback;
+  if (Array.isArray(fallback)) {
+    const byId = new Map<string, unknown>();
+    for (const chunk of parsed) {
+      if (!Array.isArray(chunk)) continue;
+      for (const item of chunk) {
+        if (
+          item &&
+          typeof item === "object" &&
+          "id" in item &&
+          typeof (item as { id: string }).id === "string"
+        ) {
+          byId.set((item as { id: string }).id, item);
+        }
+      }
+    }
+    const merged = Array.from(byId.values()) as T;
+    if (Array.isArray(merged)) {
+      merged.sort((a, b) => {
+        const aa = a as { createdAt?: string };
+        const bb = b as { createdAt?: string };
+        return (bb.createdAt ?? "").localeCompare(aa.createdAt ?? "");
+      });
+    }
+    return merged;
+  }
+  return parsed[0] as T;
+}
+
+/** Read raw JSON text for a store file. Returns null when missing. */
+export async function readStoreRaw(file: string): Promise<string | null> {
+  const backend = resolveStorePersistenceBackend();
+  if (backend === "kv") return readFromKv(file);
+  if (backend === "blob") return readFromBlob(file);
+  return readFromFilesystem(file);
+}
+
+/** Persist raw JSON text for a store file. */
+export async function writeStoreRaw(file: string, raw: string): Promise<void> {
+  let lastError: unknown;
+  for (const backend of writeBackendFallbackOrder()) {
+    try {
+      await writeWithBackend(backend, file, raw);
+      return;
+    } catch (error) {
+      lastError = error;
+      console.error(`[store-persistence] write via ${backend} failed`, error);
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("Failed to persist store file");
+}
+
 export async function readStoreJson<T>(file: string, fallback: T): Promise<T> {
   try {
-    const raw = await readStoreRaw(file);
-    if (raw == null) return fallback;
-    return JSON.parse(raw) as T;
+    const raws = await readAllStoreRawCandidates(file);
+    if (raws.length === 0) return fallback;
+    const parsed = raws.map((raw) => JSON.parse(raw) as unknown);
+    return mergeParsedJson(fallback, parsed);
   } catch {
     return fallback;
   }
