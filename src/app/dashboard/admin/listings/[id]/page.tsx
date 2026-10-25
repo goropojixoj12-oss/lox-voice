@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { AdminCommentsPanel } from "@/components/admin/admin-comments-panel";
 import { AdminListingModerationForm } from "@/components/dashboard/admin-listing-moderation-form";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { propertyListingsEnabled } from "@/lib/listings-policy";
 import { getRuntimeListingById } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Review listing" };
@@ -14,9 +13,6 @@ export default async function AdminListingReviewPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!propertyListingsEnabled()) {
-    notFound();
-  }
   const { id } = await params;
   const listing = await getRuntimeListingById(id);
   if (!listing) notFound();
