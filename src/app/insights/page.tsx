@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     "Why SEAPS separates unverified, verified, and premium listing states for Cambodian property searchers.",
 };
 
-const INSIGHTS_SLUG = "seaps-since-1997";
+const INSIGHTS_SLUG = "seaps-since-2013";
 
 export default function InsightsPage() {
   const items = articles.filter((a) => a.slug === INSIGHTS_SLUG);

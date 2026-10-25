@@ -20,7 +20,7 @@ export const agencies: Agency[] = [
     verified: true,
     agentIds: ["agent-sokha", "agent-dara"],
     propertyCount: 36,
-    foundedYear: 1997,
+    foundedYear: 2013,
     languages: ["English", "Khmer", "Chinese"],
   },
   {
@@ -38,7 +38,7 @@ export const agencies: Agency[] = [
     verified: true,
     agentIds: ["agent-rith", "agent-srey"],
     propertyCount: 24,
-    foundedYear: 1997,
+    foundedYear: 2013,
     languages: ["English", "Khmer", "French"],
   },
   {
@@ -56,7 +56,7 @@ export const agencies: Agency[] = [
     verified: true,
     agentIds: ["agent-vann"],
     propertyCount: 18,
-    foundedYear: 1997,
+    foundedYear: 2013,
     languages: ["English", "Khmer"],
   },
   {
@@ -74,7 +74,7 @@ export const agencies: Agency[] = [
     verified: true,
     agentIds: ["agent-chenda"],
     propertyCount: 21,
-    foundedYear: 1997,
+    foundedYear: 2013,
     languages: ["English", "Khmer", "Vietnamese"],
   },
 ];

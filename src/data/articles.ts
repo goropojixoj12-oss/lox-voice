@@ -38,11 +38,11 @@ On SEAPS project pages, verified facts and developer claims are listed separatel
   },
   {
     id: "a-005",
-    slug: "seaps-since-1997",
-    title: "SEAPS Since 1997: Clearer Verification Labels",
+    slug: "seaps-since-2013",
+    title: "SEAPS Since 2013: Clearer Verification Labels",
     excerpt:
       "Why SEAPS separates unverified, verified, and premium listing states for Cambodian property searchers.",
-    content: `Since 1997, South East Asia Property Services has helped clients navigate Cambodian property with practical local guidance.
+    content: `Since 2013, South East Asia Property Services has helped clients navigate Cambodian property with practical local guidance.
 
 Verification is not a guarantee of purchase success. It is a signal that key listing fields and ownership claims passed moderation checks. Premium marks highlight additional review depth on selected inventory.`,
     cover: img("photo-1454165804606-c3d57bc86b40"),

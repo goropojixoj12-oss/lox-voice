@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { articles, getArticleBySlug } from "@/data/articles";
 
-const PUBLIC_INSIGHT_SLUGS = new Set(["seaps-since-1997", "off-plan-buying-questions-cambodia"]);
+const PUBLIC_INSIGHT_SLUGS = new Set(["seaps-since-2013", "off-plan-buying-questions-cambodia"]);
 
 export function generateStaticParams() {
   return articles.filter((a) => PUBLIC_INSIGHT_SLUGS.has(a.slug)).map((a) => ({ slug: a.slug }));

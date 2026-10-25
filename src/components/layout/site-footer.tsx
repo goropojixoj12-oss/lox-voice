@@ -93,7 +93,7 @@ export function SiteFooter() {
             </Link>
             .
           </p>
-          <p>Phnom Penh · Siem Reap · Sihanoukville · Kampot · Kep</p>
+          <p>Professionalism - Honesty - Integrity - Morale Courage</p>
         </div>
       </div>
     </footer>

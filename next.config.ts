@@ -56,6 +56,11 @@ const nextConfig: NextConfig = {
     return [
       { source: "/agencies", destination: "/usefullinks", permanent: true },
       { source: "/agencies/:path*", destination: "/usefullinks", permanent: true },
+      {
+        source: "/insights/seaps-since-1997",
+        destination: "/insights/seaps-since-2013",
+        permanent: true,
+      },
       { source: "/market-feed", destination: "/search", permanent: true },
       { source: "/market-feed/:path*", destination: "/search", permanent: true },
       { source: "/admin/market-feed", destination: "/dashboard/admin", permanent: true },
