@@ -78,14 +78,21 @@ export default function ContactPage() {
         Contact
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
-        Send a message to the SEAPS team. We respond using the contact details you provide. Or email{" "}
+        We thank you for your contact. Please complete the fields below and upon submission, the
+        information provided will be assessed and forwarded to the most appropriate SEAPS
+        Specialist.
+      </p>
+      <p className="mt-2 text-[var(--color-muted)]">
+        Please click this link{" "}
         <a
-          href={`mailto:${brand.supportEmail}`}
-          className="font-semibold text-[var(--color-accent-soft)] underline"
+          href={brand.googleMapsPlaceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="seaps-gold-text font-semibold underline notranslate"
         >
-          {brand.supportEmail}
-        </a>
-        .
+          MAP
+        </a>{" "}
+        to view our convenient location, within the prestigious Hotel Cambodiana.
       </p>
       <form
         onSubmit={onSubmit}
