@@ -49,6 +49,8 @@ export const brand = {
     | "mapbox"
     | "google"
     | "none",
+  /** Google Maps embed iframe src (Share → Embed a map). Set via NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL. */
+  googleMapsEmbedUrl: process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL?.trim() ?? "",
 } as const;
 
 export type BrandConfig = typeof brand;

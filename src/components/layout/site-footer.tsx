@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
 import { BackgroundVideo } from "@/components/shared/background-video";
 import { primaryNav } from "@/components/layout/site-nav-config";
+import { FooterLocationMap } from "@/components/layout/footer-location-map";
 import { brand } from "@/config/brand";
 
 const linkClass =
@@ -37,6 +38,7 @@ export function SiteFooter() {
               info@seaps.asia
             </a>
           </p>
+          <FooterLocationMap />
         </div>
         <div className="grid min-w-0 gap-10 sm:grid-cols-2">
           <nav aria-label="Footer menu">
