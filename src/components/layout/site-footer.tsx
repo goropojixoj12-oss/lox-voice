@@ -23,14 +23,9 @@ export function SiteFooter() {
         overlayClassName="bg-[linear-gradient(180deg,rgba(5,13,24,0.92)_0%,rgba(5,13,24,0.88)_55%,rgba(5,13,24,0.95)_100%)]"
       />
       <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.2fr_1.4fr] lg:px-8">
-        <div className="flex min-w-0 max-w-sm flex-col gap-5">
-          <div className="flex justify-center">
-            <SeapsLogo size="footer" />
-          </div>
-          <div className="flex flex-col gap-3 text-sm leading-relaxed text-[var(--color-muted)]">
-            <p className="text-[var(--color-text)]">
-              {brand.name} — South East Asia Property Services
-            </p>
+        <div className="flex min-w-0 max-w-sm flex-col items-center gap-5 text-center">
+          <SeapsLogo size="footer" />
+          <div className="flex w-full flex-col gap-3 text-sm leading-relaxed text-[var(--color-muted)]">
             <p>{brand.fullName}</p>
             <p>Reg. Co. E-15-183 / 00028074</p>
             <p>
@@ -42,7 +37,7 @@ export function SiteFooter() {
               </a>
             </p>
           </div>
-          <FooterLocationMap />
+          <FooterLocationMap className="w-full" />
         </div>
         <div className="grid min-w-0 gap-10 sm:grid-cols-2">
           <nav aria-label="Footer menu">

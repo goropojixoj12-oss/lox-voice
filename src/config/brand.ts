@@ -50,18 +50,18 @@ export const brand = {
     | "google"
     | "none",
   officeAddress: {
-    line1: "Unit 3/4, Cambodiana Hotel",
+    line1: "Unit 3/4, Hotel Cambodiana",
     line2: "#313 Preah Sisowath Quay,",
     cityLine: "Phnom Penh, 12206",
     country: "Cambodia",
   },
   /** Google Maps place search (open in new tab). */
   googleMapsPlaceUrl:
-    "https://www.google.com/maps/search/?api=1&query=Unit+3%2F4%2C+Cambodiana+Hotel%2C+%23313+Preah+Sisowath+Quay%2C+Phnom+Penh%2C+12206%2C+Cambodia",
+    "https://www.google.com/maps/search/?api=1&query=Unit+3%2F4%2C+Hotel+Cambodiana%2C+%23313+Preah+Sisowath+Quay%2C+Phnom+Penh%2C+12206%2C+Cambodia",
   /** Google Maps embed iframe src (Share → Embed a map). Override with NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL. */
   googleMapsEmbedUrl:
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL?.trim() ||
-    "https://maps.google.com/maps?q=Unit+3%2F4%2C+Cambodiana+Hotel%2C+%23313+Preah+Sisowath+Quay%2C+Phnom+Penh%2C+12206%2C+Cambodia&hl=en&z=16&output=embed",
+    "https://maps.google.com/maps?q=Unit+3%2F4%2C+Hotel+Cambodiana%2C+%23313+Preah+Sisowath+Quay%2C+Phnom+Penh%2C+12206%2C+Cambodia&hl=en&z=16&output=embed",
 } as const;
 
 export type BrandConfig = typeof brand;
