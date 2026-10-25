@@ -76,7 +76,7 @@ export default async function HomePage() {
             <li>· Must-have amenities and timeline</li>
           </ul>
           <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
-            Contact SEAPS for a shortlist
+            Contact SEAPS - Personalise Your Experience
           </ButtonLink>
         </div>
       </Section>
