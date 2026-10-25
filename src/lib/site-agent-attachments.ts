@@ -2,7 +2,7 @@ import { del, get, put } from "@vercel/blob";
 import { promises as fs } from "fs";
 import os from "os";
 import path from "path";
-import { isBlobStorageAvailable } from "@/lib/store-persistence";
+import { isBlobStorageAvailable, isBlobSuspendedError } from "@/lib/store-persistence";
 
 const BLOB_PREFIX = "seaps-admin-site-requests";
 const LOCAL_DIR = "admin-site-requests";
@@ -82,15 +82,7 @@ export async function writeSiteRequestAttachment(
   const bytes = Buffer.from(await file.arrayBuffer());
   const contentType = file.type || "application/octet-stream";
 
-  if (isBlobStorageAvailable()) {
-    await put(blobPathname(storageKey), bytes, {
-      access: "private",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType,
-      ...blobAuth(),
-    });
-  } else {
+  async function writeLocalCopy(): Promise<void> {
     let written = false;
     for (const filePath of attachmentPaths(storageKey)) {
       try {
@@ -104,6 +96,27 @@ export async function writeSiteRequestAttachment(
       }
     }
     if (!written) throw new Error("Failed to save attachment");
+  }
+
+  if (isBlobStorageAvailable()) {
+    try {
+      await put(blobPathname(storageKey), bytes, {
+        access: "private",
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        contentType,
+        ...blobAuth(),
+      });
+    } catch (error) {
+      if (!isBlobSuspendedError(error)) throw error;
+      console.warn(
+        "[site-agent-attachments] Vercel Blob store suspended; saving attachment to ephemeral disk",
+        error,
+      );
+      await writeLocalCopy();
+    }
+  } else {
+    await writeLocalCopy();
   }
 
   return { storageKey, fileName, contentType, sizeBytes: bytes.length };
