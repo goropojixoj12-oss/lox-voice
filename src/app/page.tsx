@@ -22,18 +22,20 @@ export default async function HomePage() {
         <div className="relative mx-auto max-w-7xl px-4 pt-10 pb-14 sm:px-6 sm:pt-12 lg:px-8 lg:pt-14 lg:pb-16">
           <HeroMainLayout
             className="reveal"
+            copyLead={
+              <div className="notranslate flex w-full flex-col items-center text-center">
+                <SeapsLogo
+                  size="hero"
+                  className="h-[4.75rem] w-[7.5rem] sm:h-[5.25rem] sm:w-[8.5rem] md:h-[6rem] md:w-[9.5rem]"
+                />
+                <p className="seaps-brand-subtitle mt-3 text-sm uppercase tracking-[0.2em] sm:mt-4">
+                  {brand.fullName}
+                </p>
+              </div>
+            }
             copy={
               <>
-                <div className="notranslate flex w-full flex-col items-center text-center">
-                  <SeapsLogo
-                    size="hero"
-                    className="h-[4.75rem] w-[7.5rem] sm:h-[5.25rem] sm:w-[8.5rem] md:h-[6rem] md:w-[9.5rem]"
-                  />
-                  <p className="seaps-brand-subtitle mt-3 text-sm uppercase tracking-[0.2em] sm:mt-4">
-                    {brand.fullName}
-                  </p>
-                </div>
-                <h1 className="mt-5 max-w-2xl text-2xl font-medium leading-snug text-white/92 md:text-3xl">
+                <h1 className="max-w-2xl text-2xl font-medium leading-snug text-white/92 md:text-3xl lg:mt-1">
                   South East Asia Property Services (SEAPS) is a multi-Award-Winning Real Estate,
                   Property Management and Investment Company, based in South East Asia.
                 </h1>
