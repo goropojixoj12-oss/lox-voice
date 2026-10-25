@@ -4,6 +4,8 @@ import { agents } from "@/data/agencies";
 import { articles } from "@/data/articles";
 import { cities } from "@/data/locations";
 import { projects } from "@/data/projects";
+import { properties } from "@/data/properties";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "",
@@ -35,6 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticRoutes,
+    ...properties.map((p) => ({ url: `${brand.url}/property/${p.slug}`, lastModified: new Date(p.updatedAt) })),
     ...projects.map((p) => ({ url: `${brand.url}/projects/${p.slug}`, lastModified: new Date() })),
     ...agents.map((a) => ({ url: `${brand.url}/agents/${a.slug}`, lastModified: new Date() })),
     ...articles.map((a) => ({

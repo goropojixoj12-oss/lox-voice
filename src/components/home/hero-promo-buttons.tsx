@@ -6,11 +6,11 @@ const heroPromoClass =
 export function HeroPromoButtons() {
   return (
     <div className="mb-4 grid shrink-0 gap-3 sm:mb-5 sm:grid-cols-2">
-      <ButtonLink href="/contact" variant="accent" size="lg" className={heroPromoClass}>
-        Contact SEAPS
+      <ButtonLink href="/sale" variant="accent" size="lg" className={heroPromoClass}>
+        Sell property
       </ButtonLink>
-      <ButtonLink href="/property-guide" variant="accent" size="lg" className={heroPromoClass}>
-        Property guide
+      <ButtonLink href="/inquires" variant="accent" size="lg" className={heroPromoClass}>
+        All enquiries
       </ButtonLink>
     </div>
   );

@@ -5,24 +5,19 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { agentDeskPath, AGENT_DESK_BASE } from "@/lib/dashboard-agent-paths";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { propertyListingsEnabled } from "@/lib/listings-policy";
 import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 import type { UserRole } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const listingLinks: { href: string; label: string; roles?: UserRole[] }[] = [
+const links: { href: string; label: string; roles?: UserRole[] }[] = [
+  { href: agentDeskPath("overview"), label: "Overview" },
   { href: agentDeskPath("listings"), label: "Listings" },
+  { href: agentDeskPath("inquiries"), label: "Inquiries" },
+  { href: agentDeskPath("profile"), label: "Profile" },
   { href: agentDeskPath("stats"), label: "Stats" },
   { href: agentDeskPath("favorites"), label: "Favorites" },
   { href: agentDeskPath("saved-searches"), label: "Saved searches" },
   { href: LIST_PROPERTY_WIZARD_ENTRY, label: "Create listing" },
-];
-
-const links: { href: string; label: string; roles?: UserRole[] }[] = [
-  { href: agentDeskPath("overview"), label: "Overview" },
-  ...(propertyListingsEnabled() ? listingLinks : []),
-  { href: agentDeskPath("inquiries"), label: "Inquiries" },
-  { href: agentDeskPath("profile"), label: "Profile" },
   { href: adminDeskPath(), label: "Admin", roles: ["admin"] },
 ];
 
