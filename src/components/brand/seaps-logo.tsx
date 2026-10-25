@@ -12,7 +12,7 @@ type SeapsLogoProps = {
 /** Intrinsic asset ratio ~488×310 */
 const sizeClass: Record<NonNullable<SeapsLogoProps["size"]>, string> = {
   header: "h-8 w-[50px] sm:h-9 sm:w-[56px]",
-  hero: "h-12 w-[78px] sm:h-[3.25rem] sm:w-[88px]",
+  hero: "h-11 w-[72px] sm:h-12 sm:w-[78px]",
   footer: "h-[52px] w-[82px]",
 };
 
