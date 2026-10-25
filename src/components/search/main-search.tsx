@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cities } from "@/data/locations";
-import { propertyTypeLabels } from "@/lib/labels";
-import type { PropertyType, TransactionType } from "@/lib/types";
+import type { HomeSearchTypeCategory, TransactionType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -14,7 +13,12 @@ const deals: { id: TransactionType; label: string; deal: TransactionType }[] = [
   { id: "rent", label: "Rent", deal: "rent" },
 ];
 
-const types = Object.entries(propertyTypeLabels).slice(0, 8);
+const HOME_SEARCH_TYPE_OPTIONS: { value: HomeSearchTypeCategory; label: string }[] = [
+  { value: "apartment_condo", label: "Apartment/Condo" },
+  { value: "house", label: "House" },
+  { value: "commercial", label: "Commercial" },
+  { value: "other", label: "Other" },
+];
 
 export function MainSearch({
   className,
@@ -27,7 +31,7 @@ export function MainSearch({
   const router = useRouter();
   const [mode, setMode] = useState<(typeof deals)[number]["id"]>("sale");
   const [city, setCity] = useState("");
-  const [type, setType] = useState<PropertyType | "">("");
+  const [type, setType] = useState<HomeSearchTypeCategory | "">("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("");
@@ -98,11 +102,11 @@ export function MainSearch({
           </span>
           <Select
             value={type}
-            onChange={(e) => setType(e.target.value as PropertyType | "")}
+            onChange={(e) => setType(e.target.value as HomeSearchTypeCategory | "")}
             aria-label="Property type"
           >
             <option value="">Any type</option>
-            {types.map(([value, label]) => (
+            {HOME_SEARCH_TYPE_OPTIONS.map(({ value, label }) => (
               <option key={value} value={value}>
                 {label}
               </option>

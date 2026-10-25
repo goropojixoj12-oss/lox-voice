@@ -31,6 +31,13 @@ export type VerificationStatus = "unverified" | "verified" | "premium";
 
 export type SellerType = "owner" | "agent" | "developer";
 
+/** Homepage hero search — grouped labels mapped in searchProperties. */
+export type HomeSearchTypeCategory =
+  | "apartment_condo"
+  | "house"
+  | "commercial"
+  | "other";
+
 export type Furnishing = "unfurnished" | "semi" | "furnished";
 
 export type AmenityKey =
@@ -277,7 +284,7 @@ export interface SearchFilters {
   deal?: TransactionType | "all";
   city?: string;
   district?: string;
-  type?: PropertyType | "all";
+  type?: PropertyType | HomeSearchTypeCategory | "all";
   minPrice?: number;
   maxPrice?: number;
   bedrooms?: number;
