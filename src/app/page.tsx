@@ -17,7 +17,7 @@ export default async function HomePage() {
   const session = await getSession();
   const newest = [...properties]
     .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-    .slice(0, 3);
+    .slice(1, 3);
   const featured = properties.filter((p) => p.isFeatured).slice(0, 3);
   const premium = properties.filter((p) => p.isPremium).slice(0, 3);
 
