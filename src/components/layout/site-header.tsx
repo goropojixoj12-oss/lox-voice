@@ -44,9 +44,17 @@ export function SiteHeader({
           <Link
             href="/"
             className="group shrink-0 notranslate justify-self-start md:col-start-1"
-            aria-label="SEAPS home"
+            aria-label="SEAPS — South East Asia Property Services Co. Ltd."
           >
-            <SeapsLogo size="header" />
+            <span className="relative inline-block leading-none">
+              <SeapsLogo size="header" />
+              <span
+                className="seaps-brand-subtitle pointer-events-none absolute bottom-[6%] left-1/2 w-[108%] -translate-x-1/2 text-center text-[0.34rem] font-semibold uppercase leading-none tracking-[0.04em] sm:text-[0.38rem]"
+                aria-hidden
+              >
+                Co. Ltd.
+              </span>
+            </span>
           </Link>
 
           <nav
