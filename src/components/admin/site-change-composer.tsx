@@ -32,6 +32,8 @@ export function SiteChangeComposer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [dispatchingId, setDispatchingId] = useState<string | null>(null);
+  const [dispatchNote, setDispatchNote] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
@@ -44,6 +46,36 @@ export function SiteChangeComposer() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  async function dispatchToAgent(id?: string) {
+    setDispatchNote(null);
+    setDispatchingId(id ?? "oldest");
+    try {
+      const res = await fetch("/api/admin/site-requests/dispatch", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(id ? { id } : {}),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        ok?: boolean;
+        bearerConfigured?: boolean;
+        dispatched?: string;
+      };
+      if (!res.ok) {
+        setDispatchNote(data.error ?? "Could not dispatch.");
+        return;
+      }
+      const bearerHint = data.bearerConfigured ? "" : " Warning: SITE_AGENT_WEBHOOK_BEARER missing on server.";
+      setDispatchNote(`Agent webhook sent for request ${data.dispatched}.${bearerHint}`);
+      await refresh();
+    } catch {
+      setDispatchNote("Network error while dispatching.");
+    } finally {
+      setDispatchingId(null);
+    }
+  }
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -148,9 +180,20 @@ export function SiteChangeComposer() {
           <p className="text-sm text-[var(--color-accent-soft)]">Sent — your request is in the queue.</p>
         ) : null}
 
-        <Button type="submit" variant="primary" disabled={loading}>
-          {loading ? "Sending…" : "Send"}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button type="submit" variant="primary" disabled={loading}>
+            {loading ? "Sending…" : "Send"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={dispatchingId !== null}
+            onClick={() => void dispatchToAgent()}
+          >
+            {dispatchingId === "oldest" ? "Dispatching…" : "Run agent (oldest queued)"}
+          </Button>
+        </div>
+        {dispatchNote ? <p className="text-sm text-[var(--color-muted)]">{dispatchNote}</p> : null}
 
         <p className="text-xs text-[var(--color-muted)]">
           Scope: public site interface and logged-in user flows only (not servers, billing, or staff HR).
@@ -174,6 +217,18 @@ export function SiteChangeComposer() {
                     {new Date(item.createdAt).toLocaleString()}
                   </time>
                 </div>
+                {item.status === "queued" ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    disabled={dispatchingId === item.id}
+                    onClick={() => void dispatchToAgent(item.id)}
+                  >
+                    {dispatchingId === item.id ? "Dispatching…" : "Run agent for this request"}
+                  </Button>
+                ) : null}
                 <p className="mt-2 whitespace-pre-wrap text-[var(--color-text)]">{item.message}</p>
                 {item.attachment ? (
                   <img
