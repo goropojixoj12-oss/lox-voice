@@ -22,9 +22,8 @@ export default function PrivacyPage() {
           that processing for the purpose of answering your request (GDPR / comparable local rules).
         </p>
         <p>
-          Session cookies identify signed-in users and are essential. Preference cookies (language,
-          cookie banner choice) stay in local browser storage. We do not load third-party analytics
-          unless you accept optional cookies in the banner.
+          Session cookies identify signed-in users and are essential. Language preference is stored
+          in your browser (local storage). We do not load third-party analytics on the public site.
         </p>
         <p>
           Data controller contact:{" "}

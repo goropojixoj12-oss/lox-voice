@@ -5,7 +5,6 @@ import { PageViewBeacon } from "@/components/analytics/page-view-beacon";
 import { GoogleTranslate } from "@/components/i18n/google-translate";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { CookieBanner } from "@/components/legal/cookie-banner";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { MobileStickyCta } from "@/components/ux/mobile-sticky-cta";
 import { brand } from "@/config/brand";
@@ -108,7 +107,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         <SiteFooter />
         <MobileStickyCta />
-        <CookieBanner />
       </body>
     </html>
   );
