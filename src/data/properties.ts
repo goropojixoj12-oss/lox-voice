@@ -96,7 +96,42 @@ export const properties: Property[] = [
     isFeatured: true,
     views: 200,
     inquiries: 6,
-  }
+  },
+  {
+    id: "p-003",
+    slug: "daun-penh-serviced-rent",
+    title: "Daun Penh Serviced Apartment for Rent",
+    summary: "One-bedroom furnished rental near the riverside.",
+    description:
+      "Long-term rental with housekeeping options available through building management. Compact layout, full kitchenette, and strong walkability to Daun Penh offices.",
+    transactionType: "rent",
+    propertyType: "apartment",
+    status: "draft",
+    verification: "verified",
+    sellerType: "agent",
+    price: 950,
+    currency: "USD",
+    pricePeriod: "month",
+    bedrooms: 1,
+    bathrooms: 1,
+    areaSqm: 48,
+    landSqm: null,
+    furnishing: "furnished",
+    amenities: ["elevator", "air_conditioning", "security", "workspace"],
+    images: [
+      { ...img("photo-1493809842364-78817add7ffb", "Serviced apartment"), isCover: true },
+    ],
+    location: kh("Phnom Penh", "phnom-penh", "Daun Penh", "daun-penh", "Near Sisowath Quay", 11.568, 104.931),
+    agentId: "agent-chenda",
+    agencyId: "ag-royal",
+    publishedAt: "2026-10-14T10:00:00.000Z",
+    updatedAt: "2026-04-01T12:00:00.000Z",
+    hasVideoTour: false,
+    isPremium: false,
+    isFeatured: false,
+    views: 200,
+    inquiries: 6,
+  },
 ];
 
 export function getPropertyBySlug(slug: string) {
