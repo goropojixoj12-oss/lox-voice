@@ -76,7 +76,7 @@ export default async function HomePage() {
             <li>· Reach out to us via our Social Media Platforms</li>
           </ul>
           <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
-            Contact SEAPS for a shortlist
+            Contact SEAPS - Personalise Your Experience
           </ButtonLink>
         </div>
       </Section>
