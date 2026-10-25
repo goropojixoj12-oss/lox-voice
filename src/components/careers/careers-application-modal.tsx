@@ -4,7 +4,10 @@ import { useEffect, useId, useRef, useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
+import { submitSiteForm } from "@/lib/submit-site-form";
 import { cn } from "@/lib/utils";
+
+const FORM_CATEGORY = "Careers — Employment application";
 
 const MAX_CV_BYTES = 5 * 1024 * 1024;
 const CV_EXTENSIONS = [".pdf", ".doc", ".docx"];
@@ -21,15 +24,20 @@ const applicationSchema = z.object({
     .min(2, "Enter your full name (at least 2 characters)")
     .max(80, "Name is too long")
     .regex(/^[\p{L}\p{M}\s'.-]+$/u, "Use letters and standard name characters only"),
+  email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
   phone: z
     .string()
     .trim()
-    .min(1, "Phone number is required")
-    .refine((value) => {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length < 8 || digits.length > 15) return false;
-      return /^[\d\s+().-]+$/.test(value);
-    }, "Enter a valid phone number (8–15 digits, optional + country code)"),
+    .optional()
+    .refine(
+      (value) => {
+        if (!value) return true;
+        const digits = value.replace(/\D/g, "");
+        if (digits.length < 8 || digits.length > 15) return false;
+        return /^[\d\s+().-]+$/.test(value);
+      },
+      { message: "Enter a valid phone number (8–15 digits, optional + country code)" },
+    ),
   introduction: z
     .string()
     .trim()
@@ -66,6 +74,8 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [cvLabel, setCvLabel] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -75,6 +85,7 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
       setSubmitted(false);
       setErrors({});
       setCvLabel(null);
+      setSubmitError("");
     }
     if (!open && dialog.open) {
       dialog.close();
@@ -86,16 +97,19 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
     onClose();
   }
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const cv = form.get("cv");
+    if (submitting) return;
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const cv = formData.get("cv");
     const cvFile = cv instanceof File ? cv : null;
 
     const payload = {
-      name: String(form.get("name") ?? ""),
-      phone: String(form.get("phone") ?? ""),
-      introduction: String(form.get("introduction") ?? ""),
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      introduction: String(formData.get("message") ?? ""),
     };
     const parsed = applicationSchema.safeParse(payload);
     const next: Record<string, string> = {};
@@ -117,8 +131,27 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
     }
 
     setErrors({});
+    setSubmitError("");
+    setSubmitting(true);
+    const result = await submitSiteForm(form);
+    setSubmitting(false);
+
+    if (!result.ok) {
+      if (result.issues?.length) {
+        const mapped: Record<string, string> = {};
+        result.issues.forEach((issue) => {
+          const key = String(issue.path[0]);
+          mapped[key === "message" ? "introduction" : key] = issue.message;
+        });
+        setErrors(mapped);
+      } else {
+        setSubmitError(result.error);
+      }
+      return;
+    }
+
     setSubmitted(true);
-    e.currentTarget.reset();
+    form.reset();
     setCvLabel(null);
   }
 
@@ -176,7 +209,7 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
             <p className="font-semibold text-[var(--color-accent-soft)]">Application received</p>
             <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">
               Thank you for your interest in SEAPS. We have recorded your details and CV submission.
-              Our team will contact you using the phone number you provided if your profile matches
+              Our team will contact you using the email address you provided if your profile matches
               an upcoming opportunity.
             </p>
             <Button type="button" variant="accent" className="mt-5" onClick={handleClose}>
@@ -184,7 +217,17 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
             </Button>
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate encType="multipart/form-data">
+          <form
+            onSubmit={onSubmit}
+            className="mt-6 space-y-4"
+            noValidate
+            encType="multipart/form-data"
+            data-form-category={FORM_CATEGORY}
+          >
+            <input type="hidden" name="category" value={FORM_CATEGORY} />
+            <input type="hidden" name="propertyId" value="careers-application" />
+            <input type="hidden" name="propertyTitle" value="Careers application" />
+            <input type="hidden" name="consent" value="true" />
             <div>
               <Label htmlFor="seaps-careers-name">Full name</Label>
               <Input
@@ -201,7 +244,24 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
               ) : null}
             </div>
             <div>
-              <Label htmlFor="seaps-careers-phone">Phone</Label>
+              <Label htmlFor="seaps-careers-email">Email</Label>
+              <Input
+                id="seaps-careers-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="name@email.com"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "seaps-careers-email-error" : undefined}
+              />
+              {errors.email ? (
+                <p id="seaps-careers-email-error" className="mt-1 text-sm text-[var(--color-danger)]">
+                  {errors.email}
+                </p>
+              ) : null}
+            </div>
+            <div>
+              <Label htmlFor="seaps-careers-phone">Phone (optional)</Label>
               <Input
                 id="seaps-careers-phone"
                 name="phone"
@@ -221,7 +281,7 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
               <Label htmlFor="seaps-careers-introduction">Brief introduction</Label>
               <Textarea
                 id="seaps-careers-introduction"
-                name="introduction"
+                name="message"
                 rows={5}
                 placeholder="Outline your experience, skills, areas of expertise and career aspirations…"
                 aria-invalid={Boolean(errors.introduction)}
@@ -265,8 +325,13 @@ export function CareersApplicationModal({ open, onClose }: CareersApplicationMod
                 </p>
               ) : null}
             </div>
-            <Button type="submit" variant="accent" className="w-full sm:w-auto">
-              Submit application
+            {submitError ? (
+              <p className="text-sm text-[var(--color-danger)]" role="alert">
+                {submitError}
+              </p>
+            ) : null}
+            <Button type="submit" variant="accent" className="w-full sm:w-auto" disabled={submitting}>
+              {submitting ? "Sending…" : "Submit application"}
             </Button>
           </form>
         )}
