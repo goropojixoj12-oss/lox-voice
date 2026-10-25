@@ -77,7 +77,11 @@ export function SiteHeader({
                 <ButtonLink href={deskHref} variant="ghost" size="sm">
                   {userName}
                 </ButtonLink>
-              ) : null}
+              ) : (
+                <ButtonLink href="/auth/login" variant="ghost" size="sm">
+                  Sign in
+                </ButtonLink>
+              )}
               <ButtonLink href="/contact" variant="accent" size="sm">
                 Contact Us
               </ButtonLink>
@@ -129,11 +133,9 @@ export function SiteHeader({
               ),
             )}
             <div className="mt-2 grid gap-2">
-              {userName ? (
-                <ButtonLink href={deskHref} variant="outline">
-                  Dashboard
-                </ButtonLink>
-              ) : null}
+              <ButtonLink href={deskHref} variant="outline">
+                {userName ? "Dashboard" : "Sign in"}
+              </ButtonLink>
               <ButtonLink href="/contact" variant="accent">
                 Contact Us
               </ButtonLink>

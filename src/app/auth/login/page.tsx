@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,12 @@ export default function LoginPage() {
           {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
+      <p className="mt-4 text-sm">
+        New to SEAPS?{" "}
+        <Link href="/auth/register" className="font-semibold text-[var(--color-accent)]">
+          Create an account
+        </Link>
+      </p>
     </div>
   );
 }
