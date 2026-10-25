@@ -62,8 +62,13 @@ export default async function HomePage() {
             Request a Personally Tailored Shortlist or Property Management Plan
           </h2>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Tell us the city, budget, and must-have amenities. Our team will follow up with a
-            shortlist — with privacy consent on the contact form.
+            SEAPS Agents/Representatives pride themselves on providing individual clients with a
+            professional, personal and individualised experience.
+          </p>
+          <p className="mt-2 text-sm text-[var(--color-muted)]">
+            Please complete the contact form, detailing as much information as possible (relevant to
+            your circumstances and objectives), and our dedicated Management Team will appoint the
+            most suitable Agent/Representative to assist you with your needs.
           </p>
           <ul className="mt-5 space-y-2 text-sm text-[var(--color-muted)]">
             <li>· City and district preferences</li>
