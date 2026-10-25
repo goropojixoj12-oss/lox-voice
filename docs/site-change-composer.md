@@ -17,7 +17,7 @@ Requests live in `admin-site-change-requests.json` (same Blob/KV/filesystem stac
 4. After deploy, **`PATCH /api/admin/site-requests/{id}`** with JSON:
    `{ "status": "done", "commitUrl": "https://github.com/...", "agentNote": "..." }`
 
-Optional: **`SITE_AGENT_WEBHOOK_URL`** receives a JSON POST when an admin sends a request (connect your automation endpoint).
+Optional: **`SITE_AGENT_WEBHOOK_URL`** + **`SITE_AGENT_WEBHOOK_BEARER`** (Cursor Automation webhook + auth header) when an admin sends a request. Step-by-step (RU): **`docs/site-change-automation-vercel-ru.md`**. Vercel Cron: **`GET /api/cron/site-agent`** (see `vercel.json`).
 
 ## Scope
 
