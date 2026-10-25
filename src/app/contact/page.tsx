@@ -78,8 +78,9 @@ export default function ContactPage() {
         Contact
       </h1>
       <p className="mt-4 text-center leading-relaxed text-[var(--color-muted)]">
-        Please complete the fields below and upon submission, the information provided will be
-        assessed and forwarded to the most appropriate SEAPS Specialist.
+        We thank you for your contact and support. Please complete the fields below and upon
+        submission, the information provided will be assessed and forwarded to the most appropriate
+        SEAPS Specialist.
         <br />
         <br />
         Please click this link{" "}
@@ -165,7 +166,7 @@ export default function ContactPage() {
         </div>
         {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
         <Button type="submit" className="min-h-11" disabled={status === "loading"}>
-          {status === "loading" ? "Sending…" : "Send message"}
+          {status === "loading" ? "Sending…" : "SEND Message."}
         </Button>
       </form>
       {status === "ok" ? (
