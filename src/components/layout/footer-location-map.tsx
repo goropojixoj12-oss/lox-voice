@@ -8,7 +8,7 @@ export function FooterLocationMap() {
   const { officeAddress } = brand;
 
   return (
-    <div className="mt-7 max-w-sm">
+    <div className="flex w-full flex-col gap-3">
       <div
         className="seaps-gold-border overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-accent)]/45 bg-[rgba(5,13,24,0.6)] shadow-[inset_0_0_24px_rgba(0,0,0,0.35)]"
         aria-label="SEAPS office location on Google Maps"
@@ -35,15 +35,12 @@ export function FooterLocationMap() {
           </p>
         </Link>
       </div>
-      <p className="mt-4 text-sm leading-relaxed text-white">
-        Address: {officeAddress.line1}
-        <br />
-        {officeAddress.line2}
-        <br />
-        {officeAddress.cityLine}
-        <br />
-        {officeAddress.country}
-      </p>
+      <address className="space-y-1 text-sm not-italic leading-relaxed text-white">
+        <p>Address: {officeAddress.line1}</p>
+        <p>{officeAddress.line2}</p>
+        <p>{officeAddress.cityLine}</p>
+        <p>{officeAddress.country}</p>
+      </address>
     </div>
   );
 }
