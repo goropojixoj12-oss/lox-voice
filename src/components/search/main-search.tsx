@@ -14,9 +14,6 @@ const deals: { id: TransactionType; label: string; deal: TransactionType }[] = [
   { id: "rent", label: "Rent", deal: "rent" },
 ];
 
-const heroSearchTagline =
-  "The country's top real estate from Cambodia's best market broker";
-
 const types = Object.entries(propertyTypeLabels).slice(0, 8);
 
 export function MainSearch({
@@ -154,10 +151,7 @@ export function MainSearch({
           </Select>
         </label>
         </div>
-        <div className={cn("space-y-3 md:col-span-6", stretch && "mt-auto pt-1")}>
-          <p className="text-center text-sm font-medium leading-snug text-[var(--color-accent-soft)] md:text-[0.9375rem]">
-            {heroSearchTagline}
-          </p>
+        <div className={cn("md:col-span-6", stretch && "mt-auto pt-1")}>
           <Button type="submit" className="w-full md:w-auto" size="lg">
             Search properties
           </Button>
