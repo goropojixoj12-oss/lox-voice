@@ -25,7 +25,7 @@ export function SiteFooter() {
         <div className="min-w-0">
           <SeapsLogo size="footer" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)]">
-            {brand.fullName} · Cambodia · since {brand.foundedYear}
+            South East Asia Property Services Co. Ltd
           </p>
           <p className="mt-4 text-xs uppercase tracking-[0.16em] text-[var(--color-accent)]">
             Property search across Cambodia
