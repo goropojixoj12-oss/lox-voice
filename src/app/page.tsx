@@ -6,7 +6,6 @@ import { BackgroundVideo } from "@/components/shared/background-video";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
 import { SeapsLogo } from "@/components/brand/seaps-logo";
-import { brand } from "@/config/brand";
 
 export default async function HomePage() {
   return (
@@ -19,6 +18,7 @@ export default async function HomePage() {
           poster="/videos/hero-banner.jpg"
           overlayClassName="bg-[linear-gradient(105deg,rgba(7,17,31,0.9)_0%,rgba(11,28,51,0.7)_48%,rgba(11,28,51,0.4)_100%)]"
         />
+<<<<<<< HEAD
         <div className="relative mx-auto max-w-7xl px-4 pt-9 pb-12 sm:px-6 sm:pt-11 lg:px-8 lg:pt-12 lg:pb-14">
           <HeroMainLayout
             className="reveal"
@@ -60,6 +60,52 @@ export default async function HomePage() {
             }
           />
           <HeroSocialLinks className="reveal mt-10 sm:mt-12" />
+=======
+        <div className="relative mx-auto flex min-h-[min(84vh,780px)] max-w-7xl flex-col px-4 pt-10 pb-8 sm:px-6 sm:pt-12 sm:pb-10 lg:px-8 lg:pt-14 lg:pb-12">
+          <div className="flex-1">
+            <HeroMainLayout
+              className="reveal"
+              copyLead={
+                <div className="notranslate flex w-full max-w-2xl flex-col items-start text-left text-justify hyphens-auto">
+                  <div className="flex flex-col items-center self-start">
+                    <SeapsLogo
+                      size="hero"
+                      className="h-[4.15rem] w-[6.55rem] sm:h-[4.65rem] sm:w-[7.35rem] md:h-[5.15rem] md:w-[8.15rem]"
+                    />
+                    <p className="seaps-brand-subtitle mt-2 text-center text-[0.6875rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.75rem]">
+                      <span className="block">South East Asia Property Services</span>
+                      <span className="block">Co. Ltd.</span>
+                    </p>
+                  </div>
+                  <h1 className="notranslate mt-4 text-[1.125rem] font-medium leading-snug sm:mt-5 md:text-[1.3125rem] lg:mt-5">
+                    <span className="seaps-gold-text block">
+                      South East Asia Property Services (SEAPS)
+                    </span>
+                    <span className="mt-2 block text-white/92">
+                      is a multi-Award-Winning Real Estate, Property Management and Investment Company,
+                      based in South East Asia.
+                    </span>
+                  </h1>
+                </div>
+              }
+              copy={
+                <p className="max-w-2xl text-left text-justify hyphens-auto text-[1.0625rem] text-white md:text-[1.1875rem] lg:mt-1">
+                  SEAPS converts market insight into clear individualised strategies by providing Buyers,
+                  Sellers and Investors with comprehensive property solutions spanning every major sector
+                  of the market, including Land, Residential and Commercial Properties, Property
+                  Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
+                </p>
+              }
+              aside={
+                <>
+                  <HeroPromoButtons />
+                  <MainSearch className="w-full max-w-none" />
+                </>
+              }
+            />
+          </div>
+          <HeroSocialLinks className="reveal mt-auto pt-8 sm:pt-10" />
+>>>>>>> 100dac3 (fix: homepage hero lockup, copy sizes, social icons toward bottom)
         </div>
       </section>
 
