@@ -59,7 +59,7 @@ export default async function HomePage() {
       <Section className="pb-24">
         <div className="mx-auto max-w-xl rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] md:max-w-2xl md:p-8">
           <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-            Request a tailored shortlist
+            Request a Personally Tailored Shortlist or Property Management Plan
           </h2>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
             Tell us the city, budget, and must-have amenities. Our team will follow up with a
