@@ -5,52 +5,46 @@ import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
+import { submitSiteForm } from "@/lib/submit-site-form";
 
 const schema = z.object({
-  name: z.string().min(2, "Name is required"),
-  contact: z
-    .string()
-    .min(5, "Provide an email or phone")
-    .refine(
-      (v) => /@/.test(v) || /[\d+]{8,}/.test(v.replace(/[\s()-]/g, "")),
-      "Enter a valid email or phone number",
-    ),
-  message: z.string().min(10, "Message should be at least 10 characters"),
+  name: z.string().trim().min(2, "Name is required"),
+  email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
+  message: z.string().trim().min(10, "Message should be at least 10 characters"),
   consent: z.literal(true, { error: "Consent is required" }),
 });
 
 export function InquiryForm({
   propertyId,
   propertyTitle,
+  formCategory,
 }: {
   propertyId: string;
   propertyTitle: string;
+  /** Email subject / page category */
+  formCategory?: string;
 }) {
+  const category = formCategory ?? propertyTitle;
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [inquiryId, setInquiryId] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState("");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status === "loading") return;
     setStatus("loading");
     setErrors({});
-    const form = new FormData(e.currentTarget);
+    setSubmitError("");
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const payload = {
-      name: String(form.get("name") ?? ""),
-      contact: String(form.get("contact") ?? ""),
-      message: String(form.get("message") ?? ""),
-      website: String(form.get("website") ?? ""),
-      consent: form.get("consent") === "on",
-      propertyId,
-      propertyTitle,
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      message: String(formData.get("message") ?? ""),
+      consent: formData.get("consent") === "on",
     };
-    const parsed = schema.safeParse({
-      name: payload.name,
-      contact: payload.contact,
-      message: payload.message,
-      consent: payload.consent ? true : undefined,
-    });
+    const parsed = schema.safeParse(payload);
     if (!parsed.success) {
       const next: Record<string, string> = {};
       parsed.error.issues.forEach((issue) => {
@@ -61,19 +55,23 @@ export function InquiryForm({
       return;
     }
 
-    const res = await fetch("/api/inquiries", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, consent: true }),
-    });
-    if (!res.ok) {
+    const result = await submitSiteForm(form);
+    if (!result.ok) {
+      if (result.issues?.length) {
+        const next: Record<string, string> = {};
+        result.issues.forEach((issue) => {
+          next[String(issue.path[0])] = issue.message;
+        });
+        setErrors(next);
+      } else {
+        setSubmitError(result.error);
+      }
       setStatus("error");
       return;
     }
-    const data = (await res.json()) as { inquiry?: { id?: string } };
-    setInquiryId(data.inquiry?.id ?? null);
+    setInquiryId(result.inquiryId ?? null);
     setStatus("success");
-    e.currentTarget.reset();
+    form.reset();
   }
 
   return (
@@ -81,7 +79,11 @@ export function InquiryForm({
       onSubmit={onSubmit}
       className="seaps-card space-y-3 rounded-[var(--radius-lg)] p-4"
       noValidate
+      data-form-category={category}
     >
+      <input type="hidden" name="category" value={category} />
+      <input type="hidden" name="propertyId" value={propertyId} />
+      <input type="hidden" name="propertyTitle" value={propertyTitle} />
       <div>
         <h3 className="font-semibold text-[var(--color-accent-soft)]">Request information</h3>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
@@ -94,18 +96,29 @@ export function InquiryForm({
         {errors.name ? <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.name}</p> : null}
       </div>
       <div>
-        <Label htmlFor="inquiry-contact">Email or phone</Label>
+        <Label htmlFor="inquiry-email">Email</Label>
         <Input
-          id="inquiry-contact"
-          name="contact"
-          autoComplete="tel"
+          id="inquiry-email"
+          name="email"
+          type="email"
+          autoComplete="email"
           inputMode="email"
-          placeholder="name@email.com or +855…"
+          placeholder="name@email.com"
           required
         />
-        {errors.contact ? (
-          <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.contact}</p>
+        {errors.email ? (
+          <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.email}</p>
         ) : null}
+      </div>
+      <div>
+        <Label htmlFor="inquiry-phone">Phone (optional)</Label>
+        <Input
+          id="inquiry-phone"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder="+855 12 345 678"
+        />
       </div>
       <div>
         <Label htmlFor="inquiry-message">Message</Label>
@@ -119,7 +132,6 @@ export function InquiryForm({
           <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.message}</p>
         ) : null}
       </div>
-      {/* Honeypot — hidden from users */}
       <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
         <Label htmlFor="inquiry-website">Website</Label>
         <Input id="inquiry-website" name="website" tabIndex={-1} autoComplete="off" />
@@ -154,7 +166,7 @@ export function InquiryForm({
       ) : null}
       {status === "error" ? (
         <p className="text-sm text-[var(--color-danger)]" role="alert">
-          Could not send inquiry. Please try again.
+          {submitError || "Could not send inquiry. Please try again."}
         </p>
       ) : null}
     </form>
