@@ -1,6 +1,6 @@
 export const brand = {
   name: "SEAPS",
-  fullName: "South East Asia Property Services Co. Ltd",
+  fullName: "South East Asia Property Services Co. Ltd.",
   tagline: "Trusted property services across Cambodia since 2013",
   description:
     "SEAPS — South East Asia Property Services — helps buyers, renters, and investors find residential and commercial property across Cambodia, with local expertise since 2013.",
@@ -25,7 +25,7 @@ export const brand = {
   },
   logo: {
     text: "SEAPS",
-    subtitle: "South East Asia Property Services Co. Ltd",
+    subtitle: "South East Asia Property Services Co. Ltd.",
     mark: "SE",
   },
   theme: {

@@ -23,7 +23,7 @@ export default async function HomePage() {
           <HeroMainLayout
             className="reveal"
             copyLead={
-              <div className="notranslate flex w-full flex-col items-center text-center">
+              <div className="notranslate flex w-full max-w-2xl flex-col items-start text-left text-justify hyphens-auto">
                 <SeapsLogo
                   size="hero"
                   className="h-[4.05rem] w-[6.4rem] sm:h-[4.55rem] sm:w-[7.2rem] md:h-[5.05rem] md:w-[8rem]"
@@ -31,7 +31,7 @@ export default async function HomePage() {
                 <p className="seaps-brand-subtitle mt-2 text-[0.65rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.7125rem]">
                   {brand.fullName}
                 </p>
-                <h1 className="notranslate mt-4 max-w-2xl text-lg font-medium leading-snug sm:mt-5 md:text-xl lg:mt-5">
+                <h1 className="notranslate mt-4 text-lg font-medium leading-snug sm:mt-5 md:text-xl lg:mt-5">
                   <span className="seaps-gold-text block">
                     South East Asia Property Services (SEAPS)
                   </span>
@@ -43,14 +43,12 @@ export default async function HomePage() {
               </div>
             }
             copy={
-              <>
-                <p className="max-w-2xl text-base text-white md:text-lg lg:mt-1">
-                  SEAPS converts market insight into clear individualised strategies by providing Buyers,
-                  Sellers and Investors with comprehensive property solutions spanning every major sector
-                  of the market, including Land, Residential and Commercial Properties, Property
-                  Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
-                </p>
-              </>
+              <p className="max-w-2xl text-justify hyphens-auto text-base text-white md:text-lg lg:mt-1">
+                SEAPS converts market insight into clear individualised strategies by providing Buyers,
+                Sellers and Investors with comprehensive property solutions spanning every major sector
+                of the market, including Land, Residential and Commercial Properties, Property
+                Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
+              </p>
             }
             aside={
               <>
