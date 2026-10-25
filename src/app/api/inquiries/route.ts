@@ -87,12 +87,19 @@ export async function POST(request: Request) {
   });
 
   if (!mailResult.delivered) {
+    const reason = mailResult.reason ?? "delivery_failed";
+    const isConfig = reason === "smtp_not_configured";
+    if (mailResult.detail) {
+      console.error("[inquiries] SMTP:", mailResult.detail);
+    }
     return NextResponse.json(
       {
-        error: "Email delivery is not configured. Set SMTP_PASS on the server.",
-        code: mailResult.reason ?? "delivery_failed",
+        error: isConfig
+          ? "Email delivery is not configured. Set SMTP_PASS on the server."
+          : "Could not send email. Check SMTP credentials and Hostinger mailbox settings.",
+        code: reason,
       },
-      { status: 503 },
+      { status: isConfig ? 503 : 502 },
     );
   }
 
