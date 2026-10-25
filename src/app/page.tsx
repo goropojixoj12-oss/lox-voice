@@ -11,7 +11,7 @@ import { brand } from "@/config/brand";
 export default async function HomePage() {
   return (
     <>
-      <section className="relative z-0 min-h-[min(82vh,760px)] overflow-hidden">
+      <section className="relative z-0 min-h-[min(88vh,820px)] overflow-hidden">
         <BackgroundVideo
           eager
           src="/videos/hero-banner.mp4"
@@ -33,7 +33,7 @@ export default async function HomePage() {
                     {brand.fullName}
                   </p>
                 </div>
-                <h1 className="notranslate mt-5 max-w-2xl text-left text-xl font-medium leading-snug sm:mt-6 md:text-[1.375rem] lg:leading-[1.35]">
+                <h1 className="notranslate mt-5 max-w-2xl text-left text-xl font-medium leading-relaxed sm:mt-6 md:text-[1.375rem] lg:leading-[1.35]">
                   <span className="seaps-gold-text block">
                     South East Asia Property Services (SEAPS)
                   </span>
