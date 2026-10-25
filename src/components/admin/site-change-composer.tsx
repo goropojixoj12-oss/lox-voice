@@ -49,22 +49,48 @@ export function SiteChangeComposer() {
     event.preventDefault();
     setError(null);
     setSent(false);
+
+    const trimmed = message.trim();
+    if (trimmed.length < 3) {
+      setError("Describe the change in at least a few words.");
+      return;
+    }
+
     setLoading(true);
     try {
       const form = new FormData();
-      form.set("message", message);
+      form.set("message", trimmed);
       if (file) form.set("file", file);
-      const res = await fetch("/api/admin/site-requests", { method: "POST", body: form });
-      const data = (await res.json()) as { error?: string };
+      const res = await fetch("/api/admin/site-requests", {
+        method: "POST",
+        body: form,
+        credentials: "same-origin",
+      });
+
+      let data: { error?: string } = {};
+      try {
+        data = (await res.json()) as { error?: string };
+      } catch {
+        setError(
+          res.ok
+            ? "Unexpected response from the server."
+            : `Could not send (server error ${res.status}).`,
+        );
+        return;
+      }
+
       if (!res.ok) {
         setError(data.error ?? "Could not send.");
         return;
       }
+
       setMessage("");
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       setSent(true);
       await refresh();
+    } catch {
+      setError("Network error. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -117,7 +143,7 @@ export function SiteChangeComposer() {
           <p className="text-sm text-[var(--color-accent-soft)]">Sent — your request is in the queue.</p>
         ) : null}
 
-        <Button type="submit" variant="primary" disabled={loading || message.trim().length < 3}>
+        <Button type="submit" variant="primary" disabled={loading}>
           {loading ? "Sending…" : "Send"}
         </Button>
 

@@ -23,6 +23,8 @@ const messageSchema = z
   .min(3, "Describe the change in at least a few words.")
   .max(8000);
 
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   const session = await requireRole(["admin"]);
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -35,43 +37,54 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many requests. Wait a minute." }, { status: 429 });
   }
 
-  const form = await request.formData();
-  const messageRaw = form.get("message");
-  const parsedMessage = messageSchema.safeParse(
-    typeof messageRaw === "string" ? messageRaw : "",
-  );
-  if (!parsedMessage.success) {
+  try {
+    const form = await request.formData();
+    const messageRaw = form.get("message");
+    const parsedMessage = messageSchema.safeParse(
+      typeof messageRaw === "string" ? messageRaw : "",
+    );
+    if (!parsedMessage.success) {
+      return NextResponse.json(
+        { error: parsedMessage.error.issues[0]?.message ?? "Invalid message" },
+        { status: 400 },
+      );
+    }
+
+    let requestRecord = await createSiteChangeRequest({
+      message: parsedMessage.data,
+      scope: "ui_auth",
+      createdByUserId: session.id,
+      createdByName: session.name,
+      attachment: null,
+    });
+
+    const fileEntry = form.get("file");
+    if (fileEntry instanceof File && fileEntry.size > 0) {
+      try {
+        const stored = await writeSiteRequestAttachment(requestRecord.id, fileEntry);
+        const updated = await setSiteChangeRequestAttachment(requestRecord.id, {
+          fileName: stored.fileName,
+          storageKey: stored.storageKey,
+          contentType: stored.contentType,
+          sizeBytes: stored.sizeBytes,
+        });
+        if (updated) requestRecord = updated;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Attachment failed";
+        return NextResponse.json({ error: message }, { status: 400 });
+      }
+    }
+
+    notifySiteAgentWebhook(requestRecord);
+    return NextResponse.json({ request: requestRecord }, { status: 201 });
+  } catch (error) {
+    console.error("[admin/site-requests] POST failed", error);
     return NextResponse.json(
-      { error: parsedMessage.error.issues[0]?.message ?? "Invalid message" },
-      { status: 400 },
+      {
+        error:
+          "Could not save your request. Site storage may be misconfigured (check Blob/KV on the server).",
+      },
+      { status: 503 },
     );
   }
-
-  let requestRecord = await createSiteChangeRequest({
-    message: parsedMessage.data,
-    scope: "ui_auth",
-    createdByUserId: session.id,
-    createdByName: session.name,
-    attachment: null,
-  });
-
-  const file = form.get("file");
-  if (file instanceof File && file.size > 0) {
-    try {
-      const stored = await writeSiteRequestAttachment(requestRecord.id, file);
-      const updated = await setSiteChangeRequestAttachment(requestRecord.id, {
-        fileName: stored.fileName,
-        storageKey: stored.storageKey,
-        contentType: stored.contentType,
-        sizeBytes: stored.sizeBytes,
-      });
-      if (updated) requestRecord = updated;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Attachment failed";
-      return NextResponse.json({ error: message }, { status: 400 });
-    }
-  }
-
-  notifySiteAgentWebhook(requestRecord);
-  return NextResponse.json({ request: requestRecord }, { status: 201 });
 }
