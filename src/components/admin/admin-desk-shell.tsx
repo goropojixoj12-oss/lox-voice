@@ -68,7 +68,7 @@ export function AdminDeskShell({
             href="/"
             className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm hover:border-[var(--color-accent)]"
           >
-            Public site
+            Public Site
           </Link>
         </div>
       </div>
