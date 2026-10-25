@@ -95,6 +95,11 @@ const nextConfig: NextConfig = {
       },
       { source: "/buy", destination: "/buy/residential", permanent: true },
       { source: "/rent", destination: "/rent/residential", permanent: true },
+      {
+        source: "/insights/seaps-since-1997",
+        destination: "/insights/seaps-since-2013",
+        permanent: true,
+      },
     ];
   },
   images: {
