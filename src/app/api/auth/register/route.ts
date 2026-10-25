@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(2),
   email: z.string().email(),
-  password: z.string().min(8),
-  role: z.enum(["buyer", "owner", "agent"]),
+  password: z.string().min(6),
 });
 
 export async function POST(request: Request) {
