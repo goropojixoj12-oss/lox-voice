@@ -166,7 +166,7 @@ export default function ContactPage() {
         </div>
         {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
         <Button type="submit" className="min-h-11" disabled={status === "loading"}>
-          {status === "loading" ? "Sending…" : "SEND Message"}
+          {status === "loading" ? "Sending…" : "Send Message"}
         </Button>
       </form>
       {status === "ok" ? (
