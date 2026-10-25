@@ -32,15 +32,30 @@ function blobPathname(storageKey: string): string {
   return `${BLOB_PREFIX}/${storageKey}`;
 }
 
-async function localRoot(): Promise<string> {
-  const local = path.join(process.cwd(), ".data", LOCAL_DIR);
-  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
-    const tmp = path.join(os.tmpdir(), LOCAL_DIR);
-    await fs.mkdir(tmp, { recursive: true }).catch(() => undefined);
-    return tmp;
-  }
-  await fs.mkdir(local, { recursive: true });
-  return local;
+function isServerlessRuntime(): boolean {
+  return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+}
+
+function safeStorageFileName(storageKey: string): string {
+  return storageKey.replace(/\//g, "__");
+}
+
+function projectAttachmentPath(storageKey: string): string {
+  return path.join(process.cwd(), ".data", LOCAL_DIR, safeStorageFileName(storageKey));
+}
+
+function ephemeralAttachmentPath(storageKey: string): string {
+  return path.join(
+    /* turbopackIgnore: true */ os.tmpdir(),
+    LOCAL_DIR,
+    safeStorageFileName(storageKey),
+  );
+}
+
+function attachmentPaths(storageKey: string): string[] {
+  return isServerlessRuntime()
+    ? [ephemeralAttachmentPath(storageKey), projectAttachmentPath(storageKey)]
+    : [projectAttachmentPath(storageKey), ephemeralAttachmentPath(storageKey)];
 }
 
 function sanitizeFileName(name: string): string {
@@ -76,11 +91,19 @@ export async function writeSiteRequestAttachment(
       ...blobAuth(),
     });
   } else {
-    const root = await localRoot();
-    const filePath = path.join(root, storageKey.replace(/\//g, "__"));
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, bytes);
-    await fs.writeFile(`${filePath}.meta.json`, JSON.stringify({ contentType }), "utf8");
+    let written = false;
+    for (const filePath of attachmentPaths(storageKey)) {
+      try {
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.writeFile(filePath, bytes);
+        await fs.writeFile(`${filePath}.meta.json`, JSON.stringify({ contentType }), "utf8");
+        written = true;
+        break;
+      } catch {
+        // try next candidate
+      }
+    }
+    if (!written) throw new Error("Failed to save attachment");
   }
 
   return { storageKey, fileName, contentType, sizeBytes: bytes.length };
@@ -106,23 +129,24 @@ export async function readSiteRequestAttachment(
       return null;
     }
   }
-  const root = await localRoot();
-  const filePath = path.join(root, storageKey.replace(/\//g, "__"));
-  try {
-    const bytes = await fs.readFile(filePath);
-    let contentType = "application/octet-stream";
+  for (const filePath of attachmentPaths(storageKey)) {
     try {
-      const meta = JSON.parse(await fs.readFile(`${filePath}.meta.json`, "utf8")) as {
-        contentType?: string;
-      };
-      if (meta.contentType) contentType = meta.contentType;
+      const bytes = await fs.readFile(filePath);
+      let contentType = "application/octet-stream";
+      try {
+        const meta = JSON.parse(await fs.readFile(`${filePath}.meta.json`, "utf8")) as {
+          contentType?: string;
+        };
+        if (meta.contentType) contentType = meta.contentType;
+      } catch {
+        /* ignore */
+      }
+      return { bytes, contentType };
     } catch {
-      /* ignore */
+      // try next candidate
     }
-    return { bytes, contentType };
-  } catch {
-    return null;
   }
+  return null;
 }
 
 export async function deleteSiteRequestAttachment(storageKey: string): Promise<void> {
@@ -134,8 +158,8 @@ export async function deleteSiteRequestAttachment(storageKey: string): Promise<v
     }
     return;
   }
-  const root = await localRoot();
-  const filePath = path.join(root, storageKey.replace(/\//g, "__"));
-  await fs.unlink(filePath).catch(() => undefined);
-  await fs.unlink(`${filePath}.meta.json`).catch(() => undefined);
+  for (const filePath of attachmentPaths(storageKey)) {
+    await fs.unlink(filePath).catch(() => undefined);
+    await fs.unlink(`${filePath}.meta.json`).catch(() => undefined);
+  }
 }

@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   const item = await claimNextSiteChangeRequest();
   if (!item) return NextResponse.json({ request: null });
 
-  const siteUrl = brand.siteUrl.replace(/\/$/, "");
+  const siteUrl = brand.url.replace(/\/$/, "");
   const attachmentUrl = item.attachment
     ? `${siteUrl}/api/admin/site-requests/file?key=${encodeURIComponent(item.attachment.storageKey)}`
     : null;

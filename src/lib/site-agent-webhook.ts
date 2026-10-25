@@ -6,7 +6,7 @@ export function notifySiteAgentWebhook(request: SiteChangeRequest): void {
   const url = process.env.SITE_AGENT_WEBHOOK_URL?.trim();
   if (!url) return;
 
-  const siteUrl = brand.siteUrl.replace(/\/$/, "");
+  const siteUrl = brand.url.replace(/\/$/, "");
   const attachmentUrl = request.attachment
     ? `${siteUrl}/api/admin/site-requests/file?key=${encodeURIComponent(request.attachment.storageKey)}`
     : null;
