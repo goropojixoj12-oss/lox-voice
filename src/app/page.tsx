@@ -26,9 +26,9 @@ export default async function HomePage() {
               <div className="notranslate flex w-full flex-col items-center text-center">
                 <SeapsLogo
                   size="hero"
-                  className="h-[3.85rem] w-[6.1rem] sm:h-[4.35rem] sm:w-[6.9rem] md:h-[4.85rem] md:w-[7.7rem]"
+                  className="h-[3.95rem] w-[6.25rem] sm:h-[4.45rem] sm:w-[7.05rem] md:h-[4.95rem] md:w-[7.875rem]"
                 />
-                <p className="seaps-brand-subtitle mt-2 text-[0.6rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.65rem]">
+                <p className="seaps-brand-subtitle mt-2 text-[0.625rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.6875rem]">
                   {brand.fullName}
                 </p>
               </div>
