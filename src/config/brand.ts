@@ -15,7 +15,7 @@ export const brand = {
   country: "Cambodia",
   social: {
     telegram: "#",
-    facebook: "#",
+    facebook: "https://www.facebook.com",
     whatsapp: "#",
     tiktok: "#",
     linkedin: "#",

@@ -39,7 +39,7 @@ export default async function HomePage() {
                   South East Asia Property Services (SEAPS) is a multi-Award-Winning Real Estate,
                   Property Management and Investment Company, based in South East Asia.
                 </h1>
-                <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
+                <p className="mt-4 max-w-2xl text-base text-white md:text-lg">
                   SEAPS converts market insight into clear individualised strategies by providing Buyers,
                   Sellers and Investors with comprehensive property solutions spanning every major sector
                   of the market, including Land, Residential and Commercial Properties, Property
