@@ -78,11 +78,13 @@ export default function ContactPage() {
         Contact
       </h1>
       <p className="mt-4 text-center leading-relaxed text-[var(--color-muted)]">
-        We thank you for your contact and support. Please complete the fields below and upon
-        submission, the information provided will be assessed and forwarded to the most appropriate
-        SEAPS Specialist.
-        <br />
-        <br />
+        We thank you for your contact and support.
+      </p>
+      <p className="mt-3 text-center leading-relaxed text-[var(--color-muted)]">
+        Please complete the fields below and upon submission, the information provided will be
+        assessed and forwarded to the most appropriate SEAPS Specialist.
+      </p>
+      <p className="mt-3 text-center leading-relaxed text-[var(--color-muted)]">
         Please click this link{" "}
         <a
           href={brand.googleMapsPlaceUrl}
