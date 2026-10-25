@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
 import { isPublicListing } from "@/lib/listing-access";
+import { propertyListingsEnabled } from "@/lib/listings-policy";
 import { saveRuntimeListing } from "@/lib/store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import { slugify } from "@/lib/utils";
@@ -77,6 +78,9 @@ const createSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  if (!propertyListingsEnabled()) {
+    return NextResponse.json({ error: "Property listings are disabled" }, { status: 403 });
+  }
   const session = await requireRole(["owner", "agent", "admin"]);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
