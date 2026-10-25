@@ -24,11 +24,6 @@ const NAV = [
     match: (p: string) => p.startsWith(adminDeskPath("legal")),
   },
   {
-    href: adminDeskPath("listings"),
-    label: "Listing moderation",
-    match: (p: string) => p.startsWith(adminDeskPath("listings")),
-  },
-  {
     href: adminDeskPath("operations"),
     label: "Operations",
     match: (p: string) => p.startsWith(adminDeskPath("operations")),
