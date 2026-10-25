@@ -4,12 +4,23 @@ import type { Property, TransactionType } from "@/lib/types";
 /** Sale and long-term rent inventory withdrawn from the public catalog (CEO site request). */
 const WITHDRAWN_PUBLIC_CATALOG_DEALS = new Set<TransactionType>(["sale", "rent"]);
 
+/** Short-stay promo listings removed from buy/rent/commercial-style catalogs (CEO site request). */
+const WITHDRAWN_PROMO_LISTING_SLUGS = new Set([
+  "sangkat-bei-short-stay",
+  "sla-kram-short-stay-villa",
+]);
+
 export function isWithdrawnSaleOrRentCatalogListing(property: Property): boolean {
   return WITHDRAWN_PUBLIC_CATALOG_DEALS.has(property.transactionType);
 }
 
+export function isWithdrawnPromoCatalogListing(property: Property): boolean {
+  return WITHDRAWN_PROMO_LISTING_SLUGS.has(property.slug);
+}
+
 export function isPublicListing(property: Property): boolean {
   if (property.status !== "published") return false;
+  if (isWithdrawnPromoCatalogListing(property)) return false;
   if (isWithdrawnSaleOrRentCatalogListing(property)) return false;
   return true;
 }

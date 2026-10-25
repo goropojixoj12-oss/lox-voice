@@ -32,3 +32,9 @@ export async function runCatalogSearch(
 export function dealDefault(deal: TransactionType): Partial<SearchFilters> {
   return { deal };
 }
+
+/** Buy and long-term rent catalog routes show no public inventory (CEO site request). */
+export function catalogVisibilityForDeal(deal?: TransactionType): CatalogVisibility {
+  if (deal === "sale" || deal === "rent") return "cleared";
+  return "normal";
+}

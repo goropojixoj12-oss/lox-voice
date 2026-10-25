@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CatalogPage } from "@/components/search/catalog-page";
+import { catalogVisibilityForDeal } from "@/lib/catalog";
 import { catalogRouteMetadata } from "@/lib/seo";
 
 type Props = {
@@ -20,7 +21,7 @@ export default async function BuyResidentialPage({ searchParams }: Props) {
     <CatalogPage
       searchParams={searchParams}
       deal="sale"
-      visibility="cleared"
+      visibility={catalogVisibilityForDeal("sale")}
       title="Homes for sale"
       description="Sale inventory including apartments, villas, and project units."
     />
