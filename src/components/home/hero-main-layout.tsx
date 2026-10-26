@@ -28,8 +28,10 @@ export function HeroMainLayout({ copyLead, copy, aside, className }: HeroMainLay
           ) : null}
           <div
             className={cn(
-              "flex w-full min-w-0 flex-col lg:col-start-2 lg:row-start-1 lg:justify-center lg:justify-self-stretch lg:pl-2 xl:pl-4",
-              copyLeadRows === 2 ? "lg:row-span-2" : "lg:row-span-1",
+              "flex w-full min-w-0 flex-col lg:col-start-2 lg:justify-self-stretch lg:pl-2 xl:pl-4",
+              copyLeadRows === 2
+                ? "lg:row-start-1 lg:row-span-2 lg:self-start lg:mt-[calc(5.2rem+0.5rem)] sm:lg:mt-[calc(5.87rem+0.625rem)] md:lg:mt-[calc(6.53rem+0.625rem)]"
+                : "lg:row-start-1 lg:row-span-1 lg:justify-center lg:self-center",
             )}
           >
             {aside}
