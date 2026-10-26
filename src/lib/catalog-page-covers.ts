@@ -4,7 +4,7 @@ export const catalogCoverBySlug: Record<
   { storageKey: string; alt: string; publicAssetPath?: string }
 > = {
   "buy-residential-vue-aston": {
-    storageKey: "-TT3QVKwlOG8/Vue Aston Web Page Cover.png",
+    storageKey: "7PV51gUb5HOt/Vue Aston Web Page Cover.png",
     alt: "Vue Aston — residential property for sale",
     publicAssetPath: "/media/catalog/vue-aston-web-page-cover.png",
   },

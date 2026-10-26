@@ -67,7 +67,7 @@ export function CatalogClient({
       </div>
 
       {coverAd ? (
-        <div className="mb-2 max-w-5xl">
+        <div className="mb-2 flex justify-center">
           <CatalogCoverAd src={coverAd.src} alt={coverAd.alt} />
         </div>
       ) : null}
