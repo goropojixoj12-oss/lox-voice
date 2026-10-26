@@ -24,12 +24,12 @@ export default async function HomePage() {
               className="reveal"
               copyLead={
                 <div className="notranslate flex w-full max-w-2xl flex-col items-start text-left text-justify hyphens-auto">
-                  <div className="flex flex-col items-center self-start">
+                  <div className="flex flex-col items-start">
                     <SeapsLogo
                       size="hero"
-                      className="h-[4.3rem] w-[6.8rem] sm:h-[4.85rem] sm:w-[7.65rem] md:h-[5.4rem] md:w-[8.5rem]"
+                      className="h-[4.73rem] w-[7.48rem] sm:h-[5.335rem] sm:w-[8.415rem] md:h-[5.94rem] md:w-[9.35rem]"
                     />
-                    <p className="seaps-brand-subtitle mt-2 text-center text-[0.7rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.7625rem]">
+                    <p className="seaps-brand-subtitle mt-2 w-[7.48rem] text-justify text-[0.77rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:w-[8.415rem] sm:text-[0.83875rem] md:w-[9.35rem]">
                       <span className="block">South East Asia Property Services</span>
                       <span className="block">Co. Ltd.</span>
                     </p>
