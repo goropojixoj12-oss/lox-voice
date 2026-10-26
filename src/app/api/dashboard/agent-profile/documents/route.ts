@@ -6,7 +6,7 @@ import {
   validateAgentDocumentFile,
   type AgentDocumentKind,
 } from "@/lib/agent-profile";
-import { getSession } from "@/lib/auth";
+import { getAgentDeskActor } from "@/lib/agent-desk-api";
 
 function parseKind(raw: FormDataEntryValue | null): AgentDocumentKind | null {
   if (typeof raw !== "string") return null;
@@ -16,11 +16,11 @@ function parseKind(raw: FormDataEntryValue | null): AgentDocumentKind | null {
 }
 
 export async function POST(request: Request) {
-  const session = await getSession();
-  if (!session) {
+  const actor = await getAgentDeskActor();
+  if (!actor) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  if (session.role !== "agent" && session.role !== "admin") {
+  if (actor.role !== "agent") {
     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
   }
 
@@ -41,8 +41,8 @@ export async function POST(request: Request) {
 
   const bytes = Buffer.from(await file.arrayBuffer());
   const profile = await addAgentDocument(
-    session.id,
-    { name: session.name, email: session.email },
+    actor.id,
+    { name: actor.name, email: actor.email },
     kind,
     {
       name: file.name,
@@ -54,11 +54,11 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const session = await getSession();
-  if (!session) {
+  const actor = await getAgentDeskActor();
+  if (!actor) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  if (session.role !== "agent" && session.role !== "admin") {
+  if (actor.role !== "agent") {
     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
   }
   const { searchParams } = new URL(request.url);
@@ -66,7 +66,7 @@ export async function DELETE(request: Request) {
   if (!documentId) {
     return NextResponse.json({ error: "Document id required" }, { status: 400 });
   }
-  const profile = await removeAgentDocument(session.id, documentId);
+  const profile = await removeAgentDocument(actor.id, documentId);
   if (!profile) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }

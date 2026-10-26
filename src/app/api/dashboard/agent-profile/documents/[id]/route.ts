@@ -1,20 +1,20 @@
 import { NextResponse } from "next/server";
 import { getAgentDocumentForUser } from "@/lib/agent-profile";
-import { getSession } from "@/lib/auth";
+import { getAgentDeskActor } from "@/lib/agent-desk-api";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_request: Request, context: RouteContext) {
-  const session = await getSession();
-  if (!session) {
+  const actor = await getAgentDeskActor();
+  if (!actor) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  if (session.role !== "agent" && session.role !== "admin") {
+  if (actor.role !== "agent") {
     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
   }
 
   const { id } = await context.params;
-  const doc = await getAgentDocumentForUser(session.id, id);
+  const doc = await getAgentDocumentForUser(actor.id, id);
   if (!doc) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }
