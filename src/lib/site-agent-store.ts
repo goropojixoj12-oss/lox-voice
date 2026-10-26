@@ -95,3 +95,16 @@ export async function setSiteChangeRequestAttachment(
   await saveRequests(items);
   return items[idx]!;
 }
+
+export async function setSiteChangeRequestSecondAttachment(
+  id: string,
+  secondAttachment: NonNullable<SiteChangeRequest["secondAttachment"]>,
+): Promise<SiteChangeRequest | null> {
+  const items = await loadRequests();
+  const idx = items.findIndex((r) => r.id === id);
+  if (idx < 0) return null;
+  const now = new Date().toISOString();
+  items[idx] = { ...items[idx]!, secondAttachment, updatedAt: now };
+  await saveRequests(items);
+  return items[idx]!;
+}
