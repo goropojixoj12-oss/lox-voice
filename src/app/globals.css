@@ -652,3 +652,13 @@ font font {
   color: #0b1c33;
 }
 
+/* Amenity labels on chips/pills — black text for readability on light fills */
+.seaps-amenity-chip {
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  animation: none !important;
+}
+

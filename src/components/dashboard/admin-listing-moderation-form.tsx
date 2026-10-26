@@ -446,10 +446,10 @@ export function AdminListingModerationForm({ listing }: { listing: Property }) {
                   type="button"
                   onClick={() => toggleAmenity(value)}
                   className={cn(
-                    "rounded-full border px-3 py-1.5 text-sm transition",
+                    "seaps-amenity-chip rounded-full border px-3 py-1.5 text-sm transition",
                     on
-                      ? "border-[rgba(212,175,55,0.75)] bg-[var(--color-mist)]"
-                      : "border-[var(--color-border)] hover:border-[rgba(212,175,55,0.45)]",
+                      ? "border-[rgba(212,175,55,0.75)] bg-white"
+                      : "border-[var(--color-border)] bg-white hover:border-[rgba(212,175,55,0.45)]",
                   )}
                 >
                   {label}

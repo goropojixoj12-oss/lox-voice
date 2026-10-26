@@ -112,7 +112,10 @@ export default async function ProjectDetailPage({
             </h2>
             <div className="flex flex-wrap gap-2">
               {project.amenities.map((a) => (
-                <span key={a} className="rounded-full bg-[var(--color-mist)] px-3 py-1 text-sm">
+                <span
+                  key={a}
+                  className="seaps-amenity-chip rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
+                >
                   {amenityLabels[a]}
                 </span>
               ))}

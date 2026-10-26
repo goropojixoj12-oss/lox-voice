@@ -286,7 +286,7 @@ export function AdvancedFilters({
                   "rounded-full border px-3 py-1.5 text-xs font-medium transition",
                   active
                     ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[#0B1C33]"
-                    : "border-[var(--color-border)] bg-[var(--color-mist)] text-[var(--color-text)] hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent-soft)]",
+                    : "seaps-amenity-chip border-[var(--color-border)] bg-white hover:border-[var(--color-accent)]/50",
                 )}
               >
                 {amenity.label}
