@@ -5,8 +5,8 @@ import type { DemoUser } from "@/lib/types";
 export const ADMIN_HIDDEN_USER_IDS = new Set(["user-buyer", "user-owner"]);
 
 /** Public catalog seed profiles (Sokha, Dara, …) — not real staff; use platform user ids in admin. */
+/** Catalog-only personas (Adam James on public pages) — not executive staff roster. */
 export const ADMIN_HIDDEN_STAFF_IDS = new Set([
-  "agent-sokha",
   "agent-dara",
   "agent-rith",
   "agent-srey",

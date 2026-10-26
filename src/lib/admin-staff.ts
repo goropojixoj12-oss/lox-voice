@@ -2,6 +2,7 @@ import { agents, getAgencyById } from "@/data/agencies";
 import { properties } from "@/data/properties";
 import { getAgentProfile } from "@/lib/agent-profile";
 import { buildProfileCompletion } from "@/lib/agent-desk-metrics";
+import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
 import { getInquiries, getRuntimeListings } from "@/lib/store";
 import type { Agent } from "@/lib/types";
 
@@ -47,6 +48,7 @@ export async function buildStaffRoster(openTasksByStaff: Record<string, number>)
   const rows: StaffRow[] = [];
 
   for (const agent of agents) {
+    if (!isAdminVisibleStaffId(agent.id)) continue;
     const agency = getAgencyById(agent.agencyId);
     let profilePercent = 0;
     let profileMissing: string[] = [];
@@ -82,5 +84,6 @@ export async function buildStaffRoster(openTasksByStaff: Record<string, number>)
 }
 
 export function getAgentByStaffId(staffId: string) {
+  if (!isAdminVisibleStaffId(staffId)) return null;
   return agents.find((a) => a.id === staffId) ?? null;
 }
