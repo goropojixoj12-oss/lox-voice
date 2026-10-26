@@ -3,8 +3,7 @@ export type UserRole =
   | "buyer"
   | "owner"
   | "agent"
-  | "admin"
-  | "god";
+  | "admin";
 
 export type TransactionType = "sale" | "rent" | "short_stay";
 

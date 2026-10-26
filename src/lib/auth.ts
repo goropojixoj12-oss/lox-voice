@@ -2,7 +2,6 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { findUserByEmail, demoUsers } from "@/data/users";
 import { DUMMY_PASSWORD_HASH, verifyPassword } from "@/lib/password";
-import { hasAdminDeskAccess } from "@/lib/platform-roles";
 import type { DemoUser, UserRole } from "@/lib/types";
 
 const SESSION_COOKIE = "en_session";
@@ -161,9 +160,6 @@ export async function logout() {
 
 export async function requireRole(roles: UserRole[]) {
   const session = await getSession();
-  if (!session) return null;
-  if (roles.includes(session.role)) return session;
-  const needsAdminDesk = roles.some((r) => r === "admin" || r === "god");
-  if (needsAdminDesk && hasAdminDeskAccess(session.role)) return session;
-  return null;
+  if (!session || !roles.includes(session.role)) return null;
+  return session;
 }
