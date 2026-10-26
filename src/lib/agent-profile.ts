@@ -68,12 +68,23 @@ function defaultProfile(
   };
 }
 
+const LEGACY_AGENT_DISPLAY_NAMES = new Set(["Agent1", "agent1"]);
+
 export async function getAgentProfile(
   userId: string,
   seed: { name: string; email: string },
 ): Promise<AgentProfileRecord> {
   const all = await readAllProfiles();
-  return all[userId] ?? defaultProfile(userId, seed);
+  const stored = all[userId];
+  if (!stored) return defaultProfile(userId, seed);
+  if (
+    seed.name.trim().length >= 2 &&
+    LEGACY_AGENT_DISPLAY_NAMES.has(stored.fullName.trim()) &&
+    stored.fullName.trim() !== seed.name.trim()
+  ) {
+    return { ...stored, fullName: seed.name, updatedAt: new Date().toISOString() };
+  }
+  return stored;
 }
 
 export async function saveAgentProfileFields(
