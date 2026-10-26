@@ -57,25 +57,44 @@ async function uploadViaBlobClient(file: File, userId: string): Promise<ListingM
 }
 
 async function uploadOne(file: File, userId: string | null): Promise<ListingMediaItem> {
-  if (userId) {
+  if (file.size <= 4.5 * 1024 * 1024) {
     try {
-      return await uploadViaBlobClient(file, userId);
-    } catch (clientError) {
-      if (file.size <= 4.5 * 1024 * 1024) {
-        try {
-          return await uploadViaServer(file);
-        } catch (serverError) {
-          const msg =
-            clientError instanceof Error ? clientError.message : "Upload failed";
-          const serverMsg =
-            serverError instanceof Error ? serverError.message : "Upload failed";
-          throw new Error(`${msg} (${serverMsg})`);
-        }
+      return await uploadViaServer(file);
+    } catch {
+      if (userId) {
+        return uploadViaBlobClient(file, userId);
       }
-      throw clientError;
+      throw new Error("Upload failed");
     }
   }
-  return uploadViaServer(file);
+  if (!userId) {
+    throw new Error("Sign in required for large uploads.");
+  }
+  return uploadViaBlobClient(file, userId);
+}
+
+const UPLOAD_CONCURRENCY = 4;
+
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    for (;;) {
+      const i = nextIndex;
+      nextIndex += 1;
+      if (i >= items.length) return;
+      results[i] = await fn(items[i]!, i);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
 }
 
 export function ListPropertyMediaStep({
@@ -118,25 +137,37 @@ export function ListPropertyMediaStep({
     setBusy(true);
     const files = Array.from(fileList);
     const next = [...items];
-    let done = 0;
 
     const failures: string[] = [];
-    for (const file of files) {
-      setProgress(`Uploading ${done + 1} / ${files.length}: ${file.name}`);
+    let completed = 0;
+    const uploaded = await mapWithConcurrency(files, UPLOAD_CONCURRENCY, async (file) => {
       try {
         const item = await uploadOne(file, userId);
-        if (item.kind === "image" && !next.some((m) => m.kind === "image" && m.isCover)) {
-          item.isCover = true;
-        }
-        next.push(item);
-        onChange([...next]);
+        completed += 1;
+        setProgress(`Uploaded ${completed} / ${files.length}…`);
+        return { ok: true as const, item, file };
       } catch (e) {
-        failures.push(
-          `${file.name}: ${e instanceof Error ? e.message : "Upload failed"}`,
-        );
+        completed += 1;
+        setProgress(`Uploaded ${completed} / ${files.length}…`);
+        return {
+          ok: false as const,
+          error: `${file.name}: ${e instanceof Error ? e.message : "Upload failed"}`,
+        };
       }
-      done += 1;
+    });
+
+    for (const result of uploaded) {
+      if (!result.ok) {
+        failures.push(result.error);
+        continue;
+      }
+      const item = result.item;
+      if (item.kind === "image" && !next.some((m) => m.kind === "image" && m.isCover)) {
+        item.isCover = true;
+      }
+      next.push(item);
     }
+    onChange([...next]);
     if (failures.length) {
       setError(
         failures.length === files.length
