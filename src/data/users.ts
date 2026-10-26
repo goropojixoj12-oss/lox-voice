@@ -11,7 +11,7 @@ export const demoUsers: DemoUser[] = [
     email: "buyer@seaps.com.kh",
     passwordHash:
       "$2b$12$NdXXHxba5KVo6jLzHsCrIOFL0eSXRN4nnc2Dz6k87kdm2auo8jC4.",
-    name: "Demo buyer",
+    name: "Adam James",
     role: "buyer",
   },
   {
@@ -19,7 +19,7 @@ export const demoUsers: DemoUser[] = [
     email: "owner@seaps.com.kh",
     passwordHash:
       "$2b$12$mqQ57ez2XIO1DZXpHsuIA.uajrUsmZ7aNu2LnVjo5A6/Sefc/Heo6",
-    name: "Demo owner",
+    name: "Adam James",
     role: "owner",
   },
   {
@@ -27,7 +27,7 @@ export const demoUsers: DemoUser[] = [
     email: "agent@seaps.com.kh",
     passwordHash:
       "$2b$12$RQPhXJlWKqPvrZaupgAE0OrcUjg8IzzkKTqDdmTpmv5I.k.FcFsge",
-    name: "Agent1",
+    name: "Adam James",
     role: "agent",
     agencyId: "ag-mekong",
   },
@@ -37,7 +37,7 @@ export const demoUsers: DemoUser[] = [
     passwordHash:
       "$2b$12$SbWirmamu/u3LkIH.BzOBOA2F2T1kZuGyPV8G7.H6icJhtp0.KxNm",
     name: "SEAPS CEO",
-    role: "admin",
+    role: "god",
   },
 ];
 

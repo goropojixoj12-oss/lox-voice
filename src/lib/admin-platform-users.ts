@@ -1,11 +1,12 @@
 import { demoUsers } from "@/data/users";
 import type { DemoUser } from "@/lib/types";
 
-/** Demo buyer/owner logins — not staff. Agent1 (user-agent) is the real platform agent. */
+/** Demo buyer/owner logins — not staff. Adam James (user-agent) is the real platform agent. */
 export const ADMIN_HIDDEN_USER_IDS = new Set(["user-buyer", "user-owner"]);
 
-/** Catalog-only personas (Adam James on public pages) — not executive staff roster. */
+/** Public catalog seed profiles (Sokha, Dara, …) — not real staff; use platform user ids in admin. */
 export const ADMIN_HIDDEN_STAFF_IDS = new Set([
+  "agent-sokha",
   "agent-dara",
   "agent-rith",
   "agent-srey",
@@ -21,7 +22,7 @@ export function isAdminVisibleStaffId(staffId: string): boolean {
   return !ADMIN_HIDDEN_STAFF_IDS.has(staffId);
 }
 
-/** Accounts shown in admin Users (CEO + Agent1 + future registrations). */
+/** Accounts shown in admin Users (God + Adam James + future registrations). */
 export function getAdminDirectoryUsers(): DemoUser[] {
   return demoUsers.filter(isAdminVisibleUser);
 }
