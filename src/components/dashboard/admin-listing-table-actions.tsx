@@ -53,11 +53,6 @@ export function AdminListingTableActions({
   }
 
   const detailHref = adminDeskPath("listings", listingId);
-  const manageLink = (
-    <Link href={detailHref} className="text-[var(--color-accent-soft)] underline">
-      Manage
-    </Link>
-  );
   const manageButton = (
     <Link
       href={detailHref}
@@ -88,5 +83,5 @@ export function AdminListingTableActions({
     );
   }
 
-  return manageLink;
+  return <div className="text-right">{manageButton}</div>;
 }
