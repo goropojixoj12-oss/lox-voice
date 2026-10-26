@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { SiteChangeComposer } from "@/components/admin/site-change-composer";
+import { adminSiteChangeAutomationEnabled } from "@/lib/admin-platform-safety";
 
 export const metadata: Metadata = { title: "Site change requests" };
 
 export default function AdminSiteChangesPage() {
+  const enabled = adminSiteChangeAutomationEnabled();
+
   return (
     <div className="space-y-4">
       <div>
@@ -15,7 +18,22 @@ export default function AdminSiteChangesPage() {
           helps.
         </p>
       </div>
-      <SiteChangeComposer />
+      {enabled ? (
+        <SiteChangeComposer />
+      ) : (
+        <div
+          className="rounded-[var(--radius-lg)] border border-amber-500/40 bg-amber-950/20 p-5 text-sm leading-relaxed"
+          role="status"
+        >
+          <p className="font-semibold text-amber-200">Site change automation is turned off</p>
+          <p className="mt-2 text-[var(--color-muted)]">
+            For site stability, admins cannot queue automated code changes from this desk. Listing
+            moderation, staff tools, and public content workflows are unaffected. Developers can
+            re-enable this only via server configuration (
+            <code className="text-xs">SEAPS_ENABLE_SITE_CHANGE_REQUESTS</code>) after review.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

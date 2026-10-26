@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { adminAggregationControlEnabled, adminAggregationForbiddenResponse } from "@/lib/admin-platform-safety";
 import { requireRole } from "@/lib/auth";
 import { runAggregationSync } from "@/lib/aggregations/sync";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
@@ -32,6 +33,9 @@ async function handle(request: Request) {
   const auth = await authorize(request);
   if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (auth.viaAdminSession && !adminAggregationControlEnabled()) {
+    return adminAggregationForbiddenResponse();
   }
 
   const limited = rateLimit(clientKey(request, "agg-sync"), {

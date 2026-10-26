@@ -5,6 +5,10 @@ import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { writeSiteRequestAttachment } from "@/lib/site-agent-attachments";
 import { notifySiteAgentWebhook } from "@/lib/site-agent-webhook";
 import {
+  adminSiteChangeAutomationEnabled,
+  adminSiteChangeForbiddenResponse,
+} from "@/lib/admin-platform-safety";
+import {
   createSiteChangeRequest,
   listSiteChangeRequests,
   setSiteChangeRequestAttachment,
@@ -28,6 +32,9 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   const session = await requireRole(["admin"]);
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!adminSiteChangeAutomationEnabled()) {
+    return adminSiteChangeForbiddenResponse();
+  }
 
   const limited = rateLimit(clientKey(request, "site-request"), {
     limit: 12,

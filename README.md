@@ -40,7 +40,7 @@ Translation uses the hidden Google Website Translator (network). Browser/OS loca
 
 ## Deploy path
 
-**Vercel production:** `main` on GitHub [`goropojixoj12-oss/lox-voice`](https://github.com/goropojixoj12-oss/lox-voice) → Vercel. That repo is the only deploy trigger for production (e.g. `vps1.store`).
+**Vercel production:** `main` on GitHub [`goropojixoj12-oss/lox-voice`](https://github.com/goropojixoj12-oss/lox-voice) → Vercel. Public domain: **https://www.seaps.asia**.
 
 | Remote   | Role |
 | -------- | ---- |
@@ -64,7 +64,7 @@ Agents and CI must not treat work as done until `git push` to **`github`** succe
 | `AGGREGATION_SYNC_SECRET` | Bearer token for scheduled sync (generate a long random string) |
 | `CRON_SECRET` | Optional alias; Netlify scheduler and `/api/aggregations/sync` accept either secret |
 | `AUTH_SECRET` | Session signing |
-| `NEXT_PUBLIC_SITE_URL` | Public site URL (e.g. `https://www.vps1.store`) |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL (e.g. `https://www.seaps.asia`) |
 
 Scheduled aggregation sync: `netlify.toml` + `netlify/functions/aggregation-sync-scheduled.ts` (`* * * * *`).
 

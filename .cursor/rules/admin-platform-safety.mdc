@@ -1,0 +1,15 @@
+---
+description: Block admin desk from triggering repo-wide or unstable production changes
+alwaysApply: true
+---
+
+# Admin platform safety
+
+Production admins must **not** regain unattended paths that edit GitHub/main or bulk-mutate infrastructure unless explicitly requested:
+
+- **Site Changes** / `SITE_AGENT_WEBHOOK_URL` / Cursor automation — gated by `SEAPS_ENABLE_SITE_CHANGE_REQUESTS` (default off). Do not re-enable in production without CEO + developer sign-off.
+- **Aggregation import/sync/prune** from admin browser — gated by `SEAPS_ENABLE_ADMIN_AGGREGATION_CONTROL` (default off).
+
+Public canonical domain is **https://www.seaps.asia** (`NEXT_PUBLIC_SITE_URL`). Do not default new links to `vps1.store`.
+
+When adding new admin APIs, ask whether they change code, deploys, or global data; if yes, use the same env-gated pattern in `src/lib/admin-platform-safety.ts`.

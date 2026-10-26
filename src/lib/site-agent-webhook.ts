@@ -1,8 +1,11 @@
 import { brand } from "@/config/brand";
+import { adminSiteChangeAutomationEnabled } from "@/lib/admin-platform-safety";
 import type { SiteChangeRequest } from "@/lib/site-agent-types";
 
 /** Optional: POST JSON to SITE_AGENT_WEBHOOK_URL when a request is queued. */
 export function notifySiteAgentWebhook(request: SiteChangeRequest): void {
+  if (!adminSiteChangeAutomationEnabled()) return;
+
   const url = process.env.SITE_AGENT_WEBHOOK_URL?.trim();
   if (!url) return;
 

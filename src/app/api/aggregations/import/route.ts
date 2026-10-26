@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { adminAggregationControlEnabled, adminAggregationForbiddenResponse } from "@/lib/admin-platform-safety";
 import { requireRole } from "@/lib/auth";
 import { importAggregatedDraft } from "@/lib/aggregations/sync";
 import { resolveExternalId } from "@/lib/aggregations/dedupe";
@@ -49,14 +50,17 @@ const importSchema = z.object({
   externalId: z.string().min(2).max(160).optional(),
 });
 
-async function authorize(request: Request): Promise<boolean> {
+type ImportAuth = { ok: true; viaAdminSession: boolean } | { ok: false };
+
+async function authorize(request: Request): Promise<ImportAuth> {
   const secret = process.env.AGGREGATION_SYNC_SECRET;
   if (secret) {
     const auth = request.headers.get("authorization");
-    if (auth === `Bearer ${secret}`) return true;
+    if (auth === `Bearer ${secret}`) return { ok: true, viaAdminSession: false };
   }
   const session = await requireRole(["admin"]);
-  return Boolean(session);
+  if (session) return { ok: true, viaAdminSession: true };
+  return { ok: false };
 }
 
 export async function POST(request: Request) {
@@ -71,8 +75,12 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!(await authorize(request))) {
+  const auth = await authorize(request);
+  if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (auth.viaAdminSession && !adminAggregationControlEnabled()) {
+    return adminAggregationForbiddenResponse();
   }
 
   let body: unknown;
