@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdminOpenAgentDeskButton } from "@/components/admin/admin-open-agent-desk-button";
 import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
 import { buildStaffRoster } from "@/lib/admin-staff";
 import { getAdminTasks } from "@/lib/admin-store";
@@ -25,9 +24,8 @@ export default async function AdminStaffPage() {
           Staff & performance
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Adam James and any future registered agent logins — not fake catalog profiles. Use{" "}
-          <strong className="text-[var(--color-text)]">Open agent desk</strong> to edit profile,
-          listings, and documents as that agent.
+          Adam James (agent@seaps.com.kh) and any future registered agent logins — not fake catalog profiles (Sokha, Dara,
+          etc.). Open a row to assign tasks and leave messages.
         </p>
       </div>
 
@@ -66,15 +64,12 @@ export default async function AdminStaffPage() {
                 <td className="p-3 text-right">{row.leadCount}</td>
                 <td className="p-3 text-right">{row.openTasks}</td>
                 <td className="p-3 text-right">
-                  <div className="flex flex-col items-end gap-2">
-                    <AdminOpenAgentDeskButton userId={row.staffId} />
-                    <Link
-                      href={adminDeskPath("staff", row.staffId)}
-                      className="text-xs text-[var(--color-accent-soft)] underline"
-                    >
-                      Staff record
-                    </Link>
-                  </div>
+                  <Link
+                    href={adminDeskPath("staff", row.staffId)}
+                    className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
+                  >
+                    Open
+                  </Link>
                 </td>
               </tr>
             ))}

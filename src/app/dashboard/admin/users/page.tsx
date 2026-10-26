@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdminOpenAgentDeskButton } from "@/components/admin/admin-open-agent-desk-button";
 import { getAdminDirectoryUsers } from "@/lib/admin-platform-users";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { roleDisplayLabel } from "@/lib/platform-roles";
 
 export const metadata: Metadata = { title: "Platform accounts" };
 
@@ -17,8 +15,8 @@ export default function AdminUsersPage() {
           Platform accounts
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Executive God account, Adam James (live agent), and future registrations. Demo buyer/owner
-          logins are hidden.
+          Real platform accounts only. Adam James (agent@seaps.com.kh) is the live agent login; buyer/owner demo logins are
+          hidden. Public catalog agent names (seed data) are not listed here.
         </p>
       </div>
 
@@ -37,10 +35,15 @@ export default function AdminUsersPage() {
               <tr key={user.id} className="border-t border-[var(--color-border)]">
                 <td className="p-3 font-semibold">{user.name}</td>
                 <td className="p-3">{user.email}</td>
-                <td className="p-3">{roleDisplayLabel(user.role)}</td>
+                <td className="p-3 capitalize">{user.role}</td>
                 <td className="p-3 text-right">
                   {user.role === "agent" ? (
-                    <AdminOpenAgentDeskButton userId={user.id} label="Open agent desk" />
+                    <Link
+                      href={adminDeskPath("staff", user.id)}
+                      className="text-[var(--color-accent-soft)] underline"
+                    >
+                      Agent desk
+                    </Link>
                   ) : null}
                 </td>
               </tr>

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminCommentsPanel } from "@/components/admin/admin-comments-panel";
 import { AdminTaskPanel } from "@/components/admin/admin-task-panel";
-import { buildStaffRoster, getAgentByStaffId } from "@/lib/admin-staff";
+import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
+import { buildStaffRoster, getStaffPlatformUser } from "@/lib/admin-staff";
 import { getAdminTasks } from "@/lib/admin-store";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
@@ -13,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ staffId: string }>;
 }): Promise<Metadata> {
   const { staffId } = await params;
-  const agent = getAgentByStaffId(staffId);
+  const agent = getStaffPlatformUser(staffId);
   return { title: agent ? `${agent.name} — staff` : "Staff" };
 }
 
@@ -23,13 +24,15 @@ export default async function AdminStaffDetailPage({
   params: Promise<{ staffId: string }>;
 }) {
   const { staffId } = await params;
-  const agent = getAgentByStaffId(staffId);
-  if (!agent) notFound();
+  if (!isAdminVisibleStaffId(staffId)) notFound();
+  const agent = getStaffPlatformUser(staffId);
+  if (!agent || agent.role !== "agent") notFound();
 
   const tasks = await getAdminTasks();
   const openByStaff: Record<string, number> = {};
   for (const t of tasks) {
     if (t.status === "done") continue;
+    if (!isAdminVisibleStaffId(t.assigneeStaffId)) continue;
     openByStaff[t.assigneeStaffId] = (openByStaff[t.assigneeStaffId] ?? 0) + 1;
   }
   const roster = await buildStaffRoster(openByStaff);
@@ -46,7 +49,7 @@ export default async function AdminStaffDetailPage({
           {agent.name}
         </h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
-          {agent.title} · {row.agencyName}
+          {agent.email} · agency {row.agencyLabel}
         </p>
       </div>
 
@@ -54,8 +57,9 @@ export default async function AdminStaffDetailPage({
         {[
           ["Profile complete", `${row.profilePercent}%`],
           ["Listings", row.listingCount],
-          ["Pending listings", row.pendingListings],
-          ["Leads (inquiries)", row.leadCount],
+          ["Pending", row.pendingListings],
+          ["Published", row.publishedListings],
+          ["Leads", row.leadCount],
         ].map(([label, value]) => (
           <div key={String(label)} className="seaps-card rounded-[var(--radius-md)] p-4">
             <p className="text-xs text-[var(--color-muted)]">{label}</p>
@@ -72,15 +76,13 @@ export default async function AdminStaffDetailPage({
               <li key={m}>{m}</li>
             ))}
           </ul>
-          {row.platformUserId ? (
-            <p className="mt-2 text-xs">
-              Agent desk profile:{" "}
-              <Link href="/dashboard/agent/profile" className="text-[var(--color-accent-soft)] underline">
-                /dashboard/agent/profile
-              </Link>{" "}
-              (when signed in as that user)
-            </p>
-          ) : null}
+          <p className="mt-2 text-xs">
+            Agent desk profile:{" "}
+            <Link href="/dashboard/agent/profile" className="text-[var(--color-accent-soft)] underline">
+              /dashboard/agent/profile
+            </Link>{" "}
+            (when signed in as {agent.email})
+          </p>
         </div>
       ) : null}
 

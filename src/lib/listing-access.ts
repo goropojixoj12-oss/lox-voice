@@ -1,5 +1,4 @@
 import type { SessionUser } from "@/lib/auth";
-import { hasAdminDeskAccess } from "@/lib/platform-roles";
 import type { Property, TransactionType } from "@/lib/types";
 
 /** Long-term rent inventory withdrawn from the public catalog (CEO site request). Sale listings (e.g. Vue Aston) stay public when published. */
@@ -27,7 +26,7 @@ export function isPublicListing(property: Property): boolean {
 }
 
 function staffCanPreviewListing(property: Property, session: SessionUser): boolean {
-  if (hasAdminDeskAccess(session.role)) return true;
+  if (session.role === "admin") return true;
   if (property.createdByUserId && property.createdByUserId === session.id) return true;
   if (property.ownerId && property.ownerId === session.id) return true;
   if (session.role === "agent" && property.agentId) return true;
