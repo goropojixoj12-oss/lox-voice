@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
-import { canUploadListingMedia, getListingMediaOwnerId } from "@/lib/agent-desk-api";
+import { getSession } from "@/lib/auth";
 import {
   LISTING_MEDIA_MAX_IMAGE_BYTES,
   LISTING_MEDIA_MAX_VIDEO_BYTES,
@@ -13,11 +13,11 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
-  if (!(await canUploadListingMedia())) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  const ownerId = await getListingMediaOwnerId();
-  if (!ownerId) {
+  if (!["owner", "agent", "admin"].includes(session.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
     const bytes = Buffer.from(await file.arrayBuffer());
     const safeName = sanitizeListingFileName(file.name || "upload");
-    const storageKey = `${ownerId}/${nanoid(10)}-${safeName}`;
+    const storageKey = `${session.id}/${nanoid(10)}-${safeName}`;
     const saved = await writeListingMediaFile(storageKey, bytes, mime);
 
     return NextResponse.json({

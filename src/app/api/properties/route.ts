@@ -133,7 +133,7 @@ export async function POST(request: Request) {
     },
     createdByUserId: session.id,
     ownerId: session.role === "owner" ? session.id : undefined,
-    agentId: session.role === "agent" ? "agent-sokha" : undefined,
+    agentId: undefined,
     agencyId: session.agencyId,
     publishedAt: now,
     updatedAt: now,

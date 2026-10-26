@@ -12,8 +12,7 @@ export default function AdminSiteChangesPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[var(--color-muted)]">
           Send UI and signed-in experience change requests from here. Attach a screenshot when it
-          helps. If your note touches hosting, secrets, or repo settings, you will see an extra
-          warning before sending.
+          helps.
         </p>
       </div>
       <SiteChangeComposer />

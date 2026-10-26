@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdminListingTableRow } from "@/components/dashboard/admin-listing-table-row";
-import { getSession } from "@/lib/auth";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
+import { adminListPropertyStepPath } from "@/lib/list-property-steps";
 import { getRuntimeListings } from "@/lib/store";
 import { demoUsers } from "@/data/users";
 import { ADMIN_HIDDEN_USER_IDS } from "@/lib/admin-platform-users";
@@ -31,8 +29,7 @@ export default async function AdminListingsPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { status: statusParam } = await searchParams;
-  const [runtime, session] = await Promise.all([getRuntimeListings(), getSession()]);
-  const canDeleteRejected = session?.role === "admin";
+  const runtime = await getRuntimeListings();
   const filter = statusParam as ListingStatus | "all" | undefined;
   const activeTab =
     STATUS_TABS.find((t) => t.key === filter)?.key ??
@@ -63,7 +60,7 @@ export default async function AdminListingsPage({
           </p>
         </div>
         <Link
-          href={LIST_PROPERTY_WIZARD_ENTRY}
+          href={adminListPropertyStepPath(1)}
           className="rounded-full bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[#0B1C33]"
         >
           New listing (7 steps)
@@ -111,18 +108,25 @@ export default async function AdminListingsPage({
               </tr>
             ) : (
               rows.map((listing) => (
-                <AdminListingTableRow
-                  key={listing.id}
-                  listingId={listing.id}
-                  title={listing.title}
-                  status={listing.status}
-                  locationLabel={`${listing.location.city}, ${listing.location.country}`}
-                  submitterLabel={submitterLabel(listing)}
-                  updatedLabel={new Date(
-                    listing.updatedAt ?? listing.publishedAt,
-                  ).toLocaleString()}
-                  canDeleteRejected={canDeleteRejected}
-                />
+                <tr key={listing.id} className="border-t border-[var(--color-border)]">
+                  <td className="p-3 font-semibold">{listing.title}</td>
+                  <td className="p-3 capitalize">{listing.status}</td>
+                  <td className="p-3 text-[var(--color-muted)]">
+                    {listing.location.city}, {listing.location.country}
+                  </td>
+                  <td className="p-3 text-xs">{submitterLabel(listing)}</td>
+                  <td className="p-3 text-xs text-[var(--color-muted)]">
+                    {new Date(listing.updatedAt ?? listing.publishedAt).toLocaleString()}
+                  </td>
+                  <td className="p-3 text-right">
+                    <Link
+                      href={adminDeskPath("listings", listing.id)}
+                      className="text-[var(--color-accent-soft)] underline"
+                    >
+                      Manage
+                    </Link>
+                  </td>
+                </tr>
               ))
             )}
           </tbody>

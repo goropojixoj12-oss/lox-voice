@@ -21,7 +21,7 @@ export default async function AdminAnalyticsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-          Site Data - Analytics - Statistics
+          Site analytics
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           Real traffic only (last {report.periodDays} days): each HTML visit and in-app route change
