@@ -39,11 +39,9 @@ export default function AboutUsPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-accent)]">
           About Us
         </p>
-        <h1 className="mx-auto mt-3 w-fit max-w-full font-[family-name:var(--font-display)] leading-tight text-[var(--color-accent-soft)]">
-          <span className="block whitespace-nowrap text-[1.05rem] min-[400px]:text-xl sm:text-2xl md:text-3xl lg:text-4xl">
-            South East Asia Property Services
-          </span>
-          <span className="mt-2 block text-center text-2xl md:text-3xl lg:text-[2.75rem]">(SEAPS)</span>
+        <h1 className="mx-auto mt-3 w-fit max-w-full font-[family-name:var(--font-display)] text-[1.05rem] leading-tight text-[var(--color-accent-soft)] min-[400px]:text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+          <span className="block whitespace-nowrap">South East Asia Property Services</span>
+          <span className="mt-2 block text-center">(SEAPS)</span>
         </h1>
         <p className="seaps-brand-subtitle mt-4 text-lg font-medium md:text-xl">
           Professional Real Estate, Property Management and Investment Solutions Across South East
