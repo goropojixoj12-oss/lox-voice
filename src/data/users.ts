@@ -11,7 +11,7 @@ export const demoUsers: DemoUser[] = [
     email: "buyer@seaps.com.kh",
     passwordHash:
       "$2b$12$NdXXHxba5KVo6jLzHsCrIOFL0eSXRN4nnc2Dz6k87kdm2auo8jC4.",
-    name: "Adam James",
+    name: "Demo buyer",
     role: "buyer",
   },
   {
@@ -19,7 +19,7 @@ export const demoUsers: DemoUser[] = [
     email: "owner@seaps.com.kh",
     passwordHash:
       "$2b$12$mqQ57ez2XIO1DZXpHsuIA.uajrUsmZ7aNu2LnVjo5A6/Sefc/Heo6",
-    name: "Adam James",
+    name: "Demo owner",
     role: "owner",
   },
   {
