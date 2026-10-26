@@ -6,7 +6,7 @@ import { AdminListingModerationForm } from "@/components/dashboard/admin-listing
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { getRuntimeListingById } from "@/lib/store";
 
-export const metadata: Metadata = { title: "Review listing" };
+export const metadata: Metadata = { title: "Manage listing" };
 
 export default async function AdminListingReviewPage({
   params,
@@ -18,7 +18,7 @@ export default async function AdminListingReviewPage({
   if (!listing) notFound();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
       <Link
         href={adminDeskPath("listings")}
         className="text-sm text-[var(--color-accent-soft)] hover:underline"
@@ -26,10 +26,11 @@ export default async function AdminListingReviewPage({
         ← Back to moderation queue
       </Link>
       <h1 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-        Review listing
+        Manage listing
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Edit copy and pricing, then approve to publish on the public site or reject to send back.
+        Edit every category, location, pricing, media, and platform field for this submission, then
+        save, publish, or reject.
       </p>
       <div className="mt-6 rounded-[var(--radius-xl)] seaps-card p-5 md:p-6">
         <AdminListingModerationForm listing={listing} />
