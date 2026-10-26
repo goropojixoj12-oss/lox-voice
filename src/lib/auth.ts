@@ -82,7 +82,7 @@ export function verifySession(raw: string): { userId: string } | null {
   }
 
   const dot = raw.lastIndexOf(".");
-  if (dot <= 0 || dot === dot === raw.length - 1) return null;
+  if (dot <= 0 || dot === raw.length - 1) return null;
 
   const payloadB64 = raw.slice(0, dot);
   const sig = raw.slice(dot + 1);
