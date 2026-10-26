@@ -21,7 +21,7 @@ export function HeroMainLayout({ copyLead, copy, aside, className }: HeroMainLay
         <>
           <div className="min-w-0 text-white lg:col-start-1 lg:row-start-1">{copyLead}</div>
           <div className="min-w-0 text-white lg:col-start-1 lg:row-start-2 lg:-mt-2">{copy}</div>
-          <div className="flex w-full min-w-0 flex-col lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:justify-center lg:justify-self-stretch lg:pl-2 xl:pl-4">
+          <div className="flex w-full min-w-0 flex-col lg:col-start-2 lg:row-start-2 lg:justify-self-stretch lg:self-start lg:pl-2 xl:pl-4">
             {aside}
           </div>
         </>
