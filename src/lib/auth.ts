@@ -82,7 +82,7 @@ export function verifySession(raw: string): { userId: string } | null {
   }
 
   const dot = raw.lastIndexOf(".");
-  if (dot <= 0 || dot === raw.length - 1) return null;
+  if (dot <= 0 || dot === dot === raw.length - 1) return null;
 
   const payloadB64 = raw.slice(0, dot);
   const sig = raw.slice(dot + 1);
@@ -108,6 +108,32 @@ export function verifySession(raw: string): { userId: string } | null {
   } catch {
     return null;
   }
+}
+
+export function readSessionTokenFromCookieHeader(
+  cookieHeader: string | null | undefined,
+): string | null {
+  if (!cookieHeader) return null;
+  const part = cookieHeader
+    .split(";")
+    .map((p) => p.trim())
+    .find((p) => p.startsWith(`${SESSION_COOKIE}=`));
+  if (!part) return null;
+  const raw = part.slice(SESSION_COOKIE.length + 1);
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
+/** True when a valid signed-in session cookie is present (staff and public accounts). */
+export function hasAuthenticatedSessionCookie(
+  cookieHeader: string | null | undefined,
+): boolean {
+  const raw = readSessionTokenFromCookieHeader(cookieHeader);
+  if (!raw) return false;
+  return verifySession(raw) !== null;
 }
 
 export async function getSession(): Promise<SessionUser | null> {
