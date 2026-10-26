@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { brand } from "@/config/brand";
 import { buildAnalyticsReport } from "@/lib/admin-analytics";
 import { getPageViewEvents, getAdminTasks } from "@/lib/admin-store";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
@@ -25,7 +26,16 @@ export default async function AdminAnalyticsPage() {
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           Real traffic only (last {report.periodDays} days): each HTML visit and in-app route change
-          on the public site and dashboard is recorded. No demo or seeded numbers.
+          on the public site and dashboard is recorded. No demo or seeded numbers. Production site:{" "}
+          <a
+            href={brand.url}
+            className="text-[var(--color-accent-soft)] underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {brand.url.replace(/^https?:\/\//, "")}
+          </a>
+          .
         </p>
       </div>
 

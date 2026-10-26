@@ -28,7 +28,7 @@ jq -n \
   --arg createdAtUtc "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --arg commit "$(git rev-parse HEAD)" \
   --arg branch "$(git rev-parse --abbrev-ref HEAD)" \
-  --arg site "https://www.vps1.store" \
+  --arg site "https://www.seaps.asia" \
   --arg githubRepo "goropojixoj12-oss/lox-voice" \
   --arg hasLocalData "$HAS_DATA" \
   --arg agentStorePath "$STORE_SNAPSHOT" \

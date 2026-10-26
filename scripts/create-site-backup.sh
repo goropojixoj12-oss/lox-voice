@@ -70,7 +70,7 @@ cat > "$MANIFEST" <<EOF
   },
   "production": {
     "githubRepo": "goropojixoj12-oss/lox-voice",
-    "site": "https://www.vps1.store"
+    "site": "https://www.seaps.asia"
   },
   "notes": "Blob/KV on Vercel is not in these files; export from Vercel Storage separately if needed."
 }

@@ -25,4 +25,4 @@ git merge --no-edit "refs/remotes/agent-mirror/$BRANCH"
 echo "Pushing to $GITHUB_REMOTE $BRANCH (Vercel production)..."
 git push -u "$GITHUB_REMOTE" "$BRANCH"
 
-echo "Done. Wait for Vercel deploy, then check https://www.vps1.store"
+echo "Done. Wait for Vercel deploy, then check https://www.seaps.asia"
