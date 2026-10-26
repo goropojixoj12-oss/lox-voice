@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { adminAggregationControlEnabled, adminAggregationForbiddenResponse } from "@/lib/admin-platform-safety";
 import { requireRole } from "@/lib/auth";
 import { normalizeAggregatedBranding } from "@/lib/aggregations/normalize-branding";
 
@@ -7,9 +6,6 @@ export async function POST() {
   const session = await requireRole(["admin"]);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (!adminAggregationControlEnabled()) {
-    return adminAggregationForbiddenResponse();
   }
 
   try {
