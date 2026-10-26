@@ -18,12 +18,8 @@ import {
   getRelatedProperties,
 } from "@/data/properties";
 import { getAllProperties } from "@/lib/catalog";
-import { getRuntimeListingById } from "@/lib/store";
-import { cookies } from "next/headers";
 import { getSession } from "@/lib/auth";
-import { ANALYTICS_SESSION_COOKIE } from "@/lib/analytics-session";
 import { canViewListing, isPublicListing } from "@/lib/listing-access";
-import { recordGuestListingView } from "@/lib/listing-views";
 import {
   amenityLabels,
   furnishingLabels,
@@ -31,6 +27,8 @@ import {
   transactionLabels,
   verificationLabels,
 } from "@/lib/labels";
+import { ListingViewRecorder } from "@/components/analytics/listing-view-recorder";
+import { resolveListingViewCount } from "@/lib/listing-view-store";
 import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
@@ -82,20 +80,12 @@ export default async function PropertyDetailPage({
 }) {
   const { slug } = await params;
   const all = await getAllProperties();
-  let property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
+  const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
   if (!property) notFound();
 
   const session = await getSession();
   if (!canViewListing(property, session)) notFound();
-
-  if (!session && isPublicListing(property)) {
-    const jar = await cookies();
-    const sid = jar.get(ANALYTICS_SESSION_COOKIE)?.value?.trim() || "anonymous";
-    await recordGuestListingView(property.id, sid);
-    const updated = await getRuntimeListingById(property.id);
-    if (updated) property = updated;
-  }
-
+  const listingViewCount = session ? await resolveListingViewCount(property) : null;
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
@@ -103,6 +93,7 @@ export default async function PropertyDetailPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <ListingViewRecorder listingId={property.id} skip={Boolean(session) || !showPublicSeo} />
       {!showPublicSeo ? (
         <p className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/40 bg-[var(--color-mist)] px-4 py-3 text-sm text-[var(--color-text)]">
           This listing is <strong>{property.status}</strong> and is not visible in public search until
@@ -181,9 +172,9 @@ export default async function PropertyDetailPage({
               <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
                 Updated {daysAgo(property.updatedAt)}
               </span>
-              {session && isPublicListing(property) ? (
-                <span className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-[var(--color-muted)]">
-                  Listing views (guests): {property.views ?? 0}
+              {session && listingViewCount !== null ? (
+                <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-[var(--color-muted)]">
+                  {listingViewCount} unique {listingViewCount === 1 ? "view" : "views"} (signed-in only)
                 </span>
               ) : null}
             </div>

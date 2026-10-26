@@ -32,7 +32,7 @@ function sessionKey(): string {
 }
 
 type PageViewBeaconProps = {
-  /** When true, do not record site analytics (staff / signed-in users). */
+  /** When true, do not record site analytics (signed-in users). */
   disabled?: boolean;
 };
 

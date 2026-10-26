@@ -6,7 +6,7 @@ import {
 } from "@/lib/analytics-session";
 import { isAnalyticsPath } from "@/lib/analytics-paths";
 import { appendPageView } from "@/lib/admin-store";
-import { getSession } from "@/lib/auth";
+import { hasAuthenticatedSessionCookie } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -32,8 +32,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const authSession = await getSession();
-  if (authSession) {
+  if (hasAuthenticatedSessionCookie(request.headers.get("cookie"))) {
     return NextResponse.json({ ok: true, skipped: "signed_in" });
   }
 

@@ -51,7 +51,7 @@ export function SiteChangeComposer() {
   const [attachNote, setAttachNote] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const fileInput2Ref = useRef<HTMLInputElement>(null);
+  const file2InputRef = useRef<HTMLInputElement>(null);
   const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
   const [attachment2PreviewUrl, setAttachment2PreviewUrl] = useState<string | null>(null);
   const attachInFlightRef = useRef(false);
@@ -128,6 +128,7 @@ export function SiteChangeComposer() {
       if (draft) {
         setMessage(draft.message);
         setFile(draft.file);
+        setFile2(draft.file2 ?? null);
       }
       setDraftReady(true);
     })();
@@ -138,8 +139,8 @@ export function SiteChangeComposer() {
 
   useEffect(() => {
     if (!draftReady) return;
-    void saveSiteChangeDraft(message, file);
-  }, [draftReady, message, file]);
+    void saveSiteChangeDraft(message, file, file2);
+  }, [draftReady, message, file, file2]);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/admin/site-requests");
@@ -246,7 +247,7 @@ export function SiteChangeComposer() {
       applyAttachment(null);
       setFile2(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
-      if (fileInput2Ref.current) fileInput2Ref.current.value = "";
+      if (file2InputRef.current) file2InputRef.current.value = "";
       setAttachNote(null);
       setSent(true);
       await refresh();
@@ -279,7 +280,7 @@ export function SiteChangeComposer() {
         <SiteChangeCriticalBanner risk={risk} />
 
         <div className="flex flex-wrap items-center gap-3">
-          <label className="cursor-pointer rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:border-[var(--color-accent)]">
+          <label className="inline-flex cursor-pointer items-center rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:border-[var(--color-accent)]">
             <input
               ref={fileInputRef}
               type="file"
@@ -292,14 +293,15 @@ export function SiteChangeComposer() {
             />
             {file ? file.name : "Attachment (As Required)"}
           </label>
-          <label className="cursor-pointer rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:border-[var(--color-accent)]">
+          <label className="inline-flex cursor-pointer items-center rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:border-[var(--color-accent)]">
             <input
-              ref={fileInput2Ref}
+              ref={file2InputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               className="sr-only"
               onChange={(e) => {
                 setFile2(e.target.files?.[0] ?? null);
+                setAttachNote(null);
               }}
             />
             {file2 ? file2.name : "Second Attachment"}
@@ -323,7 +325,8 @@ export function SiteChangeComposer() {
               className="text-sm text-[var(--color-muted)] underline"
               onClick={() => {
                 setFile2(null);
-                if (fileInput2Ref.current) fileInput2Ref.current.value = "";
+                if (file2InputRef.current) file2InputRef.current.value = "";
+                setAttachNote(null);
               }}
             >
               Remove second file

@@ -5,14 +5,16 @@ import {
   ANALYTICS_SESSION_COOKIE,
 } from "@/lib/analytics-session";
 import { isAnalyticsPath, isDocumentNavigation } from "@/lib/analytics-paths";
+
 /** Must match {@link SESSION_COOKIE} in auth — avoid importing auth here (Edge runtime). */
 const SIGNED_IN_SESSION_COOKIE = "en_session";
 
+/** Edge-safe: signed session cookies use payload.signature (not legacy JSON). */
 function hasSignedInSessionCookie(request: NextRequest): boolean {
   const raw = request.cookies.get(SIGNED_IN_SESSION_COOKIE)?.value?.trim();
-  if (!raw || raw.length < 16) return false;
-  if (raw.startsWith("{")) return false;
-  return raw.includes(".");
+  if (!raw || raw.startsWith("{")) return false;
+  const dot = raw.lastIndexOf(".");
+  return dot > 0 && dot < raw.length - 1;
 }
 
 function analyticsSessionId(request: NextRequest): string {

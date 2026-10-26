@@ -182,8 +182,7 @@ export function applyAdminListingPatch(
     };
   }
 
-  const firstPublish = status === "published" && existing.status !== "published";
-  const views = firstPublish ? (existing.views ?? 0) : existing.views;
+  const newlyPublished = status === "published" && existing.status !== "published";
 
   return {
     ...existing,
@@ -214,6 +213,6 @@ export function applyAdminListingPatch(
     status,
     updatedAt: now,
     publishedAt: status === "published" ? now : existing.publishedAt,
-    ...(views !== undefined ? { views } : {}),
+    views: newlyPublished ? 0 : existing.views,
   };
 }
