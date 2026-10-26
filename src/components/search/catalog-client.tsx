@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CatalogCoverAd } from "@/components/search/catalog-cover-ad";
 import { AdvancedFilters } from "@/components/search/advanced-filters";
 import { PropertyMap } from "@/components/search/property-map";
 import { PropertyGrid, PropertyList } from "@/components/property/property-card";
@@ -18,6 +19,7 @@ export function CatalogClient({
   userId,
   title,
   description,
+  coverAd,
 }: {
   items: Property[];
   total: number;
@@ -26,6 +28,7 @@ export function CatalogClient({
   userId?: string;
   title: string;
   description: string;
+  coverAd?: { src: string; alt: string };
 }) {
   const [view, setView] = useState<"grid" | "list" | "map">("grid");
   const [activeId, setActiveId] = useState<string | undefined>(items[0]?.id);
@@ -62,6 +65,12 @@ export function CatalogClient({
           {total} matching {total === 1 ? "listing" : "listings"}
         </p>
       </div>
+
+      {coverAd ? (
+        <div className="mb-2 max-w-5xl">
+          <CatalogCoverAd src={coverAd.src} alt={coverAd.alt} />
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-6 lg:flex-row">
         <AdvancedFilters resultCount={total} basePath={pathname} />
