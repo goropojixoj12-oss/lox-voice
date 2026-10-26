@@ -37,7 +37,7 @@ export const demoUsers: DemoUser[] = [
     passwordHash:
       "$2b$12$SbWirmamu/u3LkIH.BzOBOA2F2T1kZuGyPV8G7.H6icJhtp0.KxNm",
     name: "SEAPS CEO",
-    role: "god",
+    role: "admin",
   },
 ];
 
