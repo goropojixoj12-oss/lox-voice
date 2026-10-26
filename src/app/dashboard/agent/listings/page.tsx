@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/states";
 import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
-import { requireAgentDeskContext } from "@/lib/admin-agent-manage";
+import { getSession } from "@/lib/auth";
 import { getRuntimeListings } from "@/lib/store";
 
 export const metadata: Metadata = { title: "My listings" };
@@ -13,10 +13,9 @@ export default async function DashboardListingsPage({
   searchParams: Promise<{ submitted?: string }>;
 }) {
   const { submitted } = await searchParams;
-  const ctx = await requireAgentDeskContext();
-  const desk = ctx.deskUser;
+  const session = await getSession();
   const listings = (await getRuntimeListings()).filter(
-    (l) => l.createdByUserId === desk.id || l.ownerId === desk.id,
+    (l) => !session || l.createdByUserId === session.id || l.ownerId === session.id || session.role === "admin",
   );
   if (!listings.length) {
     return (
