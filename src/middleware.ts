@@ -6,6 +6,16 @@ import {
 } from "@/lib/analytics-session";
 import { isAnalyticsPath, isDocumentNavigation } from "@/lib/analytics-paths";
 
+const SESSION_COOKIE = "en_session";
+
+/** Edge-safe: signed session cookies use payload.signature (not legacy JSON). */
+function hasSignedInSessionCookie(request: NextRequest): boolean {
+  const raw = request.cookies.get(SESSION_COOKIE)?.value?.trim();
+  if (!raw || raw.startsWith("{")) return false;
+  const dot = raw.lastIndexOf(".");
+  return dot > 0 && dot < raw.length - 1;
+}
+
 function analyticsSessionId(request: NextRequest): string {
   const existing = request.cookies.get(ANALYTICS_SESSION_COOKIE)?.value?.trim();
   if (existing && existing.length >= 8 && existing.length <= 64) return existing;
@@ -54,7 +64,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
     isAnalyticsPath(pathname) &&
     isDocumentNavigation(request) &&
     request.headers.get("purpose") !== "prefetch" &&
-    !request.headers.get("next-router-prefetch")
+    !request.headers.get("next-router-prefetch") &&
+    !hasSignedInSessionCookie(request)
   ) {
     const sessionKey = analyticsSessionId(request);
     response.cookies.set(ANALYTICS_SESSION_COOKIE, sessionKey, {

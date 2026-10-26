@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { adminListingPatchSchema, applyAdminListingPatch } from "@/lib/admin-listing-patch";
+import { resetListingViewTracking } from "@/lib/listing-view-store";
 import {
   deleteRuntimeListing,
   getRuntimeListingById,
@@ -41,6 +42,9 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   const updated = applyAdminListingPatch(existing, parsed.data);
+  if (updated.status === "published" && existing.status !== "published") {
+    await resetListingViewTracking(updated.id);
+  }
   await saveRuntimeListing(updated);
   return NextResponse.json({ listing: updated });
 }

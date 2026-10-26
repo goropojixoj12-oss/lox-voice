@@ -31,11 +31,17 @@ function sessionKey(): string {
   }
 }
 
-export function PageViewBeacon() {
+type Props = {
+  /** Skip tracking for signed-in users (staff and public accounts). */
+  skipWhenSignedIn?: boolean;
+};
+
+export function PageViewBeacon({ skipWhenSignedIn = false }: Props) {
   const pathname = usePathname();
   const last = useRef<string | null>(null);
 
   useEffect(() => {
+    if (skipWhenSignedIn) return;
     if (!pathname || pathname.startsWith("/api")) return;
     if (last.current === pathname) return;
     last.current = pathname;
@@ -52,7 +58,7 @@ export function PageViewBeacon() {
       body: JSON.stringify(payload),
       keepalive: true,
     }).catch(() => undefined);
-  }, [pathname]);
+  }, [pathname, skipWhenSignedIn]);
 
   return null;
 }

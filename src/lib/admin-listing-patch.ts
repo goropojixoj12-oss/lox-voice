@@ -182,6 +182,8 @@ export function applyAdminListingPatch(
     };
   }
 
+  const newlyPublished = status === "published" && existing.status !== "published";
+
   return {
     ...existing,
     slug: data.slug ?? existing.slug,
@@ -211,5 +213,6 @@ export function applyAdminListingPatch(
     status,
     updatedAt: now,
     publishedAt: status === "published" ? now : existing.publishedAt,
+    views: newlyPublished ? 0 : existing.views,
   };
 }
