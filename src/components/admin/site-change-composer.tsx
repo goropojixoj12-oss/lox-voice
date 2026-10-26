@@ -26,6 +26,7 @@ type SiteRequestItem = {
   status: string;
   createdAt: string;
   attachment: AttachmentMeta | null;
+  secondAttachment?: AttachmentMeta | null;
   agentNote?: string;
   commitUrl?: string;
 };
@@ -40,6 +41,7 @@ const STATUS_LABEL: Record<string, string> = {
 export function SiteChangeComposer() {
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [file2, setFile2] = useState<File | null>(null);
   const [items, setItems] = useState<SiteRequestItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,9 @@ export function SiteChangeComposer() {
   const [attachNote, setAttachNote] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInput2Ref = useRef<HTMLInputElement>(null);
   const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
+  const [attachment2PreviewUrl, setAttachment2PreviewUrl] = useState<string | null>(null);
   const attachInFlightRef = useRef(false);
 
   const risk = useMemo(() => assessSiteChangeMessage(message), [message]);
@@ -99,6 +103,22 @@ export function SiteChangeComposer() {
     });
     return () => URL.revokeObjectURL(url);
   }, [file]);
+
+  useEffect(() => {
+    if (!file2 || !file2.type.startsWith("image/")) {
+      setAttachment2PreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+      return;
+    }
+    const url = URL.createObjectURL(file2);
+    setAttachment2PreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
+    return () => URL.revokeObjectURL(url);
+  }, [file2]);
 
   useEffect(() => {
     let cancelled = false;
@@ -197,6 +217,7 @@ export function SiteChangeComposer() {
       const form = new FormData();
       form.set("message", trimmed);
       if (file) form.set("file", file);
+      if (file2) form.set("file2", file2);
       const res = await fetch("/api/admin/site-requests", {
         method: "POST",
         body: form,
@@ -223,7 +244,9 @@ export function SiteChangeComposer() {
       await clearSiteChangeDraft();
       setMessage("");
       applyAttachment(null);
+      setFile2(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
+      if (fileInput2Ref.current) fileInput2Ref.current.value = "";
       setAttachNote(null);
       setSent(true);
       await refresh();
@@ -267,7 +290,19 @@ export function SiteChangeComposer() {
                 setAttachNote(null);
               }}
             />
-            {file ? file.name : "Attach screenshot (optional)"}
+            {file ? file.name : "Attachment (As Required)"}
+          </label>
+          <label className="cursor-pointer rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:border-[var(--color-accent)]">
+            <input
+              ref={fileInput2Ref}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="sr-only"
+              onChange={(e) => {
+                setFile2(e.target.files?.[0] ?? null);
+              }}
+            />
+            {file2 ? file2.name : "Second Attachment"}
           </label>
           {file ? (
             <button
@@ -282,12 +317,31 @@ export function SiteChangeComposer() {
               Remove file
             </button>
           ) : null}
+          {file2 ? (
+            <button
+              type="button"
+              className="text-sm text-[var(--color-muted)] underline"
+              onClick={() => {
+                setFile2(null);
+                if (fileInput2Ref.current) fileInput2Ref.current.value = "";
+              }}
+            >
+              Remove second file
+            </button>
+          ) : null}
         </div>
 
         {file && attachmentPreviewUrl ? (
           <img
             src={attachmentPreviewUrl}
             alt={file.name}
+            className="max-h-40 rounded border border-[var(--color-border)] object-contain"
+          />
+        ) : null}
+        {file2 && attachment2PreviewUrl ? (
+          <img
+            src={attachment2PreviewUrl}
+            alt={file2.name}
             className="max-h-40 rounded border border-[var(--color-border)] object-contain"
           />
         ) : null}
@@ -319,7 +373,7 @@ export function SiteChangeComposer() {
             disabled={dispatchingId !== null}
             onClick={() => void dispatchToAgent()}
           >
-            {dispatchingId === "oldest" ? "Dispatching…" : "Run agent (oldest queued)"}
+            {dispatchingId === "oldest" ? "Dispatching…" : "Confirm."}
           </Button>
         </div>
         {dispatchNote ? <p className="text-sm text-[var(--color-muted)]">{dispatchNote}</p> : null}
@@ -363,6 +417,13 @@ export function SiteChangeComposer() {
                   <img
                     src={`/api/admin/site-requests/file?key=${encodeURIComponent(item.attachment.storageKey)}`}
                     alt={item.attachment.fileName}
+                    className="mt-3 max-h-40 rounded border border-[var(--color-border)] object-contain"
+                  />
+                ) : null}
+                {item.secondAttachment ? (
+                  <img
+                    src={`/api/admin/site-requests/file?key=${encodeURIComponent(item.secondAttachment.storageKey)}`}
+                    alt={item.secondAttachment.fileName}
                     className="mt-3 max-h-40 rounded border border-[var(--color-border)] object-contain"
                   />
                 ) : null}

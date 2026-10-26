@@ -18,8 +18,12 @@ import {
   getRelatedProperties,
 } from "@/data/properties";
 import { getAllProperties } from "@/lib/catalog";
+import { getRuntimeListingById } from "@/lib/store";
+import { cookies } from "next/headers";
 import { getSession } from "@/lib/auth";
+import { ANALYTICS_SESSION_COOKIE } from "@/lib/analytics-session";
 import { canViewListing, isPublicListing } from "@/lib/listing-access";
+import { recordGuestListingView } from "@/lib/listing-views";
 import {
   amenityLabels,
   furnishingLabels,
@@ -78,11 +82,20 @@ export default async function PropertyDetailPage({
 }) {
   const { slug } = await params;
   const all = await getAllProperties();
-  const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
+  let property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
   if (!property) notFound();
 
   const session = await getSession();
   if (!canViewListing(property, session)) notFound();
+
+  if (!session && isPublicListing(property)) {
+    const jar = await cookies();
+    const sid = jar.get(ANALYTICS_SESSION_COOKIE)?.value?.trim() || "anonymous";
+    await recordGuestListingView(property.id, sid);
+    const updated = await getRuntimeListingById(property.id);
+    if (updated) property = updated;
+  }
+
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
@@ -168,6 +181,11 @@ export default async function PropertyDetailPage({
               <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
                 Updated {daysAgo(property.updatedAt)}
               </span>
+              {session && isPublicListing(property) ? (
+                <span className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1 text-[var(--color-muted)]">
+                  Listing views (guests): {property.views ?? 0}
+                </span>
+              ) : null}
             </div>
           </div>
 

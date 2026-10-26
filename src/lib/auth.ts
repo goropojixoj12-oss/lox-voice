@@ -4,7 +4,7 @@ import { findUserByEmail, demoUsers } from "@/data/users";
 import { DUMMY_PASSWORD_HASH, verifyPassword } from "@/lib/password";
 import type { DemoUser, UserRole } from "@/lib/types";
 
-const SESSION_COOKIE = "en_session";
+export const SESSION_COOKIE = "en_session";
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14;
 
 export type SessionUser = Omit<DemoUser, "passwordHash">;

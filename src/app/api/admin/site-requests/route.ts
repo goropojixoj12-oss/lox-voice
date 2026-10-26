@@ -9,6 +9,7 @@ import {
   createSiteChangeRequest,
   listSiteChangeRequests,
   setSiteChangeRequestAttachment,
+  setSiteChangeRequestSecondAttachment,
 } from "@/lib/site-agent-store";
 
 export async function GET() {
@@ -72,6 +73,23 @@ export async function POST(request: Request) {
         if (updated) requestRecord = updated;
       } catch (error) {
         const message = error instanceof Error ? error.message : "Attachment failed";
+        return NextResponse.json({ error: message }, { status: 400 });
+      }
+    }
+
+    const file2Entry = form.get("file2");
+    if (file2Entry instanceof File && file2Entry.size > 0) {
+      try {
+        const stored = await writeSiteRequestAttachment(`${requestRecord.id}-2`, file2Entry);
+        const updated = await setSiteChangeRequestSecondAttachment(requestRecord.id, {
+          fileName: stored.fileName,
+          storageKey: stored.storageKey,
+          contentType: stored.contentType,
+          sizeBytes: stored.sizeBytes,
+        });
+        if (updated) requestRecord = updated;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Second attachment failed";
         return NextResponse.json({ error: message }, { status: 400 });
       }
     }

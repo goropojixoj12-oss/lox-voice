@@ -5,6 +5,15 @@ import {
   ANALYTICS_SESSION_COOKIE,
 } from "@/lib/analytics-session";
 import { isAnalyticsPath, isDocumentNavigation } from "@/lib/analytics-paths";
+/** Must match {@link SESSION_COOKIE} in auth — avoid importing auth here (Edge runtime). */
+const SIGNED_IN_SESSION_COOKIE = "en_session";
+
+function hasSignedInSessionCookie(request: NextRequest): boolean {
+  const raw = request.cookies.get(SIGNED_IN_SESSION_COOKIE)?.value?.trim();
+  if (!raw || raw.length < 16) return false;
+  if (raw.startsWith("{")) return false;
+  return raw.includes(".");
+}
 
 function analyticsSessionId(request: NextRequest): string {
   const existing = request.cookies.get(ANALYTICS_SESSION_COOKIE)?.value?.trim();
@@ -54,7 +63,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
     isAnalyticsPath(pathname) &&
     isDocumentNavigation(request) &&
     request.headers.get("purpose") !== "prefetch" &&
-    !request.headers.get("next-router-prefetch")
+    !request.headers.get("next-router-prefetch") &&
+    !hasSignedInSessionCookie(request)
   ) {
     const sessionKey = analyticsSessionId(request);
     response.cookies.set(ANALYTICS_SESSION_COOKIE, sessionKey, {

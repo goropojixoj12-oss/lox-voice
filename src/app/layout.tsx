@@ -104,7 +104,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <OrganizationJsonLd />
         <Script src="/scripts/seaps-lang-boot.js" strategy="beforeInteractive" />
         <GoogleTranslate />
-        <PageViewBeacon />
+        <PageViewBeacon disabled={Boolean(session)} />
         <SeapsBackslashShortcut />
         <SeapsEqualsScreenshotShortcut />
         <SiteHeader userName={session?.name} userRole={session?.role} />
