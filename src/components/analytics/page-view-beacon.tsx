@@ -31,17 +31,11 @@ function sessionKey(): string {
   }
 }
 
-type PageViewBeaconProps = {
-  /** When true, do not record site analytics (signed-in users). */
-  disabled?: boolean;
-};
-
-export function PageViewBeacon({ disabled = false }: PageViewBeaconProps) {
+export function PageViewBeacon() {
   const pathname = usePathname();
   const last = useRef<string | null>(null);
 
   useEffect(() => {
-    if (disabled) return;
     if (!pathname || pathname.startsWith("/api")) return;
     if (last.current === pathname) return;
     last.current = pathname;
@@ -58,7 +52,7 @@ export function PageViewBeacon({ disabled = false }: PageViewBeaconProps) {
       body: JSON.stringify(payload),
       keepalive: true,
     }).catch(() => undefined);
-  }, [pathname, disabled]);
+  }, [pathname]);
 
   return null;
 }
