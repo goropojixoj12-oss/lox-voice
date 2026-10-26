@@ -1,6 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { canUploadListingMedia, getListingMediaOwnerId } from "@/lib/agent-desk-api";
 import { BLOB_PREFIX } from "@/lib/listing-media-constants";
 
 function blobToken(): string | undefined {
@@ -22,11 +22,11 @@ const ALLOWED = [
 ];
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const session = await getSession();
-  if (!session) {
+  if (!(await canUploadListingMedia())) {
     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   }
-  if (!["owner", "agent", "admin"].includes(session.role)) {
+  const ownerId = await getListingMediaOwnerId();
+  if (!ownerId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -37,7 +37,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const prefix = `${BLOB_PREFIX}/${session.id}/`;
+  const prefix = `${BLOB_PREFIX}/${ownerId}/`;
 
   try {
     const jsonResponse = await handleUpload({
