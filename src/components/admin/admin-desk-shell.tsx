@@ -25,8 +25,14 @@ const NAV = [
   },
   {
     href: adminDeskPath("listings"),
-    label: "Listing Moderation",
-    match: (p: string) => p.startsWith(adminDeskPath("listings")),
+    label: "Listings",
+    match: (p: string) =>
+      p.startsWith(adminDeskPath("listings")) && !p.includes("/list-property"),
+  },
+  {
+    href: adminDeskPath("list-property", "step1"),
+    label: "New listing",
+    match: (p: string) => p.startsWith(adminDeskPath("list-property")),
   },
   {
     href: adminDeskPath("operations"),
@@ -37,9 +43,11 @@ const NAV = [
 
 export function AdminDeskShell({
   userName,
+  roleLabel = "God",
   children,
 }: {
   userName: string;
+  roleLabel?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -60,7 +68,7 @@ export function AdminDeskShell({
           </p>
           <p className="text-sm text-[var(--color-muted)]">
             Signed in as <span className="font-semibold text-[var(--color-text)]">{userName}</span>{" "}
-            (admin)
+            ({roleLabel})
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
