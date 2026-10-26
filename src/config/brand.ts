@@ -7,7 +7,7 @@ export const brand = {
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
     (process.env.VERCEL_ENV === "production"
-      ? "https://www.seaps.asia"
+      ? "https://www.vps1.store"
       : "http://127.0.0.1:43123"),
   locale: "en",
   supportEmail: "info@seaps.asia",
