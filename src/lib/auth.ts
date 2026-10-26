@@ -2,9 +2,10 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { findUserByEmail, demoUsers } from "@/data/users";
 import { DUMMY_PASSWORD_HASH, verifyPassword } from "@/lib/password";
+import { hasAdminDeskAccess } from "@/lib/platform-roles";
 import type { DemoUser, UserRole } from "@/lib/types";
 
-export const SESSION_COOKIE = "en_session";
+const SESSION_COOKIE = "en_session";
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14;
 
 export type SessionUser = Omit<DemoUser, "passwordHash">;
@@ -110,32 +111,6 @@ export function verifySession(raw: string): { userId: string } | null {
   }
 }
 
-export function readSessionTokenFromCookieHeader(
-  cookieHeader: string | null | undefined,
-): string | null {
-  if (!cookieHeader) return null;
-  const part = cookieHeader
-    .split(";")
-    .map((p) => p.trim())
-    .find((p) => p.startsWith(`${SESSION_COOKIE}=`));
-  if (!part) return null;
-  const raw = part.slice(SESSION_COOKIE.length + 1);
-  try {
-    return decodeURIComponent(raw);
-  } catch {
-    return raw;
-  }
-}
-
-/** True when a valid signed-in session cookie is present (staff and public accounts). */
-export function hasAuthenticatedSessionCookie(
-  cookieHeader: string | null | undefined,
-): boolean {
-  const raw = readSessionTokenFromCookieHeader(cookieHeader);
-  if (!raw) return false;
-  return verifySession(raw) !== null;
-}
-
 export async function getSession(): Promise<SessionUser | null> {
   const jar = await cookies();
   const raw = jar.get(SESSION_COOKIE)?.value;
@@ -186,6 +161,9 @@ export async function logout() {
 
 export async function requireRole(roles: UserRole[]) {
   const session = await getSession();
-  if (!session || !roles.includes(session.role)) return null;
-  return session;
+  if (!session) return null;
+  if (roles.includes(session.role)) return session;
+  const needsAdminDesk = roles.some((r) => r === "admin" || r === "god");
+  if (needsAdminDesk && hasAdminDeskAccess(session.role)) return session;
+  return null;
 }
