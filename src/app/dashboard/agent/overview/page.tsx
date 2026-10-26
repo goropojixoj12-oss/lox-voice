@@ -1,46 +1,42 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AgentOverviewPanel } from "@/components/dashboard/agent-overview-panel";
+import { requireAgentDeskContext } from "@/lib/admin-agent-manage";
 import { getAgentProfile } from "@/lib/agent-profile";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
-import { getSession } from "@/lib/auth";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Overview" };
 
 export default async function DashboardOverviewPage() {
-  const session = await getSession();
-  if (!session) return null;
+  const ctx = await requireAgentDeskContext();
+  const desk = ctx.deskUser;
 
   const [favorites, inquiries, listings] = await Promise.all([
-    getFavorites(session.id),
+    getFavorites(desk.id),
     getInquiries(),
     getRuntimeListings(),
   ]);
 
-  const isAgentDesk = session.role === "agent" || session.role === "admin";
   let agentOverview = null;
-  if (isAgentDesk) {
-    const profile = await getAgentProfile(session.id, {
-      name: session.name,
-      email: session.email,
+  if (desk.role === "agent") {
+    const profile = await getAgentProfile(desk.id, {
+      name: desk.name,
+      email: desk.email,
     });
-    agentOverview = buildAgentOverviewBundle(
-      session.id,
-      profile,
-      inquiries,
-      listings,
-    );
+    agentOverview = buildAgentOverviewBundle(desk.id, profile, inquiries, listings);
   }
 
   return (
     <div>
       <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
-        Welcome back, {session.name}
+        {ctx.isGodManaging ? `${desk.name} — agent overview` : `Welcome back, ${desk.name}`}
       </h1>
       <p className="mt-2 text-[var(--color-muted)]">
-        Role: {session.role}. Manage favorites, inquiries, and your listings from this desk.
+        {ctx.isGodManaging
+          ? "Full agent desk access for listings, profile, inquiries, and uploads."
+          : "Manage favorites, inquiries, and your listings from this desk."}
       </p>
 
       {agentOverview ? <AgentOverviewPanel bundle={agentOverview} /> : null}
@@ -54,8 +50,8 @@ export default async function DashboardOverviewPage() {
             { label: "Favorites", value: favorites.length, href: agentDeskPath("favorites") },
             { label: "Inquiries", value: inquiries.length, href: agentDeskPath("inquiries") },
             {
-              label: "Your runtime listings",
-              value: listings.length,
+              label: "Your listings",
+              value: listings.filter((l) => l.createdByUserId === desk.id).length,
               href: agentDeskPath("listings"),
             },
           ].map((card) => (

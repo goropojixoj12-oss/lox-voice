@@ -1,42 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AdminOpenAgentDeskButton } from "@/components/admin/admin-open-agent-desk-button";
 import { getAdminDirectoryUsers } from "@/lib/admin-platform-users";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { getRuntimeListings } from "@/lib/store";
-import type { DemoUser } from "@/lib/types";
+import { roleDisplayLabel } from "@/lib/platform-roles";
 
-export const metadata: Metadata = { title: "User directory" };
+export const metadata: Metadata = { title: "Platform accounts" };
 
-const ROLE_LABEL: Record<DemoUser["role"], string> = {
-  admin: "Administrator",
-  agent: "Agent",
-  buyer: "Buyer",
-  owner: "Owner",
-};
-
-export default async function AdminUsersPage() {
-  const [users, runtime] = await Promise.all([
-    getAdminDirectoryUsers(),
-    getRuntimeListings(),
-  ]);
-
-  const runtimeListingsByUser = new Map<string, number>();
-  for (const user of users) {
-    runtimeListingsByUser.set(
-      user.id,
-      runtime.filter((listing) => listing.createdByUserId === user.id).length,
-    );
-  }
+export default function AdminUsersPage() {
+  const users = getAdminDirectoryUsers();
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-          User directory
+          Platform accounts
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Platform login accounts with staff roles. Demo buyer and owner logins are excluded from
-          this directory — they are not agent staff.
+          Executive God account, Adam James (live agent), and future registrations. Demo buyer/owner
+          logins are hidden.
         </p>
       </div>
 
@@ -47,37 +29,28 @@ export default async function AdminUsersPage() {
               <th className="p-3">Name</th>
               <th className="p-3">Email</th>
               <th className="p-3">Role</th>
-              <th className="p-3 text-right">Runtime listings</th>
+              <th className="p-3" />
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="p-8 text-center text-[var(--color-muted)]">
-                  No platform accounts in the directory yet.
+            {users.map((user) => (
+              <tr key={user.id} className="border-t border-[var(--color-border)]">
+                <td className="p-3 font-semibold">{user.name}</td>
+                <td className="p-3">{user.email}</td>
+                <td className="p-3">{roleDisplayLabel(user.role)}</td>
+                <td className="p-3 text-right">
+                  {user.role === "agent" ? (
+                    <AdminOpenAgentDeskButton userId={user.id} label="Open agent desk" />
+                  ) : null}
                 </td>
               </tr>
-            ) : (
-              users.map((user) => (
-                <tr key={user.id} className="border-t border-[var(--color-border)]">
-                  <td className="p-3 font-semibold">{user.name}</td>
-                  <td className="p-3 font-mono text-xs">{user.email}</td>
-                  <td className="p-3">{ROLE_LABEL[user.role]}</td>
-                  <td className="p-3 text-right">
-                    {runtimeListingsByUser.get(user.id) ?? 0}
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
-      <Link
-        href={adminDeskPath("operations")}
-        className="inline-block text-sm font-semibold text-[var(--color-accent)]"
-      >
-        ← Operations
+      <Link href={adminDeskPath()} className="text-sm font-semibold text-[var(--color-accent)]">
+        ← Back to analytics
       </Link>
     </div>
   );

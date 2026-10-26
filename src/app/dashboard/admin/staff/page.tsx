@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AdminOpenAgentDeskButton } from "@/components/admin/admin-open-agent-desk-button";
+import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
 import { buildStaffRoster } from "@/lib/admin-staff";
 import { getAdminTasks } from "@/lib/admin-store";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
@@ -11,6 +13,7 @@ export default async function AdminStaffPage() {
   const openByStaff: Record<string, number> = {};
   for (const t of tasks) {
     if (t.status === "done") continue;
+    if (!isAdminVisibleStaffId(t.assigneeStaffId)) continue;
     openByStaff[t.assigneeStaffId] = (openByStaff[t.assigneeStaffId] ?? 0) + 1;
   }
   const roster = await buildStaffRoster(openByStaff);
@@ -22,8 +25,9 @@ export default async function AdminStaffPage() {
           Staff & performance
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Profile completion, listings, leads, and open tasks. Open a manager to assign work and
-          leave messages.
+          Adam James and any future registered agent logins — not fake catalog profiles. Use{" "}
+          <strong className="text-[var(--color-text)]">Open agent desk</strong> to edit profile,
+          listings, and documents as that agent.
         </p>
       </div>
 
@@ -32,7 +36,7 @@ export default async function AdminStaffPage() {
           <thead className="bg-[var(--color-mist)]/60 text-left text-[var(--color-muted)]">
             <tr>
               <th className="p-3">Agent</th>
-              <th className="p-3">Desk</th>
+              <th className="p-3">Email</th>
               <th className="p-3 text-right">Profile</th>
               <th className="p-3 text-right">Listings</th>
               <th className="p-3 text-right">Pending</th>
@@ -42,25 +46,35 @@ export default async function AdminStaffPage() {
             </tr>
           </thead>
           <tbody>
+            {roster.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="p-8 text-center text-[var(--color-muted)]">
+                  No registered agent accounts yet.
+                </td>
+              </tr>
+            ) : null}
             {roster.map((row) => (
               <tr key={row.staffId} className="border-t border-[var(--color-border)]">
                 <td className="p-3">
                   <p className="font-semibold">{row.name}</p>
                   <p className="text-xs text-[var(--color-muted)]">{row.title}</p>
                 </td>
-                <td className="p-3">{row.agencyName}</td>
+                <td className="p-3 text-xs">{row.email}</td>
                 <td className="p-3 text-right">{row.profilePercent}%</td>
                 <td className="p-3 text-right">{row.listingCount}</td>
                 <td className="p-3 text-right">{row.pendingListings}</td>
                 <td className="p-3 text-right">{row.leadCount}</td>
                 <td className="p-3 text-right">{row.openTasks}</td>
                 <td className="p-3 text-right">
-                  <Link
-                    href={adminDeskPath("staff", row.staffId)}
-                    className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
-                  >
-                    Open
-                  </Link>
+                  <div className="flex flex-col items-end gap-2">
+                    <AdminOpenAgentDeskButton userId={row.staffId} />
+                    <Link
+                      href={adminDeskPath("staff", row.staffId)}
+                      className="text-xs text-[var(--color-accent-soft)] underline"
+                    >
+                      Staff record
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}

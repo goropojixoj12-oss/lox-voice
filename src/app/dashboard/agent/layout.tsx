@@ -1,12 +1,7 @@
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
-import { adminDeskPath } from "@/lib/dashboard-admin-paths";
+import { requireAgentDeskContext } from "@/lib/admin-agent-manage";
 
-/** Agent desk is for agent/owner/buyer workflows — admins use `/dashboard/admin`. */
+/** Agent desk — real agents, or God managing an agent from the admin staff list. */
 export default async function AgentDeskLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-  if (session?.role === "admin") {
-    redirect(adminDeskPath());
-  }
+  await requireAgentDeskContext();
   return children;
 }

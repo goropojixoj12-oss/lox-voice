@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
 import { AgentProfilePanel } from "@/components/dashboard/agent-profile-panel";
+import { requireAgentDeskContext } from "@/lib/admin-agent-manage";
 import { getAgentProfile } from "@/lib/agent-profile";
 import { getSession } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "Profile" };
 
 export default async function ProfilePage() {
-  const session = await getSession();
-  if (!session) return null;
+  const operator = await getSession();
+  if (!operator) return null;
 
-  const isAgentDesk = session.role === "agent" || session.role === "admin";
+  const ctx = await requireAgentDeskContext();
+  const desk = ctx.deskUser;
 
-  if (isAgentDesk) {
-    const profile = await getAgentProfile(session.id, {
-      name: session.name,
-      email: session.email,
+  if (desk.role === "agent") {
+    const profile = await getAgentProfile(desk.id, {
+      name: desk.name,
+      email: desk.email,
     });
     return (
       <div>
@@ -22,9 +24,14 @@ export default async function ProfilePage() {
           Agent profile
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-[var(--color-muted)]">
-          Complete your personal details and upload verification documents for SEAPS onboarding.
+          {ctx.isGodManaging
+            ? "Edit this agent’s personal details and verification documents on their behalf."
+            : "Complete your personal details and upload verification documents for SEAPS onboarding."}
         </p>
-        <AgentProfilePanel initialProfile={profile} sessionRole={session.role} />
+        <AgentProfilePanel
+          initialProfile={profile}
+          sessionRole={ctx.isGodManaging ? "god" : desk.role}
+        />
       </div>
     );
   }
@@ -37,20 +44,13 @@ export default async function ProfilePage() {
       <dl className="mt-5 max-w-lg space-y-3 rounded-[var(--radius-lg)] seaps-card p-5">
         <div>
           <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Name</dt>
-          <dd className="font-semibold">{session.name}</dd>
+          <dd className="font-semibold">{desk.name}</dd>
         </div>
         <div>
           <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Email</dt>
-          <dd className="font-semibold">{session.email}</dd>
-        </div>
-        <div>
-          <dt className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Role</dt>
-          <dd className="font-semibold capitalize">{session.role}</dd>
+          <dd className="font-semibold">{desk.email}</dd>
         </div>
       </dl>
-      <p className="mt-4 text-sm text-[var(--color-muted)]">
-        Profile details for your SEAPS account. Contact support to update verified credentials.
-      </p>
     </div>
   );
 }
