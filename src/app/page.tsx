@@ -24,10 +24,10 @@ export default async function HomePage() {
               className="reveal"
               copyLead={
                 <div className="notranslate flex w-full max-w-2xl flex-col items-start text-left text-justify hyphens-auto">
-                  <div className="flex w-full flex-col items-center self-center">
+                  <div className="flex w-full flex-col items-stretch self-stretch">
                     <SeapsLogo
                       size="hero"
-                      className="h-[4.73rem] w-[7.48rem] sm:h-[5.34rem] sm:w-[8.42rem] md:h-[5.94rem] md:w-[9.35rem]"
+                      className="block aspect-[488/310] h-auto w-full max-w-full"
                     />
                     <p className="seaps-brand-subtitle mt-2 text-center text-[0.7rem] uppercase tracking-[0.14em] sm:mt-2.5 sm:text-[0.7625rem]">
                       <span className="block">South East Asia Property Services</span>
