@@ -4,8 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SiteChangeCriticalBanner } from "@/components/admin/site-change-critical-banner";
 import { Button } from "@/components/ui/button";
 import {
-  EqualsScreenshotShortcutTracker,
-  isEqualsShortcutKey,
+  SEAPS_EQUALS_SCREENSHOT_ATTACH_EVENT,
   stripTrailingEqualsCommand,
 } from "@/lib/seaps-equals-screenshot-shortcut";
 import { resolveLatestScreenshotFile } from "@/lib/site-change-screenshot-access";
@@ -51,7 +50,6 @@ export function SiteChangeComposer() {
   const [draftReady, setDraftReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
-  const equalsShortcutRef = useRef(new EqualsScreenshotShortcutTracker());
   const attachInFlightRef = useRef(false);
 
   const risk = useMemo(() => assessSiteChangeMessage(message), [message]);
@@ -133,6 +131,17 @@ export function SiteChangeComposer() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  useEffect(() => {
+    const onEqualsAttach = () => {
+      setMessage((prev) => stripTrailingEqualsCommand(prev));
+      void attachLatestScreenshot();
+    };
+    window.addEventListener(SEAPS_EQUALS_SCREENSHOT_ATTACH_EVENT, onEqualsAttach);
+    return () => {
+      window.removeEventListener(SEAPS_EQUALS_SCREENSHOT_ATTACH_EVENT, onEqualsAttach);
+    };
+  }, [attachLatestScreenshot]);
 
   async function dispatchToAgent(id?: string) {
     setDispatchNote(null);
@@ -228,27 +237,16 @@ export function SiteChangeComposer() {
   return (
     <div className="space-y-8">
       <form
+        data-seaps-site-change-composer
         onSubmit={onSubmit}
         className="seaps-card space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5"
       >
         <label className="block">
           <span className="sr-only">Change request</span>
           <textarea
+            data-seaps-equals-controlled
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (isEqualsShortcutKey(e.key)) {
-                if (equalsShortcutRef.current.onEqualsPress()) {
-                  e.preventDefault();
-                  setMessage((prev) => stripTrailingEqualsCommand(prev));
-                  void attachLatestScreenshot();
-                }
-                return;
-              }
-              if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1) {
-                equalsShortcutRef.current.onOtherKey();
-              }
-            }}
             rows={8}
             placeholder="Describe the UI or signed-in experience change you want…"
             className="w-full resize-y rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)]"
@@ -296,7 +294,8 @@ export function SiteChangeComposer() {
 
         {attachNote ? <p className="text-sm text-[var(--color-muted)]">{attachNote}</p> : null}
         <p className="text-xs text-[var(--color-muted)]">
-          Tip: type ===== within 5 seconds to attach your latest screenshot from an authorized folder
+          Tip: type ===== within 5 seconds in any text field to attach your latest screenshot (authorize
+          your screenshots folder once)
           (or open the file picker when the browser requires it).
         </p>
 

@@ -50,3 +50,42 @@ export function stripTrailingEqualsCommand(text: string): string {
 export function isEqualsShortcutKey(key: string): boolean {
   return key === "=" || key === "Equal";
 }
+
+export const SEAPS_EQUALS_SCREENSHOT_ATTACH_EVENT = "seaps:equals-screenshot-attach";
+
+export const SEAPS_EQUALS_SHORTCUT_EXCLUDE_ATTR = "data-seaps-no-equals-screenshot";
+
+export function isEqualsShortcutExcluded(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return true;
+  return Boolean(target.closest(`[${SEAPS_EQUALS_SHORTCUT_EXCLUDE_ATTR}]`));
+}
+
+export function isEqualsEditableTarget(target: EventTarget | null): target is HTMLElement {
+  if (!(target instanceof HTMLElement)) return false;
+  if (isEqualsShortcutExcluded(target)) return false;
+  if (target.isContentEditable) return true;
+  if (target instanceof HTMLTextAreaElement) return !target.disabled && !target.readOnly;
+  if (target instanceof HTMLInputElement) {
+    if (target.disabled || target.readOnly) return false;
+    const t = target.type;
+    if (t === "checkbox" || t === "radio" || t === "file" || t === "button" || t === "submit") {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+/** Strip equals left in the field when the fifth press is prevented (controlled fields use state). */
+export function stripTrailingEqualsFromElement(element: HTMLElement): void {
+  if (element instanceof HTMLTextAreaElement || element instanceof HTMLInputElement) {
+    element.value = stripTrailingEqualsCommand(element.value);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    return;
+  }
+  if (element.isContentEditable) {
+    const text = element.innerText;
+    element.innerText = stripTrailingEqualsCommand(text);
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+}
