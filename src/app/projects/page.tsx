@@ -1,7 +1,4 @@
 import type { Metadata } from "next";
-import { ProjectCard } from "@/components/project/project-card";
-import { Section, SectionHeader } from "@/components/shared/section";
-import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Projects & developments",
@@ -9,18 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  return (
-    <Section>
-      <SectionHeader
-        eyebrow="Developments"
-        title="New homes and residential projects"
-        description="Each project page separates moderated facts from developer-provided claims."
-      />
-      <div className="grid items-stretch gap-5 lg:grid-cols-3">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
-    </Section>
-  );
+  return null;
 }
