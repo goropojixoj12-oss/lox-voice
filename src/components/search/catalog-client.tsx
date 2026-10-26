@@ -28,7 +28,7 @@ export function CatalogClient({
   userId?: string;
   title: string;
   description: string;
-  coverAd?: { src: string; alt: string };
+  coverAd?: { src: string; alt: string; href?: string };
 }) {
   const [view, setView] = useState<"grid" | "list" | "map">("grid");
   const [activeId, setActiveId] = useState<string | undefined>(items[0]?.id);
@@ -68,7 +68,7 @@ export function CatalogClient({
 
       {coverAd ? (
         <div className="mb-2 flex justify-center">
-          <CatalogCoverAd src={coverAd.src} alt={coverAd.alt} />
+          <CatalogCoverAd src={coverAd.src} alt={coverAd.alt} href={coverAd.href} />
         </div>
       ) : null}
 

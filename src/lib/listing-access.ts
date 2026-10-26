@@ -1,8 +1,8 @@
 import type { SessionUser } from "@/lib/auth";
 import type { Property, TransactionType } from "@/lib/types";
 
-/** Sale and long-term rent inventory withdrawn from the public catalog (CEO site request). */
-const WITHDRAWN_PUBLIC_CATALOG_DEALS = new Set<TransactionType>(["sale", "rent"]);
+/** Long-term rent inventory withdrawn from the public catalog (CEO site request). Sale listings (e.g. Vue Aston) stay public when published. */
+const WITHDRAWN_PUBLIC_CATALOG_DEALS = new Set<TransactionType>(["rent"]);
 
 /** Short-stay promo listings removed from buy/rent/commercial-style catalogs (CEO site request). */
 const WITHDRAWN_PROMO_LISTING_SLUGS = new Set([

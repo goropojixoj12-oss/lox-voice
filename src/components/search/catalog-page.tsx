@@ -8,6 +8,7 @@ import type { SearchFilters, TransactionType } from "@/lib/types";
 export type CatalogCoverAdConfig = {
   src: string;
   alt: string;
+  href?: string;
 };
 
 export async function CatalogPage({
