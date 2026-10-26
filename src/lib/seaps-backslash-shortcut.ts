@@ -1,6 +1,6 @@
 /** Exact replacement when five `\` keys are pressed within the window. */
 export const SEAPS_BACKSLASH_SHORTCUT_REPLACEMENT =
-  "South East Asian Property Services";
+  "South East Asia Property Services";
 
 export const SEAPS_BACKSLASH_SHORTCUT_COUNT = 5;
 export const SEAPS_BACKSLASH_SHORTCUT_WINDOW_MS = 5000;
