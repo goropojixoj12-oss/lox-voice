@@ -43,11 +43,9 @@ const NAV = [
 
 export function AdminDeskShell({
   userName,
-  roleLabel = "God",
   children,
 }: {
   userName: string;
-  roleLabel?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -68,7 +66,7 @@ export function AdminDeskShell({
           </p>
           <p className="text-sm text-[var(--color-muted)]">
             Signed in as <span className="font-semibold text-[var(--color-text)]">{userName}</span>{" "}
-            ({roleLabel})
+            (admin)
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

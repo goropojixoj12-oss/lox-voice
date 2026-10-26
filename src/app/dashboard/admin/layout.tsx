@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const session = await requireRole(["god", "admin"]);
+  const session = await requireRole(["admin"]);
   if (!session) redirect("/auth/login");
   return children;
 }
