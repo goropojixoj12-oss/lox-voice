@@ -34,17 +34,17 @@ export default async function HomePage() {
                       <span className="block">Co. Ltd.</span>
                     </p>
                   </div>
-                  <div className="mt-4 w-full text-justify hyphens-auto [text-align-last:center] sm:mt-5">
-                    <h1 className="text-[1.125rem] font-bold leading-snug sm:text-xl md:text-[1.35rem]">
+                  <div className="mt-4 w-full text-justify hyphens-none [text-align-last:center] sm:mt-5">
+                    <h1 className="text-[1.2rem] font-bold leading-snug sm:text-[1.3125rem] md:text-[1.45rem]">
                       <span className="block text-center text-white">
                         South East Asia Property Services (SEAPS)
                       </span>
-                      <span className="mt-2 block text-[1.0625rem] text-white/92 md:text-[1.125rem]">
+                      <span className="mt-2 block text-[1.125rem] text-white/92 md:text-[1.2rem]">
                         is a multi-Award-Winning Real Estate, Property Management and Investment
                         Company, based in South East Asia.
                       </span>
                     </h1>
-                    <p className="mt-3 text-[1.075rem] text-white md:mt-4 md:text-[1.2rem]">
+                    <p className="mt-3 text-[1.125rem] text-white md:mt-4 md:text-[1.275rem]">
                       SEAPS converts market insight into clear individualised strategies by providing
                       Buyers, Sellers and Investors with comprehensive property solutions spanning every
                       major sector of the market, including Land, Residential and Commercial Properties,
