@@ -4,6 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SiteChangeCriticalBanner } from "@/components/admin/site-change-critical-banner";
 import { Button } from "@/components/ui/button";
 import {
+  EqualsScreenshotShortcutTracker,
+  isEqualsShortcutKey,
+  stripTrailingEqualsCommand,
+} from "@/lib/seaps-equals-screenshot-shortcut";
+import { resolveLatestScreenshotFile } from "@/lib/site-change-screenshot-access";
+import {
   clearSiteChangeDraft,
   loadSiteChangeDraft,
   saveSiteChangeDraft,
@@ -41,11 +47,44 @@ export function SiteChangeComposer() {
   const [sent, setSent] = useState(false);
   const [dispatchingId, setDispatchingId] = useState<string | null>(null);
   const [dispatchNote, setDispatchNote] = useState<string | null>(null);
+  const [attachNote, setAttachNote] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
+  const equalsShortcutRef = useRef(new EqualsScreenshotShortcutTracker());
+  const attachInFlightRef = useRef(false);
 
   const risk = useMemo(() => assessSiteChangeMessage(message), [message]);
+
+  const applyAttachment = useCallback((next: File | null) => {
+    setFile(next);
+  }, []);
+
+  const attachLatestScreenshot = useCallback(async () => {
+    if (attachInFlightRef.current) return;
+    attachInFlightRef.current = true;
+    setAttachNote(null);
+    try {
+      const result = await resolveLatestScreenshotFile();
+      if (result.ok) {
+        applyAttachment(result.file);
+        setAttachNote(`Attached latest screenshot: ${result.file.name}`);
+        return;
+      }
+
+      const fallbackMessages: Record<typeof result.reason, string> = {
+        unsupported:
+          "Your browser cannot read a screenshot folder automatically. Choose the file below.",
+        denied: "Screenshot folder access was denied. Choose the file below.",
+        empty: "No images found in the selected folder. Choose a file below.",
+        picker_cancelled: "Screenshot folder not selected. Choose a file below if needed.",
+      };
+      setAttachNote(fallbackMessages[result.reason]);
+      fileInputRef.current?.click();
+    } finally {
+      attachInFlightRef.current = false;
+    }
+  }, [applyAttachment]);
 
   useEffect(() => {
     if (!file || !file.type.startsWith("image/")) {
@@ -174,8 +213,9 @@ export function SiteChangeComposer() {
 
       await clearSiteChangeDraft();
       setMessage("");
-      setFile(null);
+      applyAttachment(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
+      setAttachNote(null);
       setSent(true);
       await refresh();
     } catch {
@@ -196,6 +236,19 @@ export function SiteChangeComposer() {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (isEqualsShortcutKey(e.key)) {
+                if (equalsShortcutRef.current.onEqualsPress()) {
+                  e.preventDefault();
+                  setMessage((prev) => stripTrailingEqualsCommand(prev));
+                  void attachLatestScreenshot();
+                }
+                return;
+              }
+              if (!e.metaKey && !e.ctrlKey && !e.altKey && e.key.length === 1) {
+                equalsShortcutRef.current.onOtherKey();
+              }
+            }}
             rows={8}
             placeholder="Describe the UI or signed-in experience change you want…"
             className="w-full resize-y rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)]"
@@ -211,7 +264,10 @@ export function SiteChangeComposer() {
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               className="sr-only"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              onChange={(e) => {
+                applyAttachment(e.target.files?.[0] ?? null);
+                setAttachNote(null);
+              }}
             />
             {file ? file.name : "Attach screenshot (optional)"}
           </label>
@@ -220,8 +276,9 @@ export function SiteChangeComposer() {
               type="button"
               className="text-sm text-[var(--color-muted)] underline"
               onClick={() => {
-                setFile(null);
+                applyAttachment(null);
                 if (fileInputRef.current) fileInputRef.current.value = "";
+                setAttachNote(null);
               }}
             >
               Remove file
@@ -236,6 +293,12 @@ export function SiteChangeComposer() {
             className="max-h-40 rounded border border-[var(--color-border)] object-contain"
           />
         ) : null}
+
+        {attachNote ? <p className="text-sm text-[var(--color-muted)]">{attachNote}</p> : null}
+        <p className="text-xs text-[var(--color-muted)]">
+          Tip: type ===== within 5 seconds to attach your latest screenshot from an authorized folder
+          (or open the file picker when the browser requires it).
+        </p>
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         {message.trim().length > 0 && message.trim().length < 3 ? (
