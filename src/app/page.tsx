@@ -23,7 +23,7 @@ export default async function HomePage() {
             <HeroMainLayout
               className="reveal"
               copyLead={
-                <div className="notranslate mx-auto flex w-full max-w-[34rem] flex-col items-center">
+                <div className="notranslate mx-auto flex w-full max-w-[36rem] flex-col items-center">
                   <div className="flex w-full flex-col items-center">
                     <SeapsLogo
                       size="hero"
