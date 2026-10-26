@@ -28,14 +28,14 @@ export default async function HomePage() {
                     size="hero"
                     className="h-[5.2rem] w-[8.22rem] sm:h-[5.87rem] sm:w-[9.26rem] md:h-[6.53rem] md:w-[10.28rem]"
                   />
-                  <p className="seaps-brand-subtitle mt-4 w-full text-justify text-[0.77rem] uppercase tracking-[0.16em] sm:mt-5 sm:text-[0.84rem] sm:tracking-[0.17em]">
+                  <p className="seaps-brand-subtitle mt-3 w-[8.22rem] text-justify text-[0.77rem] uppercase tracking-[0.16em] sm:mt-4 sm:w-[9.26rem] sm:text-[0.84rem] sm:tracking-[0.17em] md:w-[10.28rem]">
                     <span className="block">South East Asia Property Services</span>
                     <span className="block">Co. Ltd.</span>
                   </p>
                 </div>
               }
               copy={
-                <div className="w-full max-w-[36rem] text-justify hyphens-auto lg:mt-1">
+                <div className="w-full max-w-[36rem] text-justify hyphens-auto">
                   <h1 className="text-[1.125rem] font-bold leading-snug sm:text-xl md:text-[1.35rem]">
                     <span className="block text-white">
                       South East Asia Property Services (SEAPS)
