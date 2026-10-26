@@ -58,7 +58,7 @@ export function SiteHeader({
           </Link>
 
           <nav
-            className="notranslate relative z-[1] hidden min-w-0 items-center justify-center gap-0 overflow-visible md:col-start-2 md:flex md:flex-nowrap md:px-1 lg:gap-0.5 lg:px-2"
+            className="notranslate relative z-[1] hidden min-w-0 items-center justify-center gap-0.5 overflow-visible md:col-start-2 md:flex md:flex-wrap md:px-2"
             aria-label="Primary"
           >
             {nav.map((entry) =>
