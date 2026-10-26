@@ -15,7 +15,7 @@ export function listPropertyStepErrorMessage(stepIndex: number): string {
     case 3:
       return "Title (8+ characters), summary (12+), and description (40+ characters) are required.";
     case 4:
-      return "Add at least one photo before continuing.";
+      return "Photos step is optional — you can continue without uploading.";
     case 5:
       return "Enter contact name and a valid email.";
     default:
@@ -49,7 +49,7 @@ export function validateListPropertyStep(
         form.description.trim().length >= 40
       );
     case 4:
-      return mediaItems.some((m) => m.kind === "image");
+      return true;
     case 5:
       return form.contactName.trim().length >= 2 && form.contactEmail.includes("@");
     default:

@@ -62,7 +62,7 @@ const createSchema = z.object({
         isCover: z.boolean().optional(),
       }),
     )
-    .min(1),
+    .default([]),
   videos: z
     .array(
       z.object({

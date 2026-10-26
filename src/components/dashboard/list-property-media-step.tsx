@@ -253,7 +253,9 @@ export function ListPropertyMediaStep({
       </ul>
 
       {items.length === 0 ? (
-        <p className="text-sm text-[var(--color-muted)]">Add at least one photo to continue.</p>
+        <p className="text-sm text-[var(--color-muted)]">
+          Photos and videos are optional — skip this step or add media later.
+        </p>
       ) : null}
     </div>
   );
