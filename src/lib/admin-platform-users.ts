@@ -22,7 +22,7 @@ export function isAdminVisibleStaffId(staffId: string): boolean {
   return !ADMIN_HIDDEN_STAFF_IDS.has(staffId);
 }
 
-/** Accounts shown in admin Users (God + Adam James + future registrations). */
+/** Accounts shown in admin Users (CEO admin + Adam James + future registrations). */
 export function getAdminDirectoryUsers(): DemoUser[] {
   return demoUsers.filter(isAdminVisibleUser);
 }
