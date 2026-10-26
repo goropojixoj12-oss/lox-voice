@@ -6,10 +6,10 @@ export function ContactPageIntro() {
   return (
     <header className="mb-8 space-y-4 text-center">
       <h1 className="seaps-gold-text text-3xl font-bold tracking-tight md:text-4xl notranslate">
-        Contact
+        Contact a SEAPS Specialist.
       </h1>
       <div className="mx-auto max-w-2xl space-y-3 text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
-        <p>We thank you for your contact.</p>
+        <p>Welcome to our SEAPS Contact Page.</p>
         <p>
           Please complete the fields below and upon submission, the information provided will be
           assessed and forwarded to the most appropriate SEAPS Specialist.
