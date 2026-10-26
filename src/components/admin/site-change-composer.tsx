@@ -3,6 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SiteChangeCriticalBanner } from "@/components/admin/site-change-critical-banner";
 import { Button } from "@/components/ui/button";
+import {
+  clearSiteChangeDraft,
+  loadSiteChangeDraft,
+  saveSiteChangeDraft,
+} from "@/lib/site-change-draft";
 import { assessSiteChangeMessage } from "@/lib/site-change-risk";
 
 type AttachmentMeta = {
@@ -27,33 +32,8 @@ const STATUS_LABEL: Record<string, string> = {
   failed: "Failed",
 };
 
-const SITE_CHANGE_MESSAGE_DRAFT_KEY = "seaps-site-change-message-draft";
-
-function readSiteChangeMessageDraft(): string {
-  if (typeof window === "undefined") return "";
-  try {
-    return window.localStorage.getItem(SITE_CHANGE_MESSAGE_DRAFT_KEY) ?? "";
-  } catch {
-    return "";
-  }
-}
-
-function writeSiteChangeMessageDraft(value: string) {
-  if (typeof window === "undefined") return;
-  try {
-    if (value.length === 0) {
-      window.localStorage.removeItem(SITE_CHANGE_MESSAGE_DRAFT_KEY);
-    } else {
-      window.localStorage.setItem(SITE_CHANGE_MESSAGE_DRAFT_KEY, value);
-    }
-  } catch {
-    /* quota / private mode */
-  }
-}
-
 export function SiteChangeComposer() {
   const [message, setMessage] = useState("");
-  const [draftHydrated, setDraftHydrated] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [items, setItems] = useState<SiteRequestItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,9 +41,48 @@ export function SiteChangeComposer() {
   const [sent, setSent] = useState(false);
   const [dispatchingId, setDispatchingId] = useState<string | null>(null);
   const [dispatchNote, setDispatchNote] = useState<string | null>(null);
+  const [draftReady, setDraftReady] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
 
   const risk = useMemo(() => assessSiteChangeMessage(message), [message]);
+
+  useEffect(() => {
+    if (!file || !file.type.startsWith("image/")) {
+      setAttachmentPreviewUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setAttachmentPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const draft = await loadSiteChangeDraft();
+      if (cancelled) return;
+      if (draft) {
+        setMessage(draft.message);
+        setFile(draft.file);
+      }
+      setDraftReady(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady) return;
+    void saveSiteChangeDraft(message, file);
+  }, [draftReady, message, file]);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/admin/site-requests");
@@ -75,16 +94,6 @@ export function SiteChangeComposer() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
-
-  useEffect(() => {
-    setMessage(readSiteChangeMessageDraft());
-    setDraftHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (!draftHydrated) return;
-    writeSiteChangeMessageDraft(message);
-  }, [message, draftHydrated]);
 
   async function dispatchToAgent(id?: string) {
     setDispatchNote(null);
@@ -163,6 +172,7 @@ export function SiteChangeComposer() {
         return;
       }
 
+      await clearSiteChangeDraft();
       setMessage("");
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -218,6 +228,14 @@ export function SiteChangeComposer() {
             </button>
           ) : null}
         </div>
+
+        {file && attachmentPreviewUrl ? (
+          <img
+            src={attachmentPreviewUrl}
+            alt={file.name}
+            className="max-h-40 rounded border border-[var(--color-border)] object-contain"
+          />
+        ) : null}
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         {message.trim().length > 0 && message.trim().length < 3 ? (
