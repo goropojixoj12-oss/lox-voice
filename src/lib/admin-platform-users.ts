@@ -4,7 +4,6 @@ import type { DemoUser } from "@/lib/types";
 /** Demo buyer/owner logins — not staff. Agent1 (user-agent) is the real platform agent. */
 export const ADMIN_HIDDEN_USER_IDS = new Set(["user-buyer", "user-owner"]);
 
-/** Public catalog seed profiles (Sokha, Dara, …) — not real staff; use platform user ids in admin. */
 /** Catalog-only personas (Adam James on public pages) — not executive staff roster. */
 export const ADMIN_HIDDEN_STAFF_IDS = new Set([
   "agent-dara",
