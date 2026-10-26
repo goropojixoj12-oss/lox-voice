@@ -16,7 +16,6 @@ export type SiteChangeRequest = {
   scope: SiteChangeScope;
   status: SiteChangeRequestStatus;
   attachment: SiteChangeAttachment | null;
-  secondAttachment?: SiteChangeAttachment | null;
   createdByUserId: string;
   createdByName: string;
   createdAt: string;
