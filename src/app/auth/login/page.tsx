@@ -31,8 +31,9 @@ export default function LoginPage() {
       return;
     }
     const data = (await res.json()) as { user?: { role?: string } };
+    const role = data.user?.role;
     const dest =
-      data.user?.role === "admin" ? "/dashboard/admin" : "/dashboard/agent/overview";
+      role === "admin" || role === "god" ? "/dashboard/admin" : "/dashboard/agent/overview";
     router.push(dest);
     router.refresh();
   }
