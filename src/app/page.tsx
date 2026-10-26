@@ -23,35 +23,35 @@ export default async function HomePage() {
             <HeroMainLayout
               className="reveal"
               copyLead={
-                <div className="notranslate mx-auto flex w-full max-w-[36rem] flex-col items-center">
-                  <div className="flex w-full flex-col items-center">
-                    <SeapsLogo
-                      size="hero"
-                      className="h-[5.2rem] w-[8.22rem] sm:h-[5.87rem] sm:w-[9.26rem] md:h-[6.53rem] md:w-[10.28rem]"
-                    />
-                    <p className="seaps-brand-subtitle mt-2 w-full text-center text-[0.77rem] uppercase tracking-[0.16em] sm:mt-2.5 sm:text-[0.84rem] sm:tracking-[0.17em]">
-                      <span className="block">South East Asia Property Services</span>
-                      <span className="block">Co. Ltd.</span>
-                    </p>
-                  </div>
-                  <div className="mt-4 w-full text-justify hyphens-auto [text-align-last:center] sm:mt-5">
-                    <h1 className="text-[1.125rem] font-bold leading-snug sm:text-xl md:text-[1.35rem]">
-                      <span className="block text-center text-white">
-                        South East Asia Property Services (SEAPS)
-                      </span>
-                      <span className="mt-2 block text-[1.0625rem] text-white/92 md:text-[1.125rem]">
-                        is a multi-Award-Winning Real Estate, Property Management and Investment
-                        Company, based in South East Asia.
-                      </span>
-                    </h1>
-                    <p className="mt-3 text-[1.075rem] text-white md:mt-4 md:text-[1.2rem]">
-                      SEAPS converts market insight into clear individualised strategies by providing
-                      Buyers, Sellers and Investors with comprehensive property solutions spanning every
-                      major sector of the market, including Land, Residential and Commercial Properties,
-                      Property Management, Sales, Rentals, Investment Holdings and Property Development
-                      Opportunities.
-                    </p>
-                  </div>
+                <div className="notranslate flex w-full max-w-[36rem] flex-col items-start">
+                  <SeapsLogo
+                    size="hero"
+                    className="h-[5.2rem] w-[8.22rem] sm:h-[5.87rem] sm:w-[9.26rem] md:h-[6.53rem] md:w-[10.28rem]"
+                  />
+                  <p className="seaps-brand-subtitle mt-3 w-[8.22rem] text-justify text-[0.77rem] uppercase tracking-[0.16em] sm:mt-4 sm:w-[9.26rem] sm:text-[0.84rem] sm:tracking-[0.17em] md:w-[10.28rem]">
+                    <span className="block">South East Asia Property Services</span>
+                    <span className="block">Co. Ltd.</span>
+                  </p>
+                </div>
+              }
+              copy={
+                <div className="w-full max-w-[36rem] text-justify hyphens-auto">
+                  <h1 className="text-[1.125rem] font-bold leading-snug sm:text-xl md:text-[1.35rem]">
+                    <span className="block text-white">
+                      South East Asia Property Services (SEAPS)
+                    </span>
+                    <span className="mt-2 block text-[1.0625rem] text-white/92 md:text-[1.125rem]">
+                      is a multi-Award-Winning Real Estate, Property Management and Investment
+                      Company, based in South East Asia.
+                    </span>
+                  </h1>
+                  <p className="mt-3 text-[1.075rem] text-white md:mt-4 md:text-[1.2rem]">
+                    SEAPS converts market insight into clear individualised strategies by providing
+                    Buyers, Sellers and Investors with comprehensive property solutions spanning every
+                    major sector of the market, including Land, Residential and Commercial Properties,
+                    Property Management, Sales, Rentals, Investment Holdings and Property Development
+                    Opportunities.
+                  </p>
                 </div>
               }
               aside={

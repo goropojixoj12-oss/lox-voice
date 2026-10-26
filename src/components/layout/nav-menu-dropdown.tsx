@@ -12,7 +12,7 @@ export type NavEntry =
   | { type: "dropdown"; label: string; href: string; items: NavDropdownItem[] };
 
 const linkShellClass =
-  "rounded-full px-2.5 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";
+  "whitespace-nowrap rounded-full px-2 py-2 text-[0.8125rem] font-medium transition hover:bg-[var(--color-mist)] lg:px-2.5 lg:text-sm";
 
 const subLinkClass =
   "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition hover:bg-[var(--color-mist)]";

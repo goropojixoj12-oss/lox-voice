@@ -11,8 +11,6 @@ type HeroMainLayoutProps = {
 };
 
 export function HeroMainLayout({ copyLead, copy, aside, className }: HeroMainLayoutProps) {
-  const copyLeadRows = copy ? 2 : 1;
-
   return (
     <div
       className={cn(
@@ -28,8 +26,10 @@ export function HeroMainLayout({ copyLead, copy, aside, className }: HeroMainLay
           ) : null}
           <div
             className={cn(
-              "flex w-full min-w-0 flex-col lg:col-start-2 lg:row-start-1 lg:justify-center lg:justify-self-stretch lg:pl-2 xl:pl-4",
-              copyLeadRows === 2 ? "lg:row-span-2" : "lg:row-span-1",
+              "flex w-full min-w-0 flex-col lg:col-start-2 lg:justify-self-stretch lg:pl-2 xl:pl-4",
+              copy
+                ? "lg:row-start-2 lg:self-start"
+                : "lg:row-start-1 lg:justify-center lg:self-center",
             )}
           >
             {aside}
