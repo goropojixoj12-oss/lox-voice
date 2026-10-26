@@ -23,8 +23,8 @@ export default async function HomePage() {
             <HeroMainLayout
               className="reveal"
               copyLead={
-                <div className="notranslate flex w-full max-w-2xl flex-col items-start text-left text-justify hyphens-auto">
-                  <div className="flex w-full flex-col items-center self-center">
+                <div className="notranslate mx-auto flex w-full max-w-[34rem] flex-col items-center">
+                  <div className="flex w-full flex-col items-center">
                     <SeapsLogo
                       size="hero"
                       className="h-[4.73rem] w-[7.48rem] sm:h-[5.34rem] sm:w-[8.42rem] md:h-[5.94rem] md:w-[9.35rem]"
@@ -34,24 +34,25 @@ export default async function HomePage() {
                       <span className="block">Co. Ltd.</span>
                     </p>
                   </div>
-                  <h1 className="notranslate mt-4 w-full text-[1.125rem] font-medium leading-snug sm:mt-5 sm:text-xl md:text-[1.35rem] lg:mt-5">
-                    <span className="block text-white">
-                      South East Asia Property Services (SEAPS)
-                    </span>
-                    <span className="mt-2 block text-[1.0625rem] text-white/92 md:text-[1.125rem]">
-                      is a multi-Award-Winning Real Estate, Property Management and Investment Company,
-                      based in South East Asia.
-                    </span>
-                  </h1>
+                  <div className="mt-4 w-full text-justify hyphens-auto [text-align-last:center] sm:mt-5">
+                    <h1 className="text-[1.125rem] font-medium leading-snug sm:text-xl md:text-[1.35rem]">
+                      <span className="block text-center text-white">
+                        South East Asia Property Services (SEAPS)
+                      </span>
+                      <span className="mt-2 block text-[1.0625rem] text-white/92 md:text-[1.125rem]">
+                        is a multi-Award-Winning Real Estate, Property Management and Investment
+                        Company, based in South East Asia.
+                      </span>
+                    </h1>
+                    <p className="mt-3 text-[1.075rem] text-white md:mt-4 md:text-[1.2rem]">
+                      SEAPS converts market insight into clear individualised strategies by providing
+                      Buyers, Sellers and Investors with comprehensive property solutions spanning every
+                      major sector of the market, including Land, Residential and Commercial Properties,
+                      Property Management, Sales, Rentals, Investment Holdings and Property Development
+                      Opportunities.
+                    </p>
+                  </div>
                 </div>
-              }
-              copy={
-                <p className="max-w-2xl text-left text-justify hyphens-auto text-[1.075rem] text-white md:text-[1.2rem] lg:mt-1">
-                  SEAPS converts market insight into clear individualised strategies by providing Buyers,
-                  Sellers and Investors with comprehensive property solutions spanning every major sector
-                  of the market, including Land, Residential and Commercial Properties, Property
-                  Management, Sales, Rentals, Investment Holdings and Property Development Opportunities.
-                </p>
               }
               aside={
                 <>
