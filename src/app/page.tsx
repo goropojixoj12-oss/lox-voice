@@ -35,7 +35,7 @@ export default async function HomePage() {
                     </p>
                   </div>
                   <div className="mt-4 w-full text-justify hyphens-auto [text-align-last:center] sm:mt-5">
-                    <h1 className="text-[1.125rem] font-medium leading-snug sm:text-xl md:text-[1.35rem]">
+                    <h1 className="text-[1.125rem] font-bold leading-snug sm:text-xl md:text-[1.35rem]">
                       <span className="block text-center text-white">
                         South East Asia Property Services (SEAPS)
                       </span>
