@@ -27,8 +27,6 @@ import {
   transactionLabels,
   verificationLabels,
 } from "@/lib/labels";
-import { ListingViewRecorder } from "@/components/analytics/listing-view-recorder";
-import { resolveListingViewCount } from "@/lib/listing-view-store";
 import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
@@ -85,7 +83,6 @@ export default async function PropertyDetailPage({
 
   const session = await getSession();
   if (!canViewListing(property, session)) notFound();
-  const listingViewCount = session ? await resolveListingViewCount(property) : null;
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
@@ -93,7 +90,6 @@ export default async function PropertyDetailPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <ListingViewRecorder listingId={property.id} skip={Boolean(session) || !showPublicSeo} />
       {!showPublicSeo ? (
         <p className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/40 bg-[var(--color-mist)] px-4 py-3 text-sm text-[var(--color-text)]">
           This listing is <strong>{property.status}</strong> and is not visible in public search until
@@ -172,11 +168,6 @@ export default async function PropertyDetailPage({
               <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
                 Updated {daysAgo(property.updatedAt)}
               </span>
-              {session && listingViewCount !== null ? (
-                <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-[var(--color-muted)]">
-                  {listingViewCount} unique {listingViewCount === 1 ? "view" : "views"} (signed-in only)
-                </span>
-              ) : null}
             </div>
           </div>
 
@@ -229,7 +220,7 @@ export default async function PropertyDetailPage({
                 {property.amenities.map((amenity) => (
                   <li
                     key={amenity}
-                    className="seaps-amenity-chip rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
+                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
                   >
                     {amenityLabels[amenity]}
                   </li>
