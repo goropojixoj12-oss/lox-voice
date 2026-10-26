@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
-import {
-  adminSiteChangeAutomationEnabled,
-  adminSiteChangeForbiddenResponse,
-} from "@/lib/admin-platform-safety";
 import { notifySiteAgentWebhook } from "@/lib/site-agent-webhook";
 import { getSiteChangeRequest, listSiteChangeRequests } from "@/lib/site-agent-store";
 
@@ -13,9 +9,6 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   const session = await requireRole(["admin"]);
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  if (!adminSiteChangeAutomationEnabled()) {
-    return adminSiteChangeForbiddenResponse();
-  }
 
   const webhookConfigured = Boolean(process.env.SITE_AGENT_WEBHOOK_URL?.trim());
   const bearerConfigured = Boolean(

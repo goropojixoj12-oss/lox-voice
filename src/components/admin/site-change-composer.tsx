@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { SiteChangeCriticalBanner } from "@/components/admin/site-change-critical-banner";
 import { Button } from "@/components/ui/button";
+import { assessSiteChangeMessage } from "@/lib/site-change-risk";
 
 type AttachmentMeta = {
   fileName: string;
@@ -35,6 +37,8 @@ export function SiteChangeComposer() {
   const [dispatchingId, setDispatchingId] = useState<string | null>(null);
   const [dispatchNote, setDispatchNote] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const risk = useMemo(() => assessSiteChangeMessage(message), [message]);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/admin/site-requests");
@@ -86,6 +90,14 @@ export function SiteChangeComposer() {
     if (trimmed.length < 3) {
       setError("Describe the change in at least a few words.");
       return;
+    }
+
+    const submitRisk = assessSiteChangeMessage(trimmed);
+    if (submitRisk.level === "critical") {
+      const ok = window.confirm(
+        "This request may change critical project settings (hosting, secrets, Git, or security).\n\nSend anyway? For infrastructure work, a developer should review first.",
+      );
+      if (!ok) return;
     }
 
     setLoading(true);
@@ -144,6 +156,8 @@ export function SiteChangeComposer() {
             className="w-full resize-y rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)]"
           />
         </label>
+
+        <SiteChangeCriticalBanner risk={risk} />
 
         <div className="flex flex-wrap items-center gap-3">
           <label className="cursor-pointer rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-muted)] hover:border-[var(--color-accent)]">

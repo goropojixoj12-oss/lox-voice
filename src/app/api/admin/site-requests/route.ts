@@ -4,10 +4,7 @@ import { requireRole } from "@/lib/auth";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { writeSiteRequestAttachment } from "@/lib/site-agent-attachments";
 import { notifySiteAgentWebhook } from "@/lib/site-agent-webhook";
-import {
-  adminSiteChangeAutomationEnabled,
-  adminSiteChangeForbiddenResponse,
-} from "@/lib/admin-platform-safety";
+import { assessSiteChangeMessage } from "@/lib/site-change-risk";
 import {
   createSiteChangeRequest,
   listSiteChangeRequests,
@@ -32,9 +29,6 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   const session = await requireRole(["admin"]);
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  if (!adminSiteChangeAutomationEnabled()) {
-    return adminSiteChangeForbiddenResponse();
-  }
 
   const limited = rateLimit(clientKey(request, "site-request"), {
     limit: 12,
@@ -83,7 +77,11 @@ export async function POST(request: Request) {
     }
 
     notifySiteAgentWebhook(requestRecord);
-    return NextResponse.json({ request: requestRecord }, { status: 201 });
+    const risk = assessSiteChangeMessage(parsedMessage.data);
+    return NextResponse.json(
+      { request: requestRecord, riskLevel: risk.level, riskTopics: risk.topics },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("[admin/site-requests] POST failed", error);
     return NextResponse.json(

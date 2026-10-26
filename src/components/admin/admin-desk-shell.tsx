@@ -3,17 +3,15 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
-import { publicAdminSiteChangeAutomationEnabled } from "@/lib/admin-platform-safety-public";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-const NAV_BASE = [
+const NAV = [
   { href: adminDeskPath(), label: "Site Analytics", match: (p: string) => p === adminDeskPath() },
   {
     href: adminDeskPath("site-changes"),
     label: "Site Changes",
     match: (p: string) => p.startsWith(adminDeskPath("site-changes")),
-    requiresSiteChangeAutomation: true,
   },
   {
     href: adminDeskPath("staff"),
@@ -35,14 +33,7 @@ const NAV_BASE = [
     label: "Operations",
     match: (p: string) => p.startsWith(adminDeskPath("operations")),
   },
-] as const;
-
-const NAV = NAV_BASE.filter((item) => {
-  if ("requiresSiteChangeAutomation" in item && item.requiresSiteChangeAutomation) {
-    return publicAdminSiteChangeAutomationEnabled();
-  }
-  return true;
-});
+];
 
 export function AdminDeskShell({
   userName,
