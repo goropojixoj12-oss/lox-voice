@@ -27,8 +27,33 @@ const STATUS_LABEL: Record<string, string> = {
   failed: "Failed",
 };
 
+const SITE_CHANGE_MESSAGE_DRAFT_KEY = "seaps-site-change-message-draft";
+
+function readSiteChangeMessageDraft(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return window.localStorage.getItem(SITE_CHANGE_MESSAGE_DRAFT_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function writeSiteChangeMessageDraft(value: string) {
+  if (typeof window === "undefined") return;
+  try {
+    if (value.length === 0) {
+      window.localStorage.removeItem(SITE_CHANGE_MESSAGE_DRAFT_KEY);
+    } else {
+      window.localStorage.setItem(SITE_CHANGE_MESSAGE_DRAFT_KEY, value);
+    }
+  } catch {
+    /* quota / private mode */
+  }
+}
+
 export function SiteChangeComposer() {
   const [message, setMessage] = useState("");
+  const [draftHydrated, setDraftHydrated] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [items, setItems] = useState<SiteRequestItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -50,6 +75,16 @@ export function SiteChangeComposer() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  useEffect(() => {
+    setMessage(readSiteChangeMessageDraft());
+    setDraftHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftHydrated) return;
+    writeSiteChangeMessageDraft(message);
+  }, [message, draftHydrated]);
 
   async function dispatchToAgent(id?: string) {
     setDispatchNote(null);
