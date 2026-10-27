@@ -152,7 +152,7 @@ export const agents: Agent[] = [
     name: "Adam James",
     photo: img("photo-1544005313-94ddf0286df2", 600),
     title: "Commercial Advisor",
-    bio: "Adam James places offices and shophouses for growing Cambodian businesses in Daun Penh with SEAPS.
+    bio: "Adam James places offices and shophouses for growing Cambodian businesses in Daun Penh with SEAPS.",
     agencyId: "ag-royal",
     languages: ["English", "Khmer"],
     specializations: ["Office", "Retail"],
