@@ -110,32 +110,6 @@ export function verifySession(raw: string): { userId: string } | null {
   }
 }
 
-export function readSessionTokenFromCookieHeader(
-  cookieHeader: string | null | undefined,
-): string | null {
-  if (!cookieHeader) return null;
-  const part = cookieHeader
-    .split(";")
-    .map((p) => p.trim())
-    .find((p) => p.startsWith(`${SESSION_COOKIE}=`));
-  if (!part) return null;
-  const raw = part.slice(SESSION_COOKIE.length + 1);
-  try {
-    return decodeURIComponent(raw);
-  } catch {
-    return raw;
-  }
-}
-
-/** True when a valid signed-in session cookie is present (staff and public accounts). */
-export function hasAuthenticatedSessionCookie(
-  cookieHeader: string | null | undefined,
-): boolean {
-  const raw = readSessionTokenFromCookieHeader(cookieHeader);
-  if (!raw) return false;
-  return verifySession(raw) !== null;
-}
-
 export async function getSession(): Promise<SessionUser | null> {
   const jar = await cookies();
   const raw = jar.get(SESSION_COOKIE)?.value;

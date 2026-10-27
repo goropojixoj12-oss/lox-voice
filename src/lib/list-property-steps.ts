@@ -1,4 +1,3 @@
-import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 
 export const LIST_PROPERTY_STEP_LABELS = [
@@ -20,19 +19,9 @@ export function listPropertyStepSlug(stepNumber: number): ListPropertyStepSlug {
   return `step${n}` as ListPropertyStepSlug;
 }
 
-export function listPropertyStepPathForBase(deskBase: string, stepNumber: number): string {
-  const slug = listPropertyStepSlug(stepNumber);
-  const base = deskBase.replace(/\/+$/, "");
-  return `${base}/list-property/${slug}`;
-}
-
-/** Agent desk (default). */
+/** 1-based step number in URL path. */
 export function listPropertyStepPath(stepNumber: number): string {
-  return listPropertyStepPathForBase(agentDeskPath(), stepNumber);
-}
-
-export function adminListPropertyStepPath(stepNumber: number): string {
-  return listPropertyStepPathForBase(adminDeskPath(), stepNumber);
+  return agentDeskPath("list-property", listPropertyStepSlug(stepNumber));
 }
 
 export const LIST_PROPERTY_WIZARD_ENTRY = listPropertyStepPath(1);
