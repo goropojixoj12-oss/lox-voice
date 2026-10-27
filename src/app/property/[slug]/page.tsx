@@ -220,7 +220,7 @@ export default async function PropertyDetailPage({
                 {property.amenities.map((amenity) => (
                   <li
                     key={amenity}
-                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
+                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm text-black"
                   >
                     {amenityLabels[amenity]}
                   </li>
