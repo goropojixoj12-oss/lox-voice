@@ -10,7 +10,14 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("py-16 md:py-20", className)}>
+    <section
+      id={id}
+      className={cn(
+        // Opaque bg + clip: keeps card shadows/glows/hovers from painting onto the next section
+        "relative isolate overflow-clip bg-[var(--color-background)] py-16 md:py-20",
+        className,
+      )}
+    >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
     </section>
   );
@@ -35,7 +42,7 @@ export function SectionHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h2 className="font-[family-name:var(--font-display)] text-3xl leading-tight text-[var(--color-primary)] md:text-4xl">
+        <h2 className="font-[family-name:var(--font-display)] text-3xl leading-tight text-[var(--color-accent-soft)] md:text-4xl">
           {title}
         </h2>
         {description ? (

@@ -6,11 +6,11 @@ export default function NotFound() {
       <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-accent)]">
         404
       </p>
-      <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+      <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Page not found
       </h1>
       <p className="mt-3 text-[var(--color-muted)]">
-        That route does not exist or the listing was removed from the demo catalog.
+        That page does not exist or the listing is no longer available.
       </p>
       <ButtonLink href="/" className="mt-6">
         Back to home

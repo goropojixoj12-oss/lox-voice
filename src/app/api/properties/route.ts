@@ -3,7 +3,9 @@ import { z } from "zod";
 import { nanoid } from "nanoid";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
+import { isPublicListing } from "@/lib/listing-access";
 import { saveRuntimeListing } from "@/lib/store";
+import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import { slugify } from "@/lib/utils";
 import type { Property } from "@/lib/types";
 
@@ -11,7 +13,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const city = searchParams.get("city");
   const all = await getAllProperties();
-  const items = city ? all.filter((p) => p.location.citySlug === city) : all;
+  const published = all.filter((p) => isPublicListing(p));
+  const items = city ? published.filter((p) => p.location.citySlug === city) : published;
   return NextResponse.json({ items, total: items.length });
 }
 
@@ -39,12 +42,38 @@ const createSchema = z.object({
   bedrooms: z.number().nullable(),
   bathrooms: z.number().nullable(),
   areaSqm: z.number().nullable(),
+  countryCode: z
+    .string()
+    .length(2)
+    .refine((code) => isWorldCountryCode(code.toUpperCase()), { message: "Invalid country" }),
   city: z.string().min(2),
   citySlug: z.string().min(2),
   district: z.string().min(2),
   districtSlug: z.string().min(2),
+  commune: z.string().min(2),
+  communeSlug: z.string().min(2),
   address: z.string().min(3),
-  imageUrl: z.string().url(),
+  images: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        url: z.string().min(1),
+        alt: z.string().min(1),
+        isCover: z.boolean().optional(),
+      }),
+    )
+    .default([]),
+  videos: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        url: z.string().min(1),
+        label: z.string().optional(),
+        role: z.enum(["tour", "card_preview"]).optional(),
+      }),
+    )
+    .optional(),
+  cardPreviewVideoUrl: z.string().nullable().optional(),
 });
 
 export async function POST(request: Request) {
@@ -60,6 +89,10 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data;
+  const countryRow = getCountryByCode(data.countryCode);
+  if (!countryRow) {
+    return NextResponse.json({ error: "Invalid country" }, { status: 400 });
+  }
   const now = new Date().toISOString();
   const listing: Property = {
     id: `runtime-${nanoid(8)}`,
@@ -81,31 +114,29 @@ export async function POST(request: Request) {
     landSqm: null,
     furnishing: null,
     amenities: [],
-    images: [
-      {
-        id: "cover",
-        url: data.imageUrl,
-        alt: data.title,
-        isCover: true,
-      },
-    ],
+    images: data.images,
+    videos: data.videos,
+    cardPreviewVideoUrl: data.cardPreviewVideoUrl ?? null,
+    hasVideoTour: Boolean(data.videos?.length),
     location: {
-      country: "Demo",
-      countrySlug: "demo",
+      country: countryRow.name,
+      countrySlug: countrySlugFromName(countryRow.name),
       city: data.city,
       citySlug: data.citySlug,
       district: data.district,
       districtSlug: data.districtSlug,
+      commune: data.commune,
+      communeSlug: data.communeSlug,
       address: data.address,
       lat: 0,
       lng: 0,
     },
+    createdByUserId: session.id,
     ownerId: session.role === "owner" ? session.id : undefined,
-    agentId: session.role === "agent" ? "agent-maya" : undefined,
+    agentId: undefined,
     agencyId: session.agencyId,
     publishedAt: now,
     updatedAt: now,
-    demo: true,
     views: 0,
     inquiries: 0,
   };

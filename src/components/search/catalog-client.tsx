@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CatalogCoverAd } from "@/components/search/catalog-cover-ad";
 import { AdvancedFilters } from "@/components/search/advanced-filters";
 import { PropertyMap } from "@/components/search/property-map";
 import { PropertyGrid, PropertyList } from "@/components/property/property-card";
@@ -18,6 +19,7 @@ export function CatalogClient({
   userId,
   title,
   description,
+  coverAd,
 }: {
   items: Property[];
   total: number;
@@ -26,6 +28,7 @@ export function CatalogClient({
   userId?: string;
   title: string;
   description: string;
+  coverAd?: { src: string; alt: string; href?: string };
 }) {
   const [view, setView] = useState<"grid" | "list" | "map">("grid");
   const [activeId, setActiveId] = useState<string | undefined>(items[0]?.id);
@@ -54,14 +57,20 @@ export function CatalogClient({
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 max-w-3xl">
-        <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+        <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
           {title}
         </h1>
         <p className="mt-2 text-[var(--color-muted)]">{description}</p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          {total} matching {total === 1 ? "listing" : "listings"} · demo inventory
+          {total} matching {total === 1 ? "listing" : "listings"}
         </p>
       </div>
+
+      {coverAd ? (
+        <div className="mb-2 flex justify-center">
+          <CatalogCoverAd src={coverAd.src} alt={coverAd.alt} href={coverAd.href} />
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-6 lg:flex-row">
         <AdvancedFilters resultCount={total} basePath={pathname} />
@@ -97,12 +106,25 @@ export function CatalogClient({
           </div>
 
           {total === 0 ? (
-            <EmptyState
-              title="No properties match these filters"
-              description="Try widening price, removing amenities, or resetting the search."
-              actionHref={pathname}
-              actionLabel="Reset filters"
-            />
+            <div className="space-y-4">
+              <EmptyState
+                title="No properties match these filters"
+                description="Try widening price, removing amenities, or resetting the search. Suggested next steps: browse all sale homes, Phnom Penh listings, or open map search."
+                actionHref={pathname}
+                actionLabel="Reset filters"
+              />
+              <div className="flex flex-wrap gap-2">
+                <ButtonLink href="/buy" variant="outline" size="sm">
+                  Homes for sale
+                </ButtonLink>
+                <ButtonLink href="/locations/phnom-penh" variant="outline" size="sm">
+                  Phnom Penh
+                </ButtonLink>
+                <ButtonLink href="/map" variant="outline" size="sm">
+                  Map search
+                </ButtonLink>
+              </div>
+            </div>
           ) : view === "map" ? (
             <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
               <PropertyMap items={items} activeId={activeId} onSelect={setActiveId} />
@@ -150,7 +172,7 @@ export function CatalogClient({
 
           <div className="rounded-[var(--radius-md)] bg-[var(--color-mist)] p-4 text-sm text-[var(--color-muted)]">
             Want alerts for this filter set?{" "}
-            <ButtonLink href="/saved-searches" variant="ghost" size="sm" className="inline px-1">
+            <ButtonLink href="/dashboard/agent/saved-searches" variant="ghost" size="sm" className="inline px-1">
               Save this search
             </ButtonLink>
           </div>

@@ -53,15 +53,15 @@ export default async function CityPage({
       </div>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <section className="mb-10">
-          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+          <h2 className="mb-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             Districts
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {guide.districts.map((district) => (
               <Link
                 key={district.slug}
                 href={`/locations/${guide.slug}/${district.slug}`}
-                className="group overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
+                className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)]"
               >
                 <div className="relative aspect-[16/10]">
                   <Image
@@ -75,7 +75,7 @@ export default async function CityPage({
                 <div className="p-4">
                   <h3 className="font-semibold">{district.name}</h3>
                   <p className="text-sm text-[var(--color-muted)]">
-                    {district.listingCount} demo listings
+                    {district.listingCount} listings
                   </p>
                 </div>
               </Link>
@@ -84,7 +84,7 @@ export default async function CityPage({
         </section>
         <section>
           <div className="mb-4 flex items-end justify-between gap-3">
-            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
               Listings in {guide.name}
             </h2>
             <Link href={`/search?city=${guide.slug}`} className="text-sm font-semibold text-[var(--color-accent)]">

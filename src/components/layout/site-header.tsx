@@ -2,119 +2,147 @@
 
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { brand } from "@/config/brand";
+import { useId, useState } from "react";
+import { SeapsLogo } from "@/components/brand/seaps-logo";
+import {
+  LanguageSwitcherProvider,
+  LanguageSwitcherSelect,
+} from "@/components/i18n/language-switcher";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  NavMenuDropdown,
+  NavMenuLink,
+} from "@/components/layout/nav-menu-dropdown";
+import { adminDeskPath } from "@/lib/dashboard-admin-paths";
+import { agentDeskPath } from "@/lib/dashboard-agent-paths";
+import type { UserRole } from "@/lib/types";
+import { primaryNav as nav } from "@/components/layout/site-nav-config";
 
-const nav = [
-  { href: "/buy", label: "Buy" },
-  { href: "/rent", label: "Rent" },
-  { href: "/projects", label: "New homes" },
-  { href: "/commercial", label: "Commercial" },
-  { href: "/agencies", label: "Agencies" },
-  { href: "/insights", label: "Market insights" },
-];
+function deskHomeHref(role: UserRole | undefined, signedIn: boolean): string {
+  if (!signedIn) return "/auth/login";
+  if (role === "admin") return adminDeskPath();
+  return agentDeskPath("overview");
+}
 
 export function SiteHeader({
   userName,
+  userRole,
 }: {
   userName?: string | null;
+  userRole?: UserRole | null;
 }) {
+  const deskHref = deskHomeHref(userRole ?? undefined, Boolean(userName));
   const [open, setOpen] = useState(false);
+  const closeMobile = () => setOpen(false);
+  const langIds = useId();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-border)]/80 bg-[color-mix(in_srgb,var(--color-background)_88%,transparent)] backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-[var(--color-primary)] font-[family-name:var(--font-display)] text-sm text-white transition group-hover:bg-[var(--color-primary-soft)]">
-            {brand.logo.mark}
-          </span>
-          <span className="font-[family-name:var(--font-display)] text-xl tracking-tight text-[var(--color-primary)]">
-            {brand.logo.text}
-          </span>
-        </Link>
-
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-[var(--color-text)] transition hover:bg-[var(--color-mist)] hover:text-[var(--color-primary)]"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="hidden items-center gap-2 lg:flex">
-          <label className="sr-only" htmlFor="lang">
-            Language
-          </label>
-          <select
-            id="lang"
-            className="h-10 rounded-full border border-[var(--color-border)] bg-transparent px-3 text-sm"
-            defaultValue="en"
-            aria-label="Language"
+    <LanguageSwitcherProvider>
+      <header className="sticky top-0 z-[100] overflow-visible border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
+        <div className="mx-auto grid h-[4.25rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-3 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] lg:px-8">
+          <Link
+            href="/"
+            className="group shrink-0 notranslate justify-self-start md:col-start-1"
+            aria-label="SEAPS — South East Asia Property Services Co. Ltd."
           >
-            <option value="en">EN</option>
-            <option value="es">ES</option>
-            <option value="pt">PT</option>
-          </select>
-          {userName ? (
-            <ButtonLink href="/dashboard" variant="ghost" size="sm">
-              {userName}
-            </ButtonLink>
-          ) : (
-            <ButtonLink href="/auth/login" variant="ghost" size="sm">
-              Sign in
-            </ButtonLink>
-          )}
-          <ButtonLink href="/list-property" variant="accent" size="sm">
-            List a property
-          </ButtonLink>
-        </div>
+            <span className="relative inline-block leading-none">
+              <SeapsLogo size="header" />
+              <span
+                className="seaps-brand-subtitle pointer-events-none absolute bottom-[6%] left-1/2 w-[108%] -translate-x-1/2 text-center text-[0.28rem] font-semibold uppercase leading-none tracking-[0.04em] sm:text-[0.32rem]"
+                aria-hidden
+              >
+                Co. Ltd.
+              </span>
+            </span>
+          </Link>
 
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] lg:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          <span className="sr-only">Toggle menu</span>
-        </button>
-      </div>
+          <nav
+            className="notranslate relative z-[1] hidden min-w-0 items-center justify-center gap-0.5 overflow-visible md:col-start-2 md:flex md:flex-wrap md:px-2"
+            aria-label="Primary"
+          >
+            {nav.map((entry) =>
+              entry.type === "dropdown" ? (
+                <NavMenuDropdown key={entry.label} entry={entry} variant="desktop" />
+              ) : (
+                <NavMenuLink key={entry.href} href={entry.href} label={entry.label} variant="desktop" />
+              ),
+            )}
+          </nav>
 
-      <div
-        id="mobile-nav"
-        className={cn(
-          "border-t border-[var(--color-border)] bg-[var(--color-background)] lg:hidden",
-          open ? "block" : "hidden",
-        )}
-      >
-        <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4">
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className="rounded-[var(--radius-md)] px-3 py-3 text-base font-medium hover:bg-[var(--color-mist)]"
+          <div className="notranslate flex shrink-0 items-center justify-end gap-2 md:col-start-3">
+            <div className="hidden items-center gap-2 md:flex">
+              <LanguageSwitcherSelect id={`${langIds}-desktop`} />
+              {userName ? (
+                <ButtonLink href={deskHref} variant="ghost" size="sm">
+                  {userName}
+                </ButtonLink>
+              ) : (
+                <ButtonLink href="/auth/login" variant="ghost" size="sm">
+                  Sign in
+                </ButtonLink>
+              )}
+              <ButtonLink href="/contact" variant="accent" size="sm">
+                Contact Us
+              </ButtonLink>
+            </div>
+
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-accent-soft)] md:hidden"
+              aria-expanded={open}
+              aria-controls="mobile-nav"
+              onClick={() => setOpen((v) => !v)}
             >
-              {item.label}
-            </Link>
-          ))}
-          <div className="mt-2 grid gap-2">
-            <ButtonLink href={userName ? "/dashboard" : "/auth/login"} variant="outline">
-              {userName ? "Dashboard" : "Sign in"}
-            </ButtonLink>
-            <ButtonLink href="/list-property" variant="accent">
-              List a property
-            </ButtonLink>
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              <span className="sr-only">Toggle menu</span>
+            </button>
           </div>
         </div>
-      </div>
-    </header>
+
+        <div
+          id="mobile-nav"
+          className={cn(
+            "notranslate border-t border-[var(--color-border)] bg-[var(--color-background)] md:hidden",
+            open ? "block" : "hidden",
+          )}
+        >
+          <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4">
+            <div className="mb-2">
+              <LanguageSwitcherSelect
+                id={`${langIds}-mobile`}
+                className="w-full [&_select]:w-full [&_select]:max-w-none"
+              />
+            </div>
+            {nav.map((entry) =>
+              entry.type === "dropdown" ? (
+                <NavMenuDropdown
+                  key={entry.label}
+                  entry={entry}
+                  variant="mobile"
+                  onNavigate={closeMobile}
+                />
+              ) : (
+                <NavMenuLink
+                  key={entry.href}
+                  href={entry.href}
+                  label={entry.label}
+                  variant="mobile"
+                  onNavigate={closeMobile}
+                />
+              ),
+            )}
+            <div className="mt-2 grid gap-2">
+              <ButtonLink href={deskHref} variant="outline">
+                {userName ? "Dashboard" : "Sign in"}
+              </ButtonLink>
+              <ButtonLink href="/contact" variant="accent">
+                Contact Us
+              </ButtonLink>
+            </div>
+          </div>
+        </div>
+      </header>
+    </LanguageSwitcherProvider>
   );
 }

@@ -1,28 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #0f2e24;
-  --color-primary-soft: #1a4638;
-  --color-background: #f6f3ee;
-  --color-surface: #fffcf8;
-  --color-accent: #c45c3e;
-  --color-accent-soft: #e8a090;
-  --color-secondary: #e7dfd3;
-  --color-sand: #d9cfc0;
-  --color-mist: #eef1ee;
-  --color-text: #1c1f1e;
-  --color-muted: #5e6763;
-  --color-border: #d8d2c8;
-  --color-success: #2f6b4f;
-  --color-warning: #b7791f;
-  --color-danger: #a33b2b;
+  --color-primary: #0b1c33;
+  --color-primary-soft: #143252;
+  --color-background: #07111f;
+  --color-surface: #0f2138;
+  --color-accent: #d4af37;
+  --color-accent-soft: #f0d78c;
+  --color-secondary: #162b45;
+  --color-sand: #2a3f5c;
+  --color-mist: #1a3050;
+  --color-text: #e8eef7;
+  /* AA-ish contrast on dark navy surfaces (~#0F2138) */
+  --color-muted: #b7c6d8;
+  --color-border: #2a4060;
+  --color-success: #3d8b6e;
+  --color-warning: #d4af37;
+  --color-danger: #c45c5c;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 28px;
-  --shadow-soft: 0 10px 30px rgba(15, 46, 36, 0.06);
-  --shadow-lift: 0 18px 50px rgba(15, 46, 36, 0.12);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.28);
+  --shadow-lift: 0 18px 50px rgba(212, 175, 55, 0.12);
   --background: var(--color-background);
   --foreground: var(--color-text);
+  /* Soft base sheen (fills / large surfaces) */
+  --gold-shine: linear-gradient(
+    110deg,
+    #8a6a1a 0%,
+    #d4af37 22%,
+    #fff3c4 50%,
+    #d4af37 78%,
+    #8a6a1a 100%
+  );
+  /*
+    Living gold: mostly solid metal with a narrow specular gleam.
+    Wide plateaus + tiny highlight = visible sweep on headings & labels.
+  */
+  --gold-flow: linear-gradient(
+    105deg,
+    #9a7420 0%,
+    #c9a227 18%,
+    #d4af37 32%,
+    #d4af37 44%,
+    #f0d78c 47%,
+    #fff8dc 49%,
+    #ffffff 50%,
+    #fff8dc 51%,
+    #f0d78c 53%,
+    #d4af37 56%,
+    #d4af37 68%,
+    #c9a227 82%,
+    #9a7420 100%
+  );
 }
 
 @theme inline {
@@ -38,37 +68,457 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
-  background:
-    radial-gradient(1200px 500px at 10% -10%, rgba(196, 92, 62, 0.08), transparent 55%),
-    radial-gradient(900px 420px at 90% 0%, rgba(26, 70, 56, 0.1), transparent 50%),
-    linear-gradient(180deg, #f8f5f0 0%, var(--color-background) 40%, #f3efe8 100%);
+  background: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body), sans-serif;
   min-height: 100%;
+  overflow-x: hidden;
+}
+
+/* Uniform card chrome — even 1px gold hairline (no pseudo borders) */
+.seaps-card {
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background-color: var(--color-surface);
+  box-shadow: none;
+}
+
+/* Admin dashboard quick links — same chrome as cards, readable on dark theme */
+.seaps-admin-nav-link {
+  display: block;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background: var(--color-surface);
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.seaps-admin-nav-link:hover {
+  border-color: rgba(240, 215, 140, 0.75);
+  background: var(--color-primary-soft);
+  color: var(--color-accent-soft);
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+.seaps-logo {
+  position: relative;
+  flex-shrink: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.seaps-logo img,
+.seaps-logo-img {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4));
+  animation: seapsGoldIconPulse 6.6s ease-in-out infinite;
+}
+
+.seaps-logo-shine-wrap {
+  overflow: hidden;
+}
+
+/* Soft highlight sweep across the logo mark (no color jumping) */
+.seaps-logo-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgba(255, 248, 220, 0.35) 46%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 236, 170, 0.4) 54%,
+    transparent 62%
+  );
+  transform: translateX(-140%);
+  animation: seapsShineSweep 3.8s linear infinite;
+  will-change: transform;
+  -webkit-mask-image: url("/brand/seaps-logo.png");
+  mask-image: url("/brand/seaps-logo.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  mix-blend-mode: screen;
+}
+
+/* ——— Living gold system (buttons, text, borders, fills) ——— */
+
+.seaps-btn-gold {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  background-image: var(--gold-flow);
+  background-size: 340% 100%;
+  background-color: #d4af37;
+  animation: seapsGoldFlow 4.2s linear infinite;
+  will-change: background-position;
+}
+
+.seaps-btn-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 62%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  animation: seapsBtnShine 4.2s linear infinite;
+  will-change: background-position;
+}
+
+.seaps-btn-gold-outline {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    var(--gold-flow) border-box;
+  background-size: 100% 100%, 400% 100%;
+  animation: seapsGoldBorderFlow 4.2s linear infinite;
+  will-change: background-position;
+  color: transparent;
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.12), 0 0 18px rgba(212, 175, 55, 0.12);
+}
+
+.seaps-btn-gold-outline > span {
+  color: var(--color-accent-soft);
+  -webkit-text-fill-color: currentColor;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .seaps-btn-gold-outline > span {
+    background-image: var(--gold-flow);
+    background-size: 340% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: seapsGoldFlow 4.2s linear infinite;
+    will-change: background-position;
+  }
+}
+
+.seaps-btn-gold-outline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgba(255, 248, 220, 0.28) 50%,
+    transparent 58%
+  );
+  background-size: 260% 100%;
+  animation: seapsBtnShine 6.9s linear infinite;
+}
+
+/*
+  Gold labels that must stay readable everywhere (hero company name, etc.).
+  Never use background-clip:text here — GT and some engines drop clipped copy.
+*/
+.seaps-brand-subtitle {
+  color: var(--color-accent-soft) !important;
+  -webkit-text-fill-color: currentColor !important;
+  background: none !important;
+  background-image: none !important;
+  background-clip: border-box !important;
+  -webkit-background-clip: border-box !important;
+  animation: seapsBrandGlow 7.2s ease-in-out infinite;
+}
+
+@keyframes seapsBrandGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  }
+  50% {
+    text-shadow: 0 0 14px rgba(255, 244, 200, 0.55);
+  }
+}
+
+/* Nav labels: archived --gold-flow on top + visible #d4af37 underlay (Chrome-safe) */
+.seaps-gold-label {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: baseline;
+  line-height: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.seaps-gold-label__under {
+  color: var(--color-accent);
+  -webkit-text-fill-color: currentColor;
+  animation: seapsGoldTextShimmer 4.2s ease-in-out infinite;
+}
+
+.seaps-gold-label__flow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  pointer-events: none;
+  user-select: none;
+  white-space: inherit;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-image: var(--gold-flow);
+  background-size: 400% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: seapsGoldFlow 4.2s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes seapsGoldTextShimmer {
+  0%,
+  100% {
+    color: #c9a227;
+    text-shadow: 0 0 6px rgba(212, 175, 55, 0.35);
+  }
+  50% {
+    color: #fff8dc;
+    text-shadow: 0 0 12px rgba(255, 244, 200, 0.55);
+  }
+}
+
+/*
+  Gold text: solid fallback first, then flowing gradient where clip is supported.
+  Skip elements that host SVGs — transparent currentColor would hide icons.
+*/
+.text-\[var\(--color-accent\)\]:not(:has(svg)),
+.text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
+.seaps-gold-text {
+  color: var(--color-accent-soft);
+  -webkit-text-fill-color: currentColor;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .text-\[var\(--color-accent\)\]:not(:has(svg)),
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)),
+  .seaps-gold-text {
+    background-image: var(--gold-flow) !important;
+    background-size: 400% 100% !important;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: seapsGoldFlow 4.2s linear infinite;
+    will-change: background-position;
+  }
+
+  .seaps-gold-label__flow font,
+  .seaps-gold-text {
+    display: inline-block;
+    transform: translateZ(0);
+  }
+
+  /* Google Translate wraps nodes in <font> — inherit clipped gradient or text vanishes */
+  .seaps-btn-gold-outline > span font,
+  .seaps-gold-label__flow font,
+  .seaps-gold-text font,
+  .text-\[var\(--color-accent\)\]:not(:has(svg)) font,
+  .text-\[var\(--color-accent-soft\)\]:not(:has(svg)) font {
+    background-image: inherit !important;
+    background-size: inherit !important;
+    background-repeat: inherit !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+}
+
+/* Icon-only / SVG hosts: keep currentColor gold + living glow */
+.text-\[var\(--color-accent\)\]:has(svg),
+.text-\[var\(--color-accent-soft\)\]:has(svg) {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #d4af37;
+  -webkit-text-fill-color: #d4af37;
+  animation: seapsGoldIconPulse 7.2s ease-in-out infinite;
+}
+
+.hover\:text-\[var\(--color-accent\)\]:hover:not(:has(svg)),
+.hover\:text-\[var\(--color-accent-soft\)\]:hover:not(:has(svg)) {
+  color: #fff4c8;
+  -webkit-text-fill-color: currentColor;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hover\:text-\[var\(--color-accent\)\]:hover:not(:has(svg)),
+  .hover\:text-\[var\(--color-accent-soft\)\]:hover:not(:has(svg)) {
+    background-image: var(--gold-flow) !important;
+    background-size: 340% 100% !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: seapsGoldFlow 4.2s linear infinite;
+  }
+}
+
+.hover\:text-\[var\(--color-accent\)\]:hover:has(svg),
+.hover\:text-\[var\(--color-accent-soft\)\]:hover:has(svg) {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #f0d78c;
+  -webkit-text-fill-color: #f0d78c;
+  animation: seapsGoldIconPulse 5.4s ease-in-out infinite;
+}
+
+/* Gold fills (chips, progress, badges) */
+.bg-\[var\(--color-accent\)\] {
+  background-color: transparent !important;
+  background-image: var(--gold-flow) !important;
+  background-size: 340% 100% !important;
+  animation: seapsGoldFlow 4.2s linear infinite;
+  will-change: background-position;
+}
+
+/* Gold borders / rings — luminous pulse on utility accent borders */
+.border-\[var\(--color-accent\)\],
+.border-\[var\(--color-accent\)\]\/25,
+.border-\[var\(--color-accent\)\]\/30,
+.border-\[var\(--color-accent\)\]\/40,
+.seaps-gold-border {
+  border-color: rgba(232, 198, 90, 0.7) !important;
+  animation: seapsGoldRing 7.2s ease-in-out infinite;
+}
+
+.hover\:border-\[var\(--color-accent\)\]:hover {
+  border-color: rgba(255, 244, 200, 0.95) !important;
+  box-shadow: 0 0 0 1px rgba(248, 231, 161, 0.45), 0 0 18px rgba(212, 175, 55, 0.35);
+}
+
+.seaps-gold-shine {
+  animation: seapsGoldRing 7.2s ease-in-out infinite;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 28%, white);
+  background: rgba(212, 175, 55, 0.35);
+  color: #fff8e7;
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
 }
 
 a {
   text-underline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+@keyframes seapsGoldFlow {
+  from {
+    background-position: 0% 50%;
   }
+  to {
+    background-position: 100% 50%;
+  }
+}
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+@keyframes seapsGoldBorderFlow {
+  from {
+    background-position:
+      0 0,
+      0% 50%;
+  }
+  to {
+    background-position:
+      0 0,
+      100% 50%;
+  }
+}
+
+@keyframes seapsGoldRing {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.35),
+      0 0 12px rgba(212, 175, 55, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 248, 220, 0.85),
+      0 0 26px rgba(255, 236, 170, 0.5);
+  }
+}
+
+@keyframes seapsGoldIconPulse {
+  0%,
+  100% {
+    color: #d4af37;
+    filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.35));
+  }
+  50% {
+    color: #fff4c8;
+    filter: drop-shadow(0 0 10px rgba(255, 244, 200, 0.65));
+  }
+}
+
+/* Continuous glide for logo highlight — no pause mid-cycle */
+@keyframes seapsShineSweep {
+  from {
+    transform: translateX(-140%);
+  }
+  to {
+    transform: translateX(140%);
+  }
+}
+
+/* Button highlight overlay */
+@keyframes seapsBtnShine {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
   }
 }
 
@@ -86,3 +536,119 @@ a {
     transform: translateY(0);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Keep SEAPS living gold + logo shine; only trim page enter motion */
+  .reveal {
+    animation: none !important;
+  }
+}
+
+/* Hide every Google Translate chrome — engine stays active, UI never shows */
+.seaps-gt-host,
+#google_translate_element,
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+.goog-te-menu-frame,
+.goog-te-menu-value,
+.goog-te-gadget,
+.goog-te-combo,
+.goog-logo-link,
+.goog-te-spinner-pos,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-text-highlight,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-ORHb,
+iframe.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  border: 0 !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+body > .skiptranslate,
+.skiptranslate {
+  display: none !important;
+}
+
+font font {
+  box-shadow: none !important;
+}
+
+/* Leaflet map pins (price chips) */
+.seaps-leaflet-map {
+  z-index: 0;
+}
+
+.seaps-leaflet-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  background: #1a3050;
+  font: inherit;
+}
+
+.seaps-map-pin {
+  background: transparent !important;
+  border: none !important;
+}
+
+.seaps-map-pin__btn {
+  display: inline-flex;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+
+.seaps-map-pin__btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.seaps-map-pin__btn.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #0b1c33;
+}
+

@@ -31,6 +31,13 @@ export type VerificationStatus = "unverified" | "verified" | "premium";
 
 export type SellerType = "owner" | "agent" | "developer";
 
+/** Homepage hero search — grouped labels mapped in searchProperties. */
+export type HomeSearchTypeCategory =
+  | "apartment_condo"
+  | "house"
+  | "commercial"
+  | "other";
+
 export type Furnishing = "unfurnished" | "semi" | "furnished";
 
 export type AmenityKey =
@@ -54,6 +61,8 @@ export interface LocationRef {
   citySlug: string;
   district: string;
   districtSlug: string;
+  commune?: string;
+  communeSlug?: string;
   address: string;
   lat: number;
   lng: number;
@@ -64,6 +73,14 @@ export interface PropertyImage {
   url: string;
   alt: string;
   isCover?: boolean;
+}
+
+export interface PropertyVideo {
+  id: string;
+  url: string;
+  label?: string;
+  /** card_preview = autoplay loop on listing cards */
+  role?: "tour" | "card_preview";
 }
 
 export interface Property {
@@ -87,10 +104,14 @@ export interface Property {
   furnishing: Furnishing | null;
   amenities: AmenityKey[];
   images: PropertyImage[];
+  videos?: PropertyVideo[];
+  cardPreviewVideoUrl?: string | null;
   location: LocationRef;
   agentId?: string;
   agencyId?: string;
   ownerId?: string;
+  /** Platform user who submitted the listing (moderation queue). */
+  createdByUserId?: string;
   projectId?: string;
   publishedAt: string;
   updatedAt: string;
@@ -125,6 +146,8 @@ export interface Agent {
   slug: string;
   name: string;
   photo: string;
+  /** Demo/platform login user linked to this public agent profile. */
+  platformUserId?: string;
   title: string;
   bio: string;
   agencyId: string;
@@ -194,7 +217,8 @@ export interface CityGuide {
 export interface DemoUser {
   id: string;
   email: string;
-  password: string;
+  /** bcrypt hash — never store plaintext passwords. */
+  passwordHash: string;
   name: string;
   role: Exclude<UserRole, "guest">;
   agencyId?: string;
@@ -219,12 +243,48 @@ export interface SavedSearch {
   createdAt: string;
 }
 
+/** Contacts from an external market source — admin-only on the public site. */
+export interface AggregatedContacts {
+  phone?: string;
+  email?: string;
+  messenger?: string;
+}
+
+/**
+ * Listing ingested from an external Cambodia market source (portal scrape,
+ * manual paste, or future FB/TG connector). Sensitive fields stay in storage
+ * but must never appear on public API/UI responses.
+ */
+export interface AggregatedListing {
+  id: string;
+  title: string;
+  description: string;
+  price: number | null;
+  currency: string;
+  location: string | null;
+  propertyType: PropertyType | null;
+  photos: string[];
+  publishedAt: string | null;
+  sourceName: string;
+  sourceUrl: string | null;
+  contacts: AggregatedContacts;
+  externalId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Public-safe projection — no contacts, no source identity. */
+export type PublicAggregatedListing = Omit<
+  AggregatedListing,
+  "sourceName" | "sourceUrl" | "contacts"
+>;
+
 export interface SearchFilters {
   q?: string;
   deal?: TransactionType | "all";
   city?: string;
   district?: string;
-  type?: PropertyType | "all";
+  type?: PropertyType | HomeSearchTypeCategory | "all";
   minPrice?: number;
   maxPrice?: number;
   bedrooms?: number;

@@ -1,5 +1,36 @@
 import { properties } from "@/data/properties";
-import type { Property, SearchFilters } from "@/lib/types";
+import { isPublicListing } from "@/lib/listing-access";
+import type { Property, PropertyType, SearchFilters } from "@/lib/types";
+
+const COMMERCIAL_PROPERTY_TYPES = new Set<PropertyType>([
+  "commercial",
+  "office",
+  "retail",
+  "warehouse",
+]);
+
+const HOME_SEARCH_OTHER_TYPES = new Set<PropertyType>([
+  "villa",
+  "townhouse",
+  "land",
+  "project_unit",
+]);
+
+function matchesSearchType(propertyType: PropertyType, filter: SearchFilters["type"]): boolean {
+  if (!filter || filter === "all") return true;
+  switch (filter) {
+    case "apartment_condo":
+      return propertyType === "apartment" || propertyType === "condo";
+    case "house":
+      return propertyType === "house";
+    case "commercial":
+      return COMMERCIAL_PROPERTY_TYPES.has(propertyType);
+    case "other":
+      return HOME_SEARCH_OTHER_TYPES.has(propertyType);
+    default:
+      return propertyType === filter;
+  }
+}
 
 export function parseSearchParams(
   params: Record<string, string | string[] | undefined>,
@@ -69,7 +100,7 @@ export function filtersToQuery(filters: SearchFilters): Record<string, string> {
 }
 
 export function searchProperties(filters: SearchFilters, source: Property[] = properties) {
-  let results = source.filter((p) => p.status === "published");
+  let results = source.filter((p) => isPublicListing(p));
 
   if (filters.deal && filters.deal !== "all") {
     results = results.filter((p) => p.transactionType === filters.deal);
@@ -81,7 +112,7 @@ export function searchProperties(filters: SearchFilters, source: Property[] = pr
     results = results.filter((p) => p.location.districtSlug === filters.district);
   }
   if (filters.type && filters.type !== "all") {
-    results = results.filter((p) => p.propertyType === filters.type);
+    results = results.filter((p) => matchesSearchType(p.propertyType, filters.type));
   }
   if (filters.minPrice !== undefined) {
     results = results.filter((p) => p.price >= filters.minPrice!);

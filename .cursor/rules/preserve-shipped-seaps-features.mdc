@@ -1,0 +1,63 @@
+---
+description: Prevent regressions — never revert approved SEAPS UI, content, or security without explicit user request
+alwaysApply: true
+---
+
+# Preserve shipped SEAPS features (no silent regressions)
+
+When editing this repository, **do not overwrite or drop** previously approved work unless the user explicitly asks to remove or replace that specific feature.
+
+## Before any broad restore or `git checkout` of many files
+
+1. **Never** run `git checkout <old-commit> -- .` or `git add -A` after mixed edits without listing what will change.
+2. If recovering one broken file, **checkout only that file path**, not the whole tree.
+3. After merges or conflict resolution, verify these **regression checkpoints**:
+
+### Homepage (`src/app/page.tsx`)
+
+- Hero: logo + `brand.fullName` centered in the **left column** (not full-page center).
+- Hero copy: full SEAPS award-winning company text (not the old “Cambodia property marketplace…” stub).
+- No “Popular agencies” / agency directory block on the homepage.
+
+### Navigation (`src/components/layout/site-header.tsx`)
+
+- First item: **About Us** → `/about`.
+- **Buy** / **Rent** dropdowns: Land, Residential, Commercial (Commercial → `/commercial`; no top-level Commercial item).
+- Residential catalogs: `/buy/residential`, `/rent/residential` (`/buy` and `/rent` redirect).
+- **Projects/Developments** → `/projects`.
+- **Property Guide** → `/property-guide`, **Careers** → `/careers`.
+- **No Market Feed** in nav (removed; `/market-feed` redirects to `/search`).
+- **Useful Links** → `/usefullinks` (not `/agencies`).
+- Nav links use **`seaps-gold-text`** (living gold), with **`notranslate`** on nav.
+- Header background: `rgba(7,17,31,0.92)` fallback + optional `color-mix`.
+- Mobile menu breakpoint: **`md`**, not only `lg`.
+
+### Branding & people
+
+- Public person display name: **Adam James** (agents, demo users, article authors).
+- No public agency directory pages or links to `/agencies/*` (redirects to `/usefullinks` are OK).
+
+### Styles (`src/app/globals.css`)
+
+- Gold text **solid fallback** when `background-clip: text` fails.
+- **`seaps-brand-subtitle`** for hero company name (must stay visible in all browsers).
+
+### Security (do not revert)
+
+- HMAC-signed `en_session` + bcrypt passwords.
+- Private Blob persistence patterns documented in repo where used.
+
+### About & contact
+
+- `/about`: full About Us copy, YouTube awards embed, bottom **Contact Us** gold button + validated modal.
+
+## When the user reports “everything reverted”
+
+1. Diff against tag `backup/2026-10-16-post-design-cross-browser` or commit `f296e24` for UI baseline.
+2. Restore **only** regressed files; re-apply newer features (About Us, Useful Links, Contact modal) on top.
+3. Run `npm run build`, then `bash scripts/push-production.sh`.
+
+## Commits
+
+- One logical change per commit; never bundle unrelated file restores with feature work.
+- Document restorations in the commit message (`fix: restore hero copy accidentally reverted in …`).

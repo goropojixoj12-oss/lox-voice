@@ -6,14 +6,12 @@ type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-soft)] shadow-[var(--shadow-soft)]",
+    "seaps-btn-gold text-[#0B1C33] shadow-[var(--shadow-soft)] hover:brightness-105",
   secondary:
     "bg-[var(--color-secondary)] text-[var(--color-text)] hover:bg-[var(--color-sand)]",
   ghost: "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-mist)]",
-  accent:
-    "bg-[var(--color-accent)] text-white hover:brightness-105 shadow-[var(--shadow-soft)]",
-  outline:
-    "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-primary)]",
+  accent: "seaps-btn-gold text-[#0B1C33] shadow-[var(--shadow-lift)] hover:brightness-105",
+  outline: "seaps-btn-gold-outline",
 };
 
 const sizes: Record<Size, string> = {
@@ -23,19 +21,24 @@ const sizes: Record<Size, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] font-medium transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center rounded-[var(--radius-md)] font-medium transition-[filter,transform,opacity] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] disabled:opacity-50 disabled:pointer-events-none";
 
 export function Button({
   className,
   variant = "primary",
   size = "md",
+  children,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
   size?: Size;
 }) {
   return (
-    <button className={cn(base, variants[variant], sizes[size], className)} {...props} />
+    <button className={cn(base, variants[variant], sizes[size], className)} {...props}>
+      <span className="relative z-[1] inline-flex items-center justify-center gap-2">
+        {children}
+      </span>
+    </button>
   );
 }
 
@@ -53,7 +56,9 @@ export function ButtonLink({
       className={cn(base, variants[variant], sizes[size], className)}
       {...props}
     >
-      {children}
+      <span className="relative z-[1] inline-flex items-center justify-center gap-2">
+        {children}
+      </span>
     </Link>
   );
 }

@@ -21,7 +21,7 @@ export function EmptyState({
         className,
       )}
     >
-      <h3 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+      <h3 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
         {title}
       </h3>
       <p className="mx-auto mt-2 max-w-md text-[var(--color-muted)]">{description}</p>
@@ -40,7 +40,7 @@ export function LoadingState({ label = "Loading listings…" }: { label?: string
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="animate-pulse overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
+          className="animate-pulse overflow-hidden rounded-[var(--radius-lg)] seaps-card"
         >
           <div className="aspect-[4/3] bg-[var(--color-secondary)]" />
           <div className="space-y-3 p-4">

@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!cityGuide || !districtGuide) return { title: "District not found" };
   return {
     title: `${districtGuide.name}, ${cityGuide.name}`,
-    description: `Demo property listings in ${districtGuide.name}, ${cityGuide.name}.`,
+    description: `Property listings in ${districtGuide.name}, ${cityGuide.name}.`,
   };
 }
 
@@ -52,12 +52,11 @@ export default async function DistrictPage({
           <p className="text-sm text-[var(--color-muted)]">
             <Link href={`/locations/${cityGuide.slug}`}>{cityGuide.name}</Link> / {districtGuide.name}
           </p>
-          <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+          <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
             {districtGuide.name}
           </h1>
           <p className="mt-3 text-[var(--color-muted)]">
-            Editorial district page with {result.total} matching demo listings. Content stays specific
-            rather than auto-generated filler.
+            District guide with {result.total} matching listings across SEAPS.
           </p>
           <Link
             href={`/search?city=${cityGuide.slug}&district=${districtGuide.slug}`}

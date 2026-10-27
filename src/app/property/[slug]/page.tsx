@@ -7,9 +7,11 @@ import { PriceDisplay } from "@/components/property/price-display";
 import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
+import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
 import { Section } from "@/components/shared/section";
 import { ButtonLink } from "@/components/ui/button";
-import { getAgencyById, getAgentById } from "@/data/agencies";
+import { AgentListingSnippet } from "@/components/agency/agent-listing-snippet";
+import { getAgentById } from "@/data/agencies";
 import { getProjectById } from "@/data/projects";
 import {
   getPropertyBySlug,
@@ -17,6 +19,7 @@ import {
 } from "@/data/properties";
 import { getAllProperties } from "@/lib/catalog";
 import { getSession } from "@/lib/auth";
+import { canViewListing, isPublicListing } from "@/lib/listing-access";
 import {
   amenityLabels,
   furnishingLabels,
@@ -28,7 +31,7 @@ import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
   const all = await getAllProperties();
-  return all.map((p) => ({ slug: p.slug }));
+  return all.filter((p) => isPublicListing(p)).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -37,15 +40,33 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const property = getPropertyBySlug(slug);
+  const all = await getAllProperties();
+  const property = all.find((p) => p.slug === slug) ?? getPropertyBySlug(slug);
   if (!property) return { title: "Property not found" };
+  if (!isPublicListing(property)) {
+    return {
+      title: "Listing preview",
+      robots: { index: false, follow: false },
+    };
+  }
+  const path = `/property/${property.slug}`;
   return {
     title: property.title,
     description: property.summary,
+    alternates: { canonical: path },
     openGraph: {
       title: property.title,
       description: property.summary,
-      images: [{ url: property.images[0]?.url }],
+      url: path,
+      images: property.images[0]
+        ? [{ url: property.images[0].url, alt: property.images[0].alt || property.title }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: property.title,
+      description: property.summary,
+      images: property.images[0] ? [property.images[0].url] : undefined,
     },
   };
 }
@@ -61,27 +82,60 @@ export default async function PropertyDetailPage({
   if (!property) notFound();
 
   const session = await getSession();
+  if (!canViewListing(property, session)) notFound();
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
-  const agency = property.agencyId ? getAgencyById(property.agencyId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
+  const showPublicSeo = isPublicListing(property);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
-        <Link href="/search" className="hover:text-[var(--color-primary)]">
+      {!showPublicSeo ? (
+        <p className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/40 bg-[var(--color-mist)] px-4 py-3 text-sm text-[var(--color-text)]">
+          This listing is <strong>{property.status}</strong> and is not visible in public search until
+          an admin approves it.
+        </p>
+      ) : null}
+      {showPublicSeo ? (
+        <>
+          <PropertyJsonLd
+            title={property.title}
+            description={property.summary}
+            url={`/property/${property.slug}`}
+            image={property.images[0]?.url}
+            price={property.price}
+            currency={property.currency}
+            locality={property.location.district}
+            region={property.location.city}
+          />
+          <BreadcrumbJsonLd
+            items={[
+              { name: "Home", url: "/" },
+              { name: "Search", url: "/search" },
+              { name: property.location.city, url: `/locations/${property.location.citySlug}` },
+              { name: property.title, url: `/property/${property.slug}` },
+            ]}
+          />
+        </>
+      ) : null}
+      <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-[var(--color-muted)]">
+        <Link href="/" className="hover:text-[var(--color-accent-soft)]">
+          Home
+        </Link>
+        <span>/</span>
+        <Link href="/search" className="hover:text-[var(--color-accent-soft)]">
           Search
         </Link>
         <span>/</span>
         <Link
           href={`/locations/${property.location.citySlug}`}
-          className="hover:text-[var(--color-primary)]"
+          className="hover:text-[var(--color-accent-soft)]"
         >
           {property.location.city}
         </Link>
         <span>/</span>
-        <span>{property.title}</span>
-      </div>
+        <span aria-current="page">{property.title}</span>
+      </nav>
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="space-y-8">
@@ -93,7 +147,7 @@ export default async function PropertyDetailPage({
                   {transactionLabels[property.transactionType]} ·{" "}
                   {propertyTypeLabels[property.propertyType]}
                 </p>
-                <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
                   {property.title}
                 </h1>
                 <p className="mt-2 text-[var(--color-muted)]">
@@ -105,7 +159,7 @@ export default async function PropertyDetailPage({
             </div>
             <PriceDisplay
               property={property}
-              className="mt-4 text-3xl font-semibold text-[var(--color-primary)]"
+              className="mt-4 text-3xl font-semibold text-[var(--color-accent-soft)]"
             />
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
               <span className="rounded-full bg-[var(--color-mist)] px-3 py-1">
@@ -114,16 +168,11 @@ export default async function PropertyDetailPage({
               <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
                 Updated {daysAgo(property.updatedAt)}
               </span>
-              {property.demo ? (
-                <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
-                  Demo listing
-                </span>
-              ) : null}
             </div>
           </div>
 
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Overview
             </h2>
             <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -154,7 +203,7 @@ export default async function PropertyDetailPage({
           </section>
 
           <section>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Description
             </h2>
             <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed text-[var(--color-muted)]">
@@ -164,14 +213,14 @@ export default async function PropertyDetailPage({
 
           {property.amenities.length ? (
             <section>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
                 Amenities
               </h2>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {property.amenities.map((amenity) => (
                   <li
                     key={amenity}
-                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm"
+                    className="rounded-full border border-[var(--color-border)] bg-white px-3 py-1.5 text-sm text-black"
                   >
                     {amenityLabels[amenity]}
                   </li>
@@ -181,7 +230,7 @@ export default async function PropertyDetailPage({
           ) : null}
 
           <section>
-            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+            <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Location
             </h2>
             <PropertyMap items={[property]} activeId={property.id} />
@@ -191,10 +240,10 @@ export default async function PropertyDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <InquiryForm propertyId={property.id} propertyTitle={property.title} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <h3 className="font-semibold text-[var(--color-primary)]">Share</h3>
+            <h3 className="font-semibold text-[var(--color-accent-soft)]">Share</h3>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
-              Copy the page URL from your browser to share this listing. External messaging
-              integrations are not enabled in demo mode.
+              Copy the page URL from your browser to share this listing, or use the inquiry form
+              to request a viewing.
             </p>
             <ButtonLink href={`/search?city=${property.location.citySlug}`} variant="outline" className="mt-3 w-full">
               More in {property.location.city}
@@ -202,16 +251,7 @@ export default async function PropertyDetailPage({
           </div>
           {agent ? (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-muted)]">Listed by</p>
-              <Link href={`/agents/${agent.slug}`} className="mt-1 block font-semibold text-[var(--color-primary)]">
-                {agent.name}
-              </Link>
-              <p className="text-sm text-[var(--color-muted)]">{agent.title}</p>
-              {agency ? (
-                <Link href={`/agencies/${agency.slug}`} className="mt-2 block text-sm text-[var(--color-accent)]">
-                  {agency.name}
-                </Link>
-              ) : null}
+              <AgentListingSnippet agent={agent} />
             </div>
           ) : null}
           {project ? (
@@ -226,7 +266,7 @@ export default async function PropertyDetailPage({
       </div>
 
       <Section className="px-0">
-        <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-primary)]">
+        <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
           Similar listings
         </h2>
         <PropertyGrid items={related} userId={session?.id} />

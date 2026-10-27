@@ -228,7 +228,7 @@ export function AdvancedFilters({
         </span>
         <Select
           value={searchParams.get("verification") ?? "all"}
-          onChange={(e) =>
+            onChange={(e) =>
             update({ verification: e.target.value === "all" ? null : e.target.value })
           }
         >
@@ -285,8 +285,8 @@ export function AdvancedFilters({
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-xs font-medium transition",
                   active
-                    ? "border-[var(--color-primary)] bg-[var(--color-primary)] text-white"
-                    : "border-[var(--color-border)] bg-white text-[var(--color-text)]",
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[#0B1C33]"
+                    : "border-[var(--color-border)] bg-[var(--color-mist)] text-[var(--color-text)] hover:border-[var(--color-accent)]/50 hover:text-[var(--color-accent-soft)]",
                 )}
               >
                 {amenity.label}
@@ -310,9 +310,9 @@ export function AdvancedFilters({
   return (
     <>
       <aside className="hidden w-72 shrink-0 lg:block">
-        <div className="sticky top-24 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="seaps-card sticky top-24 rounded-[var(--radius-lg)] p-4">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-semibold text-[var(--color-primary)]">Filters</h2>
+            <h2 className="font-semibold text-[var(--color-accent-soft)]">Filters</h2>
             <span className="text-xs text-[var(--color-muted)]">{resultCount} results</span>
           </div>
           {fields}

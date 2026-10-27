@@ -3,10 +3,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { articles, getArticleBySlug } from "@/data/articles";
 
+const PUBLIC_INSIGHT_SLUGS = new Set(["seaps-since-2013", "off-plan-buying-questions-cambodia"]);
+
 export function generateStaticParams() {
-  return articles
-    .filter((a) => a.category !== "guides")
-    .map((a) => ({ slug: a.slug }));
+  return articles.filter((a) => PUBLIC_INSIGHT_SLUGS.has(a.slug)).map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({
@@ -27,14 +27,16 @@ export default async function InsightArticlePage({
 }) {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
-  if (!article || article.category === "guides") notFound();
+  if (!article || article.category === "guides" || !PUBLIC_INSIGHT_SLUGS.has(article.slug)) {
+    notFound();
+  }
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-accent)]">
         {article.category}
       </p>
-      <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)] md:text-5xl">
+      <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)] md:text-5xl">
         {article.title}
       </h1>
       <p className="mt-3 text-sm text-[var(--color-muted)]">
@@ -46,7 +48,7 @@ export default async function InsightArticlePage({
         })}
       </p>
       <div className="relative my-8 aspect-[16/9] overflow-hidden rounded-[var(--radius-xl)]">
-        <Image src={article.cover} alt="" fill className="object-cover" sizes="800px" />
+        <Image src={article.cover} alt={article.title} fill className="object-cover" sizes="800px" />
       </div>
       <div className="space-y-4 whitespace-pre-line text-lg leading-relaxed text-[var(--color-text)]">
         {article.content}

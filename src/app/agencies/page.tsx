@@ -1,26 +1,6 @@
-import type { Metadata } from "next";
-import { AgencyCard } from "@/components/agency/agency-card";
-import { Section, SectionHeader } from "@/components/shared/section";
-import { agencies } from "@/data/agencies";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Agencies",
-  description: "Directory of demo real estate agencies on EstateNova.",
-};
-
-export default function AgenciesPage() {
-  return (
-    <Section>
-      <SectionHeader
-        eyebrow="Professionals"
-        title="Agency directory"
-        description="Browse agencies by city, specialization, and verification status."
-      />
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {agencies.map((agency) => (
-          <AgencyCard key={agency.id} agency={agency} />
-        ))}
-      </div>
-    </Section>
-  );
+/** Legacy URL — permanent redirect to Useful Links. */
+export default function LegacyAgenciesIndexPage() {
+  redirect("/usefullinks");
 }

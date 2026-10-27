@@ -1,0 +1,48 @@
+---
+description: Never publish package-lock or large blobs via GitHub MCP; use git push only; no test commits on main
+alwaysApply: true
+---
+
+# Lockfile and GitHub MCP — hard bans
+
+These mistakes broke production (`npm ci` / Vercel ERROR). **Do not repeat them.**
+
+## Never use GitHub MCP to write these paths
+
+Do **not** use `create_or_update_file`, `push_files`, or similar MCP tools for:
+
+- `package-lock.json`
+- `npm-shrinkwrap.json`
+- Any file **> 50 KB** (generated locks, bundles, images, archives)
+- `scripts/lock-parts/**` unless you are copying **literal file bytes** read from disk — never a path string like `/workspace/...`
+
+For lockfiles and large files: change them **locally**, run validation, then **`git push` to `github`** (see `vercel-github-push.mdc`).
+
+## Before claiming "lockfile restored"
+
+1. Run `node scripts/validate-package-lock.mjs` — must exit 0.
+2. Run `npm ci` — must exit 0.
+3. Confirm `package-lock.json` on disk is **> 10 KB** and contains many `packages` entries (not only `"": { ... }`).
+
+If `git push github` fails, **stop** and ask the user to push. Do **not** substitute MCP uploads of stubs or placeholders.
+
+## Forbidden commit patterns on `main`
+
+Never push to `main`:
+
+- Commits whose message starts with `test:` or contains `probe`, `size probe`, `path string`
+- "Fix" commits that only replace `package-lock.json` with minimal JSON stubs
+- Partial lock "parts" as a permanent workaround without a validated full lock on `main`
+
+Use a **`cursor/` feature branch + PR** for experiments.
+
+## Single source of truth for deploy
+
+Vercel builds **`github/main`**. A successful MCP commit that bypasses local `npm ci` still breaks production.
+
+## If lockfile is corrupt on remote
+
+1. Locally: `git checkout main && git pull`, then `npm install`.
+2. `node scripts/validate-package-lock.mjs && npm ci && npm run build`.
+3. One commit: `fix: restore package-lock.json via git` — push with `./scripts/push-production.sh`.
+4. Do **not** chain dozens of MCP "fix" attempts on `main`.

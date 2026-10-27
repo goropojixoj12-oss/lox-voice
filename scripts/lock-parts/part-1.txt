@@ -1,0 +1,1 @@
+/workspace/scripts/lock-parts/part-1.txt

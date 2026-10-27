@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(2),
   email: z.string().email(),
-  password: z.string().min(8),
-  role: z.enum(["buyer", "owner", "agent"]),
+  password: z.string().min(6),
 });
 
 export async function POST(request: Request) {
@@ -19,12 +17,12 @@ export async function POST(request: Request) {
     {
       ok: false,
       error:
-        "Demo mode uses fixed seed accounts. Connect PostgreSQL + Prisma user persistence to enable open registration.",
-      demoAccounts: [
-        "buyer@estatenova.demo",
-        "owner@estatenova.demo",
-        "agent@estatenova.demo",
-        "admin@estatenova.demo",
+        "Open registration will be enabled with full user persistence. Use current SEAPS access accounts meanwhile.",
+      accessAccounts: [
+        "buyer@seaps.com.kh",
+        "owner@seaps.com.kh",
+        "agent@seaps.com.kh",
+        "ceo@seaps.asia",
       ],
     },
     { status: 501 },

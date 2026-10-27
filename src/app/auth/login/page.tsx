@@ -30,22 +30,25 @@ export default function LoginPage() {
       setError(data.error ?? "Sign-in failed");
       return;
     }
-    router.push("/dashboard");
+    const data = (await res.json()) as { user?: { role?: string } };
+    const dest =
+      data.user?.role === "admin" ? "/dashboard/admin" : "/dashboard/agent/overview";
+    router.push(dest);
     router.refresh();
   }
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
-      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-primary)]">
+      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
         Sign in
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Demo accounts are listed below. Open registration waits for PostgreSQL user persistence.
+        Access your SEAPS account to manage favorites, listings, and inquiries.
       </p>
       <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <div>
           <Label htmlFor="email">Email</Label>
-          <Input id="email" name="email" type="email" required defaultValue="buyer@estatenova.demo" />
+          <Input id="email" name="email" type="email" required autoComplete="email" />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
@@ -54,7 +57,7 @@ export default function LoginPage() {
             name="password"
             type="password"
             required
-            defaultValue="demo-buyer-123"
+            autoComplete="current-password"
           />
         </div>
         {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
@@ -62,19 +65,10 @@ export default function LoginPage() {
           {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
-      <div className="mt-6 rounded-[var(--radius-md)] bg-[var(--color-mist)] p-4 text-xs text-[var(--color-muted)]">
-        <p className="font-semibold text-[var(--color-text)]">Demo logins</p>
-        <ul className="mt-2 space-y-1">
-          <li>buyer@estatenova.demo / demo-buyer-123</li>
-          <li>owner@estatenova.demo / demo-owner-123</li>
-          <li>agent@estatenova.demo / demo-agent-123</li>
-          <li>admin@estatenova.demo / demo-admin-123</li>
-        </ul>
-      </div>
       <p className="mt-4 text-sm">
-        Need an account notes page?{" "}
+        New to SEAPS?{" "}
         <Link href="/auth/register" className="font-semibold text-[var(--color-accent)]">
-          Registration status
+          Create an account
         </Link>
       </p>
     </div>

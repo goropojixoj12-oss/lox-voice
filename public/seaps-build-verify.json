@@ -1,0 +1,7 @@
+{
+  "buildAlignId": "SEAPS-ALIGN-9a923d7",
+  "baselineCommit": "9a923d7bdffb05d36dfff1200498c4387676a957",
+  "githubMainHead": "30d3de9c9cc97a3734cf39415961fbb095405f11",
+  "alignedAtUtc": "2026-10-27T01:46:00Z",
+  "note": "After git pull, open http://127.0.0.1:43123/seaps-build-verify.json — buildAlignId must match."
+}
