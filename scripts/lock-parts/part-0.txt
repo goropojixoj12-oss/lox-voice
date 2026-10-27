@@ -1,1 +1,1 @@
-PLACEHOLDER
+@file:/workspace/scripts/lock-parts/part-0.txt
