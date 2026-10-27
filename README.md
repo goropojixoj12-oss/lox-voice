@@ -6,10 +6,15 @@ Founded in **1997**. Listings, projects, agencies, and market guides focused on 
 
 ## Run locally
 
+From a fresh clone of [goropojixoj12-oss/lox-voice](https://github.com/goropojixoj12-oss/lox-voice) `main`:
+
 ```bash
-npm install
+node scripts/restore-package-lock.mjs
+npm ci
 npm run dev
 ```
+
+If `npm ci` still complains about the lockfile, run `npm install` once (regenerates `package-lock.json` from `package.json`), then `npm run dev`.
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
