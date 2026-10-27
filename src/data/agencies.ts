@@ -83,7 +83,7 @@ export const agents: Agent[] = [
   {
     id: "agent-sokha",
     slug: "sokha-meas",
-    name: "Agent1",
+    name: "Adam James",
     platformUserId: "user-agent",
     photo: img("photo-1573496359142-b8d87734a5a2", 600),
     title: "Senior Buyer Advisor",
