@@ -24,3 +24,5 @@ When work lands on `main` (merge or direct commit on `main`), still push **`gith
 ## If push fails
 
 Fix auth/network/permissions, retry until `github` push succeeds. Report the blocker to the user if you cannot resolve it.
+
+**Do not** use GitHub MCP (`create_or_update_file`, `push_files`) as a workaround for `package-lock.json` or other large files — see `no-github-mcp-for-lockfile.mdc`.
