@@ -137,7 +137,7 @@ export async function POST(request: Request) {
   const inquiry = await createInquiry({
     name: data.name,
     contact: contactLineFromForm(data.email, data.phone),
-    message: data.message,
+    message: data.message.trim() || "No additional message.",
     propertyId: data.propertyId ?? "site-form",
     propertyTitle: data.category,
     recipientType: "platform",

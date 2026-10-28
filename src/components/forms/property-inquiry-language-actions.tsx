@@ -64,13 +64,13 @@ export function PropertyInquiryLanguageActions({ className }: { className?: stri
       </p>
       <div className="flex flex-wrap gap-2">
         <button type="button" className={goldBtn} onClick={() => pickLanguage("en")}>
-          English
+          ENGLISH
         </button>
         <button type="button" className={goldBtn} onClick={() => pickLanguage("km")}>
-          Khmer
+          KHMER
         </button>
         <ButtonLink href="/contact" variant="accent" className={cn(goldBtn, "inline-flex")}>
-          Schedule V
+          SCHEDULE
         </ButtonLink>
       </div>
     </div>

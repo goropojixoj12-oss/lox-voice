@@ -37,11 +37,11 @@ export function PropertyListingInquiry({
           </div>
         ) : null}
         {lines.length ? (
-          <div className="space-y-2 pb-1 text-center">
+          <div className="space-y-2.5 pb-2 text-center">
             {lines.map((line) => (
               <p
                 key={line}
-                className="text-pretty text-sm leading-relaxed tracking-normal text-[var(--color-muted)] transition-[opacity,transform] duration-300"
+                className="text-pretty text-sm leading-[1.65] tracking-normal text-[var(--color-text)]"
               >
                 {line}
               </p>

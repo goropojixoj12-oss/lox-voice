@@ -30,6 +30,7 @@ import {
   transactionLabels,
   verificationLabels,
 } from "@/lib/labels";
+import { normalizeListingHeadline } from "@/lib/property-listing-promo";
 import { daysAgo } from "@/lib/utils";
 
 export async function generateStaticParams() {
@@ -90,6 +91,7 @@ export default async function PropertyDetailPage({
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property);
   const showPublicSeo = isPublicListing(property);
+  const headline = normalizeListingHeadline(property.title);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -150,8 +152,8 @@ export default async function PropertyDetailPage({
                   {transactionLabels[property.transactionType]} ·{" "}
                   {propertyTypeLabels[property.propertyType]}
                 </p>
-                <h1 className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
-                  {property.title}
+                <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl leading-snug text-balance text-[var(--color-accent-soft)] sm:text-4xl">
+                  {headline}
                 </h1>
                 <p className="mt-2 text-[var(--color-muted)]">
                   {property.location.address} · {property.location.district},{" "}

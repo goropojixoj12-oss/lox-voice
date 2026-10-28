@@ -117,7 +117,7 @@ export function InquiryForm({
         <h3 className="font-semibold text-[var(--color-accent-soft)]">Request information</h3>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           {isProperty
-            ? "Response time average is 35 seconds"
+            ? "response time average is 35 seconds"
             : "Send a viewing or details request. No phone numbers are invented on this page."}
         </p>
       </div>
