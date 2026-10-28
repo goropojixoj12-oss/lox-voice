@@ -11,6 +11,7 @@ import { resolveLatestScreenshotFile } from "@/lib/site-change-screenshot-access
 import {
   clearSiteChangeDraft,
   loadSiteChangeDraft,
+  readSiteChangeDraftMessageSync,
   saveSiteChangeDraft,
 } from "@/lib/site-change-draft";
 import { assessSiteChangeMessage } from "@/lib/site-change-risk";
@@ -39,7 +40,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function SiteChangeComposer() {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(readSiteChangeDraftMessageSync);
   const [file, setFile] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
   const [items, setItems] = useState<SiteRequestItem[]>([]);
@@ -126,7 +127,6 @@ export function SiteChangeComposer() {
       const draft = await loadSiteChangeDraft();
       if (cancelled) return;
       if (draft) {
-        setMessage(draft.message);
         setFile(draft.file);
         setFile2(draft.file2 ?? null);
       }
@@ -141,6 +141,17 @@ export function SiteChangeComposer() {
     if (!draftReady) return;
     void saveSiteChangeDraft(message, file, file2);
   }, [draftReady, message, file, file2]);
+
+  useEffect(() => {
+    const flush = () => {
+      void saveSiteChangeDraft(message, file, file2);
+    };
+    window.addEventListener("pagehide", flush);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [message, file, file2]);
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/admin/site-requests");
@@ -270,7 +281,11 @@ export function SiteChangeComposer() {
           <textarea
             data-seaps-equals-controlled
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              const next = e.target.value;
+              setMessage(next);
+              void saveSiteChangeDraft(next, file, file2);
+            }}
             rows={8}
             placeholder="Describe the UI or signed-in experience change you want…"
             className="w-full resize-y rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)]"

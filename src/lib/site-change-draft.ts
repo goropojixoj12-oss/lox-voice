@@ -191,6 +191,13 @@ function readLegacyMessageDraft(): string | null {
   }
 }
 
+/** Synchronous message restore so the textarea is populated on first paint. */
+export function readSiteChangeDraftMessageSync(): string {
+  const meta = readMeta();
+  if (meta) return meta.message;
+  return readLegacyMessageDraft() ?? "";
+}
+
 export async function loadSiteChangeDraft(): Promise<SiteChangeDraftLoaded | null> {
   let meta = readMeta();
   if (!meta) {
