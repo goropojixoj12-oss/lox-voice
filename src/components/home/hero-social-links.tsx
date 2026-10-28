@@ -13,6 +13,22 @@ import {
 
 const iconClass = "h-[1.35rem] w-[1.35rem] sm:h-6 sm:w-6";
 
+const SEAPS_PUBLIC_HOSTS = new Set(["www.seaps.asia", "seaps.asia"]);
+
+function isExternalSocialHref(href: string): boolean {
+  if (!href || href === "#") return false;
+  try {
+    const linkHost = new URL(href).hostname;
+    if (SEAPS_PUBLIC_HOSTS.has(linkHost)) return false;
+    const siteHost = new URL(
+      brand.url.startsWith("http") ? brand.url : `https://${brand.url}`,
+    ).hostname;
+    return linkHost !== siteHost;
+  } catch {
+    return true;
+  }
+}
+
 const networks = [
   { key: "telegram" as const, label: "Telegram", Icon: TelegramIcon },
   { key: "facebook" as const, label: "Facebook", Icon: FacebookIcon },
@@ -36,12 +52,13 @@ export function HeroSocialLinks({ className }: { className?: string }) {
       {networks.map(({ key, label, Icon }) => {
         const href = brand.social[key];
         const isPlaceholder = !href || href === "#";
+        const openInNewTab = !isPlaceholder && isExternalSocialHref(href);
         return (
           <li key={key}>
             <a
               href={href || "#"}
-              target={isPlaceholder ? undefined : "_blank"}
-              rel={isPlaceholder ? undefined : "noopener noreferrer"}
+              target={openInNewTab ? "_blank" : undefined}
+              rel={openInNewTab ? "noopener noreferrer" : undefined}
               aria-label={label}
               className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-[rgba(212,175,55,0.55)] bg-[rgba(255,255,255,0.08)] text-[var(--color-accent-soft)] transition hover:border-[rgba(240,215,140,0.85)] hover:bg-[rgba(212,175,55,0.18)] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)]"
             >

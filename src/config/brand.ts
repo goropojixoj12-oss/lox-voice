@@ -15,7 +15,7 @@ export const brand = {
   country: "Cambodia",
   social: {
     telegram: "#",
-    facebook: "https://www.facebook.com/seapsrealestate",
+    facebook: "https://www.seaps.asia/",
     whatsapp: "#",
     tiktok: "#",
     linkedin: "#",
