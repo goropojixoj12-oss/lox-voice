@@ -165,7 +165,7 @@ export function SiteChangeComposer() {
                 if (fileInputRef.current) fileInputRef.current.value = "";
               }}
             >
-              Remove file
+              Remove Attachment
             </button>
           ) : null}
         </div>
@@ -196,7 +196,7 @@ export function SiteChangeComposer() {
         {dispatchNote ? <p className="text-sm text-[var(--color-muted)]">{dispatchNote}</p> : null}
 
         <p className="text-xs text-[var(--color-muted)]">
-          Scope: public site interface and logged-in user flows only (not servers, billing, or staff HR).
+          Scope: Public Site Interface (Not Servers, Billing or Staff)
         </p>
       </form>
 
