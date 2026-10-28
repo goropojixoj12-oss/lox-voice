@@ -4,7 +4,7 @@ import { PageFeedbackForm } from "@/components/forms/page-feedback-form";
 import { Section } from "@/components/shared/section";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact a SEAPS Specialist.",
   description: "Send an inquiry to SEAPS.",
 };
 
