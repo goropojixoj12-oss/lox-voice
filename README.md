@@ -18,6 +18,10 @@ If `npm ci` still complains about the lockfile, run `npm install` once (regenera
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
+### Two local folders on Windows?
+
+If you have both `C:\Users\Administrator\lox-voice` and a `khmer_backup\lox-voice` copy, read **[docs/local-windows-clones-guide-ru.md](docs/local-windows-clones-guide-ru.md)** and run **`scripts/compare-windows-clones.ps1`** to pick one primary clone before `git push`.
+
 ## Access accounts
 
 | Role  | Email                 | Password         |
