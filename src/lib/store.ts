@@ -41,6 +41,14 @@ export async function getRuntimeListingById(id: string) {
   return listings.find((l) => l.id === id) ?? null;
 }
 
+export async function deleteRuntimeListing(id: string): Promise<boolean> {
+  const listings = await getRuntimeListings();
+  const next = listings.filter((l) => l.id !== id);
+  if (next.length === listings.length) return false;
+  await writeJson("listings.json", next);
+  return true;
+}
+
 export async function getInquiries() {
   return readJson<Inquiry[]>("inquiries.json", []);
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AdminListingTableRow } from "@/components/dashboard/admin-listing-table-row";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { adminListPropertyStepPath } from "@/lib/list-property-steps";
 import { getRuntimeListings } from "@/lib/store";
@@ -108,25 +109,18 @@ export default async function AdminListingsPage({
               </tr>
             ) : (
               rows.map((listing) => (
-                <tr key={listing.id} className="border-t border-[var(--color-border)]">
-                  <td className="p-3 font-semibold">{listing.title}</td>
-                  <td className="p-3 capitalize">{listing.status}</td>
-                  <td className="p-3 text-[var(--color-muted)]">
-                    {listing.location.city}, {listing.location.country}
-                  </td>
-                  <td className="p-3 text-xs">{submitterLabel(listing)}</td>
-                  <td className="p-3 text-xs text-[var(--color-muted)]">
-                    {new Date(listing.updatedAt ?? listing.publishedAt).toLocaleString()}
-                  </td>
-                  <td className="p-3 text-right">
-                    <Link
-                      href={adminDeskPath("listings", listing.id)}
-                      className="text-[var(--color-accent-soft)] underline"
-                    >
-                      Manage
-                    </Link>
-                  </td>
-                </tr>
+                <AdminListingTableRow
+                  key={listing.id}
+                  listingId={listing.id}
+                  title={listing.title}
+                  status={listing.status}
+                  locationLabel={`${listing.location.city}, ${listing.location.country}`}
+                  submitterLabel={submitterLabel(listing)}
+                  updatedLabel={new Date(
+                    listing.updatedAt ?? listing.publishedAt,
+                  ).toLocaleString()}
+                  canDeleteRejected={listing.status === "rejected"}
+                />
               ))
             )}
           </tbody>

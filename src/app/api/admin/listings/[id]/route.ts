@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
-import { getRuntimeListingById, saveRuntimeListing } from "@/lib/store";
+import {
+  deleteRuntimeListing,
+  getRuntimeListingById,
+  saveRuntimeListing,
+} from "@/lib/store";
+import { resetListingViewTracking } from "@/lib/listing-view-store";
 import type { ListingStatus, Property } from "@/lib/types";
 
 const patchSchema = z.object({
@@ -70,4 +75,30 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   await saveRuntimeListing(updated);
   return NextResponse.json({ listing: updated });
+}
+
+export async function DELETE(_request: Request, context: RouteContext) {
+  const session = await requireRole(["admin"]);
+  if (!session) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = await context.params;
+  const existing = await getRuntimeListingById(id);
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (existing.status !== "rejected") {
+    return NextResponse.json(
+      { error: "Only rejected listings can be deleted from this action" },
+      { status: 400 },
+    );
+  }
+
+  const removed = await deleteRuntimeListing(id);
+  if (!removed) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  await resetListingViewTracking(id).catch(() => undefined);
+  return NextResponse.json({ ok: true });
 }
