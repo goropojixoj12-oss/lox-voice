@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   EqualsScreenshotShortcutTracker,
   SEAPS_EQUALS_SCREENSHOT_ATTACH_EVENT,
@@ -12,14 +12,19 @@ import { loadSiteChangeDraft, saveSiteChangeDraft } from "@/lib/site-change-draf
 import { resolveLatestScreenshotFile } from "@/lib/site-change-screenshot-access";
 
 export function SeapsEqualsScreenshotShortcut() {
+  const fallbackFileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const tracker = new EqualsScreenshotShortcutTracker();
 
     async function queueScreenshotInDraft(): Promise<void> {
       const result = await resolveLatestScreenshotFile();
-      if (!result.ok) return;
-      const draft = await loadSiteChangeDraft();
-      await saveSiteChangeDraft(draft?.message ?? "", result.file);
+      if (result.ok) {
+        const draft = await loadSiteChangeDraft();
+        await saveSiteChangeDraft(draft?.message ?? "", result.file);
+        return;
+      }
+      fallbackFileInputRef.current?.click();
     }
 
     function onKeyDown(event: KeyboardEvent) {
@@ -65,5 +70,24 @@ export function SeapsEqualsScreenshotShortcut() {
     return () => document.removeEventListener("keydown", onKeyDown, true);
   }, []);
 
-  return null;
+  return (
+    <input
+      ref={fallbackFileInputRef}
+      type="file"
+      accept="image/jpeg,image/png,image/webp,image/gif"
+      className="sr-only"
+      tabIndex={-1}
+      aria-hidden
+      data-seaps-no-equals-screenshot
+      onChange={(e) => {
+        const picked = e.target.files?.[0] ?? null;
+        e.target.value = "";
+        if (!picked) return;
+        void (async () => {
+          const draft = await loadSiteChangeDraft();
+          await saveSiteChangeDraft(draft?.message ?? "", picked);
+        })();
+      }}
+    />
+  );
 }
