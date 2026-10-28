@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { InquiryForm } from "@/components/forms/inquiry-form";
+import {
+  PropertyListingInquiry,
+  propertyListingInquiryFromProperty,
+} from "@/components/forms/property-listing-inquiry";
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
 import { PropertyGallery } from "@/components/property/property-gallery";
@@ -185,9 +188,8 @@ export default async function PropertyDetailPage({
                   "Furnishing",
                   property.furnishing ? furnishingLabels[property.furnishing] : null,
                 ],
-                ["Seller", property.sellerType],
               ]
-                .filter(([, value]) => value !== null && value !== undefined)
+                .filter(([label, value]) => label !== "Seller" && value !== null && value !== undefined)
                 .map(([label, value]) => (
                   <div
                     key={String(label)}
@@ -238,7 +240,7 @@ export default async function PropertyDetailPage({
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-          <InquiryForm propertyId={property.id} propertyTitle={property.title} />
+          <PropertyListingInquiry {...propertyListingInquiryFromProperty(property)} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <h3 className="font-semibold text-[var(--color-accent-soft)]">Share</h3>
             <p className="mt-1 text-sm text-[var(--color-muted)]">
@@ -251,7 +253,11 @@ export default async function PropertyDetailPage({
           </div>
           {agent ? (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <AgentListingSnippet agent={agent} />
+              <AgentListingSnippet
+                agent={agent}
+                listedByName="ADAM CREEK"
+                listedByTitle="CEO"
+              />
             </div>
           ) : null}
           {project ? (

@@ -9,17 +9,48 @@ const emailField = z
   .min(1, "Email is required")
   .email("Enter a valid email address");
 
-export const siteFormFieldsSchema = z.object({
+const siteFormFieldsBaseSchema = z.object({
   category: z.string().trim().min(1, "Category is required").max(120),
   name: z.string().trim().min(2, "Name is required").max(80),
   email: emailField,
-  message: z.string().trim().min(10, "Message should be at least 10 characters").max(8000),
+  message: z.string().trim().max(8000),
   phone: z.string().trim().max(40).optional(),
   propertyId: z.string().trim().max(120).optional(),
   propertyTitle: z.string().trim().max(200).optional(),
   pageUrl: z.string().trim().max(500).optional(),
   website: z.string().optional(),
   consent: z.union([z.literal("true"), z.literal("on"), z.literal("1")]),
+});
+
+export const siteFormFieldsSchema = siteFormFieldsBaseSchema.superRefine((data, ctx) => {
+  const isPropertyInquiry = Boolean(data.propertyId?.trim());
+
+  if (isPropertyInquiry) {
+    if (!data.phone?.trim() || data.phone.trim().length < 6) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["phone"],
+        message: "Phone is required",
+      });
+    }
+    const msg = data.message.trim();
+    if (msg.length > 0 && msg.length < 3) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["message"],
+        message: "Message should be at least 3 characters when provided",
+      });
+    }
+    return;
+  }
+
+  if (data.message.trim().length < 10) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["message"],
+      message: "Message should be at least 10 characters",
+    });
+  }
 });
 
 export type SiteFormFields = z.infer<typeof siteFormFieldsSchema>;

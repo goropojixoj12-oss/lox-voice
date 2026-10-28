@@ -1,16 +1,30 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
+import { PropertyInquiryLanguageActions } from "@/components/forms/property-inquiry-language-actions";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { submitSiteForm } from "@/lib/submit-site-form";
+import { cn } from "@/lib/utils";
 
-const schema = z.object({
+const defaultSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
   email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
   message: z.string().trim().min(10, "Message should be at least 10 characters"),
+  consent: z.literal(true, { error: "Consent is required" }),
+});
+
+const propertySchema = z.object({
+  name: z.string().trim().min(2, "Name is required"),
+  email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
+  phone: z.string().trim().min(6, "Phone is required"),
+  message: z
+    .string()
+    .trim()
+    .refine((value) => value.length === 0 || value.length >= 3, {
+      message: "Message should be at least 3 characters when provided",
+    }),
   consent: z.literal(true, { error: "Consent is required" }),
 });
 
@@ -18,13 +32,19 @@ export function InquiryForm({
   propertyId,
   propertyTitle,
   formCategory,
+  variant = "default",
+  embedded = false,
 }: {
   propertyId: string;
   propertyTitle: string;
   /** Email subject / page category */
   formCategory?: string;
+  variant?: "default" | "property";
+  /** Nested inside {@link PropertyListingInquiry} promo shell */
+  embedded?: boolean;
 }) {
   const category = formCategory ?? propertyTitle;
+  const isProperty = variant === "property";
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [inquiryId, setInquiryId] = useState<string | null>(null);
@@ -38,13 +58,15 @@ export function InquiryForm({
     setSubmitError("");
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const rawMessage = String(formData.get("message") ?? "").trim();
     const payload = {
       name: String(formData.get("name") ?? ""),
       email: String(formData.get("email") ?? ""),
-      message: String(formData.get("message") ?? ""),
+      phone: String(formData.get("phone") ?? ""),
+      message: isProperty && !rawMessage ? "Property inquiry (no message)" : rawMessage,
       consent: formData.get("consent") === "on",
     };
-    const parsed = schema.safeParse(payload);
+    const parsed = (isProperty ? propertySchema : defaultSchema).safeParse(payload);
     if (!parsed.success) {
       const next: Record<string, string> = {};
       parsed.error.issues.forEach((issue) => {
@@ -53,6 +75,10 @@ export function InquiryForm({
       setErrors(next);
       setStatus("idle");
       return;
+    }
+
+    if (isProperty && !rawMessage) {
+      formData.set("message", "Property inquiry (no message)");
     }
 
     const result = await submitSiteForm(form);
@@ -77,7 +103,10 @@ export function InquiryForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="seaps-card space-y-3 rounded-[var(--radius-lg)] p-4"
+      className={cn(
+        "space-y-3",
+        embedded ? "seaps-card rounded-none border-0 bg-transparent p-4 pt-3 shadow-none" : "seaps-card rounded-[var(--radius-lg)] p-4",
+      )}
       noValidate
       data-form-category={category}
     >
@@ -87,7 +116,9 @@ export function InquiryForm({
       <div>
         <h3 className="font-semibold text-[var(--color-accent-soft)]">Request information</h3>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
-          Send a viewing or details request. No phone numbers are invented on this page.
+          {isProperty
+            ? "Response time average is 35 seconds"
+            : "Send a viewing or details request. No phone numbers are invented on this page."}
         </p>
       </div>
       <div>
@@ -111,22 +142,34 @@ export function InquiryForm({
         ) : null}
       </div>
       <div>
-        <Label htmlFor="inquiry-phone">Phone (optional)</Label>
+        <Label htmlFor="inquiry-phone">{isProperty ? "Phone" : "Phone (optional)"}</Label>
         <Input
           id="inquiry-phone"
           name="phone"
           type="tel"
           autoComplete="tel"
           placeholder="+855 12 345 678"
+          required={isProperty}
         />
+        {errors.phone ? (
+          <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.phone}</p>
+        ) : null}
       </div>
       <div>
-        <Label htmlFor="inquiry-message">Message</Label>
+        <Label htmlFor="inquiry-message">
+          Message{isProperty ? " (optional)" : ""}
+        </Label>
         <Textarea
           id="inquiry-message"
           name="message"
-          defaultValue={`I am interested in ${propertyTitle}. Please share next steps for a viewing.`}
-          required
+          placeholder={isProperty ? "write your request here" : undefined}
+          defaultValue={
+            isProperty
+              ? undefined
+              : `I am interested in ${propertyTitle}. Please share next steps for a viewing.`
+          }
+          required={!isProperty}
+          className={isProperty ? "placeholder:text-sm placeholder:text-[var(--color-muted)]/80" : undefined}
         />
         {errors.message ? (
           <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.message}</p>
@@ -144,20 +187,40 @@ export function InquiryForm({
           required
           className="mt-1 h-4 w-4 accent-[var(--color-accent)]"
         />
-        <Label htmlFor="inquiry-consent" className="mb-0 text-xs font-normal leading-relaxed text-[var(--color-muted)]">
+        <Label
+          htmlFor="inquiry-consent"
+          className={cn(
+            "mb-0 text-xs font-normal leading-relaxed",
+            isProperty ? "text-white" : "text-[var(--color-muted)]",
+          )}
+        >
           I agree to the processing of my personal data as described in the{" "}
-          <Link href="/privacy" className="font-semibold text-[var(--color-accent-soft)] underline">
-            Privacy policy
-          </Link>
+          {isProperty ? (
+            <span className="font-semibold text-white">Privacy terms</span>
+          ) : (
+            <>
+              <a
+                href="/privacy"
+                className="font-semibold text-[var(--color-accent-soft)] underline"
+              >
+                Privacy policy
+              </a>
+            </>
+          )}
           .
         </Label>
       </div>
       {errors.consent ? (
         <p className="text-xs text-[var(--color-danger)]">{errors.consent}</p>
       ) : null}
-      <Button type="submit" className="w-full min-h-11" disabled={status === "loading"}>
-        {status === "loading" ? "Sending…" : "Send inquiry"}
+      <Button
+        type="submit"
+        className={cn("w-full min-h-11", isProperty && "uppercase tracking-[0.12em]")}
+        disabled={status === "loading"}
+      >
+        {status === "loading" ? "Sending…" : isProperty ? "SEND INQUIRY" : "Send inquiry"}
       </Button>
+      {isProperty ? <PropertyInquiryLanguageActions /> : null}
       {status === "success" ? (
         <p className="text-sm text-[var(--color-success)]" role="status">
           Inquiry sent{inquiryId ? ` (ref ${inquiryId})` : ""}. Our team will respond using the
