@@ -11,8 +11,21 @@ import {
   shouldResetSequenceDueToTimeout,
 } from "@/lib/seaps-backslash-shortcut";
 
+const SEAPS_BACKSLASH_SHORTCUT_HOSTS = new Set(["www.seaps.asia", "seaps.asia"]);
+
+function isSeapsPublicSiteHost(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  return SEAPS_BACKSLASH_SHORTCUT_HOSTS.has(window.location.hostname);
+}
+
 export function SeapsBackslashShortcut() {
   useEffect(() => {
+    if (!isSeapsPublicSiteHost()) {
+      return;
+    }
+
     let count = 0;
     let firstPressAt: number | null = null;
     let sequenceTarget: HTMLElement | null = null;

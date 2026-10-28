@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { OrganizationJsonLd } from "@/components/seo/json-ld";
 import { MobileStickyCta } from "@/components/ux/mobile-sticky-cta";
+import { SeapsBackslashShortcut } from "@/components/ux/seaps-backslash-shortcut";
 import { SeapsEqualsScreenshotShortcut } from "@/components/ux/seaps-equals-screenshot-shortcut";
 import { brand } from "@/config/brand";
 import { getSession } from "@/lib/auth";
@@ -104,6 +105,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Script src="/scripts/seaps-lang-boot.js" strategy="beforeInteractive" />
         <GoogleTranslate />
         <PageViewBeacon />
+        <SeapsBackslashShortcut />
         <SeapsEqualsScreenshotShortcut />
         <SiteHeader userName={session?.name} userRole={session?.role} />
         <main className="flex-1">{children}</main>
