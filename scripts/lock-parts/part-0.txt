@@ -1,1 +1,1 @@
-/workspace/scripts/lock-parts/part-0.txt
+LOAD_FROM:/tmp/cou-push-0.json
