@@ -1,0 +1,14 @@
+services:
+  seaps-restore-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: seaps
+      POSTGRES_PASSWORD: seaps
+      POSTGRES_DB: seaps
+    ports:
+      - "5433:5432"
+    volumes:
+      - seaps_restore_pg:/var/lib/postgresql/data
+
+volumes:
+  seaps_restore_pg:
