@@ -83,7 +83,7 @@ export default async function HomePage() {
           </p>
           <p className="mt-5 text-sm text-[var(--color-muted)]">Alternatively, you can:</p>
           <ul className="mt-2 space-y-2 text-sm text-[var(--color-muted)]">
-            <li>· Contact us via Telephone on: +855  888 714 085, or</li>
+            <li>· Contact us via Telephone on: +855 (0)17 335 169, or</li>
             <li>· Reach out to us via our Social Media Platforms</li>
           </ul>
           <ButtonLink href="/contact" variant="primary" className="mt-6 w-full min-h-11">
