@@ -1,1 +1,1 @@
-STUB0
+__file__:/workspace/scripts/lock-parts/part-0.txt
