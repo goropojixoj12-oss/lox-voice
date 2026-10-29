@@ -37,7 +37,7 @@ export async function buildStaffRoster(openTasksByStaff: Record<string, number>)
   const [runtime, inquiries] = await Promise.all([getRuntimeListings(), getInquiries()]);
   const rows: StaffRow[] = [];
 
-  for (const user of getPlatformAgents()) {
+  for (const user of await getPlatformAgents()) {
     const profile = await getAgentProfile(user.id, {
       email: user.email,
       name: user.name,
@@ -71,6 +71,6 @@ export async function buildStaffRoster(openTasksByStaff: Record<string, number>)
   );
 }
 
-export function getStaffPlatformUser(staffId: string): DemoUser | null {
+export async function getStaffPlatformUser(staffId: string): Promise<DemoUser | null> {
   return getPlatformUserById(staffId);
 }

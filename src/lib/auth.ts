@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
-import { findUserByEmail, demoUsers } from "@/data/users";
+import { findPlatformUserByEmail, findPlatformUserById } from "@/lib/platform-users-store";
 import { DUMMY_PASSWORD_HASH, verifyPassword } from "@/lib/password";
 import type { DemoUser, UserRole } from "@/lib/types";
 
@@ -144,12 +144,12 @@ export async function getSession(): Promise<SessionUser | null> {
   const verified = verifySession(raw);
   if (!verified) return null;
 
-  const user = demoUsers.find((u) => u.id === verified.userId);
+  const user = await findPlatformUserById(verified.userId);
   return user ? toSessionUser(user) : null;
 }
 
 export async function login(email: string, password: string) {
-  const user = findUserByEmail(email);
+  const user = await findPlatformUserByEmail(email);
   if (!user) {
     await verifyPassword(password, DUMMY_PASSWORD_HASH);
     return { ok: false as const, error: "Invalid email or password" };
