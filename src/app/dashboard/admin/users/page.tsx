@@ -5,8 +5,8 @@ import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
 export const metadata: Metadata = { title: "Platform accounts" };
 
-export default function AdminUsersPage() {
-  const users = getAdminDirectoryUsers();
+export default async function AdminUsersPage() {
+  const users = await getAdminDirectoryUsers();
 
   return (
     <div className="space-y-6">

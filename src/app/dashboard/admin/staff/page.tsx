@@ -20,13 +20,23 @@ export default async function AdminStaffPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-          Staff & performance
-        </h1>
-        <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Adam James (agent@seaps.com.kh) and any future registered agent logins — not fake catalog profiles (Sokha, Dara,
-          etc.). Open a row to assign tasks and leave messages.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+              Employees
+            </h1>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">
+              Registered agent accounts — not fake catalog profiles (Sokha, Dara, etc.). Open a row to assign
+              tasks and leave messages.
+            </p>
+          </div>
+          <Link
+            href={adminDeskPath("staff", "new")}
+            className="rounded-full bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[#0B1C33] hover:opacity-90"
+          >
+            New Agent
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)]">

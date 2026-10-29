@@ -15,8 +15,14 @@ const NAV = [
   },
   {
     href: adminDeskPath("staff"),
-    label: "Staff & Performance",
-    match: (p: string) => p.startsWith(adminDeskPath("staff")),
+    label: "Employees",
+    match: (p: string) =>
+      p.startsWith(adminDeskPath("staff")) && !p.startsWith(adminDeskPath("staff", "new")),
+  },
+  {
+    href: adminDeskPath("staff", "new"),
+    label: "New Agent",
+    match: (p: string) => p.startsWith(adminDeskPath("staff", "new")),
   },
   {
     href: adminDeskPath("legal"),
