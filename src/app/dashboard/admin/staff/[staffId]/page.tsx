@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ staffId: string }>;
 }): Promise<Metadata> {
   const { staffId } = await params;
-  const agent = getStaffPlatformUser(staffId);
+  const agent = await getStaffPlatformUser(staffId);
   return { title: agent ? `${agent.name} — staff` : "Staff" };
 }
 
@@ -25,7 +25,7 @@ export default async function AdminStaffDetailPage({
 }) {
   const { staffId } = await params;
   if (!isAdminVisibleStaffId(staffId)) notFound();
-  const agent = getStaffPlatformUser(staffId);
+  const agent = await getStaffPlatformUser(staffId);
   if (!agent || agent.role !== "agent") notFound();
 
   const tasks = await getAdminTasks();
