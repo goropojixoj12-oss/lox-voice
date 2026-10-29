@@ -25,7 +25,7 @@ Production (Vercel) смотрит **только** на GitHub: [goropojixoj12-
 | Смысл имени папки | `khmer_backup` = резервная копия | Корень профиля = типичный **основной** клон |
 | Риск битого lock с GitHub | Если не делали `del` + `npm install` после pull — lock может быть stub с remote | То же |
 
-**Предварительная гипотеза (до автоматического отчёта на вашем ПК):**
+**Предварительная гипотеза (до автоматического отчёта на вашем ПC):**
 
 - **Оставить для работы:** чаще **`C:\Users\Administrator\lox-voice`**, если там правильный `git remote` и **`npm ci` проходит**.
 - **`khmer_backup`** — архив, **если** после сравнения у него ниже score (старый pull, нет guardrail-скриптов, меньший lock).
@@ -89,7 +89,7 @@ ren "C:\Users\Administrator\Documents\Default Project\khmer_backup\lox-voice" lo
 
 ### Что **не** смешивать
 
-- Не копировать `node_modules` между папками.
+- Нне копировать `node_modules` между папками.
 - Не push из обеих по очереди.
 - Не править `.env` в архивной копии.
 
@@ -157,7 +157,7 @@ node -e "require('@tailwindcss/turbopack'); console.log('turbopack OK')"
 npm run dev
 ```
 
-Если `dir ...\dist\index.js` всё ещё **File Not Found** after `npm ci`:
+Если `dir ...\dist\index.js` всё ещё **File Not Found** после `npm ci`:
 
 ```cmd
 npm install @tailwindcss/turbopack@4.3.3 tailwindcss@4.3.3 --save-dev --force
