@@ -60,7 +60,7 @@ export function PropertyInquiryLanguageActions({ className }: { className?: stri
         HERE IS EXACTLY WHAT YOU ARE LOOKING FOR!
       </h4>
       <p className="text-center text-sm leading-relaxed text-[var(--color-muted)]">
-        Stay in front of Estate Market — Your Language is?
+        Stay in front of Estate Market - Your Language is?
       </p>
       <div className="flex flex-wrap gap-2">
         <button type="button" className={goldBtn} onClick={() => pickLanguage("en")}>
@@ -70,7 +70,7 @@ export function PropertyInquiryLanguageActions({ className }: { className?: stri
           KHMER
         </button>
         <ButtonLink href="/contact" variant="accent" className={cn(goldBtn, "inline-flex")}>
-          SCHEDULE
+          SCHEDULE V
         </ButtonLink>
       </div>
     </div>
