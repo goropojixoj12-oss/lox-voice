@@ -1,5 +1,44 @@
 # Полный бэкап SEAPS (код + GitHub + Vercel + инвентарь)
 
+## 0. Windows — один ZIP + убрать дубли (ваш ПК)
+
+**Единственная рабочая папка:** `C:\Users\Administrator\lox-voice`  
+**Дубль для архивации/удаления:** `C:\Users\Administrator\Documents\Default Project\khmer_backup\lox-voice`  
+**Мусор в профиле** (ломает Turbopack): `C:\Users\Administrator\package.json`, `yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`
+
+### Шаг A — только бэкап (без удалений)
+
+```powershell
+cd C:\Users\Administrator\lox-voice
+git pull github main
+powershell -ExecutionPolicy Bypass -File .\scripts\windows-full-backup-and-cleanup.ps1 -BackupOnly -IncludeDuplicateTree
+```
+
+**Ожидание:** файл  
+`C:\Users\Administrator\SEAPS-Backups\SEAPS-FULL-BACKUP-YYYYMMDD-HHMMSS.zip`  
+(внутри: git bundle, source tar, full tar с `.git`, `.env*` если есть, README).
+
+### Шаг B — после проверки ZIP: переименовать дубль + убрать lock-мусор из `C:\Users\Administrator`
+
+```powershell
+cd C:\Users\Administrator\lox-voice
+powershell -ExecutionPolicy Bypass -File .\scripts\windows-full-backup-and-cleanup.ps1 -DoCleanup -ConfirmCleanup
+```
+
+**Ожидание:** дубль переименован в `lox-voice-ARCHIVED-…`; в домашней папке lock-файлы → `*.bak-…`.
+
+### Шаг C — GitHub / облако (уже работает prod)
+
+- Сайт: https://www.seaps.asia  
+- Репо: https://github.com/goropojixoj12-oss/lox-voice (`main`)  
+- Опционально: **Code → Download ZIP** или тег `backup/*` на GitHub.
+
+### Шаг D — Vercel (вручную, секреты)
+
+См. раздел **2** ниже — значения env в менеджер паролей.
+
+---
+
 ## 1. Код и Git (автоматически)
 
 ```bash
