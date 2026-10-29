@@ -142,7 +142,7 @@ git push github main
 | Сообщение | Причина | Действие |
 |-----------|---------|----------|
 | `Authentication failed` + origin.cursor.com | Push в Cursor, не GitHub | `git push github main` + PAT |
-| `403` | Нет прав на repo | Token with scope `repo`, аккаунт — owner/collaborator |
+| `403` | Нет прав на repo | Token с scope `repo`, аккаунт — owner/collaborator |
 | `could not read Username` | Нет сохранённых credentials | PAT при push или `gh auth login` |
 | Push OK, Vercel red | Битый lock на GitHub | Commit полного `package-lock.json` |
 
