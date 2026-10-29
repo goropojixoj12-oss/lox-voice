@@ -1,1 +1,1 @@
-@workspace/scripts/lock-parts/part-0.txt
+file:///tmp/part0-content.txt
