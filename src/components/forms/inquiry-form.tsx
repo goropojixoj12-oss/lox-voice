@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { PropertyInquiryLanguageActions } from "@/components/forms/property-inquiry-language-actions";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { submitSiteForm } from "@/lib/submit-site-form";
@@ -220,7 +219,6 @@ export function InquiryForm({
       >
         {status === "loading" ? "Sending…" : isProperty ? "SEND INQUIRY" : "Send inquiry"}
       </Button>
-      {isProperty ? <PropertyInquiryLanguageActions /> : null}
       {status === "success" ? (
         <p className="text-sm text-[var(--color-success)]" role="status">
           Inquiry sent{inquiryId ? ` (ref ${inquiryId})` : ""}. Our team will respond using the

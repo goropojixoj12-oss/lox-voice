@@ -55,7 +55,7 @@ function pickLanguage(siteCode: SiteLangCode) {
 
 export function PropertyInquiryLanguageActions({ className }: { className?: string }) {
   return (
-    <div className={cn("space-y-3 border-t border-[var(--color-border)] pt-4", className)}>
+    <div className={cn("space-y-3", className)}>
       <h4 className="text-center font-[family-name:var(--font-display)] text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-accent-soft)]">
         HERE IS EXACTLY WHAT YOU ARE LOOKING FOR!
       </h4>

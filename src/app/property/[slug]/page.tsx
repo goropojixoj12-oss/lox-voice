@@ -12,8 +12,8 @@ import { PropertyGallery3D } from "@/components/property/property-gallery-3d";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
 import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
+import { PropertyInquiryLanguageActions } from "@/components/forms/property-inquiry-language-actions";
 import { Section } from "@/components/shared/section";
-import { ButtonLink } from "@/components/ui/button";
 import { AgentListingSnippet } from "@/components/agency/agent-listing-snippet";
 import { getAgentById } from "@/data/agencies";
 import { getProjectById } from "@/data/projects";
@@ -370,14 +370,7 @@ export default async function PropertyDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <PropertyListingInquiry {...propertyListingInquiryFromProperty(property)} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <h3 className="font-semibold text-[var(--color-accent-soft)]">Share</h3>
-            <p className="mt-1 text-sm text-[var(--color-muted)]">
-              Copy the page URL from your browser to share this listing, or use the inquiry form
-              to request a viewing.
-            </p>
-            <ButtonLink href={`/search?city=${property.location.citySlug}`} variant="outline" className="mt-3 w-full">
-              More in {property.location.city}
-            </ButtonLink>
+            <PropertyInquiryLanguageActions />
           </div>
           {agent ? (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
