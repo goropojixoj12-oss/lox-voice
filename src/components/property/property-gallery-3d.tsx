@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { ChevronLeft, ChevronRight, Download, Pause, Play, X, ZoomIn, ZoomOut } from "lucide-react";
 import type { PropertyImage, PropertyVideo } from "@/lib/types";
 
@@ -65,10 +65,10 @@ const INITIAL_ROT: Rot = {
   yaw: 0.55,
   pitch: 0.38,
 };
-/** rad/s — XW/YW like hypercube.tbrun.dev; yaw so the tumble is obvious. */
-const XW_SPEED = 0.35;
-const YW_SPEED = 0.22;
-const YAW_SPEED = 0.45;
+/** rad/s — XW/YW so the inner cell grows outward; yaw keeps the tumble readable. */
+const XW_SPEED = 0.55;
+const YW_SPEED = 0.4;
+const YAW_SPEED = 0.5;
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const photos: MediaFace[] = images.map((img, i) => ({
@@ -247,6 +247,164 @@ function buildModel(rot: Rot): { pts: Pt[]; faceModels: FaceModel[] } {
   return { pts, faceModels };
 }
 
+type MotionState = {
+  rot: Rot;
+  base: Rot;
+  spinning: boolean;
+  spinStartedAt: number;
+  drag: { x: number; y: number; yaw: number; pitch: number; xw: number; yw: number } | null;
+  dragged: boolean;
+  paint: () => void;
+};
+
+const MOTION = new WeakMap<SVGSVGElement, MotionState>();
+
+function attachTesseractMotion(svg: SVGSVGElement) {
+  if (svg.dataset.live === "1") return MOTION.get(svg);
+  const facesLayer = svg.querySelector("[data-layer='faces']") as SVGGElement | null;
+  if (!facesLayer) return undefined;
+
+  const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
+  const groups = SQUARES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
+  const tints = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
+  const clips = SQUARES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
+  const images = SQUARES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
+  const plays = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
+  const circles = Array.from({ length: 16 }, (_, i) => svg.querySelector(`circle[data-v="${i}"]`) as SVGCircleElement | null);
+
+  const state: MotionState = {
+    rot: { ...INITIAL_ROT },
+    base: { ...INITIAL_ROT },
+    spinning: svg.dataset.paused !== "1" && svg.dataset.dragging !== "1",
+    spinStartedAt: performance.now(),
+    drag: null,
+    dragged: false,
+    paint: () => {},
+  };
+
+  const paint = () => {
+    const { pts, faceModels } = buildModel(state.rot);
+    svg.setAttribute("data-xw", state.rot.xw.toFixed(4));
+    svg.setAttribute("data-yw", state.rot.yw.toFixed(4));
+    svg.setAttribute("data-yaw", state.rot.yaw.toFixed(4));
+    for (let i = 0; i < EDGES.length; i += 1) {
+      const line = lines[i];
+      if (!line) continue;
+      const [a, b] = EDGES[i];
+      line.setAttribute("x1", pts[a].x.toFixed(2));
+      line.setAttribute("y1", pts[a].y.toFixed(2));
+      line.setAttribute("x2", pts[b].x.toFixed(2));
+      line.setAttribute("y2", pts[b].y.toFixed(2));
+    }
+    const order = faceModels
+      .map((_, i) => i)
+      .sort((a, b) => faceModels[a].depth - faceModels[b].depth);
+    for (const idx of order) {
+      const group = groups[idx];
+      const item = faceModels[idx];
+      if (!group) continue;
+      facesLayer.appendChild(group);
+      const back = item.area < 0;
+      const tint = tints[idx];
+      if (tint) {
+        tint.setAttribute("points", item.points);
+        tint.setAttribute("fill-opacity", back ? "0.14" : "0.32");
+      }
+      const clip = clips[idx];
+      if (clip) clip.setAttribute("points", item.points);
+      const image = images[idx];
+      if (image) {
+        image.setAttribute("transform", `matrix(${item.affine})`);
+        const photoOpacity = back
+          ? item.geom.wCell
+            ? 0.16
+            : 0.08
+          : item.geom.wCell
+            ? 0.52
+            : 0.32;
+        image.setAttribute("opacity", String(photoOpacity));
+      }
+      const play = plays[idx];
+      if (play) {
+        const cx = (item.quad[0].x + item.quad[2].x) / 2;
+        const cy = (item.quad[0].y + item.quad[2].y) / 2;
+        play.setAttribute("points", `${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`);
+        play.setAttribute("display", back ? "none" : "block");
+      }
+    }
+    for (let i = 0; i < 16; i += 1) {
+      const c = circles[i];
+      if (!c) continue;
+      c.setAttribute("cx", pts[i].x.toFixed(2));
+      c.setAttribute("cy", pts[i].y.toFixed(2));
+    }
+  };
+  state.paint = paint;
+
+  let raf = 0;
+  let frames = 0;
+  const tick = (now: number) => {
+    const spin = svg.dataset.paused !== "1" && svg.dataset.dragging !== "1";
+    if (spin) {
+      if (!state.spinning) {
+        state.spinStartedAt = now;
+        state.base = { ...state.rot };
+      }
+      const elapsed = (now - state.spinStartedAt) / 1000;
+      state.rot = {
+        ...state.base,
+        xw: state.base.xw + elapsed * XW_SPEED,
+        yw: state.base.yw + elapsed * YW_SPEED,
+        yaw: state.base.yaw + elapsed * YAW_SPEED,
+      };
+    }
+    state.spinning = spin;
+    frames += 1;
+    svg.setAttribute("data-frames", String(frames));
+    paint();
+  };
+  const loop = (now: number) => {
+    tick(now);
+    raf = window.requestAnimationFrame(loop);
+  };
+  svg.dataset.live = "1";
+  svg.setAttribute("data-live", "1");
+  tick(performance.now());
+  raf = window.requestAnimationFrame(loop);
+  window.setInterval(() => tick(performance.now()), 16);
+  MOTION.set(svg, state);
+  void raf;
+  return state;
+}
+
+function bootTesseractMotion() {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  const scan = () => {
+    document.querySelectorAll<SVGSVGElement>("svg[data-tesseract]").forEach((svg) => {
+      attachTesseractMotion(svg);
+    });
+  };
+  scan();
+  window.requestAnimationFrame(scan);
+  window.setInterval(scan, 200);
+  document.addEventListener("DOMContentLoaded", scan);
+}
+
+bootTesseractMotion();
+
+function setTesseractPaused(paused: boolean) {
+  if (typeof document === "undefined") return;
+  document.querySelectorAll<SVGSVGElement>("svg[data-tesseract]").forEach((svg) => {
+    svg.dataset.paused = paused ? "1" : "0";
+    const state = MOTION.get(svg);
+    if (state && !paused) {
+      state.base = { ...state.rot };
+      state.spinStartedAt = performance.now();
+      state.spinning = false;
+    }
+  });
+}
+
 function LightboxModal({
   face,
   allFaces,
@@ -322,188 +480,91 @@ function LightboxModal({
   );
 }
 
+
 const TesseractCanvas = memo(function TesseractCanvas({
   uid,
   faces,
   onOpenFace,
-  autoRotate,
-  autoRotateRef,
 }: {
   uid: string;
   faces: MediaFace[];
   onOpenFace: (face: MediaFace) => void;
-  autoRotate: boolean;
-  autoRotateRef: MutableRefObject<boolean>;
+  autoRotate?: boolean;
+  autoRotateRef?: MutableRefObject<boolean>;
 }) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const facesLayerRef = useRef<SVGGElement>(null);
-  const rotRef = useRef<Rot>({ ...INITIAL_ROT });
-  const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; xw: number; yw: number } | null>(null);
-  const draggingRef = useRef(false);
-  const dragged = useRef(false);
-  const [holding, setHolding] = useState(false);
-  const paintRef = useRef<() => void>(() => {});
   const initial = useMemo(() => buildModel(INITIAL_ROT), []);
+  const dragged = useRef(false);
 
-  useLayoutEffect(() => {
-    const svg = svgRef.current;
-    const facesLayer = facesLayerRef.current;
-    if (!svg || !facesLayer) return;
-    svg.dataset.hydrated = "1";
-
-    const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
-    const groups = SQUARES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
-    const tints = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
-    const clips = SQUARES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
-    const images = SQUARES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
-    const plays = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
-    const circles = Array.from({ length: 16 }, (_, i) => svg.querySelector(`circle[data-v="${i}"]`) as SVGCircleElement | null);
-
-    svg.dataset.live = "1";
-    const paint = () => {
-      const rot = rotRef.current;
-      const { pts, faceModels } = buildModel(rot);
-      svg.dataset.xw = rot.xw.toFixed(4);
-      svg.dataset.yw = rot.yw.toFixed(4);
-      svg.setAttribute("data-xw", rot.xw.toFixed(4));
-      svg.setAttribute("data-yw", rot.yw.toFixed(4));
-      for (let i = 0; i < EDGES.length; i += 1) {
-        const line = lines[i];
-        if (!line) continue;
-        const [a, b] = EDGES[i];
-        line.setAttribute("x1", pts[a].x.toFixed(2));
-        line.setAttribute("y1", pts[a].y.toFixed(2));
-        line.setAttribute("x2", pts[b].x.toFixed(2));
-        line.setAttribute("y2", pts[b].y.toFixed(2));
-      }
-      const order = faceModels
-        .map((_, i) => i)
-        .sort((a, b) => faceModels[a].depth - faceModels[b].depth);
-      for (const idx of order) {
-        const group = groups[idx];
-        const item = faceModels[idx];
-        if (!group) continue;
-        facesLayer.appendChild(group);
-        const back = item.area < 0;
-        const tint = tints[idx];
-        if (tint) {
-          tint.setAttribute("points", item.points);
-          tint.setAttribute("fill-opacity", back ? "0.14" : "0.32");
-        }
-        const clip = clips[idx];
-        if (clip) clip.setAttribute("points", item.points);
-        const image = images[idx];
-        if (image) {
-          image.setAttribute("transform", `matrix(${item.affine})`);
-          const photoOpacity = back
-            ? item.geom.wCell
-              ? 0.16
-              : 0.08
-            : item.geom.wCell
-              ? 0.52
-              : 0.32;
-          image.setAttribute("opacity", String(photoOpacity));
-        }
-        const play = plays[idx];
-        if (play) {
-          const cx = (item.quad[0].x + item.quad[2].x) / 2;
-          const cy = (item.quad[0].y + item.quad[2].y) / 2;
-          play.setAttribute("points", `${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`);
-          play.setAttribute("display", back ? "none" : "block");
-        }
-      }
-      for (let i = 0; i < 16; i += 1) {
-        const c = circles[i];
-        if (!c) continue;
-        c.setAttribute("cx", pts[i].x.toFixed(2));
-        c.setAttribute("cy", pts[i].y.toFixed(2));
-      }
-    };
-    paintRef.current = paint;
-
-    let raf = 0;
-    let frames = 0;
-    let spinning = autoRotateRef.current && !draggingRef.current;
-    let spinStartedAt = performance.now();
-    let base: Rot = { ...rotRef.current };
-    const tick = (now: number) => {
-      const spin = autoRotateRef.current && !draggingRef.current;
-      if (spin) {
-        if (!spinning) {
-          spinStartedAt = now;
-          base = { ...rotRef.current };
-        }
-        const elapsed = (now - spinStartedAt) / 1000;
-        rotRef.current = {
-          ...base,
-          xw: base.xw + elapsed * XW_SPEED,
-          yw: base.yw + elapsed * YW_SPEED,
-          yaw: base.yaw + elapsed * YAW_SPEED,
-        };
-      }
-      spinning = spin;
-      frames += 1;
-      svg.dataset.frames = String(frames);
-      paint();
-    };
-    tick(performance.now());
-    const loop = (now: number) => {
-      tick(now);
-      raf = window.requestAnimationFrame(loop);
-    };
-    raf = window.requestAnimationFrame(loop);
-    const fallback = window.setInterval(() => tick(performance.now()), 16);
-    return () => {
-      window.cancelAnimationFrame(raf);
-      window.clearInterval(fallback);
-      paintRef.current = () => {};
-    };
-  }, [autoRotateRef]);
+  const bindSvg = (svg: SVGSVGElement | null) => {
+    if (svg) attachTesseractMotion(svg);
+  };
 
   return (
     <div
-      className={`h-full w-full touch-none ${autoRotate && !holding ? "seaps-tesseract-spin" : ""}`}
+      className="h-full w-full touch-none"
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId);
+        const svg = event.currentTarget.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
+        if (!svg) return;
+        const state = attachTesseractMotion(svg);
+        if (!state) return;
         dragged.current = false;
-        draggingRef.current = true;
-        setHolding(true);
-        drag.current = {
+        state.dragged = false;
+        svg.dataset.dragging = "1";
+        state.drag = {
           x: event.clientX,
           y: event.clientY,
-          yaw: rotRef.current.yaw,
-          pitch: rotRef.current.pitch,
-          xw: rotRef.current.xw,
-          yw: rotRef.current.yw,
+          yaw: state.rot.yaw,
+          pitch: state.rot.pitch,
+          xw: state.rot.xw,
+          yw: state.rot.yw,
         };
       }}
       onPointerMove={(event) => {
-        if (!drag.current) return;
-        const dx = event.clientX - drag.current.x;
-        const dy = event.clientY - drag.current.y;
-        if (Math.abs(dx) + Math.abs(dy) > 4) dragged.current = true;
-        rotRef.current = {
-          ...rotRef.current,
-          yaw: drag.current.yaw + dx * 0.008,
-          pitch: Math.max(-1.15, Math.min(1.15, drag.current.pitch + dy * 0.008)),
-          yw: drag.current.yw + dx * 0.004,
-          xw: drag.current.xw + dy * 0.004,
+        const svg = event.currentTarget.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
+        if (!svg) return;
+        const state = MOTION.get(svg);
+        if (!state?.drag) return;
+        const dx = event.clientX - state.drag.x;
+        const dy = event.clientY - state.drag.y;
+        if (Math.abs(dx) + Math.abs(dy) > 4) {
+          dragged.current = true;
+          state.dragged = true;
+        }
+        state.rot = {
+          ...state.rot,
+          yaw: state.drag.yaw + dx * 0.008,
+          pitch: Math.max(-1.15, Math.min(1.15, state.drag.pitch + dy * 0.008)),
+          yw: state.drag.yw + dx * 0.004,
+          xw: state.drag.xw + dy * 0.004,
         };
-        paintRef.current();
+        state.paint();
       }}
-      onPointerUp={() => {
-        drag.current = null;
-        draggingRef.current = false;
-        setHolding(false);
+      onPointerUp={(event) => {
+        const svg = event.currentTarget.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
+        if (!svg) return;
+        const state = MOTION.get(svg);
+        if (state) {
+          state.drag = null;
+          state.base = { ...state.rot };
+          state.spinStartedAt = performance.now();
+        }
+        svg.dataset.dragging = "0";
       }}
-      onPointerCancel={() => {
-        drag.current = null;
-        draggingRef.current = false;
-        setHolding(false);
+      onPointerCancel={(event) => {
+        const svg = event.currentTarget.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
+        if (!svg) return;
+        const state = MOTION.get(svg);
+        if (state) {
+          state.drag = null;
+          state.base = { ...state.rot };
+          state.spinStartedAt = performance.now();
+        }
+        svg.dataset.dragging = "0";
       }}
     >
       <svg
-        ref={svgRef}
+        ref={bindSvg}
         viewBox={`0 0 ${VIEW} ${VIEW}`}
         className="h-full w-full"
         style={{ maxWidth: "none", overflow: "visible" }}
@@ -528,7 +589,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
             </clipPath>
           ))}
         </defs>
-        <g ref={facesLayerRef} data-layer="faces">
+        <g data-layer="faces">
           {initial.faceModels.map((item) => {
             const back = item.area < 0;
             const media = faces[item.faceIndex % faces.length];
@@ -547,7 +608,9 @@ const TesseractCanvas = memo(function TesseractCanvas({
                 key={item.faceIndex}
                 data-f={item.faceIndex}
                 onClick={() => {
-                  if (dragged.current) return;
+                  const svg = document.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
+                  const state = svg ? MOTION.get(svg) : undefined;
+                  if (dragged.current || state?.dragged) return;
                   onOpenFace(media);
                 }}
                 style={{ cursor: "pointer" }}
@@ -635,6 +698,7 @@ export function PropertyGallery3D({
         const next = !autoRotateRef.current;
         autoRotateRef.current = next;
         setAutoRotate(next);
+        setTesseractPaused(!next);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -663,6 +727,7 @@ export function PropertyGallery3D({
             const next = !autoRotateRef.current;
             autoRotateRef.current = next;
             setAutoRotate(next);
+            setTesseractPaused(!next);
           }}
           aria-label={autoRotate ? "Pause" : "Play"}
         >
@@ -680,6 +745,7 @@ export function PropertyGallery3D({
             setActiveFace(null);
             autoRotateRef.current = true;
             setAutoRotate(true);
+            setTesseractPaused(false);
           }}
           onNavigate={setActiveFace}
         />
