@@ -11,7 +11,7 @@ import { sanitizeListingFileName } from "@/lib/listing-media-constants";
 import { writeListingMediaFile } from "@/lib/listing-media-files";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 1200;
 
 export async function POST(request: Request) {
   const session = await getSession();

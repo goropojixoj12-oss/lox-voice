@@ -91,10 +91,10 @@ async function uploadOne(
 ): Promise<ListingMediaItem> {
   if (file.size <= 4.5 * 1024 * 1024) {
     try {
-      return await withRetry(() => uploadViaServer(file, actingUserId), 2, 1000);
+      return await withRetry(() => uploadViaServer(file, actingUserId), 7, 1000);
     } catch {
       if (userId) {
-        return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 2, 1000);
+        return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 7, 1000);
       }
       throw new Error("Upload failed");
     }
@@ -102,31 +102,16 @@ async function uploadOne(
   if (!userId) {
     throw new Error("Sign in required for large uploads.");
   }
-  return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 2, 1500);
+  return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 7, 1500);
 }
 
-const UPLOAD_CONCURRENCY = 6;
+const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB
 
-async function mapWithConcurrency<T, R>(
+async function mapAllParallel<T, R>(
   items: T[],
-  limit: number,
   fn: (item: T, index: number) => Promise<R>,
 ): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let nextIndex = 0;
-
-  async function worker() {
-    for (;;) {
-      const i = nextIndex;
-      nextIndex += 1;
-      if (i >= items.length) return;
-      results[i] = await fn(items[i]!, i);
-    }
-  }
-
-  const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
-  await Promise.all(workers);
-  return results;
+  return Promise.all(items.map((item, i) => fn(item, i)));
 }
 
 export function ListPropertyMediaStep({
@@ -176,13 +161,19 @@ export function ListPropertyMediaStep({
       return;
     }
     setError("");
-    setBusy(true);
     const files = Array.from(fileList);
+    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+    if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
+      const totalMB = Math.round(totalBytes / 1024 / 1024);
+      setError(`Общий размер файлов ${totalMB} МБ превышает лимит 1 ГБ. Выберите меньше файлов.`);
+      return;
+    }
+    setBusy(true);
     const next = [...items];
 
     const failures: string[] = [];
     let completed = 0;
-    const uploaded = await mapWithConcurrency(files, UPLOAD_CONCURRENCY, async (file) => {
+    const uploaded = await mapAllParallel(files, async (file) => {
       try {
         const item = await uploadOne(file, userId, actingUserId);
         completed += 1;
