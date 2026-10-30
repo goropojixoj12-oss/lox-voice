@@ -1,0 +1,1695 @@
+From 8077ada6a4de475aba50cce1ef4c4d94bd35ec1a Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 29 Oct 2026 17:04:35 +0000
+Subject: [PATCH] feat: admin Agent Desk edit routes for any agent account
+
+Allow admins to manage agent desk UI at /dashboard/admin/edit/agent/{slug}
+without switching sessions. APIs accept acting agent userId via header or query.
+Add Agent Desk entry points on staff pages.
+
+Co-authored-by: goropojixoj12 <goropojixoj12@gmail.com>
+---
+ .../agent-profile/documents/[id]/route.ts     |  10 +-
+ .../agent-profile/documents/route.ts          |  18 ++-
+ src/app/api/dashboard/agent-profile/route.ts  |  33 +++--
+ .../media/client-upload/route.ts              |  12 +-
+ .../dashboard/list-property/media/route.ts    |  12 +-
+ src/app/api/properties/route.ts               |  30 ++++-
+ .../edit/agent/[agentSlug]/favorites/page.tsx |  64 +++++++++
+ .../edit/agent/[agentSlug]/inquiries/page.tsx |  62 +++++++++
+ .../admin/edit/agent/[agentSlug]/layout.tsx   |  31 +++++
+ .../list-property/[[...step]]/page.tsx        |  25 ++++
+ .../[agentSlug]/list-property/layout.tsx      |  24 ++++
+ .../edit/agent/[agentSlug]/listings/page.tsx  |  78 +++++++++++
+ .../edit/agent/[agentSlug]/overview/page.tsx  |  95 +++++++++++++
+ .../admin/edit/agent/[agentSlug]/page.tsx     |  11 ++
+ .../edit/agent/[agentSlug]/profile/page.tsx   |  43 ++++++
+ .../agent/[agentSlug]/saved-searches/page.tsx |  41 ++++++
+ .../edit/agent/[agentSlug]/stats/page.tsx     |  52 ++++++++
+ .../dashboard/admin/staff/[staffId]/page.tsx  |  34 +++--
+ src/app/dashboard/admin/staff/page.tsx        |  21 ++-
+ .../admin/admin-agent-edit-desk-shell.tsx     | 126 ++++++++++++++++++
+ .../dashboard/agent-profile-panel.tsx         |  47 +++++--
+ src/components/dashboard/dashboard-shell.tsx  |   5 +
+ .../dashboard/list-property-desk-provider.tsx |  15 +++
+ .../dashboard/list-property-media-step.tsx    |  51 +++++--
+ .../dashboard/list-property-wizard.tsx        |  19 ++-
+ src/lib/admin-edit-agent-page.ts              |   9 ++
+ src/lib/admin-edit-agent-paths.ts             |  32 +++++
+ src/lib/agent-desk-acting-user-constants.ts   |   8 ++
+ src/lib/agent-desk-acting-user.ts             |  68 ++++++++++
+ src/lib/agent-desk-api-client.ts              |  22 +++
+ 30 files changed, 1030 insertions(+), 68 deletions(-)
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/favorites/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/inquiries/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/layout.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/[[...step]]/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/layout.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/listings/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/overview/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/profile/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/saved-searches/page.tsx
+ create mode 100644 src/app/dashboard/admin/edit/agent/[agentSlug]/stats/page.tsx
+ create mode 100644 src/components/admin/admin-agent-edit-desk-shell.tsx
+ create mode 100644 src/lib/admin-edit-agent-page.ts
+ create mode 100644 src/lib/admin-edit-agent-paths.ts
+ create mode 100644 src/lib/agent-desk-acting-user-constants.ts
+ create mode 100644 src/lib/agent-desk-acting-user.ts
+ create mode 100644 src/lib/agent-desk-api-client.ts
+
+diff --git a/src/app/api/dashboard/agent-profile/documents/[id]/route.ts b/src/app/api/dashboard/agent-profile/documents/[id]/route.ts
+index c90f355..7eb9d1e 100644
+--- a/src/app/api/dashboard/agent-profile/documents/[id]/route.ts
++++ b/src/app/api/dashboard/agent-profile/documents/[id]/route.ts
+@@ -1,10 +1,11 @@
+ import { NextResponse } from "next/server";
+ import { getAgentDocumentForUser } from "@/lib/agent-profile";
++import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
+ import { getSession } from "@/lib/auth";
+ 
+ type RouteContext = { params: Promise<{ id: string }> };
+ 
+-export async function GET(_request: Request, context: RouteContext) {
++export async function GET(request: Request, context: RouteContext) {
+   const session = await getSession();
+   if (!session) {
+     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+@@ -13,8 +14,13 @@ export async function GET(_request: Request, context: RouteContext) {
+     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
+   }
+ 
++  const resolved = await resolveActingAgentUser(session, request);
++  if (!resolved.ok) {
++    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++  }
++
+   const { id } = await context.params;
+-  const doc = await getAgentDocumentForUser(session.id, id);
++  const doc = await getAgentDocumentForUser(resolved.user.id, id);
+   if (!doc) {
+     return NextResponse.json({ error: "Document not found" }, { status: 404 });
+   }
+diff --git a/src/app/api/dashboard/agent-profile/documents/route.ts b/src/app/api/dashboard/agent-profile/documents/route.ts
+index fd7a68b..9e29d4e 100644
+--- a/src/app/api/dashboard/agent-profile/documents/route.ts
++++ b/src/app/api/dashboard/agent-profile/documents/route.ts
+@@ -6,6 +6,7 @@ import {
+   validateAgentDocumentFile,
+   type AgentDocumentKind,
+ } from "@/lib/agent-profile";
++import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
+ import { getSession } from "@/lib/auth";
+ 
+ function parseKind(raw: FormDataEntryValue | null): AgentDocumentKind | null {
+@@ -24,6 +25,11 @@ export async function POST(request: Request) {
+     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
+   }
+ 
++  const resolved = await resolveActingAgentUser(session, request);
++  if (!resolved.ok) {
++    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++  }
++
+   const form = await request.formData();
+   const kind = parseKind(form.get("kind"));
+   const file = form.get("file");
+@@ -41,8 +47,8 @@ export async function POST(request: Request) {
+ 
+   const bytes = Buffer.from(await file.arrayBuffer());
+   const profile = await addAgentDocument(
+-    session.id,
+-    { name: session.name, email: session.email },
++    resolved.user.id,
++    { name: resolved.user.name, email: resolved.user.email },
+     kind,
+     {
+       name: file.name,
+@@ -61,12 +67,18 @@ export async function DELETE(request: Request) {
+   if (session.role !== "agent" && session.role !== "admin") {
+     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
+   }
++
++  const resolved = await resolveActingAgentUser(session, request);
++  if (!resolved.ok) {
++    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++  }
++
+   const { searchParams } = new URL(request.url);
+   const documentId = searchParams.get("id")?.trim();
+   if (!documentId) {
+     return NextResponse.json({ error: "Document id required" }, { status: 400 });
+   }
+-  const profile = await removeAgentDocument(session.id, documentId);
++  const profile = await removeAgentDocument(resolved.user.id, documentId);
+   if (!profile) {
+     return NextResponse.json({ error: "Document not found" }, { status: 404 });
+   }
+diff --git a/src/app/api/dashboard/agent-profile/route.ts b/src/app/api/dashboard/agent-profile/route.ts
+index 273f153..7af5809 100644
+--- a/src/app/api/dashboard/agent-profile/route.ts
++++ b/src/app/api/dashboard/agent-profile/route.ts
+@@ -4,9 +4,10 @@ import {
+   getAgentProfile,
+   saveAgentProfileFields,
+ } from "@/lib/agent-profile";
++import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
+ import { getSession } from "@/lib/auth";
+ 
+-export async function GET() {
++export async function GET(request: Request) {
+   const session = await getSession();
+   if (!session) {
+     return NextResponse.json({ error: "Sign in required" }, { status: 401 });
+@@ -14,9 +15,15 @@ export async function GET() {
+   if (session.role !== "agent" && session.role !== "admin") {
+     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
+   }
+-  const profile = await getAgentProfile(session.id, {
+-    name: session.name,
+-    email: session.email,
++
++  const resolved = await resolveActingAgentUser(session, request);
++  if (!resolved.ok) {
++    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++  }
++
++  const profile = await getAgentProfile(resolved.user.id, {
++    name: resolved.user.name,
++    email: resolved.user.email,
+   });
+   return NextResponse.json({ profile });
+ }
+@@ -29,6 +36,12 @@ export async function PATCH(request: Request) {
+   if (session.role !== "agent" && session.role !== "admin") {
+     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
+   }
++
++  const resolved = await resolveActingAgentUser(session, request);
++  if (!resolved.ok) {
++    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++  }
++
+   let body: unknown;
+   try {
+     body = await request.json();
+@@ -40,9 +53,13 @@ export async function PATCH(request: Request) {
+     const message = parsed.error.issues[0]?.message ?? "Invalid profile data";
+     return NextResponse.json({ error: message }, { status: 400 });
+   }
+-  const profile = await saveAgentProfileFields(session.id, {
+-    name: session.name,
+-    email: session.email,
+-  }, parsed.data);
++  const profile = await saveAgentProfileFields(
++    resolved.user.id,
++    {
++      name: resolved.user.name,
++      email: resolved.user.email,
++    },
++    parsed.data,
++  );
+   return NextResponse.json({ profile });
+ }
+diff --git a/src/app/api/dashboard/list-property/media/client-upload/route.ts b/src/app/api/dashboard/list-property/media/client-upload/route.ts
+index 0d56538..70ce9d0 100644
+--- a/src/app/api/dashboard/list-property/media/client-upload/route.ts
++++ b/src/app/api/dashboard/list-property/media/client-upload/route.ts
+@@ -1,5 +1,6 @@
+ import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+ import { NextResponse } from "next/server";
++import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
+ import { getSession } from "@/lib/auth";
+ import { BLOB_PREFIX } from "@/lib/listing-media-constants";
+ 
+@@ -30,6 +31,15 @@ export async function POST(request: Request): Promise<NextResponse> {
+     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+   }
+ 
++  let storageUserId = session.id;
++  if (session.role === "agent" || session.role === "admin") {
++    const resolved = await resolveActingAgentUser(session, request);
++    if (!resolved.ok) {
++      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++    }
++    storageUserId = resolved.user.id;
++  }
++
+   let body: HandleUploadBody;
+   try {
+     body = (await request.json()) as HandleUploadBody;
+@@ -37,7 +47,7 @@ export async function POST(request: Request): Promise<NextResponse> {
+     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+   }
+ 
+-  const prefix = `${BLOB_PREFIX}/${session.id}/`;
++  const prefix = `${BLOB_PREFIX}/${storageUserId}/`;
+ 
+   try {
+     const jsonResponse = await handleUpload({
+diff --git a/src/app/api/dashboard/list-property/media/route.ts b/src/app/api/dashboard/list-property/media/route.ts
+index c6ade54..c0429e9 100644
+--- a/src/app/api/dashboard/list-property/media/route.ts
++++ b/src/app/api/dashboard/list-property/media/route.ts
+@@ -1,5 +1,6 @@
+ import { nanoid } from "nanoid";
+ import { NextResponse } from "next/server";
++import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
+ import { getSession } from "@/lib/auth";
+ import {
+   LISTING_MEDIA_MAX_IMAGE_BYTES,
+@@ -21,6 +22,15 @@ export async function POST(request: Request) {
+     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+   }
+ 
++  let storageUserId = session.id;
++  if (session.role === "agent" || session.role === "admin") {
++    const resolved = await resolveActingAgentUser(session, request);
++    if (!resolved.ok) {
++      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
++    }
++    storageUserId = resolved.user.id;
++  }
++
+   try {
+     const form = await request.formData();
+     const file = form.get("file");
+@@ -53,7 +63,7 @@ export async function POST(request: Request) {
+ 
+     const bytes = Buffer.from(await file.arrayBuffer());
+     const safeName = sanitizeListingFileName(file.name || "upload");
+-    const storageKey = `${session.id}/${nanoid(10)}-${safeName}`;
++    const storageKey = `${storageUserId}/${nanoid(10)}-${safeName}`;
+     const saved = await writeListingMediaFile(storageKey, bytes, mime);
+ 
+     return NextResponse.json({
+diff --git a/src/app/api/properties/route.ts b/src/app/api/properties/route.ts
+index 0374c33..91d255c 100644
+--- a/src/app/api/properties/route.ts
++++ b/src/app/api/properties/route.ts
+@@ -1,6 +1,8 @@
+ import { NextResponse } from "next/server";
+ import { z } from "zod";
+ import { nanoid } from "nanoid";
++import { readActingAgentUserIdFromRequest } from "@/lib/agent-desk-acting-user";
++import { getPlatformUserById } from "@/lib/admin-platform-users";
+ import { getSession, requireRole } from "@/lib/auth";
+ import { getAllProperties } from "@/lib/catalog";
+ import { isPublicListing } from "@/lib/listing-access";
+@@ -74,6 +76,7 @@ const createSchema = z.object({
+     )
+     .optional(),
+   cardPreviewVideoUrl: z.string().nullable().optional(),
++  createdByUserId: z.string().min(1).optional(),
+ });
+ 
+ export async function POST(request: Request) {
+@@ -89,6 +92,27 @@ export async function POST(request: Request) {
+   }
+ 
+   const data = parsed.data;
++
++  let listingOwnerId = session.id;
++  let listingSellerType: Property["sellerType"] =
++    session.role === "agent" ? "agent" : "owner";
++
++  if (session.role === "admin") {
++    const targetId =
++      data.createdByUserId?.trim() || readActingAgentUserIdFromRequest(request)?.trim() || null;
++    if (targetId) {
++      const agentUser = await getPlatformUserById(targetId);
++      if (!agentUser || agentUser.role !== "agent") {
++        return NextResponse.json({ error: "Agent account not found" }, { status: 404 });
++      }
++      listingOwnerId = agentUser.id;
++      listingSellerType = "agent";
++    }
++  } else if (session.role === "agent") {
++    listingOwnerId = session.id;
++    listingSellerType = "agent";
++  }
++
+   const countryRow = getCountryByCode(data.countryCode);
+   if (!countryRow) {
+     return NextResponse.json({ error: "Invalid country" }, { status: 400 });
+@@ -104,7 +128,7 @@ export async function POST(request: Request) {
+     propertyType: data.propertyType,
+     status: "pending",
+     verification: "unverified",
+-    sellerType: session.role === "agent" ? "agent" : "owner",
++    sellerType: listingSellerType,
+     price: data.price,
+     currency: data.currency,
+     pricePeriod: data.pricePeriod,
+@@ -131,8 +155,8 @@ export async function POST(request: Request) {
+       lat: 0,
+       lng: 0,
+     },
+-    createdByUserId: session.id,
+-    ownerId: session.role === "owner" ? session.id : undefined,
++    createdByUserId: listingOwnerId,
++    ownerId: session.role === "owner" && listingOwnerId === session.id ? session.id : undefined,
+     agentId: undefined,
+     agencyId: session.agencyId,
+     publishedAt: now,
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/favorites/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/favorites/page.tsx
+new file mode 100644
+index 0000000..2b8e6a5
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/favorites/page.tsx
+@@ -0,0 +1,64 @@
++import type { Metadata } from "next";
++import Link from "next/link";
++import { EmptyState } from "@/components/shared/states";
++import { properties } from "@/data/properties";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++import { getFavorites } from "@/lib/store";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const agent = await requireAgentForEditSlug((await params).agentSlug);
++  return { title: `${agent.name} — favorites` };
++}
++
++export default async function AdminEditAgentFavoritesPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++  const ids = await getFavorites(agent.id);
++  const items = properties.filter((p) => ids.includes(p.id));
++
++  if (!items.length) {
++    return (
++      <div>
++        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++          Favorites · {agent.name}
++        </h1>
++        <div className="mt-6">
++          <EmptyState
++            title="No saved homes"
++            description={`${agent.name} has not saved any listings to their account yet.`}
++            actionHref="/search"
++            actionLabel="Browse listings"
++          />
++        </div>
++      </div>
++    );
++  }
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++        Favorites · {agent.name}
++      </h1>
++      <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
++        {items.map((p) => (
++          <li key={p.id} className="seaps-card rounded-[var(--radius-md)] p-4">
++            <Link href={`/property/${p.slug}`} className="font-semibold hover:underline">
++              {p.title}
++            </Link>
++            <p className="mt-1 text-sm text-[var(--color-muted)]">
++              {p.location.city} · {p.price.toLocaleString()} {p.currency}
++            </p>
++          </li>
++        ))}
++      </ul>
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/inquiries/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/inquiries/page.tsx
+new file mode 100644
+index 0000000..6dc635b
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/inquiries/page.tsx
+@@ -0,0 +1,62 @@
++import type { Metadata } from "next";
++import { EmptyState } from "@/components/shared/states";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++import { getRuntimeListings, getInquiries } from "@/lib/store";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const agent = await requireAgentForEditSlug((await params).agentSlug);
++  return { title: `${agent.name} — inquiries` };
++}
++
++export default async function AdminEditAgentInquiriesPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++  const [inquiries, listings] = await Promise.all([getInquiries(), getRuntimeListings()]);
++  const agentListingIds = new Set(
++    listings.filter((l) => l.createdByUserId === agent.id).map((l) => l.id),
++  );
++  const agentInquiries = inquiries.filter((i) => agentListingIds.has(i.propertyId));
++
++  if (!agentInquiries.length) {
++    return (
++      <EmptyState
++        title="No inquiries yet"
++        description={`When someone inquires about ${agent.name}'s listings, they appear here.`}
++        actionHref="/search"
++        actionLabel="Browse listings"
++      />
++    );
++  }
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++        Inquiries · {agent.name}
++      </h1>
++      <ul className="mt-5 space-y-3">
++        {agentInquiries.map((inquiry) => (
++          <li key={inquiry.id} className="rounded-[var(--radius-md)] seaps-card p-4">
++            <div className="flex flex-wrap items-center justify-between gap-2">
++              <p className="font-semibold">{inquiry.propertyTitle}</p>
++              <span className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
++                {inquiry.status}
++              </span>
++            </div>
++            <p className="mt-1 text-sm text-[var(--color-muted)]">
++              {inquiry.name} · {inquiry.contact}
++            </p>
++            <p className="mt-2 text-sm">{inquiry.message}</p>
++          </li>
++        ))}
++      </ul>
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/layout.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/layout.tsx
+new file mode 100644
+index 0000000..d964a63
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/layout.tsx
+@@ -0,0 +1,31 @@
++import { notFound, redirect } from "next/navigation";
++import { AdminAgentEditDeskShell } from "@/components/admin/admin-agent-edit-desk-shell";
++import { findAgentByDeskSlug } from "@/lib/agent-desk-acting-user";
++import { getSession } from "@/lib/auth";
++import { adminDeskPath } from "@/lib/dashboard-admin-paths";
++
++export default async function AdminEditAgentLayout({
++  params,
++  children,
++}: {
++  params: Promise<{ agentSlug: string }>;
++  children: React.ReactNode;
++}) {
++  const session = await getSession();
++  if (!session) redirect("/auth/login");
++  if (session.role !== "admin") redirect(adminDeskPath());
++
++  const { agentSlug } = await params;
++  const agent = await findAgentByDeskSlug(agentSlug);
++  if (!agent) notFound();
++
++  return (
++    <AdminAgentEditDeskShell
++      agentSlug={agentSlug}
++      agentLabel={agent.name}
++      adminName={session.name}
++    >
++      {children}
++    </AdminAgentEditDeskShell>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/[[...step]]/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/[[...step]]/page.tsx
+new file mode 100644
+index 0000000..b74c12f
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/[[...step]]/page.tsx
+@@ -0,0 +1,25 @@
++import { redirect } from "next/navigation";
++import { ListPropertyWizard } from "@/components/dashboard/list-property-wizard";
++import { adminEditAgentListPropertyStepPath } from "@/lib/admin-edit-agent-paths";
++import { parseListPropertyStepSlug } from "@/lib/list-property-steps";
++
++export default async function AdminEditAgentListPropertyStepPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string; step?: string[] }>;
++}) {
++  const { agentSlug, step: segments } = await params;
++  const slug = segments?.[0];
++  const entry = adminEditAgentListPropertyStepPath(agentSlug, 1);
++
++  if (!slug) {
++    redirect(entry);
++  }
++
++  const stepIndex = parseListPropertyStepSlug(slug);
++  if (stepIndex == null) {
++    redirect(entry);
++  }
++
++  return <ListPropertyWizard stepIndex={stepIndex} />;
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/layout.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/layout.tsx
+new file mode 100644
+index 0000000..95b457f
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/list-property/layout.tsx
+@@ -0,0 +1,24 @@
++import {
++  adminEditAgentListPropertyDesk,
++  ListPropertyDeskProvider,
++} from "@/components/dashboard/list-property-desk-provider";
++import { ListPropertyWizardProvider } from "@/components/dashboard/list-property-wizard";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++
++export default async function AdminEditAgentListPropertyLayout({
++  params,
++  children,
++}: {
++  params: Promise<{ agentSlug: string }>;
++  children: React.ReactNode;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++  const desk = adminEditAgentListPropertyDesk(agentSlug, agent.id);
++
++  return (
++    <ListPropertyDeskProvider desk={desk}>
++      <ListPropertyWizardProvider>{children}</ListPropertyWizardProvider>
++    </ListPropertyDeskProvider>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/listings/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/listings/page.tsx
+new file mode 100644
+index 0000000..f3a1325
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/listings/page.tsx
+@@ -0,0 +1,78 @@
++import type { Metadata } from "next";
++import Link from "next/link";
++import { EmptyState } from "@/components/shared/states";
++import { adminEditAgentListPropertyStepPath, adminEditAgentPath } from "@/lib/admin-edit-agent-paths";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++import { getRuntimeListings } from "@/lib/store";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const agent = await requireAgentForEditSlug((await params).agentSlug);
++  return { title: `${agent.name} — listings` };
++}
++
++export default async function AdminEditAgentListingsPage({
++  params,
++  searchParams,
++}: {
++  params: Promise<{ agentSlug: string }>;
++  searchParams: Promise<{ submitted?: string }>;
++}) {
++  const { agentSlug } = await params;
++  const { submitted } = await searchParams;
++  const agent = await requireAgentForEditSlug(agentSlug);
++  const listings = (await getRuntimeListings()).filter((l) => l.createdByUserId === agent.id);
++
++  const wizardEntry = adminEditAgentListPropertyStepPath(agentSlug, 1);
++
++  if (!listings.length) {
++    return (
++      <EmptyState
++        title="No runtime listings yet"
++        description={`Create a listing on behalf of ${agent.name}. Submissions appear here after save.`}
++        actionHref={wizardEntry}
++        actionLabel="Create listing"
++      />
++    );
++  }
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++        Listings · {agent.name}
++      </h1>
++      {submitted === "pending" ? (
++        <p className="mt-3 rounded-[var(--radius-md)] bg-[var(--color-mist)] px-4 py-3 text-sm text-[var(--color-text)]">
++          Listing sent to <strong>moderation</strong> under this agent account.
++        </p>
++      ) : null}
++      <ul className="mt-5 space-y-3">
++        {listings.map((listing) => (
++          <li key={listing.id} className="rounded-[var(--radius-md)] seaps-card p-4">
++            <div className="flex flex-wrap items-center justify-between gap-2">
++              <div>
++                <Link href={`/property/${listing.slug}`} className="font-semibold">
++                  {listing.title}
++                </Link>
++                <p className="text-sm text-[var(--color-muted)]">
++                  Status: {listing.status} · {listing.location.city}
++                </p>
++              </div>
++              <Link href={wizardEntry} className="text-sm text-[var(--color-accent)]">
++                Create another
++              </Link>
++            </div>
++          </li>
++        ))}
++      </ul>
++      <p className="mt-4 text-sm text-[var(--color-muted)]">
++        <Link href={adminEditAgentPath(agentSlug, "overview")} className="text-[var(--color-accent-soft)] underline">
++          Back to overview
++        </Link>
++      </p>
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/overview/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/overview/page.tsx
+new file mode 100644
+index 0000000..d49f947
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/overview/page.tsx
+@@ -0,0 +1,95 @@
++import type { Metadata } from "next";
++import Link from "next/link";
++import { AgentOverviewPanel } from "@/components/dashboard/agent-overview-panel";
++import { adminEditAgentPath } from "@/lib/admin-edit-agent-paths";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++import { getAgentProfile } from "@/lib/agent-profile";
++import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
++import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const { agentSlug } = await params;
++  const agent = await findAgentByDeskSlugSafe(agentSlug);
++  return { title: agent ? `${agent.name} — agent desk` : "Agent desk" };
++}
++
++async function findAgentByDeskSlugSafe(slug: string) {
++  try {
++    return await requireAgentForEditSlug(slug);
++  } catch {
++    return null;
++  }
++}
++
++export default async function AdminEditAgentOverviewPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++
++  const [favorites, inquiries, listings] = await Promise.all([
++    getFavorites(agent.id),
++    getInquiries(),
++    getRuntimeListings(),
++  ]);
++
++  const profile = await getAgentProfile(agent.id, {
++    name: agent.name,
++    email: agent.email,
++  });
++  const agentOverview = buildAgentOverviewBundle(agent.id, profile, inquiries, listings);
++
++  const agentListings = listings.filter((l) => l.createdByUserId === agent.id);
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
++        {agent.name}
++      </h1>
++      <p className="mt-2 text-[var(--color-muted)]">
++        Agent desk · {agent.email}. You are editing this account as admin — changes apply to their
++        profile, listings, and desk data.
++      </p>
++
++      <AgentOverviewPanel bundle={agentOverview} />
++
++      <div className="mt-8">
++        <h2 className="font-[family-name:var(--font-display)] text-xl text-[var(--color-accent-soft)]">
++          Quick counts
++        </h2>
++        <div className="mt-4 grid gap-4 sm:grid-cols-3">
++          {[
++            {
++              label: "Favorites",
++              value: favorites.length,
++              href: adminEditAgentPath(agentSlug, "favorites"),
++            },
++            {
++              label: "Inquiries",
++              value: inquiries.filter((i) =>
++                agentListings.some((l) => l.id === i.propertyId),
++              ).length,
++              href: adminEditAgentPath(agentSlug, "inquiries"),
++            },
++            { label: "Listings", value: agentListings.length, href: adminEditAgentPath(agentSlug, "listings") },
++          ].map((card) => (
++            <Link
++              key={card.label}
++              href={card.href}
++              className="rounded-[var(--radius-lg)] seaps-card p-5 transition hover:border-[rgba(212,175,55,0.55)]"
++            >
++              <p className="text-sm text-[var(--color-muted)]">{card.label}</p>
++              <p className="mt-2 font-[family-name:var(--font-display)] text-3xl">{card.value}</p>
++            </Link>
++          ))}
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/page.tsx
+new file mode 100644
+index 0000000..d25f72c
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/page.tsx
+@@ -0,0 +1,11 @@
++import { redirect } from "next/navigation";
++import { adminEditAgentPath } from "@/lib/admin-edit-agent-paths";
++
++export default async function AdminEditAgentIndexPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  redirect(adminEditAgentPath(agentSlug, "overview"));
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/profile/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/profile/page.tsx
+new file mode 100644
+index 0000000..8c7a681
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/profile/page.tsx
+@@ -0,0 +1,43 @@
++import type { Metadata } from "next";
++import { AgentProfilePanel } from "@/components/dashboard/agent-profile-panel";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++import { getAgentProfile } from "@/lib/agent-profile";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const agent = await requireAgentForEditSlug((await params).agentSlug);
++  return { title: `${agent.name} — profile` };
++}
++
++export default async function AdminEditAgentProfilePage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++  const profile = await getAgentProfile(agent.id, {
++    name: agent.name,
++    email: agent.email,
++  });
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++        Agent profile
++      </h1>
++      <p className="mt-2 max-w-2xl text-sm text-[var(--color-muted)]">
++        Edit {agent.name}&apos;s desk profile, documents, and contact details. The agent can still
++        sign in with their own password; you are not switching sessions.
++      </p>
++      <AgentProfilePanel
++        initialProfile={profile}
++        sessionRole="admin"
++        actingUserId={agent.id}
++      />
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/saved-searches/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/saved-searches/page.tsx
+new file mode 100644
+index 0000000..fe8155f
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/saved-searches/page.tsx
+@@ -0,0 +1,41 @@
++import type { Metadata } from "next";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const agent = await requireAgentForEditSlug((await params).agentSlug);
++  return { title: `${agent.name} — saved searches` };
++}
++
++export default async function AdminEditAgentSavedSearchesPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++        Saved searches · {agent.name}
++      </h1>
++      <p className="mt-2 text-sm text-[var(--color-muted)]">
++        Saved searches for agent accounts are stored in the browser session when the agent uses
++        their desk. Open{" "}
++        <strong className="text-[var(--color-text)]">Agent Desk</strong> while signed in as{" "}
++        {agent.email} to manage them, or extend server-side saved-search storage in a follow-up.
++      </p>
++      <p className="mt-4 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-4 text-sm text-[var(--color-muted)]">
++        As admin you can still run searches on their behalf from the public{" "}
++        <a href="/search" className="text-[var(--color-accent-soft)] underline">
++          search page
++        </a>{" "}
++        and share links with the agent.
++      </p>
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/edit/agent/[agentSlug]/stats/page.tsx b/src/app/dashboard/admin/edit/agent/[agentSlug]/stats/page.tsx
+new file mode 100644
+index 0000000..27e6ac2
+--- /dev/null
++++ b/src/app/dashboard/admin/edit/agent/[agentSlug]/stats/page.tsx
+@@ -0,0 +1,52 @@
++import type { Metadata } from "next";
++import { properties } from "@/data/properties";
++import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
++import { getRuntimeListings, getInquiries } from "@/lib/store";
++
++export async function generateMetadata({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}): Promise<Metadata> {
++  const agent = await requireAgentForEditSlug((await params).agentSlug);
++  return { title: `${agent.name} — stats` };
++}
++
++export default async function AdminEditAgentStatsPage({
++  params,
++}: {
++  params: Promise<{ agentSlug: string }>;
++}) {
++  const { agentSlug } = await params;
++  const agent = await requireAgentForEditSlug(agentSlug);
++  const [runtime, inquiries] = await Promise.all([getRuntimeListings(), getInquiries()]);
++  const agentListings = runtime.filter((l) => l.createdByUserId === agent.id);
++  const agentListingIds = new Set(agentListings.map((l) => l.id));
++  const agentInquiries = inquiries.filter((i) => agentListingIds.has(i.propertyId));
++  const views = properties.reduce((sum, p) => sum + (p.views ?? 0), 0);
++
++  return (
++    <div>
++      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++        Performance · {agent.name}
++      </h1>
++      <p className="mt-2 text-sm text-[var(--color-muted)]">
++        Desk metrics for this agent account (catalog views are site-wide reference).
++      </p>
++      <div className="mt-6 grid gap-4 sm:grid-cols-3">
++        <div className="rounded-[var(--radius-lg)] seaps-card p-5">
++          <p className="text-sm text-[var(--color-muted)]">Catalog views (site)</p>
++          <p className="mt-2 text-3xl font-semibold">{views}</p>
++        </div>
++        <div className="rounded-[var(--radius-lg)] seaps-card p-5">
++          <p className="text-sm text-[var(--color-muted)]">Runtime listings</p>
++          <p className="mt-2 text-3xl font-semibold">{agentListings.length}</p>
++        </div>
++        <div className="rounded-[var(--radius-lg)] seaps-card p-5">
++          <p className="text-sm text-[var(--color-muted)]">Inquiries on their listings</p>
++          <p className="mt-2 text-3xl font-semibold">{agentInquiries.length}</p>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/app/dashboard/admin/staff/[staffId]/page.tsx b/src/app/dashboard/admin/staff/[staffId]/page.tsx
+index 1357d41..4d81f3a 100644
+--- a/src/app/dashboard/admin/staff/[staffId]/page.tsx
++++ b/src/app/dashboard/admin/staff/[staffId]/page.tsx
+@@ -6,6 +6,7 @@ import { AdminTaskPanel } from "@/components/admin/admin-task-panel";
+ import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
+ import { buildStaffRoster, getStaffPlatformUser } from "@/lib/admin-staff";
+ import { getAdminTasks } from "@/lib/admin-store";
++import { adminEditAgentPath, agentDeskEditSlug } from "@/lib/admin-edit-agent-paths";
+ import { adminDeskPath } from "@/lib/dashboard-admin-paths";
+ 
+ export async function generateMetadata({
+@@ -44,13 +45,21 @@ export default async function AdminStaffDetailPage({
+       <Link href={adminDeskPath("staff")} className="text-sm text-[var(--color-accent-soft)] hover:underline">
+         ← All staff
+       </Link>
+-      <div>
+-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+-          {agent.name}
+-        </h1>
+-        <p className="mt-1 text-sm text-[var(--color-muted)]">
+-          {agent.email} · agency {row.agencyLabel}
+-        </p>
++      <div className="flex flex-wrap items-start justify-between gap-4">
++        <div>
++          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
++            {agent.name}
++          </h1>
++          <p className="mt-1 text-sm text-[var(--color-muted)]">
++            {agent.email} · agency {row.agencyLabel}
++          </p>
++        </div>
++        <Link
++          href={adminEditAgentPath(agentDeskEditSlug(agent))}
++          className="rounded-full bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-[#0B1C33] hover:opacity-90"
++        >
++          Agent Desk
++        </Link>
+       </div>
+ 
+       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+@@ -77,11 +86,14 @@ export default async function AdminStaffDetailPage({
+             ))}
+           </ul>
+           <p className="mt-2 text-xs">
+-            Agent desk profile:{" "}
+-            <Link href="/dashboard/agent/profile" className="text-[var(--color-accent-soft)] underline">
+-              /dashboard/agent/profile
++            Open{" "}
++            <Link
++              href={adminEditAgentPath(agentDeskEditSlug(agent), "profile")}
++              className="text-[var(--color-accent-soft)] underline"
++            >
++              Agent Desk → Profile
+             </Link>{" "}
+-            (when signed in as {agent.email})
++            to fix gaps without signing in as the agent.
+           </p>
+         </div>
+       ) : null}
+diff --git a/src/app/dashboard/admin/staff/page.tsx b/src/app/dashboard/admin/staff/page.tsx
+index 857985d..9acfc81 100644
+--- a/src/app/dashboard/admin/staff/page.tsx
++++ b/src/app/dashboard/admin/staff/page.tsx
+@@ -3,6 +3,7 @@ import Link from "next/link";
+ import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
+ import { buildStaffRoster } from "@/lib/admin-staff";
+ import { getAdminTasks } from "@/lib/admin-store";
++import { adminEditAgentPath, agentDeskEditSlug } from "@/lib/admin-edit-agent-paths";
+ import { adminDeskPath } from "@/lib/dashboard-admin-paths";
+ 
+ export const metadata: Metadata = { title: "Staff & performance" };
+@@ -74,12 +75,20 @@ export default async function AdminStaffPage() {
+                 <td className="p-3 text-right">{row.leadCount}</td>
+                 <td className="p-3 text-right">{row.openTasks}</td>
+                 <td className="p-3 text-right">
+-                  <Link
+-                    href={adminDeskPath("staff", row.staffId)}
+-                    className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
+-                  >
+-                    Open
+-                  </Link>
++                  <div className="flex flex-wrap justify-end gap-2">
++                    <Link
++                      href={adminEditAgentPath(agentDeskEditSlug({ id: row.staffId, name: row.name, email: row.email }))}
++                      className="rounded-full border border-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[var(--color-accent-soft)]"
++                    >
++                      Agent Desk
++                    </Link>
++                    <Link
++                      href={adminDeskPath("staff", row.staffId)}
++                      className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
++                    >
++                      Open
++                    </Link>
++                  </div>
+                 </td>
+               </tr>
+             ))}
+diff --git a/src/components/admin/admin-agent-edit-desk-shell.tsx b/src/components/admin/admin-agent-edit-desk-shell.tsx
+new file mode 100644
+index 0000000..156e8ae
+--- /dev/null
++++ b/src/components/admin/admin-agent-edit-desk-shell.tsx
+@@ -0,0 +1,126 @@
++"use client";
++
++import Link from "next/link";
++import { usePathname, useRouter } from "next/navigation";
++import { Button } from "@/components/ui/button";
++import { adminDeskPath } from "@/lib/dashboard-admin-paths";
++import {
++  adminEditAgentListPropertyStepPath,
++  adminEditAgentPath,
++} from "@/lib/admin-edit-agent-paths";
++import { cn } from "@/lib/utils";
++
++const NAV_SEGMENTS: { segment: string; label: string }[] = [
++  { segment: "overview", label: "Overview" },
++  { segment: "listings", label: "Listings" },
++  { segment: "inquiries", label: "Inquiries" },
++  { segment: "profile", label: "Profile" },
++  { segment: "stats", label: "Stats" },
++  { segment: "favorites", label: "Favorites" },
++  { segment: "saved-searches", label: "Saved searches" },
++];
++
++export function AdminAgentEditDeskShell({
++  agentSlug,
++  agentLabel,
++  adminName,
++  children,
++}: {
++  agentSlug: string;
++  agentLabel: string;
++  adminName: string;
++  children: React.ReactNode;
++}) {
++  const pathname = usePathname();
++  const router = useRouter();
++  const listPropertyBase = adminEditAgentPath(agentSlug, "list-property");
++
++  async function signOut() {
++    await fetch("/api/auth/logout", { method: "POST" });
++    router.push("/");
++    router.refresh();
++  }
++
++  function navHref(segment: string): string {
++    return adminEditAgentPath(agentSlug, segment);
++  }
++
++  function isActive(segment: string): boolean {
++    const href = navHref(segment);
++    if (pathname === href) return true;
++    if (segment === "overview" && pathname === adminEditAgentPath(agentSlug)) return true;
++    return pathname.startsWith(`${href}/`);
++  }
++
++  const onListProperty = pathname.startsWith(`${listPropertyBase}/`);
++
++  return (
++    <div className="notranslate min-h-[70vh]">
++      <div className="mb-6 space-y-3 border-b border-[var(--color-border)] pb-4">
++        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-accent-soft)]">
++          Admin · Agent desk (edit mode)
++        </p>
++        <p className="text-sm text-[var(--color-muted)]">
++          Signed in as <span className="font-semibold text-[var(--color-text)]">{adminName}</span>{" "}
++          (admin) — editing{" "}
++          <span className="font-semibold text-[var(--color-text)]">{agentLabel}</span>
++        </p>
++        <div className="flex flex-wrap gap-2">
++          <Link
++            href={adminDeskPath("staff")}
++            className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm hover:border-[var(--color-accent)]"
++          >
++            ← Employees
++          </Link>
++          <Link
++            href={adminDeskPath()}
++            className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm hover:border-[var(--color-accent)]"
++          >
++            Executive desk
++          </Link>
++        </div>
++      </div>
++
++      <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
++        <aside className="seaps-card h-fit rounded-[var(--radius-lg)] p-3">
++          <nav aria-label="Agent desk navigation">
++            <ul className="space-y-1">
++              {NAV_SEGMENTS.map(({ segment, label }) => (
++                <li key={segment}>
++                  <Link
++                    href={navHref(segment)}
++                    className={cn(
++                      "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition",
++                      isActive(segment)
++                        ? "bg-[var(--color-primary)] text-white"
++                        : "hover:bg-[var(--color-mist)]",
++                    )}
++                  >
++                    {label}
++                  </Link>
++                </li>
++              ))}
++              <li>
++                <Link
++                  href={adminEditAgentListPropertyStepPath(agentSlug, 1)}
++                  className={cn(
++                    "block rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium transition",
++                    onListProperty
++                      ? "bg-[var(--color-primary)] text-white"
++                      : "hover:bg-[var(--color-mist)]",
++                  )}
++                >
++                  Create listing
++                </Link>
++              </li>
++            </ul>
++          </nav>
++          <Button type="button" variant="outline" className="mt-4 w-full" onClick={signOut}>
++            Sign Out
++          </Button>
++        </aside>
++        <div className="min-w-0">{children}</div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/components/dashboard/agent-profile-panel.tsx b/src/components/dashboard/agent-profile-panel.tsx
+index 596fb2f..c46d9d3 100644
+--- a/src/components/dashboard/agent-profile-panel.tsx
++++ b/src/components/dashboard/agent-profile-panel.tsx
+@@ -13,6 +13,7 @@ import { AgentAvatar } from "@/components/agency/agent-avatar";
+ import { agents } from "@/data/agencies";
+ import { Button } from "@/components/ui/button";
+ import { Input, Label } from "@/components/ui/input";
++import { agentProfileApiPath, withActingAgentUser } from "@/lib/agent-desk-api-client";
+ import { cn } from "@/lib/utils";
+ 
+ const UPLOAD_SLOTS: {
+@@ -60,9 +61,15 @@ function docsForKind(documents: AgentDocumentRef[], kind: AgentDocumentKind) {
+ type AgentProfilePanelProps = {
+   initialProfile: AgentProfileRecord;
+   sessionRole: string;
++  /** Admin editing another agent's desk — API calls target this user id. */
++  actingUserId?: string;
+ };
+ 
+-export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfilePanelProps) {
++export function AgentProfilePanel({
++  initialProfile,
++  sessionRole,
++  actingUserId,
++}: AgentProfilePanelProps) {
+   const [profile, setProfile] = useState(initialProfile);
+   const linkedAgent = agents.find((a) => a.platformUserId === initialProfile.userId);
+   const hasPortrait = agentHasRequiredProfilePhoto(profile);
+@@ -82,11 +89,14 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
+     setInfoMessage(null);
+     setInfoError(null);
+     try {
+-      const res = await fetch("/api/dashboard/agent-profile", {
+-        method: "PATCH",
+-        headers: { "Content-Type": "application/json" },
+-        body: JSON.stringify({ fullName, email, phone, residence }),
+-      });
++      const res = await fetch(
++        agentProfileApiPath("/api/dashboard/agent-profile", actingUserId),
++        withActingAgentUser(actingUserId, {
++          method: "PATCH",
++          headers: { "Content-Type": "application/json" },
++          body: JSON.stringify({ fullName, email, phone, residence }),
++        }),
++      );
+       const data = (await res.json()) as { profile?: AgentProfileRecord; error?: string };
+       if (!res.ok) {
+         setInfoError(data.error ?? "Could not save profile");
+@@ -99,7 +109,7 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
+     } finally {
+       setSavingInfo(false);
+     }
+-  }, [email, fullName, phone, residence]);
++  }, [actingUserId, email, fullName, phone, residence]);
+ 
+   async function uploadDocument(kind: AgentDocumentKind, file: File | null) {
+     if (!file) return;
+@@ -109,10 +119,13 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
+       const form = new FormData();
+       form.set("kind", kind);
+       form.set("file", file);
+-      const res = await fetch("/api/dashboard/agent-profile/documents", {
+-        method: "POST",
+-        body: form,
+-      });
++      const res = await fetch(
++        agentProfileApiPath("/api/dashboard/agent-profile/documents", actingUserId),
++        withActingAgentUser(actingUserId, {
++          method: "POST",
++          body: form,
++        }),
++      );
+       const data = (await res.json()) as { profile?: AgentProfileRecord; error?: string };
+       if (!res.ok) {
+         setDocError(data.error ?? "Upload failed");
+@@ -130,8 +143,11 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
+     setDocError(null);
+     try {
+       const res = await fetch(
+-        `/api/dashboard/agent-profile/documents?id=${encodeURIComponent(documentId)}`,
+-        { method: "DELETE" },
++        agentProfileApiPath(
++          `/api/dashboard/agent-profile/documents?id=${encodeURIComponent(documentId)}`,
++          actingUserId,
++        ),
++        withActingAgentUser(actingUserId, { method: "DELETE" }),
+       );
+       const data = (await res.json()) as { profile?: AgentProfileRecord; error?: string };
+       if (!res.ok) {
+@@ -312,7 +328,10 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
+                         </span>
+                         <div className="flex shrink-0 gap-2">
+                           <a
+-                            href={`/api/dashboard/agent-profile/documents/${doc.id}`}
++                            href={agentProfileApiPath(
++                              `/api/dashboard/agent-profile/documents/${doc.id}`,
++                              actingUserId,
++                            )}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="text-sm font-medium text-[var(--color-accent-soft)] underline-offset-2 hover:underline"
+diff --git a/src/components/dashboard/dashboard-shell.tsx b/src/components/dashboard/dashboard-shell.tsx
+index 965c6f4..d9fca36 100644
+--- a/src/components/dashboard/dashboard-shell.tsx
++++ b/src/components/dashboard/dashboard-shell.tsx
+@@ -15,8 +15,13 @@ export function DashboardShell({
+   children: React.ReactNode;
+ }) {
+   const pathname = usePathname();
++  const isAdminEditAgentDesk = pathname.startsWith("/dashboard/admin/edit/agent/");
+   const isAdminDesk = pathname.startsWith("/dashboard/admin");
+ 
++  if (isAdminEditAgentDesk) {
++    return <>{children}</>;
++  }
++
+   if (isAdminDesk) {
+     return <AdminDeskShell userName={userName}>{children}</AdminDeskShell>;
+   }
+diff --git a/src/components/dashboard/list-property-desk-provider.tsx b/src/components/dashboard/list-property-desk-provider.tsx
+index 9ef69c8..4838b2f 100644
+--- a/src/components/dashboard/list-property-desk-provider.tsx
++++ b/src/components/dashboard/list-property-desk-provider.tsx
+@@ -1,12 +1,15 @@
+ "use client";
+ 
+ import { createContext, useContext, type ReactNode } from "react";
++import { adminEditAgentPath } from "@/lib/admin-edit-agent-paths";
+ import { ADMIN_DESK_BASE, adminDeskPath } from "@/lib/dashboard-admin-paths";
+ import { AGENT_DESK_BASE, agentDeskPath } from "@/lib/dashboard-agent-paths";
+ 
+ export type ListPropertyDeskConfig = {
+   base: string;
+   afterSubmitPath: string;
++  /** When an admin creates a listing on behalf of an agent account. */
++  actingUserId?: string;
+ };
+ 
+ const ListPropertyDeskContext = createContext<ListPropertyDeskConfig>({
+@@ -39,3 +42,15 @@ export const ADMIN_LIST_PROPERTY_DESK: ListPropertyDeskConfig = {
+   base: ADMIN_DESK_BASE,
+   afterSubmitPath: `${adminDeskPath("listings")}?submitted=pending`,
+ };
++
++export function adminEditAgentListPropertyDesk(
++  agentSlug: string,
++  actingUserId: string,
++): ListPropertyDeskConfig {
++  const base = adminEditAgentPath(agentSlug);
++  return {
++    base,
++    afterSubmitPath: `${adminEditAgentPath(agentSlug, "listings")}?submitted=pending`,
++    actingUserId,
++  };
++}
+diff --git a/src/components/dashboard/list-property-media-step.tsx b/src/components/dashboard/list-property-media-step.tsx
+index f331e97..5aa982a 100644
+--- a/src/components/dashboard/list-property-media-step.tsx
++++ b/src/components/dashboard/list-property-media-step.tsx
+@@ -9,15 +9,19 @@ import { BLOB_PREFIX } from "@/lib/listing-media-constants";
+ import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
+ import { listingMediaPublicUrl, sanitizeListingFileName } from "@/lib/listing-media-constants";
+ import type { ListingMediaItem } from "@/lib/list-property-media";
++import { withActingAgentUser } from "@/lib/agent-desk-api-client";
+ import { cn } from "@/lib/utils";
+ 
+-async function uploadViaServer(file: File): Promise<ListingMediaItem> {
++async function uploadViaServer(file: File, actingUserId?: string): Promise<ListingMediaItem> {
+   const body = new FormData();
+   body.set("file", file);
+-  const res = await fetch("/api/dashboard/list-property/media", {
+-    method: "POST",
+-    body,
+-  });
++  const res = await fetch(
++    "/api/dashboard/list-property/media",
++    withActingAgentUser(actingUserId, {
++      method: "POST",
++      body,
++    }),
++  );
+   const data = (await res.json().catch(() => ({}))) as {
+     error?: string;
+     item?: ListingMediaItem;
+@@ -29,7 +33,11 @@ async function uploadViaServer(file: File): Promise<ListingMediaItem> {
+   return data.item;
+ }
+ 
+-async function uploadViaBlobClient(file: File, userId: string): Promise<ListingMediaItem> {
++async function uploadViaBlobClient(
++  file: File,
++  userId: string,
++  actingUserId?: string,
++): Promise<ListingMediaItem> {
+   const mime = inferMimeType(file);
+   const kind = mediaKindFromMime(mime);
+   if (!kind) {
+@@ -39,9 +47,12 @@ async function uploadViaBlobClient(file: File, userId: string): Promise<ListingM
+   const storageKey = `${userId}/${nanoid(10)}-${safeName}`;
+   const pathname = `${BLOB_PREFIX}/${storageKey}`;
+ 
++  const uploadQuery = actingUserId
++    ? `?userId=${encodeURIComponent(actingUserId)}`
++    : "";
+   await upload(pathname, file, {
+     access: "private",
+-    handleUploadUrl: "/api/dashboard/list-property/media/client-upload",
++    handleUploadUrl: `/api/dashboard/list-property/media/client-upload${uploadQuery}`,
+     multipart: file.size > 4.5 * 1024 * 1024,
+     contentType: mime,
+   });
+@@ -56,13 +67,17 @@ async function uploadViaBlobClient(file: File, userId: string): Promise<ListingM
+   };
+ }
+ 
+-async function uploadOne(file: File, userId: string | null): Promise<ListingMediaItem> {
++async function uploadOne(
++  file: File,
++  userId: string | null,
++  actingUserId?: string,
++): Promise<ListingMediaItem> {
+   if (file.size <= 4.5 * 1024 * 1024) {
+     try {
+-      return await uploadViaServer(file);
++      return await uploadViaServer(file, actingUserId);
+     } catch {
+       if (userId) {
+-        return uploadViaBlobClient(file, userId);
++        return uploadViaBlobClient(file, userId, actingUserId);
+       }
+       throw new Error("Upload failed");
+     }
+@@ -70,7 +85,7 @@ async function uploadOne(file: File, userId: string | null): Promise<ListingMedi
+   if (!userId) {
+     throw new Error("Sign in required for large uploads.");
+   }
+-  return uploadViaBlobClient(file, userId);
++  return uploadViaBlobClient(file, userId, actingUserId);
+ }
+ 
+ const UPLOAD_CONCURRENCY = 4;
+@@ -101,10 +116,15 @@ export function ListPropertyMediaStep({
+   items,
+   onChange,
+   listingTitle,
++  uploadUserId: uploadUserIdOverride,
++  actingUserId,
+ }: {
+   items: ListingMediaItem[];
+   onChange: (next: ListingMediaItem[]) => void;
+   listingTitle: string;
++  /** Storage namespace for uploads (agent account when admin is editing). */
++  uploadUserId?: string | null;
++  actingUserId?: string;
+ }) {
+   const inputRef = useRef<HTMLInputElement>(null);
+   const [userId, setUserId] = useState<string | null>(null);
+@@ -114,6 +134,11 @@ export function ListPropertyMediaStep({
+   const [error, setError] = useState("");
+ 
+   useEffect(() => {
++    if (uploadUserIdOverride) {
++      setUserId(uploadUserIdOverride);
++      setSessionReady(true);
++      return;
++    }
+     fetch("/api/auth/session")
+       .then((r) => r.json())
+       .then((data: { user?: { id?: string } | null }) => {
+@@ -121,7 +146,7 @@ export function ListPropertyMediaStep({
+       })
+       .catch(() => setUserId(null))
+       .finally(() => setSessionReady(true));
+-  }, []);
++  }, [uploadUserIdOverride]);
+ 
+   async function handleFiles(fileList: FileList | null) {
+     if (!fileList?.length) return;
+@@ -142,7 +167,7 @@ export function ListPropertyMediaStep({
+     let completed = 0;
+     const uploaded = await mapWithConcurrency(files, UPLOAD_CONCURRENCY, async (file) => {
+       try {
+-        const item = await uploadOne(file, userId);
++        const item = await uploadOne(file, userId, actingUserId);
+         completed += 1;
+         setProgress(`Uploaded ${completed} / ${files.length}…`);
+         return { ok: true as const, item, file };
+diff --git a/src/components/dashboard/list-property-wizard.tsx b/src/components/dashboard/list-property-wizard.tsx
+index 005d11a..28bd82d 100644
+--- a/src/components/dashboard/list-property-wizard.tsx
++++ b/src/components/dashboard/list-property-wizard.tsx
+@@ -21,6 +21,7 @@ import { ListingCardPreview, listingPreviewFromMedia } from "@/components/proper
+ import { Button } from "@/components/ui/button";
+ import { Input, Label, Select, Textarea } from "@/components/ui/input";
+ import { useListPropertyDesk } from "@/components/dashboard/list-property-desk-provider";
++import { withActingAgentUser } from "@/lib/agent-desk-api-client";
+ import {
+   LIST_PROPERTY_STEP_COUNT,
+   LIST_PROPERTY_STEP_LABELS,
+@@ -140,10 +141,12 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
+     setError("");
+     const payloadForm = normalizeListPropertyFormForSubmit(form);
+     const media = listingMediaToPropertyPayload(mediaItems, payloadForm.title || "Listing");
+-    const res = await fetch("/api/properties", {
+-      method: "POST",
+-      headers: { "Content-Type": "application/json" },
+-      body: JSON.stringify({
++    const res = await fetch(
++      "/api/properties",
++      withActingAgentUser(desk.actingUserId, {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({
+         title: payloadForm.title,
+         summary: payloadForm.summary,
+         description: `${payloadForm.description}\n\nContact preference: ${payloadForm.contactName} · ${payloadForm.contactEmail}`,
+@@ -166,8 +169,10 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
+         images: media.images,
+         videos: media.videos,
+         cardPreviewVideoUrl: media.cardPreviewVideoUrl,
++        ...(desk.actingUserId ? { createdByUserId: desk.actingUserId } : {}),
+       }),
+-    });
++      }),
++    );
+     setLoading(false);
+     if (res.status === 401) {
+       setError("Sign in as owner or agent before submitting a listing.");
+@@ -186,7 +191,7 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
+     }
+     clearListPropertyDraft();
+     router.push(desk.afterSubmitPath);
+-  }, [dealSelection, desk.afterSubmitPath, desk.base, form, mediaItems, router]);
++  }, [dealSelection, desk.actingUserId, desk.afterSubmitPath, desk.base, form, mediaItems, router]);
+ 
+   const value = useMemo(
+     () => ({
+@@ -484,6 +489,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
+               items={mediaItems}
+               onChange={setMediaItems}
+               listingTitle={form.title}
++              uploadUserId={desk.actingUserId}
++              actingUserId={desk.actingUserId}
+             />
+             {mediaItems.length > 0 ? (
+               <div>
+diff --git a/src/lib/admin-edit-agent-page.ts b/src/lib/admin-edit-agent-page.ts
+new file mode 100644
+index 0000000..f980a8f
+--- /dev/null
++++ b/src/lib/admin-edit-agent-page.ts
+@@ -0,0 +1,9 @@
++import { notFound } from "next/navigation";
++import { findAgentByDeskSlug } from "@/lib/agent-desk-acting-user";
++import type { DemoUser } from "@/lib/types";
++
++export async function requireAgentForEditSlug(agentSlug: string): Promise<DemoUser> {
++  const agent = await findAgentByDeskSlug(agentSlug);
++  if (!agent) notFound();
++  return agent;
++}
+diff --git a/src/lib/admin-edit-agent-paths.ts b/src/lib/admin-edit-agent-paths.ts
+new file mode 100644
+index 0000000..a315346
+--- /dev/null
++++ b/src/lib/admin-edit-agent-paths.ts
+@@ -0,0 +1,32 @@
++import { ADMIN_DESK_BASE } from "@/lib/dashboard-admin-paths";
++import type { DemoUser } from "@/lib/types";
++
++export const ADMIN_EDIT_AGENT_BASE = `${ADMIN_DESK_BASE}/edit/agent`;
++
++/** URL slug for agent desk edit routes (e.g. adam-james, agent). */
++export function agentDeskEditSlug(user: Pick<DemoUser, "name" | "email" | "id">): string {
++  const fromName = user.name
++    .trim()
++    .toLowerCase()
++    .replace(/[^a-z0-9]+/g, "-")
++    .replace(/^-+|-+$/g, "");
++  if (fromName) return fromName;
++  const local = user.email.split("@")[0]?.trim().toLowerCase();
++  if (local) return local.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || user.id;
++  return user.id;
++}
++
++export function adminEditAgentPath(agentSlug: string, ...segments: string[]): string {
++  const slug = agentSlug.replace(/^\/+|\/+$/g, "");
++  const tail = segments
++    .map((s) => s.replace(/^\/+|\/+$/g, ""))
++    .filter(Boolean)
++    .join("/");
++  const base = `${ADMIN_EDIT_AGENT_BASE}/${slug}`;
++  return tail ? `${base}/${tail}` : base;
++}
++
++export function adminEditAgentListPropertyStepPath(agentSlug: string, stepNumber: number): string {
++  const n = Math.min(7, Math.max(1, Math.round(stepNumber)));
++  return adminEditAgentPath(agentSlug, "list-property", `step${n}`);
++}
+diff --git a/src/lib/agent-desk-acting-user-constants.ts b/src/lib/agent-desk-acting-user-constants.ts
+new file mode 100644
+index 0000000..6a2e5f6
+--- /dev/null
++++ b/src/lib/agent-desk-acting-user-constants.ts
+@@ -0,0 +1,8 @@
++/** Shared between server resolution and client API calls (no Node imports). */
++export const AGENT_ACTING_USER_ID_QUERY = "userId";
++export const AGENT_ACTING_USER_ID_HEADER = "x-seaps-agent-user-id";
++
++export function agentDeskApiUrl(path: string, actingUserId: string): string {
++  const sep = path.includes("?") ? "&" : "?";
++  return `${path}${sep}${AGENT_ACTING_USER_ID_QUERY}=${encodeURIComponent(actingUserId)}`;
++}
+diff --git a/src/lib/agent-desk-acting-user.ts b/src/lib/agent-desk-acting-user.ts
+new file mode 100644
+index 0000000..cb5df1f
+--- /dev/null
++++ b/src/lib/agent-desk-acting-user.ts
+@@ -0,0 +1,68 @@
++import { getPlatformUserById, getPlatformAgents } from "@/lib/admin-platform-users";
++import { findPlatformUserById } from "@/lib/platform-users-store";
++import type { SessionUser } from "@/lib/auth";
++import type { DemoUser } from "@/lib/types";
++import { agentDeskEditSlug } from "@/lib/admin-edit-agent-paths";
++import {
++  AGENT_ACTING_USER_ID_HEADER,
++  AGENT_ACTING_USER_ID_QUERY,
++} from "@/lib/agent-desk-acting-user-constants";
++
++export { AGENT_ACTING_USER_ID_HEADER, AGENT_ACTING_USER_ID_QUERY } from "@/lib/agent-desk-acting-user-constants";
++export { agentDeskApiUrl } from "@/lib/agent-desk-acting-user-constants";
++
++export function readActingAgentUserIdFromRequest(request: Request): string | null {
++  const url = new URL(request.url);
++  const fromQuery = url.searchParams.get(AGENT_ACTING_USER_ID_QUERY)?.trim();
++  if (fromQuery) return fromQuery;
++  const fromHeader = request.headers.get(AGENT_ACTING_USER_ID_HEADER)?.trim();
++  return fromHeader || null;
++}
++
++export async function resolveActingAgentUser(
++  session: SessionUser,
++  request: Request,
++): Promise<{ ok: true; user: DemoUser } | { ok: false; status: number; error: string }> {
++  if (session.role === "agent") {
++    const self = await findPlatformUserById(session.id);
++    if (!self || self.role !== "agent") {
++      return { ok: false, status: 403, error: "Agent account required." };
++    }
++    return { ok: true, user: self };
++  }
++
++  if (session.role !== "admin") {
++    return { ok: false, status: 403, error: "Forbidden." };
++  }
++
++  const targetId = readActingAgentUserIdFromRequest(request);
++  if (!targetId) {
++    return {
++      ok: false,
++      status: 400,
++      error: "Admin must specify agent userId when editing an agent desk.",
++    };
++  }
++
++  const user = await getPlatformUserById(targetId);
++  if (!user || user.role !== "agent") {
++    return { ok: false, status: 404, error: "Agent account not found." };
++  }
++
++  return { ok: true, user };
++}
++
++export async function findAgentByDeskSlug(slug: string): Promise<DemoUser | null> {
++  const normalized = slug.trim().toLowerCase();
++  if (!normalized) return null;
++
++  const agents = await getPlatformAgents();
++  for (const agent of agents) {
++    if (agent.id === slug || agent.id === normalized) return agent;
++    if (agentDeskEditSlug(agent) === normalized) return agent;
++    const emailLocal = agent.email.split("@")[0]?.toLowerCase();
++    if (emailLocal === normalized) return agent;
++  }
++  return null;
++}
++
+diff --git a/src/lib/agent-desk-api-client.ts b/src/lib/agent-desk-api-client.ts
+new file mode 100644
+index 0000000..fbb1edb
+--- /dev/null
++++ b/src/lib/agent-desk-api-client.ts
+@@ -0,0 +1,22 @@
++import {
++  AGENT_ACTING_USER_ID_HEADER,
++  agentDeskApiUrl,
++} from "@/lib/agent-desk-acting-user-constants";
++
++export function withActingAgentUser(
++  actingUserId: string | undefined,
++  init?: RequestInit,
++): RequestInit {
++  if (!actingUserId) return init ?? {};
++  const headers = new Headers(init?.headers);
++  headers.set(AGENT_ACTING_USER_ID_HEADER, actingUserId);
++  return { ...init, headers };
++}
++
++export function agentProfileApiPath(
++  path: string,
++  actingUserId: string | undefined,
++): string {
++  if (!actingUserId) return path;
++  return agentDeskApiUrl(path, actingUserId);
++}
+-- 
+2.43.0
