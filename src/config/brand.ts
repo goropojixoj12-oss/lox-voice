@@ -7,7 +7,7 @@ export const brand = {
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
     (process.env.VERCEL_ENV === "production"
-      ? "https://www.vps1.store"
+      ? "https://www.seaps.asia"
       : "http://127.0.0.1:43123"),
   locale: "en",
   supportEmail: "info@seaps.asia",
@@ -59,7 +59,7 @@ export const brand = {
   /** Google Maps place search (open in new tab). */
   googleMapsPlaceUrl:
     "https://www.google.com/maps/search/?api=1&query=Unit+3%2F4%2C+Hotel+Cambodiana%2C+%23313+Preah+Sisowath+Quay%2C+Phnom+Penh%2C+12206%2C+Cambodia",
-  /** Google Maps embed iframe src (Share → Embed a map). Override with NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL. */
+  /** Google Maps embed iframe src (Share \u2192 Embed a map). Override with NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL. */
   googleMapsEmbedUrl:
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_EMBED_URL?.trim() ||
     "https://maps.google.com/maps?q=Unit+3%2F4%2C+Hotel+Cambodiana%2C+%23313+Preah+Sisowath+Quay%2C+Phnom+Penh%2C+12206%2C+Cambodia&hl=en&z=16&output=embed",
