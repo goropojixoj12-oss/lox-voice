@@ -6,6 +6,7 @@ import {
   validateAgentDocumentFile,
   type AgentDocumentKind,
 } from "@/lib/agent-profile";
+import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
 import { getSession } from "@/lib/auth";
 
 function parseKind(raw: FormDataEntryValue | null): AgentDocumentKind | null {
@@ -22,6 +23,11 @@ export async function POST(request: Request) {
   }
   if (session.role !== "agent" && session.role !== "admin") {
     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
+  }
+
+  const resolved = await resolveActingAgentUser(session, request);
+  if (!resolved.ok) {
+    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
   }
 
   const form = await request.formData();
@@ -41,8 +47,8 @@ export async function POST(request: Request) {
 
   const bytes = Buffer.from(await file.arrayBuffer());
   const profile = await addAgentDocument(
-    session.id,
-    { name: session.name, email: session.email },
+    resolved.user.id,
+    { name: resolved.user.name, email: resolved.user.email },
     kind,
     {
       name: file.name,
@@ -61,12 +67,18 @@ export async function DELETE(request: Request) {
   if (session.role !== "agent" && session.role !== "admin") {
     return NextResponse.json({ error: "Agent profile only" }, { status: 403 });
   }
+
+  const resolved = await resolveActingAgentUser(session, request);
+  if (!resolved.ok) {
+    return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+  }
+
   const { searchParams } = new URL(request.url);
   const documentId = searchParams.get("id")?.trim();
   if (!documentId) {
     return NextResponse.json({ error: "Document id required" }, { status: 400 });
   }
-  const profile = await removeAgentDocument(session.id, documentId);
+  const profile = await removeAgentDocument(resolved.user.id, documentId);
   if (!profile) {
     return NextResponse.json({ error: "Document not found" }, { status: 404 });
   }

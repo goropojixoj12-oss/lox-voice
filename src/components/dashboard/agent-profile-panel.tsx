@@ -13,6 +13,7 @@ import { AgentAvatar } from "@/components/agency/agent-avatar";
 import { agents } from "@/data/agencies";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { agentProfileApiPath, withActingAgentUser } from "@/lib/agent-desk-api-client";
 import { cn } from "@/lib/utils";
 
 const UPLOAD_SLOTS: {
@@ -60,9 +61,15 @@ function docsForKind(documents: AgentDocumentRef[], kind: AgentDocumentKind) {
 type AgentProfilePanelProps = {
   initialProfile: AgentProfileRecord;
   sessionRole: string;
+  /** Admin editing another agent's desk — API calls target this user id. */
+  actingUserId?: string;
 };
 
-export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfilePanelProps) {
+export function AgentProfilePanel({
+  initialProfile,
+  sessionRole,
+  actingUserId,
+}: AgentProfilePanelProps) {
   const [profile, setProfile] = useState(initialProfile);
   const linkedAgent = agents.find((a) => a.platformUserId === initialProfile.userId);
   const hasPortrait = agentHasRequiredProfilePhoto(profile);
@@ -82,11 +89,14 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
     setInfoMessage(null);
     setInfoError(null);
     try {
-      const res = await fetch("/api/dashboard/agent-profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, phone, residence }),
-      });
+      const res = await fetch(
+        agentProfileApiPath("/api/dashboard/agent-profile", actingUserId),
+        withActingAgentUser(actingUserId, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fullName, email, phone, residence }),
+        }),
+      );
       const data = (await res.json()) as { profile?: AgentProfileRecord; error?: string };
       if (!res.ok) {
         setInfoError(data.error ?? "Could not save profile");
@@ -99,7 +109,7 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
     } finally {
       setSavingInfo(false);
     }
-  }, [email, fullName, phone, residence]);
+  }, [actingUserId, email, fullName, phone, residence]);
 
   async function uploadDocument(kind: AgentDocumentKind, file: File | null) {
     if (!file) return;
@@ -109,10 +119,13 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
       const form = new FormData();
       form.set("kind", kind);
       form.set("file", file);
-      const res = await fetch("/api/dashboard/agent-profile/documents", {
-        method: "POST",
-        body: form,
-      });
+      const res = await fetch(
+        agentProfileApiPath("/api/dashboard/agent-profile/documents", actingUserId),
+        withActingAgentUser(actingUserId, {
+          method: "POST",
+          body: form,
+        }),
+      );
       const data = (await res.json()) as { profile?: AgentProfileRecord; error?: string };
       if (!res.ok) {
         setDocError(data.error ?? "Upload failed");
@@ -130,8 +143,11 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
     setDocError(null);
     try {
       const res = await fetch(
-        `/api/dashboard/agent-profile/documents?id=${encodeURIComponent(documentId)}`,
-        { method: "DELETE" },
+        agentProfileApiPath(
+          `/api/dashboard/agent-profile/documents?id=${encodeURIComponent(documentId)}`,
+          actingUserId,
+        ),
+        withActingAgentUser(actingUserId, { method: "DELETE" }),
       );
       const data = (await res.json()) as { profile?: AgentProfileRecord; error?: string };
       if (!res.ok) {
@@ -312,7 +328,10 @@ export function AgentProfilePanel({ initialProfile, sessionRole }: AgentProfileP
                         </span>
                         <div className="flex shrink-0 gap-2">
                           <a
-                            href={`/api/dashboard/agent-profile/documents/${doc.id}`}
+                            href={agentProfileApiPath(
+                              `/api/dashboard/agent-profile/documents/${doc.id}`,
+                              actingUserId,
+                            )}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm font-medium text-[var(--color-accent-soft)] underline-offset-2 hover:underline"

@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
+import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
 import { getSession } from "@/lib/auth";
 import {
   LISTING_MEDIA_MAX_IMAGE_BYTES,
@@ -19,6 +20,15 @@ export async function POST(request: Request) {
   }
   if (!["owner", "agent", "admin"].includes(session.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  let storageUserId = session.id;
+  if (session.role === "agent" || session.role === "admin") {
+    const resolved = await resolveActingAgentUser(session, request);
+    if (!resolved.ok) {
+      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    }
+    storageUserId = resolved.user.id;
   }
 
   try {
@@ -53,7 +63,7 @@ export async function POST(request: Request) {
 
     const bytes = Buffer.from(await file.arrayBuffer());
     const safeName = sanitizeListingFileName(file.name || "upload");
-    const storageKey = `${session.id}/${nanoid(10)}-${safeName}`;
+    const storageKey = `${storageUserId}/${nanoid(10)}-${safeName}`;
     const saved = await writeListingMediaFile(storageKey, bytes, mime);
 
     return NextResponse.json({

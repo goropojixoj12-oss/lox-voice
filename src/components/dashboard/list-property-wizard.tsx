@@ -21,6 +21,7 @@ import { ListingCardPreview, listingPreviewFromMedia } from "@/components/proper
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useListPropertyDesk } from "@/components/dashboard/list-property-desk-provider";
+import { withActingAgentUser } from "@/lib/agent-desk-api-client";
 import {
   LIST_PROPERTY_STEP_COUNT,
   LIST_PROPERTY_STEP_LABELS,
@@ -140,10 +141,12 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
     setError("");
     const payloadForm = normalizeListPropertyFormForSubmit(form);
     const media = listingMediaToPropertyPayload(mediaItems, payloadForm.title || "Listing");
-    const res = await fetch("/api/properties", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    const res = await fetch(
+      "/api/properties",
+      withActingAgentUser(desk.actingUserId, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
         title: payloadForm.title,
         summary: payloadForm.summary,
         description: `${payloadForm.description}\n\nContact preference: ${payloadForm.contactName} · ${payloadForm.contactEmail}`,
@@ -166,8 +169,10 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
         images: media.images,
         videos: media.videos,
         cardPreviewVideoUrl: media.cardPreviewVideoUrl,
+        ...(desk.actingUserId ? { createdByUserId: desk.actingUserId } : {}),
       }),
-    });
+      }),
+    );
     setLoading(false);
     if (res.status === 401) {
       setError("Sign in as owner or agent before submitting a listing.");
@@ -186,7 +191,7 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
     }
     clearListPropertyDraft();
     router.push(desk.afterSubmitPath);
-  }, [dealSelection, desk.afterSubmitPath, desk.base, form, mediaItems, router]);
+  }, [dealSelection, desk.actingUserId, desk.afterSubmitPath, desk.base, form, mediaItems, router]);
 
   const value = useMemo(
     () => ({
@@ -484,6 +489,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
               items={mediaItems}
               onChange={setMediaItems}
               listingTitle={form.title}
+              uploadUserId={desk.actingUserId}
+              actingUserId={desk.actingUserId}
             />
             {mediaItems.length > 0 ? (
               <div>

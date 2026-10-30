@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { nanoid } from "nanoid";
+import { readActingAgentUserIdFromRequest } from "@/lib/agent-desk-acting-user";
+import { getPlatformUserById } from "@/lib/admin-platform-users";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
 import { isPublicListing } from "@/lib/listing-access";
@@ -74,6 +76,7 @@ const createSchema = z.object({
     )
     .optional(),
   cardPreviewVideoUrl: z.string().nullable().optional(),
+  createdByUserId: z.string().min(1).optional(),
 });
 
 export async function POST(request: Request) {
@@ -89,6 +92,27 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data;
+
+  let listingOwnerId = session.id;
+  let listingSellerType: Property["sellerType"] =
+    session.role === "agent" ? "agent" : "owner";
+
+  if (session.role === "admin") {
+    const targetId =
+      data.createdByUserId?.trim() || readActingAgentUserIdFromRequest(request)?.trim() || null;
+    if (targetId) {
+      const agentUser = await getPlatformUserById(targetId);
+      if (!agentUser || agentUser.role !== "agent") {
+        return NextResponse.json({ error: "Agent account not found" }, { status: 404 });
+      }
+      listingOwnerId = agentUser.id;
+      listingSellerType = "agent";
+    }
+  } else if (session.role === "agent") {
+    listingOwnerId = session.id;
+    listingSellerType = "agent";
+  }
+
   const countryRow = getCountryByCode(data.countryCode);
   if (!countryRow) {
     return NextResponse.json({ error: "Invalid country" }, { status: 400 });
@@ -104,7 +128,7 @@ export async function POST(request: Request) {
     propertyType: data.propertyType,
     status: "pending",
     verification: "unverified",
-    sellerType: session.role === "agent" ? "agent" : "owner",
+    sellerType: listingSellerType,
     price: data.price,
     currency: data.currency,
     pricePeriod: data.pricePeriod,
@@ -131,8 +155,8 @@ export async function POST(request: Request) {
       lat: 0,
       lng: 0,
     },
-    createdByUserId: session.id,
-    ownerId: session.role === "owner" ? session.id : undefined,
+    createdByUserId: listingOwnerId,
+    ownerId: session.role === "owner" && listingOwnerId === session.id ? session.id : undefined,
     agentId: undefined,
     agencyId: session.agencyId,
     publishedAt: now,

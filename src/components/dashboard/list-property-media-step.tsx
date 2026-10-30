@@ -9,15 +9,19 @@ import { BLOB_PREFIX } from "@/lib/listing-media-constants";
 import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
 import { listingMediaPublicUrl, sanitizeListingFileName } from "@/lib/listing-media-constants";
 import type { ListingMediaItem } from "@/lib/list-property-media";
+import { withActingAgentUser } from "@/lib/agent-desk-api-client";
 import { cn } from "@/lib/utils";
 
-async function uploadViaServer(file: File): Promise<ListingMediaItem> {
+async function uploadViaServer(file: File, actingUserId?: string): Promise<ListingMediaItem> {
   const body = new FormData();
   body.set("file", file);
-  const res = await fetch("/api/dashboard/list-property/media", {
-    method: "POST",
-    body,
-  });
+  const res = await fetch(
+    "/api/dashboard/list-property/media",
+    withActingAgentUser(actingUserId, {
+      method: "POST",
+      body,
+    }),
+  );
   const data = (await res.json().catch(() => ({}))) as {
     error?: string;
     item?: ListingMediaItem;
@@ -29,7 +33,11 @@ async function uploadViaServer(file: File): Promise<ListingMediaItem> {
   return data.item;
 }
 
-async function uploadViaBlobClient(file: File, userId: string): Promise<ListingMediaItem> {
+async function uploadViaBlobClient(
+  file: File,
+  userId: string,
+  actingUserId?: string,
+): Promise<ListingMediaItem> {
   const mime = inferMimeType(file);
   const kind = mediaKindFromMime(mime);
   if (!kind) {
@@ -39,9 +47,12 @@ async function uploadViaBlobClient(file: File, userId: string): Promise<ListingM
   const storageKey = `${userId}/${nanoid(10)}-${safeName}`;
   const pathname = `${BLOB_PREFIX}/${storageKey}`;
 
+  const uploadQuery = actingUserId
+    ? `?userId=${encodeURIComponent(actingUserId)}`
+    : "";
   await upload(pathname, file, {
     access: "private",
-    handleUploadUrl: "/api/dashboard/list-property/media/client-upload",
+    handleUploadUrl: `/api/dashboard/list-property/media/client-upload${uploadQuery}`,
     multipart: file.size > 4.5 * 1024 * 1024,
     contentType: mime,
   });
@@ -56,13 +67,17 @@ async function uploadViaBlobClient(file: File, userId: string): Promise<ListingM
   };
 }
 
-async function uploadOne(file: File, userId: string | null): Promise<ListingMediaItem> {
+async function uploadOne(
+  file: File,
+  userId: string | null,
+  actingUserId?: string,
+): Promise<ListingMediaItem> {
   if (file.size <= 4.5 * 1024 * 1024) {
     try {
-      return await uploadViaServer(file);
+      return await uploadViaServer(file, actingUserId);
     } catch {
       if (userId) {
-        return uploadViaBlobClient(file, userId);
+        return uploadViaBlobClient(file, userId, actingUserId);
       }
       throw new Error("Upload failed");
     }
@@ -70,7 +85,7 @@ async function uploadOne(file: File, userId: string | null): Promise<ListingMedi
   if (!userId) {
     throw new Error("Sign in required for large uploads.");
   }
-  return uploadViaBlobClient(file, userId);
+  return uploadViaBlobClient(file, userId, actingUserId);
 }
 
 const UPLOAD_CONCURRENCY = 4;
@@ -101,10 +116,15 @@ export function ListPropertyMediaStep({
   items,
   onChange,
   listingTitle,
+  uploadUserId: uploadUserIdOverride,
+  actingUserId,
 }: {
   items: ListingMediaItem[];
   onChange: (next: ListingMediaItem[]) => void;
   listingTitle: string;
+  /** Storage namespace for uploads (agent account when admin is editing). */
+  uploadUserId?: string | null;
+  actingUserId?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -114,6 +134,11 @@ export function ListPropertyMediaStep({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (uploadUserIdOverride) {
+      setUserId(uploadUserIdOverride);
+      setSessionReady(true);
+      return;
+    }
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((data: { user?: { id?: string } | null }) => {
@@ -121,7 +146,7 @@ export function ListPropertyMediaStep({
       })
       .catch(() => setUserId(null))
       .finally(() => setSessionReady(true));
-  }, []);
+  }, [uploadUserIdOverride]);
 
   async function handleFiles(fileList: FileList | null) {
     if (!fileList?.length) return;
@@ -142,7 +167,7 @@ export function ListPropertyMediaStep({
     let completed = 0;
     const uploaded = await mapWithConcurrency(files, UPLOAD_CONCURRENCY, async (file) => {
       try {
-        const item = await uploadOne(file, userId);
+        const item = await uploadOne(file, userId, actingUserId);
         completed += 1;
         setProgress(`Uploaded ${completed} / ${files.length}…`);
         return { ok: true as const, item, file };

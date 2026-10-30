@@ -6,6 +6,7 @@ import { AdminTaskPanel } from "@/components/admin/admin-task-panel";
 import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
 import { buildStaffRoster, getStaffPlatformUser } from "@/lib/admin-staff";
 import { getAdminTasks } from "@/lib/admin-store";
+import { adminEditAgentPath, agentDeskEditSlug } from "@/lib/admin-edit-agent-paths";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
 export async function generateMetadata({
@@ -44,13 +45,21 @@ export default async function AdminStaffDetailPage({
       <Link href={adminDeskPath("staff")} className="text-sm text-[var(--color-accent-soft)] hover:underline">
         ← All staff
       </Link>
-      <div>
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-          {agent.name}
-        </h1>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
-          {agent.email} · agency {row.agencyLabel}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+            {agent.name}
+          </h1>
+          <p className="mt-1 text-sm text-[var(--color-muted)]">
+            {agent.email} · agency {row.agencyLabel}
+          </p>
+        </div>
+        <Link
+          href={adminEditAgentPath(agentDeskEditSlug(agent))}
+          className="rounded-full bg-[var(--color-accent)] px-5 py-2.5 text-sm font-semibold text-[#0B1C33] hover:opacity-90"
+        >
+          Agent Desk
+        </Link>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -77,11 +86,14 @@ export default async function AdminStaffDetailPage({
             ))}
           </ul>
           <p className="mt-2 text-xs">
-            Agent desk profile:{" "}
-            <Link href="/dashboard/agent/profile" className="text-[var(--color-accent-soft)] underline">
-              /dashboard/agent/profile
+            Open{" "}
+            <Link
+              href={adminEditAgentPath(agentDeskEditSlug(agent), "profile")}
+              className="text-[var(--color-accent-soft)] underline"
+            >
+              Agent Desk → Profile
             </Link>{" "}
-            (when signed in as {agent.email})
+            to fix gaps without signing in as the agent.
           </p>
         </div>
       ) : null}

@@ -15,7 +15,12 @@ export function DashboardShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const isAdminEditAgentDesk = pathname.startsWith("/dashboard/admin/edit/agent/");
   const isAdminDesk = pathname.startsWith("/dashboard/admin");
+
+  if (isAdminEditAgentDesk) {
+    return <>{children}</>;
+  }
 
   if (isAdminDesk) {
     return <AdminDeskShell userName={userName}>{children}</AdminDeskShell>;

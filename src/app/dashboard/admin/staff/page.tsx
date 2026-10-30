@@ -3,6 +3,7 @@ import Link from "next/link";
 import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
 import { buildStaffRoster } from "@/lib/admin-staff";
 import { getAdminTasks } from "@/lib/admin-store";
+import { adminEditAgentPath, agentDeskEditSlug } from "@/lib/admin-edit-agent-paths";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 
 export const metadata: Metadata = { title: "Staff & performance" };
@@ -74,12 +75,20 @@ export default async function AdminStaffPage() {
                 <td className="p-3 text-right">{row.leadCount}</td>
                 <td className="p-3 text-right">{row.openTasks}</td>
                 <td className="p-3 text-right">
-                  <Link
-                    href={adminDeskPath("staff", row.staffId)}
-                    className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
-                  >
-                    Open
-                  </Link>
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Link
+                      href={adminEditAgentPath(agentDeskEditSlug({ id: row.staffId, name: row.name, email: row.email }))}
+                      className="rounded-full border border-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[var(--color-accent-soft)]"
+                    >
+                      Agent Desk
+                    </Link>
+                    <Link
+                      href={adminDeskPath("staff", row.staffId)}
+                      className="rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
+                    >
+                      Open
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}

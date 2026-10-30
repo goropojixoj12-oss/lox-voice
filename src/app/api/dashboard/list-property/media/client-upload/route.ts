@@ -1,5 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
+import { resolveActingAgentUser } from "@/lib/agent-desk-acting-user";
 import { getSession } from "@/lib/auth";
 import { BLOB_PREFIX } from "@/lib/listing-media-constants";
 
@@ -30,6 +31,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  let storageUserId = session.id;
+  if (session.role === "agent" || session.role === "admin") {
+    const resolved = await resolveActingAgentUser(session, request);
+    if (!resolved.ok) {
+      return NextResponse.json({ error: resolved.error }, { status: resolved.status });
+    }
+    storageUserId = resolved.user.id;
+  }
+
   let body: HandleUploadBody;
   try {
     body = (await request.json()) as HandleUploadBody;
@@ -37,7 +47,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const prefix = `${BLOB_PREFIX}/${session.id}/`;
+  const prefix = `${BLOB_PREFIX}/${storageUserId}/`;
 
   try {
     const jsonResponse = await handleUpload({
