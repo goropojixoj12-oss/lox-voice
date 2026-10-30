@@ -8,7 +8,14 @@ import {
 } from "@/lib/store";
 import { resetListingViewTracking } from "@/lib/listing-view-store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
-import type { ListingStatus, Property } from "@/lib/types";
+import type {
+  DocAccessLevel,
+  ListingDocument,
+  ListingNote,
+  ListingStatus,
+  NoteVisibility,
+  Property,
+} from "@/lib/types";
 
 const imageSchema = z.object({
   id: z.string().min(1),
@@ -54,6 +61,29 @@ const patchSchema = z.object({
   cardPreviewVideoUrl: z.string().nullable().optional(),
   contactName: z.string().optional(),
   contactEmail: z.string().email().optional(),
+  assignedAgentId: z.string().optional(),
+  commissionAgent: z.number().nonnegative().optional(),
+  commissionCompany: z.number().nonnegative().optional(),
+  notes: z.array(z.object({
+    id: z.string().min(1),
+    text: z.string().min(1),
+    authorId: z.string().min(1),
+    authorName: z.string().min(1),
+    visibility: z.enum(["admin_only", "staff", "public"]),
+    createdAt: z.string().min(1),
+  })).optional(),
+  documents: z.array(z.object({
+    id: z.string().min(1),
+    name: z.string().min(1),
+    url: z.string().min(1),
+    storageKey: z.string().min(1),
+    mimeType: z.string().min(1),
+    size: z.number().nonnegative(),
+    access: z.enum(["admin_only", "staff", "public"]),
+    uploadedById: z.string().min(1),
+    uploadedByName: z.string().min(1),
+    createdAt: z.string().min(1),
+  })).optional(),
 });
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -135,6 +165,11 @@ export async function PATCH(request: Request, context: RouteContext) {
     hasVideoTour: data.videos !== undefined
       ? data.videos.some((v) => v.role === "tour")
       : existing.hasVideoTour,
+    assignedAgentId: data.assignedAgentId !== undefined ? data.assignedAgentId : existing.assignedAgentId,
+    commissionAgent: data.commissionAgent !== undefined ? data.commissionAgent : existing.commissionAgent,
+    commissionCompany: data.commissionCompany !== undefined ? data.commissionCompany : existing.commissionCompany,
+    notes: data.notes !== undefined ? data.notes : existing.notes,
+    documents: data.documents !== undefined ? data.documents : existing.documents,
     location,
     status,
     updatedAt: now,

@@ -17,6 +17,7 @@ import {
   type DealSelection,
   type ListingCategory,
 } from "@/components/dashboard/list-property-deal-step";
+import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { ListPropertyMediaStep } from "@/components/dashboard/list-property-media-step";
 import { ListingCardPreview, listingPreviewFromMedia } from "@/components/property/listing-card-preview";
 import { Button } from "@/components/ui/button";
@@ -467,6 +468,36 @@ export function AdminListingEditWizard({
               <Label>{dealSelection?.category === "land" ? "Land area (m\u00b2)" : "Area (m\u00b2)"}</Label>
               <Input value={form.areaSqm} onChange={(e) => update("areaSqm", e.target.value)} />
             </div>
+            <div className="sm:col-span-2 mt-4 border-t border-[var(--color-border)] pt-4">
+              <p className="text-sm font-semibold text-[var(--color-accent-soft)]">Commission & assignment</p>
+            </div>
+            <div>
+              <Label>Agent commission (%)</Label>
+              <Input
+                inputMode="numeric"
+                value={String((form as Record<string, unknown>).commissionAgent ?? "")}
+                onChange={(e) => update("commissionAgent" as keyof ListPropertyDraftForm, e.target.value)}
+                placeholder="e.g. 3"
+              />
+            </div>
+            <div>
+              <Label>Company income (%) — admin only</Label>
+              <Input
+                inputMode="numeric"
+                value={String((form as Record<string, unknown>).commissionCompany ?? "")}
+                onChange={(e) => update("commissionCompany" as keyof ListPropertyDraftForm, e.target.value)}
+                placeholder="e.g. 2"
+              />
+              <p className="mt-1 text-xs text-red-500">Only admin can see this value</p>
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Assigned agent ID</Label>
+              <Input
+                value={String((form as Record<string, unknown>).assignedAgentId ?? "")}
+                onChange={(e) => update("assignedAgentId" as keyof ListPropertyDraftForm, e.target.value)}
+                placeholder="Agent user ID (from Employees list)"
+              />
+            </div>
           </div>
         ) : null}
 
@@ -486,10 +517,10 @@ export function AdminListingEditWizard({
             </div>
             <div>
               <Label htmlFor="edit-description">Description</Label>
-              <Textarea
-                id="edit-description"
-                value={form.description}
-                onChange={(e) => update("description", e.target.value)}
+              <RichTextEditor
+                content={form.description}
+                onChange={(html) => update("description", html)}
+                placeholder="Write a detailed description — formatting, images, and videos are supported…"
               />
             </div>
           </div>

@@ -17,6 +17,7 @@ import {
   type DealSelection,
 } from "@/components/dashboard/list-property-deal-step";
 import { ListPropertyMediaStep } from "@/components/dashboard/list-property-media-step";
+import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { ListingCardPreview, listingPreviewFromMedia } from "@/components/property/listing-card-preview";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
@@ -474,10 +475,10 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={form.description}
-                onChange={(e) => update("description", e.target.value)}
+              <RichTextEditor
+                content={form.description}
+                onChange={(html) => update("description", html)}
+                placeholder="Write a detailed description — formatting, images, and videos are supported…"
               />
             </div>
           </div>

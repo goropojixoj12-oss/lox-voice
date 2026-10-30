@@ -8,6 +8,7 @@ import {
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
 import { PropertyGallery } from "@/components/property/property-gallery";
+import { PropertyGallery3D } from "@/components/property/property-gallery-3d";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
 import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
@@ -144,7 +145,11 @@ export default async function PropertyDetailPage({
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="space-y-8">
-          <PropertyGallery images={property.images} />
+          {property.images.length >= 3 ? (
+            <PropertyGallery3D images={property.images} videos={property.videos} />
+          ) : (
+            <PropertyGallery images={property.images} />
+          )}
           <div>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -210,9 +215,16 @@ export default async function PropertyDetailPage({
             <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Description
             </h2>
-            <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed text-[var(--color-muted)]">
-              {property.description}
-            </p>
+            {property.description.includes("<") ? (
+              <div
+                className="prose prose-sm mt-3 max-w-3xl text-[var(--color-muted)] prose-headings:text-[var(--color-accent-soft)] prose-a:text-[var(--color-accent)] prose-img:rounded-lg"
+                dangerouslySetInnerHTML={{ __html: property.description }}
+              />
+            ) : (
+              <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed text-[var(--color-muted)]">
+                {property.description}
+              </p>
+            )}
           </section>
 
           {property.amenities.length ? (
@@ -229,6 +241,120 @@ export default async function PropertyDetailPage({
                     {amenityLabels[amenity]}
                   </li>
                 ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {session && (session.role === "admin" || session.role === "agent") ? (
+            <section className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-accent)]/40 bg-[var(--color-mist)]/30 p-6">
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
+                Internal info
+              </h2>
+              <p className="mt-1 text-xs text-[var(--color-muted)]">
+                Only visible to signed-in staff members.
+              </p>
+
+              {property.assignedAgentId ? (
+                <p className="mt-3 text-sm">
+                  <span className="font-semibold">Assigned agent:</span>{" "}
+                  {property.assignedAgentId}
+                </p>
+              ) : null}
+
+              {(session.role === "admin" || session.role === "agent") && property.commissionAgent ? (
+                <p className="mt-2 text-sm">
+                  <span className="font-semibold">Agent commission:</span>{" "}
+                  {property.commissionAgent}%
+                </p>
+              ) : null}
+
+              {session.role === "admin" && property.commissionCompany ? (
+                <p className="mt-1 text-sm text-red-600">
+                  <span className="font-semibold">Company income:</span>{" "}
+                  {property.commissionCompany}% (admin only)
+                </p>
+              ) : null}
+
+              {(property.notes?.length ?? 0) > 0 ? (
+                <div className="mt-4">
+                  <p className="text-sm font-semibold">Notes</p>
+                  <ul className="mt-2 space-y-2">
+                    {(property.notes ?? [])
+                      .filter((n) => {
+                        if (session.role === "admin") return true;
+                        return n.visibility === "staff" || n.visibility === "public" || n.authorId === session.id;
+                      })
+                      .map((note) => (
+                        <li
+                          key={note.id}
+                          className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-sm"
+                        >
+                          <p className="whitespace-pre-wrap">{note.text}</p>
+                          <p className="mt-1 text-xs text-[var(--color-muted)]">
+                            {note.authorName} ·{" "}
+                            {new Date(note.createdAt).toLocaleDateString("en-GB")}
+                          </p>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {(property.documents?.length ?? 0) > 0 ? (
+                <div className="mt-4">
+                  <p className="text-sm font-semibold">Documents</p>
+                  <ul className="mt-2 space-y-2">
+                    {(property.documents ?? [])
+                      .filter((d) => {
+                        if (session.role === "admin") return true;
+                        return d.access === "staff" || d.access === "public";
+                      })
+                      .map((doc) => (
+                        <li
+                          key={doc.id}
+                          className="flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-sm"
+                        >
+                          <span className="truncate font-medium">{doc.name}</span>
+                          <a
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
+                          >
+                            Download
+                          </a>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ) : null}
+            </section>
+          ) : null}
+
+          {(property.documents ?? []).filter((d) => d.access === "public").length > 0 && !session ? (
+            <section>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
+                Documents
+              </h2>
+              <ul className="mt-3 space-y-2">
+                {(property.documents ?? [])
+                  .filter((d) => d.access === "public")
+                  .map((doc) => (
+                    <li
+                      key={doc.id}
+                      className="flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-sm"
+                    >
+                      <span className="truncate font-medium">{doc.name}</span>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 rounded-full bg-[var(--color-accent)] px-3 py-1 text-xs font-semibold text-[#0B1C33]"
+                      >
+                        Download
+                      </a>
+                    </li>
+                  ))}
               </ul>
             </section>
           ) : null}

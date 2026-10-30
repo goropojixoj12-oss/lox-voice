@@ -83,11 +83,37 @@ export interface PropertyVideo {
   role?: "tour" | "card_preview";
 }
 
+export type NoteVisibility = "admin_only" | "staff" | "public";
+export type DocAccessLevel = "admin_only" | "staff" | "public";
+
+export interface ListingNote {
+  id: string;
+  text: string;
+  authorId: string;
+  authorName: string;
+  visibility: NoteVisibility;
+  createdAt: string;
+}
+
+export interface ListingDocument {
+  id: string;
+  name: string;
+  url: string;
+  storageKey: string;
+  mimeType: string;
+  size: number;
+  access: DocAccessLevel;
+  uploadedById: string;
+  uploadedByName: string;
+  createdAt: string;
+}
+
 export interface Property {
   id: string;
   slug: string;
   title: string;
   summary: string;
+  /** Rich HTML description (Tiptap editor output). */
   description: string;
   transactionType: TransactionType;
   propertyType: PropertyType;
@@ -112,6 +138,16 @@ export interface Property {
   ownerId?: string;
   /** Platform user who submitted the listing (moderation queue). */
   createdByUserId?: string;
+  /** Responsible agent assigned by admin. */
+  assignedAgentId?: string;
+  /** Agent commission percentage (visible to agent + admin). */
+  commissionAgent?: number;
+  /** Company income commission percentage (visible to admin only). */
+  commissionCompany?: number;
+  /** Internal notes with access control. */
+  notes?: ListingNote[];
+  /** Attached documents with access levels. */
+  documents?: ListingDocument[];
   projectId?: string;
   publishedAt: string;
   updatedAt: string;
