@@ -103,6 +103,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col pb-20 md:pb-0">
         <OrganizationJsonLd />
         <Script src="/scripts/seaps-lang-boot.js" strategy="beforeInteractive" />
+        <Script src="/scripts/tesseract-motion.js" strategy="beforeInteractive" />
         <GoogleTranslate />
         <PageViewBeacon />
         <SeapsBackslashShortcut />

@@ -502,6 +502,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
   return (
     <div
       className="h-full w-full touch-none"
+      data-tesseract-drag="1"
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId);
         const svg = event.currentTarget.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
