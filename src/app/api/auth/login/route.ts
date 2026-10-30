@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { extractClientInfo, writeAuditEntry } from "@/lib/audit-log";
 import { login } from "@/lib/auth";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 
@@ -28,7 +29,20 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid credentials payload" }, { status: 400 });
   }
+
+  const { ip, userAgent } = extractClientInfo(request);
   const result = await login(parsed.data.email, parsed.data.password);
+
+  writeAuditEntry({
+    action: result.ok ? "login_success" : "login_failed",
+    userId: result.ok ? result.user.id : null,
+    userName: result.ok ? result.user.name : null,
+    email: parsed.data.email,
+    ip,
+    userAgent,
+    meta: { role: result.ok ? result.user.role : "unknown" },
+  }).catch((err) => console.error("[audit] login log failed", err));
+
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 401 });
   }

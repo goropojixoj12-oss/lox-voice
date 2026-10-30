@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { extractClientInfo, writeAuditEntry } from "@/lib/audit-log";
 import { requireRole } from "@/lib/auth";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { writeSiteRequestAttachment } from "@/lib/site-agent-attachments";
@@ -74,6 +75,17 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: message }, { status: 400 });
       }
     }
+
+    const { ip, userAgent } = extractClientInfo(request);
+    writeAuditEntry({
+      action: "site_change_submit",
+      userId: session.id,
+      userName: session.name,
+      email: session.email,
+      ip,
+      userAgent,
+      meta: { requestId: requestRecord.id, messagePreview: parsedMessage.data.slice(0, 120) },
+    }).catch((err) => console.error("[audit] site-change log failed", err));
 
     notifySiteAgentWebhook(requestRecord);
     return NextResponse.json({ request: requestRecord }, { status: 201 });

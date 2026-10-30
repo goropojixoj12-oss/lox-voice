@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { extractClientInfo, writeAuditEntry } from "@/lib/audit-log";
 import { requireRole } from "@/lib/auth";
 import { notifySiteAgentWebhook } from "@/lib/site-agent-webhook";
 import { getSiteChangeRequest, listSiteChangeRequests } from "@/lib/site-agent-store";
@@ -57,6 +58,17 @@ export async function POST(request: Request) {
       { status: 503 },
     );
   }
+
+  const { ip, userAgent } = extractClientInfo(request);
+  writeAuditEntry({
+    action: "site_change_dispatch",
+    userId: session.id,
+    userName: session.name,
+    email: session.email,
+    ip,
+    userAgent,
+    meta: { requestId: item.id },
+  }).catch((err) => console.error("[audit] dispatch log failed", err));
 
   notifySiteAgentWebhook(item);
 
