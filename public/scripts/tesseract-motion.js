@@ -6,9 +6,9 @@
   var VIEW = 1000;
   var D4 = 3;
   var D3 = 7.5;
-  var XW_SPEED = 0.55;
-  var YW_SPEED = 0.4;
-  var YAW_SPEED = 0.5;
+  var XW_SPEED = 0.1;
+  var YW_SPEED = 0.07;
+  var YAW_SPEED = 0.035;
   var INITIAL = { xw: 0.08, yw: 0.1, zw: 0, xy: 0, yaw: 0.55, pitch: 0.38 };
 
   function vertex(i) {
@@ -236,13 +236,12 @@
         var back = item.area < 0;
         if (tints[idx]) {
           tints[idx].setAttribute("points", item.points);
-          tints[idx].setAttribute("fill-opacity", back ? "0.14" : "0.32");
+          tints[idx].setAttribute("fill-opacity", back ? "0.04" : "0.06");
         }
         if (clips[idx]) clips[idx].setAttribute("points", item.points);
         if (images[idx]) {
           images[idx].setAttribute("transform", "matrix(" + item.affine + ")");
-          var photoOpacity = back ? (item.geom.wCell ? 0.16 : 0.08) : item.geom.wCell ? 0.52 : 0.32;
-          images[idx].setAttribute("opacity", String(photoOpacity));
+          images[idx].setAttribute("opacity", back ? "0.88" : "1");
         }
         if (plays[idx]) {
           var cx = (item.quad[0].x + item.quad[2].x) / 2;

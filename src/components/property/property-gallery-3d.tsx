@@ -66,9 +66,13 @@ const INITIAL_ROT: Rot = {
   pitch: 0.38,
 };
 /** rad/s — XW/YW so the inner cell grows outward; yaw keeps the tumble readable. */
-const XW_SPEED = 0.55;
-const YW_SPEED = 0.4;
-const YAW_SPEED = 0.5;
+const XW_SPEED = 0.1;
+const YW_SPEED = 0.07;
+const YAW_SPEED = 0.035;
+
+function facePhotoOpacity(back: boolean): number {
+  return back ? 0.88 : 1;
+}
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const photos: MediaFace[] = images.map((img, i) => ({
@@ -308,21 +312,14 @@ function attachTesseractMotion(svg: SVGSVGElement) {
       const tint = tints[idx];
       if (tint) {
         tint.setAttribute("points", item.points);
-        tint.setAttribute("fill-opacity", back ? "0.14" : "0.32");
+        tint.setAttribute("fill-opacity", back ? "0.04" : "0.06");
       }
       const clip = clips[idx];
       if (clip) clip.setAttribute("points", item.points);
       const image = images[idx];
       if (image) {
         image.setAttribute("transform", `matrix(${item.affine})`);
-        const photoOpacity = back
-          ? item.geom.wCell
-            ? 0.16
-            : 0.08
-          : item.geom.wCell
-            ? 0.52
-            : 0.32;
-        image.setAttribute("opacity", String(photoOpacity));
+        image.setAttribute("opacity", String(facePhotoOpacity(back)));
       }
       const play = plays[idx];
       if (play) {
@@ -578,7 +575,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
       >
         <defs>
           <filter id={`${uid}-glow`} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2.4" result="blur" />
+            <feGaussianBlur stdDeviation="1.4" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -595,13 +592,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
             const back = item.area < 0;
             const media = faces[item.faceIndex % faces.length];
             const tint = CUBE_TINTS[item.geom.cube] ?? CUBE_TINTS[0];
-            const photoOpacity = back
-              ? item.geom.wCell
-                ? 0.16
-                : 0.08
-              : item.geom.wCell
-                ? 0.52
-                : 0.32;
+            const photoOpacity = facePhotoOpacity(back);
             const cx = (item.quad[0].x + item.quad[2].x) / 2;
             const cy = (item.quad[0].y + item.quad[2].y) / 2;
             return (
@@ -616,7 +607,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
                 }}
                 style={{ cursor: "pointer" }}
               >
-                <polygon data-ft={item.faceIndex} points={item.points} fill={tint} fillOpacity={back ? 0.14 : 0.32} />
+                <polygon data-ft={item.faceIndex} points={item.points} fill={tint} fillOpacity={back ? 0.04 : 0.06} />
                 {media.kind === "image" ? (
                   <g clipPath={`url(#${uid}-c${item.faceIndex})`}>
                     <image
@@ -653,7 +644,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
                 x2={initial.pts[b].x}
                 y2={initial.pts[b].y}
                 stroke={wEdge ? "rgba(212,175,55,0.55)" : GOLD_BRIGHT}
-                strokeWidth={wEdge ? 2.2 : 3.6}
+                strokeWidth={wEdge ? 1.15 : 1.85}
                 strokeLinecap="round"
                 filter={`url(#${uid}-glow)`}
               />
