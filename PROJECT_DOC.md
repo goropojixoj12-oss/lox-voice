@@ -28,6 +28,37 @@
 
 ---
 
+### 08:47 UTC (08:47 BST) — Правило 12: язык общения — русский
+
+- **Действие**: Добавлено Правило 12 в `PROJECT_RULES.md` — все ответы агента администратору всегда на русском языке.
+- **Модель**: Claude Opus 4
+- **Файлы**: `PROJECT_RULES.md`, `PROJECT_DOC.md`
+- **Результат**: Правило добавлено
+
+---
+
+### 08:32–08:45 UTC (08:32–08:45 BST) — Админский редактор листингов + исправления загрузки медиа
+
+- **Действие**: Создан полный 7-шаговый визард для редактирования листингов админом. Исправлены проблемы загрузки фото/видео.
+- **Модель**: Claude Opus 4
+- **Файлы**:
+  - `src/components/dashboard/admin-listing-edit-wizard.tsx` (NEW — 660 строк)
+  - `src/app/dashboard/admin/listings/[id]/page.tsx` (переписан)
+  - `src/app/api/admin/listings/[id]/route.ts` (расширен)
+  - `src/components/dashboard/list-property-media-step.tsx` (retry-логика)
+  - `src/app/api/dashboard/list-property/media/route.ts` (таймаут 120с)
+  - `src/components/dashboard/admin-listing-table-actions.tsx` (кнопка «Edit»)
+- **Коммиты**:
+  - `f24ccd3` — страница, таблица, .gitignore, media route
+  - `d27c413` — расширенный PATCH API
+  - `1fec6cc` — retry-логика и параллельность 6
+  - `41eaa1c` — компонент AdminListingEditWizard
+- **Build**: 0 ошибок, 0 предупреждений
+- **Push**: GitHub MCP API → Vercel автодеплой
+- **Результат**: ✓ Завершено и проверено
+
+---
+
 ### 07:27 UTC (07:27 BST) — Начало сессии
 
 **Контекст**: Продолжение работы из предыдущей сессии. В предыдущей сессии (2026-10-29) был создан патч `admin-agent-desk.patch` для функционала Agent Desk — административного редактирования агентских аккаунтов.
