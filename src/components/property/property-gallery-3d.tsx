@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { ChevronLeft, ChevronRight, Download, Pause, Play, X, ZoomIn, ZoomOut } from "lucide-react";
 import type { PropertyImage, PropertyVideo } from "@/lib/types";
 
@@ -13,6 +13,62 @@ type MediaFace = {
 
 type Vec4 = { x: number; y: number; z: number; w: number };
 type Pt = { x: number; y: number; z: number };
+type Rot = {
+  xw: number;
+  yw: number;
+  zw: number;
+  xy: number;
+  yaw: number;
+  pitch: number;
+};
+
+type FaceGeom = {
+  ids: number[];
+  cube: number;
+  wCell: boolean;
+};
+
+type FaceModel = {
+  faceIndex: number;
+  geom: FaceGeom;
+  quad: Pt[];
+  points: string;
+  depth: number;
+  area: number;
+  affine: string;
+};
+
+const VIEW = 1000;
+/** 4D eye distance — hypercube.tbrun.dev default. */
+const D4 = 3;
+/** 3D camera distance; keep above projected |z| so the outer cell stays cubic. */
+const D3 = 7.5;
+const GOLD = "#D4AF37";
+const GOLD_BRIGHT = "#F0D78C";
+const CUBE_TINTS = [
+  "rgba(212,175,55,0.28)",
+  "rgba(240,215,140,0.24)",
+  "rgba(184,134,11,0.26)",
+  "rgba(255,215,0,0.18)",
+  "rgba(205,173,106,0.26)",
+  "rgba(218,165,32,0.22)",
+  "rgba(153,122,48,0.26)",
+  "rgba(255,223,128,0.18)",
+] as const;
+
+/** Nested cubes at rest; XW/YW auto-rotate grows the inner cell outward. */
+const INITIAL_ROT: Rot = {
+  xw: 0.08,
+  yw: 0.1,
+  zw: 0,
+  xy: 0,
+  yaw: 0.55,
+  pitch: 0.38,
+};
+/** rad/s — XW/YW like hypercube.tbrun.dev; yaw so the tumble is obvious. */
+const XW_SPEED = 0.35;
+const YW_SPEED = 0.22;
+const YAW_SPEED = 0.45;
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const photos: MediaFace[] = images.map((img, i) => ({
@@ -48,8 +104,8 @@ function vertex(i: number): Vec4 {
   };
 }
 
-function tesseractSquares(): number[][] {
-  const faces: number[][] = [];
+function tesseractSquares(): FaceGeom[] {
+  const faces: FaceGeom[] = [];
   for (let a = 0; a < 4; a += 1) {
     for (let b = a + 1; b < 4; b += 1) {
       const fixed: number[] = [];
@@ -67,7 +123,11 @@ function tesseractSquares(): number[][] {
               ids.push(id);
             }
           }
-          faces.push([ids[0], ids[1], ids[3], ids[2]]);
+          faces.push({
+            ids: [ids[0], ids[1], ids[3], ids[2]],
+            cube: fixed[0] * 2 + s0,
+            wCell: a !== 3 && b !== 3,
+          });
         }
       }
     }
@@ -102,19 +162,89 @@ function rotate4(v: Vec4, plane: [number, number], angle: number): Vec4 {
   return { x: arr[0], y: arr[1], z: arr[2], w: arr[3] };
 }
 
-function project(v: Vec4): Pt {
-  const distance = 2.55;
-  const persp = distance / (distance - v.w);
-  const scale = 92;
+function orbit3(p: Pt, yaw: number, pitch: number): Pt {
+  const cy = Math.cos(yaw);
+  const sy = Math.sin(yaw);
+  const x1 = p.x * cy - p.z * sy;
+  const z1 = p.x * sy + p.z * cy;
+  const cp = Math.cos(pitch);
+  const sp = Math.sin(pitch);
   return {
-    x: 200 + v.x * persp * scale,
-    y: 200 + v.y * persp * scale,
-    z: v.z * persp,
+    x: x1,
+    y: p.y * cp - z1 * sp,
+    z: p.y * sp + z1 * cp,
   };
 }
 
 function facing(q: Pt[]): number {
   return (q[1].x - q[0].x) * (q[3].y - q[0].y) - (q[1].y - q[0].y) * (q[3].x - q[0].x);
+}
+
+function affineMatrix(q: Pt[]): string {
+  const a = q[3].x - q[0].x;
+  const c = q[3].y - q[0].y;
+  const b = q[1].x - q[0].x;
+  const d = q[1].y - q[0].y;
+  return `${a} ${c} ${b} ${d} ${q[0].x} ${q[0].y}`;
+}
+
+function projectRaw(rot: Rot): Pt[] {
+  const cam = Array.from({ length: 16 }, (_, i) => {
+    let v = vertex(i);
+    v = rotate4(v, [0, 1], rot.xy);
+    v = rotate4(v, [0, 3], rot.xw);
+    v = rotate4(v, [1, 3], rot.yw);
+    v = rotate4(v, [2, 3], rot.zw);
+    const k4 = D4 / (D4 - v.w);
+    return orbit3({ x: v.x * k4, y: v.y * k4, z: v.z * k4 }, rot.yaw, rot.pitch);
+  });
+  return cam.map((p) => {
+    const z = Math.min(p.z, D3 - 0.6);
+    const k = D3 / (D3 - z);
+    return { x: p.x * k, y: p.y * k, z: p.z };
+  });
+}
+
+const CAMERA_FIT = (() => {
+  const raw = projectRaw(INITIAL_ROT);
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (const p of raw) {
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.y > maxY) maxY = p.y;
+  }
+  const span = Math.max(maxX - minX, maxY - minY, 0.2);
+  return {
+    scale: (VIEW * 0.82) / span,
+    ox: (minX + maxX) / 2,
+    oy: (minY + maxY) / 2,
+  };
+})();
+
+function buildModel(rot: Rot): { pts: Pt[]; faceModels: FaceModel[] } {
+  const raw = projectRaw(rot);
+  const pts = raw.map((p) => ({
+    x: VIEW / 2 + (p.x - CAMERA_FIT.ox) * CAMERA_FIT.scale,
+    y: VIEW / 2 - (p.y - CAMERA_FIT.oy) * CAMERA_FIT.scale,
+    z: p.z,
+  }));
+  const faceModels = SQUARES.map((geom, faceIndex) => {
+    const quad = geom.ids.map((id) => pts[id]);
+    return {
+      faceIndex,
+      geom,
+      quad,
+      points: quad.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "),
+      depth: (quad[0].z + quad[1].z + quad[2].z + quad[3].z) / 4,
+      area: facing(quad),
+      affine: affineMatrix(quad),
+    };
+  });
+  return { pts, faceModels };
 }
 
 function LightboxModal({
@@ -192,6 +322,289 @@ function LightboxModal({
   );
 }
 
+const TesseractCanvas = memo(function TesseractCanvas({
+  uid,
+  faces,
+  onOpenFace,
+  autoRotateRef,
+}: {
+  uid: string;
+  faces: MediaFace[];
+  onOpenFace: (face: MediaFace) => void;
+  autoRotateRef: MutableRefObject<boolean>;
+}) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const facesLayerRef = useRef<SVGGElement>(null);
+  const rotRef = useRef<Rot>({ ...INITIAL_ROT });
+  const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; xw: number; yw: number } | null>(null);
+  const draggingRef = useRef(false);
+  const dragged = useRef(false);
+  const paintRef = useRef<() => void>(() => {});
+  const initial = useMemo(() => buildModel(INITIAL_ROT), []);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    const facesLayer = facesLayerRef.current;
+    if (!svg || !facesLayer) return;
+
+    const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
+    const groups = SQUARES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
+    const tints = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
+    const clips = SQUARES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
+    const images = SQUARES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
+    const plays = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
+    const circles = Array.from({ length: 16 }, (_, i) => svg.querySelector(`circle[data-v="${i}"]`) as SVGCircleElement | null);
+
+    svg.dataset.live = "1";
+    const paint = () => {
+      const rot = rotRef.current;
+      const { pts, faceModels } = buildModel(rot);
+      svg.dataset.xw = rot.xw.toFixed(4);
+      svg.dataset.yw = rot.yw.toFixed(4);
+      svg.setAttribute("data-xw", rot.xw.toFixed(4));
+      svg.setAttribute("data-yw", rot.yw.toFixed(4));
+      for (let i = 0; i < EDGES.length; i += 1) {
+        const line = lines[i];
+        if (!line) continue;
+        const [a, b] = EDGES[i];
+        line.setAttribute("x1", pts[a].x.toFixed(2));
+        line.setAttribute("y1", pts[a].y.toFixed(2));
+        line.setAttribute("x2", pts[b].x.toFixed(2));
+        line.setAttribute("y2", pts[b].y.toFixed(2));
+      }
+      const order = faceModels
+        .map((_, i) => i)
+        .sort((a, b) => faceModels[a].depth - faceModels[b].depth);
+      for (const idx of order) {
+        const group = groups[idx];
+        const item = faceModels[idx];
+        if (!group) continue;
+        facesLayer.appendChild(group);
+        const back = item.area < 0;
+        const tint = tints[idx];
+        if (tint) {
+          tint.setAttribute("points", item.points);
+          tint.setAttribute("fill-opacity", back ? "0.14" : "0.32");
+        }
+        const clip = clips[idx];
+        if (clip) clip.setAttribute("points", item.points);
+        const image = images[idx];
+        if (image) {
+          image.setAttribute("transform", `matrix(${item.affine})`);
+          const photoOpacity = back
+            ? item.geom.wCell
+              ? 0.16
+              : 0.08
+            : item.geom.wCell
+              ? 0.52
+              : 0.32;
+          image.setAttribute("opacity", String(photoOpacity));
+        }
+        const play = plays[idx];
+        if (play) {
+          const cx = (item.quad[0].x + item.quad[2].x) / 2;
+          const cy = (item.quad[0].y + item.quad[2].y) / 2;
+          play.setAttribute("points", `${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`);
+          play.setAttribute("display", back ? "none" : "block");
+        }
+      }
+      for (let i = 0; i < 16; i += 1) {
+        const c = circles[i];
+        if (!c) continue;
+        c.setAttribute("cx", pts[i].x.toFixed(2));
+        c.setAttribute("cy", pts[i].y.toFixed(2));
+      }
+    };
+    paintRef.current = paint;
+
+    let raf = 0;
+    let spinning = autoRotateRef.current && !draggingRef.current;
+    let spinStartedAt = performance.now();
+    let base: Rot = { ...rotRef.current };
+    const tick = (now: number) => {
+      const spin = autoRotateRef.current && !draggingRef.current;
+      if (spin) {
+        if (!spinning) {
+          spinStartedAt = now;
+          base = { ...rotRef.current };
+        }
+        const elapsed = (now - spinStartedAt) / 1000;
+        rotRef.current = {
+          ...base,
+          xw: base.xw + elapsed * XW_SPEED,
+          yw: base.yw + elapsed * YW_SPEED,
+          yaw: base.yaw + elapsed * YAW_SPEED,
+        };
+      }
+      spinning = spin;
+      paint();
+    };
+    paint();
+    const loop = (now: number) => {
+      tick(now);
+      raf = window.requestAnimationFrame(loop);
+    };
+    raf = window.requestAnimationFrame(loop);
+    const fallback = window.setInterval(() => tick(performance.now()), 80);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.clearInterval(fallback);
+      paintRef.current = () => {};
+    };
+  }, [autoRotateRef]);
+
+  return (
+    <div
+      className="h-full w-full touch-none"
+      onPointerDown={(event) => {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        dragged.current = false;
+        draggingRef.current = true;
+        drag.current = {
+          x: event.clientX,
+          y: event.clientY,
+          yaw: rotRef.current.yaw,
+          pitch: rotRef.current.pitch,
+          xw: rotRef.current.xw,
+          yw: rotRef.current.yw,
+        };
+      }}
+      onPointerMove={(event) => {
+        if (!drag.current) return;
+        const dx = event.clientX - drag.current.x;
+        const dy = event.clientY - drag.current.y;
+        if (Math.abs(dx) + Math.abs(dy) > 4) dragged.current = true;
+        rotRef.current = {
+          ...rotRef.current,
+          yaw: drag.current.yaw + dx * 0.008,
+          pitch: Math.max(-1.15, Math.min(1.15, drag.current.pitch + dy * 0.008)),
+          yw: drag.current.yw + dx * 0.004,
+          xw: drag.current.xw + dy * 0.004,
+        };
+        paintRef.current();
+      }}
+      onPointerUp={() => {
+        drag.current = null;
+        draggingRef.current = false;
+      }}
+      onPointerCancel={() => {
+        drag.current = null;
+        draggingRef.current = false;
+      }}
+    >
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${VIEW} ${VIEW}`}
+        className="h-full w-full"
+        style={{ maxWidth: "none", overflow: "visible" }}
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="4D tesseract listing gallery — nested cubes, 24 faces"
+        data-tesseract="1"
+        data-xw={INITIAL_ROT.xw.toFixed(4)}
+        data-yw={INITIAL_ROT.yw.toFixed(4)}
+      >
+        <defs>
+          <filter id={`${uid}-glow`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2.4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          {initial.faceModels.map((item) => (
+            <clipPath key={`c${item.faceIndex}`} id={`${uid}-c${item.faceIndex}`}>
+              <polygon data-fc={item.faceIndex} points={item.points} />
+            </clipPath>
+          ))}
+        </defs>
+        <g ref={facesLayerRef} data-layer="faces">
+          {initial.faceModels.map((item) => {
+            const back = item.area < 0;
+            const media = faces[item.faceIndex % faces.length];
+            const tint = CUBE_TINTS[item.geom.cube] ?? CUBE_TINTS[0];
+            const photoOpacity = back
+              ? item.geom.wCell
+                ? 0.16
+                : 0.08
+              : item.geom.wCell
+                ? 0.52
+                : 0.32;
+            const cx = (item.quad[0].x + item.quad[2].x) / 2;
+            const cy = (item.quad[0].y + item.quad[2].y) / 2;
+            return (
+              <g
+                key={item.faceIndex}
+                data-f={item.faceIndex}
+                onClick={() => {
+                  if (dragged.current) return;
+                  onOpenFace(media);
+                }}
+                style={{ cursor: "pointer" }}
+              >
+                <polygon data-ft={item.faceIndex} points={item.points} fill={tint} fillOpacity={back ? 0.14 : 0.32} />
+                {media.kind === "image" ? (
+                  <g clipPath={`url(#${uid}-c${item.faceIndex})`}>
+                    <image
+                      data-fi={item.faceIndex}
+                      href={media.url}
+                      width={1}
+                      height={1}
+                      preserveAspectRatio="none"
+                      transform={`matrix(${item.affine})`}
+                      opacity={photoOpacity}
+                    />
+                  </g>
+                ) : (
+                  <polygon
+                    data-fpb={item.faceIndex}
+                    points={`${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`}
+                    fill={GOLD_BRIGHT}
+                    display={back ? "none" : "block"}
+                  />
+                )}
+              </g>
+            );
+          })}
+        </g>
+        <g data-layer="edges">
+          {EDGES.map(([a, b]) => {
+            const wEdge = (a ^ b) === 8;
+            return (
+              <line
+                key={`${a}-${b}`}
+                data-e={`${a}-${b}`}
+                x1={initial.pts[a].x}
+                y1={initial.pts[a].y}
+                x2={initial.pts[b].x}
+                y2={initial.pts[b].y}
+                stroke={wEdge ? "rgba(212,175,55,0.55)" : GOLD_BRIGHT}
+                strokeWidth={wEdge ? 2.2 : 3.6}
+                strokeLinecap="round"
+                filter={`url(#${uid}-glow)`}
+              />
+            );
+          })}
+        </g>
+        <g data-layer="verts">
+          {initial.pts.map((p, i) => (
+            <circle
+              key={i}
+              data-v={i}
+              cx={p.x}
+              cy={p.y}
+              r={i & 8 ? 5.2 : 6.4}
+              fill={GOLD_BRIGHT}
+              stroke={GOLD}
+              strokeWidth="1.2"
+            />
+          ))}
+        </g>
+      </svg>
+    </div>
+  );
+});
+
 export function PropertyGallery3D({
   images,
   videos = [],
@@ -201,148 +614,64 @@ export function PropertyGallery3D({
 }) {
   const uid = useId().replace(/:/g, "");
   const [autoRotate, setAutoRotate] = useState(true);
+  const autoRotateRef = useRef(true);
   const [activeFace, setActiveFace] = useState<MediaFace | null>(null);
-  const [rot, setRot] = useState({ xw: 0.55, yw: 0.85, zw: 0.18, xy: 0.35 });
-  const drag = useRef<{ x: number; y: number; xw: number; yw: number } | null>(null);
-  const dragged = useRef(false);
   const faces = useMemo(() => buildFaces(images, videos), [images, videos]);
 
   useEffect(() => {
-    if (!autoRotate) return;
-    const id = window.setInterval(() => {
-      setRot((r) => ({
-        ...r,
-        xw: r.xw + 0.028,
-        yw: r.yw + 0.016,
-        xy: r.xy + 0.006,
-      }));
-    }, 40);
-    return () => window.clearInterval(id);
-  }, [autoRotate]);
-
-  const model = useMemo(() => {
-    const pts = Array.from({ length: 16 }, (_, i) => {
-      let v = vertex(i);
-      v = rotate4(v, [0, 1], rot.xy);
-      v = rotate4(v, [0, 3], rot.xw);
-      v = rotate4(v, [1, 3], rot.yw);
-      v = rotate4(v, [2, 3], rot.zw);
-      return project(v);
-    });
-    const faceModels = SQUARES.map((ids, faceIndex) => {
-      const quad = ids.map((id) => pts[id]);
-      return {
-        faceIndex,
-        ids,
-        quad,
-        points: quad.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "),
-        depth: (quad[0].z + quad[1].z + quad[2].z + quad[3].z) / 4,
-        area: facing(quad),
-      };
-    }).sort((a, b) => a.depth - b.depth);
-    return { pts, faceModels };
-  }, [rot]);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === "Space" && !activeFace) {
+        e.preventDefault();
+        const next = !autoRotateRef.current;
+        autoRotateRef.current = next;
+        setAutoRotate(next);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activeFace]);
 
   if (faces.length === 0) return null;
 
   return (
-    <div className="mb-24 sm:mb-0">
+    <div className="mb-24 w-full sm:mb-0">
       <div
-        className="relative flex h-[360px] items-center justify-center rounded-[var(--radius-xl)] bg-gradient-to-b from-[#07111f] to-[#163154] sm:h-[540px]"
-        onPointerDown={(event) => {
-          event.currentTarget.setPointerCapture(event.pointerId);
-          dragged.current = false;
-          drag.current = { x: event.clientX, y: event.clientY, xw: rot.xw, yw: rot.yw };
-          setAutoRotate(false);
-        }}
-        onPointerMove={(event) => {
-          if (!drag.current) return;
-          const dx = event.clientX - drag.current.x;
-          const dy = event.clientY - drag.current.y;
-          if (Math.abs(dx) + Math.abs(dy) > 4) dragged.current = true;
-          setRot((r) => ({
-            ...r,
-            yw: drag.current!.yw + dx * 0.01,
-            xw: drag.current!.xw + dy * 0.01,
-          }));
-        }}
-        onPointerUp={() => { drag.current = null; }}
-        onPointerCancel={() => { drag.current = null; }}
+        className="relative w-full rounded-[var(--radius-xl)] bg-[radial-gradient(ellipse_at_center,_#163154_0%,_#07111f_62%,_#050d18_100%)] shadow-[0_0_48px_rgba(212,175,55,0.18)]"
+        style={{ height: "clamp(28rem, 92vw, 46rem)" }}
       >
-        <svg viewBox="0 0 400 400" className="h-full w-full drop-shadow-[0_0_18px_rgba(212,175,55,0.35)]">
-          <defs>
-            {faces.map((face) =>
-              face.kind === "image" ? (
-                <pattern key={face.index} id={`${uid}-p${face.index}`} width="1" height="1" patternContentUnits="objectBoundingBox">
-                  <image href={face.url} width="1" height="1" preserveAspectRatio="xMidYMid slice" />
-                </pattern>
-              ) : null,
-            )}
-          </defs>
-          {EDGES.map(([a, b]) => {
-            const wEdge = (a ^ b) === 8;
-            return (
-              <line
-                key={`${a}-${b}`}
-                x1={model.pts[a].x}
-                y1={model.pts[a].y}
-                x2={model.pts[b].x}
-                y2={model.pts[b].y}
-                stroke={wEdge ? "rgba(212,175,55,0.45)" : "rgba(212,175,55,0.95)"}
-                strokeWidth={wEdge ? 1 : 2.4}
-              />
-            );
-          })}
-          {model.faceModels.map((item) => {
-            const back = item.area < 30;
-            const media = faces[item.faceIndex % faces.length];
-            const fill = media.kind === "image" ? `url(#${uid}-p${media.index})` : "rgba(8,22,40,0.55)";
-            return (
-              <g key={item.faceIndex}>
-                <polygon
-                  points={item.points}
-                  fill={fill}
-                  fillOpacity={back ? 0.22 : 0.9}
-                  stroke="#D4AF37"
-                  strokeWidth={back ? 0.8 : 1.6}
-                  onClick={() => {
-                    if (dragged.current || back) return;
-                    setActiveFace(media);
-                  }}
-                  style={{ cursor: back ? "default" : "pointer" }}
-                />
-                {!back && media.kind === "video" ? (
-                  <text
-                    x={(item.quad[0].x + item.quad[2].x) / 2}
-                    y={(item.quad[0].y + item.quad[2].y) / 2}
-                    textAnchor="middle"
-                    fill="#D4AF37"
-                    fontSize="9"
-                  >
-                    ▶ {media.label}
-                  </text>
-                ) : null}
-              </g>
-            );
-          })}
-          {model.pts.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r="2.6" fill="#D4AF37" />
-          ))}
-        </svg>
+        <TesseractCanvas
+          uid={uid}
+          faces={faces}
+          onOpenFace={setActiveFace}
+          autoRotateRef={autoRotateRef}
+        />
         <button
           type="button"
           className="absolute bottom-3 right-3 z-10 rounded-full bg-black/60 p-2 text-white"
-          onClick={() => setAutoRotate((v) => !v)}
+          onClick={() => {
+            const next = !autoRotateRef.current;
+            autoRotateRef.current = next;
+            setAutoRotate(next);
+          }}
           aria-label={autoRotate ? "Pause" : "Play"}
         >
           {autoRotate ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
         <p className="absolute bottom-3 left-3 z-10 max-w-[75%] rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-          4D tesseract · inner cube grows outward · 24 faces · {faces.length} files
+          4D tesseract · XW/YW inner cube grows outward · 24 faces · {faces.length} files
         </p>
       </div>
       {activeFace ? (
-        <LightboxModal face={activeFace} allFaces={faces} onClose={() => setActiveFace(null)} onNavigate={setActiveFace} />
+        <LightboxModal
+          face={activeFace}
+          allFaces={faces}
+          onClose={() => {
+            setActiveFace(null);
+            autoRotateRef.current = true;
+            setAutoRotate(true);
+          }}
+          onNavigate={setActiveFace}
+        />
       ) : null}
     </div>
   );
