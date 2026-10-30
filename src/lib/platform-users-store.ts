@@ -82,3 +82,36 @@ export async function createRegisteredAgent(input: {
   await writeStoreJson(STORE_FILE, registered);
   return { ok: true, user };
 }
+
+export type UpdatePlatformUserResult =
+  | { ok: true; user: DemoUser }
+  | { ok: false; error: string; status: number };
+
+export async function updatePlatformUser(
+  userId: string,
+  fields: { name?: string; email?: string; password?: string; suspended?: boolean },
+): Promise<UpdatePlatformUserResult> {
+  const builtin = demoUsers.find((u) => u.id === userId);
+  if (builtin) {
+    if (fields.name !== undefined) builtin.name = fields.name;
+    if (fields.email !== undefined) builtin.email = fields.email;
+    if (fields.password !== undefined) builtin.passwordHash = await hashPassword(fields.password);
+    if (fields.suspended !== undefined) builtin.suspended = fields.suspended;
+    return { ok: true, user: builtin };
+  }
+
+  const registered = await loadRegistered();
+  const idx = registered.findIndex((u) => u.id === userId);
+  if (idx === -1) {
+    return { ok: false, error: "User not found.", status: 404 };
+  }
+
+  const user = registered[idx]!;
+  if (fields.name !== undefined) user.name = fields.name;
+  if (fields.email !== undefined) user.email = fields.email.trim().toLowerCase();
+  if (fields.password !== undefined) user.passwordHash = await hashPassword(fields.password);
+  if (fields.suspended !== undefined) user.suspended = fields.suspended;
+
+  await writeStoreJson(STORE_FILE, registered);
+  return { ok: true, user };
+}

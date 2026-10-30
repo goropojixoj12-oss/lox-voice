@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminCommentsPanel } from "@/components/admin/admin-comments-panel";
+import { AdminStaffAccountPanel } from "@/components/admin/admin-staff-account-panel";
 import { AdminTaskPanel } from "@/components/admin/admin-task-panel";
 import { isAdminVisibleStaffId } from "@/lib/admin-platform-users";
 import { buildStaffRoster, getStaffPlatformUser } from "@/lib/admin-staff";
@@ -49,6 +50,11 @@ export default async function AdminStaffDetailPage({
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
             {agent.name}
+            {agent.suspended ? (
+              <span className="ml-3 inline-block rounded-full bg-red-600 px-3 py-0.5 align-middle text-xs font-semibold text-white">
+                BLOCKED
+              </span>
+            ) : null}
           </h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
             {agent.email} · agency {row.agencyLabel}
@@ -105,6 +111,13 @@ export default async function AdminStaffDetailPage({
           title="Direct messages & HR notes"
         />
       </div>
+
+      <AdminStaffAccountPanel
+        userId={agent.id}
+        name={agent.name}
+        email={agent.email}
+        suspended={!!agent.suspended}
+      />
 
       <div className="seaps-card rounded-[var(--radius-lg)] p-4 text-sm">
         <p className="font-semibold">Legal & contracts</p>

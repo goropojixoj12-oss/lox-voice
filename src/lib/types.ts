@@ -222,6 +222,8 @@ export interface DemoUser {
   name: string;
   role: Exclude<UserRole, "guest">;
   agencyId?: string;
+  /** When true the account cannot sign in and existing sessions are rejected. */
+  suspended?: boolean;
 }
 
 export interface Inquiry {

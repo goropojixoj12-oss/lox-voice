@@ -18,6 +18,7 @@ export type StaffRow = {
   rejectedListings: number;
   leadCount: number;
   openTasks: number;
+  suspended: boolean;
 };
 
 function runtimeListingsForUser(userId: string, runtime: Awaited<ReturnType<typeof getRuntimeListings>>) {
@@ -60,6 +61,7 @@ export async function buildStaffRoster(openTasksByStaff: Record<string, number>)
       rejectedListings: mine.filter((p) => p.status === "rejected").length,
       leadCount: leadCountForUser(user.id, runtime, inquiries),
       openTasks: openTasksByStaff[user.id] ?? 0,
+      suspended: !!user.suspended,
     });
   }
 

@@ -145,7 +145,8 @@ export async function getSession(): Promise<SessionUser | null> {
   if (!verified) return null;
 
   const user = await findPlatformUserById(verified.userId);
-  return user ? toSessionUser(user) : null;
+  if (!user || user.suspended) return null;
+  return toSessionUser(user);
 }
 
 export async function login(email: string, password: string) {
@@ -153,6 +154,10 @@ export async function login(email: string, password: string) {
   if (!user) {
     await verifyPassword(password, DUMMY_PASSWORD_HASH);
     return { ok: false as const, error: "Invalid email or password" };
+  }
+
+  if (user.suspended) {
+    return { ok: false as const, error: "Your account has been suspended. Contact the administrator." };
   }
 
   const match = await verifyPassword(password, user.passwordHash);

@@ -65,7 +65,14 @@ export default async function AdminStaffPage() {
             {roster.map((row) => (
               <tr key={row.staffId} className="border-t border-[var(--color-border)]">
                 <td className="p-3">
-                  <p className="font-semibold">{row.name}</p>
+                  <p className="font-semibold">
+                    {row.name}
+                    {row.suspended ? (
+                      <span className="ml-2 inline-block rounded-full bg-red-600 px-2 py-0.5 align-middle text-[10px] font-semibold text-white">
+                        BLOCKED
+                      </span>
+                    ) : null}
+                  </p>
                   <p className="text-xs text-[var(--color-muted)]">{row.title}</p>
                 </td>
                 <td className="p-3 text-xs">{row.email}</td>
