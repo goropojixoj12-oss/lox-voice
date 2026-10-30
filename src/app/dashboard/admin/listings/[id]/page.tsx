@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminCommentsPanel } from "@/components/admin/admin-comments-panel";
-import { AdminListingModerationForm } from "@/components/dashboard/admin-listing-moderation-form";
+import {
+  AdminListingEditWizard,
+  AdminListingEditWizardProvider,
+} from "@/components/dashboard/admin-listing-edit-wizard";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { getRuntimeListingById } from "@/lib/store";
 
-export const metadata: Metadata = { title: "Review listing" };
+export const metadata: Metadata = { title: "Edit listing" };
 
-export default async function AdminListingReviewPage({
+export default async function AdminListingEditPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -23,16 +26,22 @@ export default async function AdminListingReviewPage({
         href={adminDeskPath("listings")}
         className="text-sm text-[var(--color-accent-soft)] hover:underline"
       >
-        ← Back to moderation queue
+        \u2190 Back to listings
       </Link>
       <h1 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-        Review listing
+        Edit listing
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Edit copy and pricing, then approve to publish on the public site or reject to send back.
+        Full 7-step editing \u2014 change any field, upload or remove media, then save, approve, or
+        reject.
       </p>
-      <div className="mt-6 rounded-[var(--radius-xl)] seaps-card p-5 md:p-6">
-        <AdminListingModerationForm listing={listing} />
+      <div className="mt-6">
+        <AdminListingEditWizardProvider
+          listing={listing}
+          afterSavePath={adminDeskPath("listings")}
+        >
+          <AdminListingEditWizard listingStatus={listing.status} />
+        </AdminListingEditWizardProvider>
       </div>
       <div className="mt-6">
         <AdminCommentsPanel
@@ -41,7 +50,10 @@ export default async function AdminListingReviewPage({
         />
       </div>
       <p className="mt-4 text-sm text-[var(--color-muted)]">
-        <Link href={`/property/${listing.slug}`} className="text-[var(--color-accent-soft)] underline">
+        <Link
+          href={`/property/${listing.slug}`}
+          className="text-[var(--color-accent-soft)] underline"
+        >
           Preview page
         </Link>{" "}
         (visible to you as admin; hidden from public until published)

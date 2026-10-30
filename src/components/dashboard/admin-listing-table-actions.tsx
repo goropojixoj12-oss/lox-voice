@@ -30,7 +30,7 @@ export function AdminListingTableActions({
 
   async function deleteListing() {
     const confirmed = window.confirm(
-      `Delete rejected listing “${listingTitle}”? This cannot be undone.`,
+      `Delete rejected listing "${listingTitle}"? This cannot be undone.`,
     );
     if (!confirmed) return;
 
@@ -58,7 +58,7 @@ export function AdminListingTableActions({
       href={detailHref}
       className={`${actionButtonClass} text-[var(--color-accent-soft)]`}
     >
-      Manage
+      Edit
     </Link>
   );
 
@@ -74,7 +74,7 @@ export function AdminListingTableActions({
               disabled={deleting}
               className={`${actionButtonClass} border-red-500/40 text-red-400 hover:border-red-400 disabled:opacity-50`}
             >
-              {deleting ? "Deleting…" : "Delete"}
+              {deleting ? "Deleting\u2026" : "Delete"}
             </button>
           ) : null}
         </span>
