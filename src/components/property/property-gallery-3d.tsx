@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type MutableRefObject } from "react";
+import { memo, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 import { ChevronLeft, ChevronRight, Download, Pause, Play, X, ZoomIn, ZoomOut } from "lucide-react";
 import type { PropertyImage, PropertyVideo } from "@/lib/types";
 
@@ -326,11 +326,13 @@ const TesseractCanvas = memo(function TesseractCanvas({
   uid,
   faces,
   onOpenFace,
+  autoRotate,
   autoRotateRef,
 }: {
   uid: string;
   faces: MediaFace[];
   onOpenFace: (face: MediaFace) => void;
+  autoRotate: boolean;
   autoRotateRef: MutableRefObject<boolean>;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -339,13 +341,15 @@ const TesseractCanvas = memo(function TesseractCanvas({
   const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; xw: number; yw: number } | null>(null);
   const draggingRef = useRef(false);
   const dragged = useRef(false);
+  const [holding, setHolding] = useState(false);
   const paintRef = useRef<() => void>(() => {});
   const initial = useMemo(() => buildModel(INITIAL_ROT), []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const svg = svgRef.current;
     const facesLayer = facesLayerRef.current;
     if (!svg || !facesLayer) return;
+    svg.dataset.hydrated = "1";
 
     const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
     const groups = SQUARES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
@@ -418,6 +422,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
     paintRef.current = paint;
 
     let raf = 0;
+    let frames = 0;
     let spinning = autoRotateRef.current && !draggingRef.current;
     let spinStartedAt = performance.now();
     let base: Rot = { ...rotRef.current };
@@ -437,15 +442,17 @@ const TesseractCanvas = memo(function TesseractCanvas({
         };
       }
       spinning = spin;
+      frames += 1;
+      svg.dataset.frames = String(frames);
       paint();
     };
-    paint();
+    tick(performance.now());
     const loop = (now: number) => {
       tick(now);
       raf = window.requestAnimationFrame(loop);
     };
     raf = window.requestAnimationFrame(loop);
-    const fallback = window.setInterval(() => tick(performance.now()), 80);
+    const fallback = window.setInterval(() => tick(performance.now()), 16);
     return () => {
       window.cancelAnimationFrame(raf);
       window.clearInterval(fallback);
@@ -455,11 +462,12 @@ const TesseractCanvas = memo(function TesseractCanvas({
 
   return (
     <div
-      className="h-full w-full touch-none"
+      className={`h-full w-full touch-none ${autoRotate && !holding ? "seaps-tesseract-spin" : ""}`}
       onPointerDown={(event) => {
         event.currentTarget.setPointerCapture(event.pointerId);
         dragged.current = false;
         draggingRef.current = true;
+        setHolding(true);
         drag.current = {
           x: event.clientX,
           y: event.clientY,
@@ -486,10 +494,12 @@ const TesseractCanvas = memo(function TesseractCanvas({
       onPointerUp={() => {
         drag.current = null;
         draggingRef.current = false;
+        setHolding(false);
       }}
       onPointerCancel={() => {
         drag.current = null;
         draggingRef.current = false;
+        setHolding(false);
       }}
     >
       <svg
@@ -643,6 +653,7 @@ export function PropertyGallery3D({
           uid={uid}
           faces={faces}
           onOpenFace={setActiveFace}
+          autoRotate={autoRotate}
           autoRotateRef={autoRotateRef}
         />
         <button

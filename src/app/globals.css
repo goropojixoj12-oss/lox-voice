@@ -476,6 +476,21 @@ a {
   }
 }
 
+@keyframes seapsTesseractSpin {
+  from {
+    transform: rotate3d(0.35, 1, 0.18, 0deg);
+  }
+  to {
+    transform: rotate3d(0.35, 1, 0.18, 360deg);
+  }
+}
+
+.seaps-tesseract-spin {
+  animation: seapsTesseractSpin 16s linear infinite;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+}
+
 @keyframes seapsGoldRing {
   0%,
   100% {
