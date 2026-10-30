@@ -1,16 +1,12 @@
 "use client";
 
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import {
-  Suspense,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import * as THREE from "three";
 import { X, ZoomIn, ZoomOut, Download, Pause, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import type { PropertyImage, PropertyVideo } from "@/lib/types";
 
@@ -20,6 +16,15 @@ type MediaFace = {
   label: string;
   index: number;
 };
+
+const FACE_LAYOUT = [
+  "rotateY(0deg) translateZ(110px)",
+  "rotateY(180deg) translateZ(110px)",
+  "rotateY(90deg) translateZ(110px)",
+  "rotateY(-90deg) translateZ(110px)",
+  "rotateX(90deg) translateZ(110px)",
+  "rotateX(-90deg) translateZ(110px)",
+] as const;
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const faces: MediaFace[] = [];
@@ -31,114 +36,6 @@ function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace
     faces.push({ url: vid.url, kind: "video", label: vid.label || "Video", index: idx++ });
   }
   return faces;
-}
-
-function ImageTexture({ url }: { url: string }) {
-  const texture = useLoader(THREE.TextureLoader, url);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return <meshStandardMaterial map={texture} />;
-}
-
-function CubeFace({
-  position,
-  rotation,
-  face,
-  onFaceClick,
-}: {
-  position: [number, number, number];
-  rotation: [number, number, number];
-  face: MediaFace;
-  onFaceClick: (face: MediaFace) => void;
-}) {
-  return (
-    <mesh
-      position={position}
-      rotation={rotation}
-      onClick={(e) => {
-        e.stopPropagation();
-        onFaceClick(face);
-      }}
-    >
-      <planeGeometry args={[1.95, 1.95]} />
-      <Suspense fallback={<meshStandardMaterial color="#1a2744" />}>
-        {face.kind === "image" ? (
-          <ImageTexture url={face.url} />
-        ) : (
-          <meshStandardMaterial color="#0d2137" />
-        )}
-      </Suspense>
-    </mesh>
-  );
-}
-
-function RotatingCube({
-  faces,
-  page,
-  autoRotate,
-  onFaceClick,
-}: {
-  faces: MediaFace[];
-  page: number;
-  autoRotate: boolean;
-  onFaceClick: (face: MediaFace) => void;
-}) {
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((_state, delta) => {
-    if (autoRotate && groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.3;
-      groupRef.current.rotation.x += delta * 0.08;
-    }
-  });
-
-  const faceConfigs: {
-    position: [number, number, number];
-    rotation: [number, number, number];
-  }[] = useMemo(
-    () => [
-      { position: [0, 0, 1], rotation: [0, 0, 0] },
-      { position: [0, 0, -1], rotation: [0, Math.PI, 0] },
-      { position: [1, 0, 0], rotation: [0, Math.PI / 2, 0] },
-      { position: [-1, 0, 0], rotation: [0, -Math.PI / 2, 0] },
-      { position: [0, 1, 0], rotation: [-Math.PI / 2, 0, 0] },
-      { position: [0, -1, 0], rotation: [Math.PI / 2, 0, 0] },
-    ],
-    [],
-  );
-
-  const start = page * 6;
-  const visibleFaces = faces.slice(start, start + 6);
-
-  return (
-    <group ref={groupRef}>
-      <mesh>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshStandardMaterial color="#0B1C33" transparent opacity={0.95} />
-      </mesh>
-      {faceConfigs.map((config, i) => {
-        const face = visibleFaces[i % visibleFaces.length];
-        if (!face) return null;
-        return (
-          <CubeFace
-            key={`${page}-${i}`}
-            position={config.position}
-            rotation={config.rotation}
-            face={face}
-            onFaceClick={onFaceClick}
-          />
-        );
-      })}
-    </group>
-  );
-}
-
-function SceneSetup() {
-  const { camera } = useThree();
-  useMemo(() => {
-    camera.position.set(3, 2, 3);
-    camera.lookAt(0, 0, 0);
-  }, [camera]);
-  return null;
 }
 
 function LightboxModal({
@@ -230,7 +127,7 @@ function LightboxModal({
         </button>
       </div>
 
-      {hasPrev && (
+      {hasPrev ? (
         <button
           type="button"
           className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
@@ -239,8 +136,8 @@ function LightboxModal({
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
-      )}
-      {hasNext && (
+      ) : null}
+      {hasNext ? (
         <button
           type="button"
           className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20"
@@ -249,12 +146,9 @@ function LightboxModal({
         >
           <ChevronRight className="h-6 w-6" />
         </button>
-      )}
+      ) : null}
 
-      <div
-        className="max-h-[85vh] max-w-[90vw] overflow-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="max-h-[85vh] max-w-[90vw] overflow-auto" onClick={(e) => e.stopPropagation()}>
         {face.kind === "video" ? (
           <video
             src={face.url}
@@ -300,10 +194,27 @@ export function PropertyGallery3D({
   const [autoRotate, setAutoRotate] = useState(true);
   const [activeFace, setActiveFace] = useState<MediaFace | null>(null);
   const [cubePage, setCubePage] = useState(0);
+  const [rotation, setRotation] = useState({ x: -18, y: 28 });
+  const drag = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null);
+  const dragged = useRef(false);
 
   const faces = useMemo(() => buildFaces(images, videos), [images, videos]);
-
   const totalPages = Math.max(1, Math.ceil(faces.length / 6));
+  const pageFaces = faces.slice(cubePage * 6, cubePage * 6 + 6);
+
+  useEffect(() => {
+    if (!autoRotate) return;
+    let frame = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const delta = now - last;
+      last = now;
+      setRotation((r) => ({ x: r.x + delta * 0.004, y: r.y + delta * 0.02 }));
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [autoRotate]);
 
   useEffect(() => {
     if (!autoRotate || faces.length <= 6) return;
@@ -313,39 +224,92 @@ export function PropertyGallery3D({
     return () => clearInterval(interval);
   }, [autoRotate, faces.length, totalPages]);
 
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragged.current = false;
+    drag.current = {
+      x: event.clientX,
+      y: event.clientY,
+      rx: rotation.x,
+      ry: rotation.y,
+    };
+    setAutoRotate(false);
+  };
+
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag.current) return;
+    const dx = event.clientX - drag.current.x;
+    const dy = event.clientY - drag.current.y;
+    if (Math.abs(dx) + Math.abs(dy) > 4) dragged.current = true;
+    setRotation({
+      x: drag.current.rx - dy * 0.45,
+      y: drag.current.ry + dx * 0.45,
+    });
+  };
+
+  const onPointerUp = () => {
+    drag.current = null;
+  };
+
   if (faces.length === 0) return null;
 
   return (
     <div className="relative">
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-b from-[#0B1C33] to-[#162D50]">
-        <Canvas gl={{ antialias: true, alpha: true }}>
-          <SceneSetup />
-          <ambientLight intensity={0.6} />
-          <directionalLight position={[5, 5, 5]} intensity={1} />
-          <pointLight position={[-3, 3, -3]} intensity={0.5} color="#D4AF37" />
-          <RotatingCube
-            faces={faces}
-            page={cubePage}
-            autoRotate={autoRotate}
-            onFaceClick={(face) => setActiveFace(face)}
-          />
-          <OrbitControls enableZoom enablePan={false} dampingFactor={0.1} />
-        </Canvas>
+      <div className="relative h-[340px] overflow-hidden rounded-[var(--radius-xl)] bg-gradient-to-b from-[#0B1C33] to-[#162D50] sm:h-[460px]">
+        <div
+          className="flex h-full w-full items-center justify-center [perspective:900px]"
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+        >
+          <div
+            className="relative h-[220px] w-[220px] [transform-style:preserve-3d]"
+            style={{ transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)` }}
+          >
+            {FACE_LAYOUT.map((transform, i) => {
+              const face = pageFaces[i % Math.max(pageFaces.length, 1)];
+              if (!face) return null;
+              return (
+                <button
+                  key={`${cubePage}-${face.index}-${i}`}
+                  type="button"
+                  className="absolute inset-0 overflow-hidden border border-[#D4AF37]/40 bg-[#10243f] shadow-lg [backface-visibility:hidden]"
+                  style={{ transform }}
+                  onClick={() => {
+                    if (dragged.current) return;
+                    setActiveFace(face);
+                  }}
+                >
+                  {face.kind === "image" ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={face.url} alt={face.label} className="h-full w-full object-cover" draggable={false} />
+                  ) : (
+                    <span className="flex h-full w-full flex-col items-center justify-center gap-2 bg-[#0d2137] text-sm text-white">
+                      <Play className="h-8 w-8 text-[#D4AF37]" />
+                      {face.label}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <button
           type="button"
-          className="absolute bottom-3 right-3 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm hover:bg-black/70"
+          className="absolute bottom-3 right-3 z-10 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm hover:bg-black/70"
           onClick={() => setAutoRotate((v) => !v)}
           aria-label={autoRotate ? "Pause rotation" : "Resume rotation"}
         >
           {autoRotate ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
 
-        <div className="absolute bottom-3 left-3 rounded-full bg-black/50 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
-          {faces.length} media · Page {cubePage + 1}/{totalPages} · Click face / Drag to rotate
+        <div className="absolute bottom-3 left-3 z-10 rounded-full bg-black/50 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
+          {faces.length} media · {cubePage + 1}/{totalPages} · drag to spin
         </div>
 
-        {totalPages > 1 && (
+        {totalPages > 1 ? (
           <div className="absolute left-1/2 top-3 z-10 flex -translate-x-1/2 gap-1.5">
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
@@ -353,51 +317,47 @@ export function PropertyGallery3D({
                 type="button"
                 onClick={() => setCubePage(i)}
                 className={`h-2 w-2 rounded-full transition ${
-                  i === cubePage ? "bg-[#D4AF37] scale-125" : "bg-white/30 hover:bg-white/50"
+                  i === cubePage ? "scale-125 bg-[#D4AF37]" : "bg-white/30 hover:bg-white/50"
                 }`}
                 aria-label={`Page ${i + 1}`}
               />
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-        {faces.map((face, i) => (
+        {faces.map((face) => (
           <button
-            key={i}
+            key={face.index}
             type="button"
             onClick={() => setActiveFace(face)}
             className={`relative h-16 w-24 shrink-0 overflow-hidden rounded-[var(--radius-md)] border-2 transition hover:opacity-100 ${
-              Math.floor(i / 6) === cubePage
+              Math.floor(face.index / 6) === cubePage
                 ? "border-[#D4AF37]/60 opacity-100"
                 : "border-transparent opacity-60"
             }`}
           >
             {face.kind === "video" ? (
-              <div className="flex h-full w-full items-center justify-center bg-[#0B1C33] text-xs text-white">
-                <Play className="mr-1 h-3 w-3" /> Video {i - images.length + 1}
-              </div>
+              <span className="flex h-full w-full items-center justify-center bg-[#0B1C33] text-xs text-white">
+                <Play className="mr-1 h-3 w-3" /> Video
+              </span>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={face.url}
-                alt={face.label}
-                className="h-full w-full object-cover"
-              />
+              <img src={face.url} alt={face.label} className="h-full w-full object-cover" />
             )}
           </button>
         ))}
       </div>
 
-      {activeFace && (
+      {activeFace ? (
         <LightboxModal
           face={activeFace}
           allFaces={faces}
           onClose={() => setActiveFace(null)}
           onNavigate={(f) => setActiveFace(f)}
         />
-      )}
+      ) : null}
     </div>
   );
 }
