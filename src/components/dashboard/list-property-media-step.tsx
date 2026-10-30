@@ -67,6 +67,23 @@ async function uploadViaBlobClient(
   };
 }
 
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  retries: number,
+  delayMs: number,
+): Promise<T> {
+  let lastErr: unknown;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (i < retries) await new Promise((r) => setTimeout(r, delayMs * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 async function uploadOne(
   file: File,
   userId: string | null,
@@ -74,10 +91,10 @@ async function uploadOne(
 ): Promise<ListingMediaItem> {
   if (file.size <= 4.5 * 1024 * 1024) {
     try {
-      return await uploadViaServer(file, actingUserId);
+      return await withRetry(() => uploadViaServer(file, actingUserId), 2, 1000);
     } catch {
       if (userId) {
-        return uploadViaBlobClient(file, userId, actingUserId);
+        return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 2, 1000);
       }
       throw new Error("Upload failed");
     }
@@ -85,10 +102,10 @@ async function uploadOne(
   if (!userId) {
     throw new Error("Sign in required for large uploads.");
   }
-  return uploadViaBlobClient(file, userId, actingUserId);
+  return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 2, 1500);
 }
 
-const UPLOAD_CONCURRENCY = 4;
+const UPLOAD_CONCURRENCY = 6;
 
 async function mapWithConcurrency<T, R>(
   items: T[],
@@ -151,7 +168,7 @@ export function ListPropertyMediaStep({
   async function handleFiles(fileList: FileList | null) {
     if (!fileList?.length) return;
     if (!sessionReady) {
-      setError("Still loading your session — try again in a moment.");
+      setError("Still loading your session \u2014 try again in a moment.");
       return;
     }
     if (!userId) {
@@ -169,11 +186,11 @@ export function ListPropertyMediaStep({
       try {
         const item = await uploadOne(file, userId, actingUserId);
         completed += 1;
-        setProgress(`Uploaded ${completed} / ${files.length}…`);
+        setProgress(`Uploaded ${completed} / ${files.length}\u2026`);
         return { ok: true as const, item, file };
       } catch (e) {
         completed += 1;
-        setProgress(`Uploaded ${completed} / ${files.length}…`);
+        setProgress(`Uploaded ${completed} / ${files.length}\u2026`);
         return {
           ok: false as const,
           error: `${file.name}: ${e instanceof Error ? e.message : "Upload failed"}`,
@@ -231,7 +248,7 @@ export function ListPropertyMediaStep({
       <p className="text-sm text-[var(--color-muted)]">
         Upload many photos and videos for this listing. Cards across the site autoplay a{" "}
         <strong className="text-[var(--color-text)]">looping preview</strong>: your chosen preview
-        video, or — if you only upload photos — a fast flipbook (like YouTube hover previews, but
+        video, or \u2014 if you only upload photos \u2014 a fast flipbook (like YouTube hover previews, but
         always on). For {listingTitle ? `"${listingTitle}"` : "this listing"} you can add all{" "}
         <strong className="text-[var(--color-text)]">50 photos</strong> and{" "}
         <strong className="text-[var(--color-text)]">2 videos</strong> here. Large files upload
@@ -310,7 +327,7 @@ export function ListPropertyMediaStep({
 
       {items.length === 0 ? (
         <p className="text-sm text-[var(--color-muted)]">
-          Photos and videos are optional — skip this step or add media later.
+          Photos and videos are optional \u2014 skip this step or add media later.
         </p>
       ) : null}
     </div>
