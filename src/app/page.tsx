@@ -38,7 +38,7 @@ export default async function HomePage() {
                 <div className="mx-auto w-full max-w-[36rem] text-justify hyphens-none [text-align-last:center]">
                   <h1 className="text-[1.2rem] font-bold leading-snug sm:text-[1.3125rem] md:text-[1.45rem]">
                     <span className="block text-center text-white">
-                      South East Asia Property Services (SEAPS)
+                      South East Asia Property Services ( S E A P S )
                     </span>
                     <span className="mt-2 block text-[1.125rem] text-white/92 md:text-[1.2rem]">
                       is a multi-Award-Winning Real Estate, Property Management and Investment
