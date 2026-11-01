@@ -67,6 +67,17 @@
 
 ---
 
+## 2026-11-01 (продолжение)
+
+### Локальный запуск и фикс hydration mismatch
+
+- **Что:** запущен `npm run dev` (порт 43123). В консоли браузера — `A tree hydrated but some attributes...` на `<html lang>`: `public/scripts/seaps-lang-boot.js` (beforeInteractive) ставит `lang` по языку браузера до гидратации, React ожидает `lang="en"`.
+- **Фикс:** добавлен `suppressHydrationWarning` к `<html>` в `src/app/layout.tsx` — стандартное решение для lang/theme, выставляемых ранним скриптом.
+- **Проверено:** Playwright → http://localhost:43123, консоль: 0 ошибок, 0 предупреждений.
+- **Замечание:** dev-сервер остаётся запущенным в фоне сессии; при перезапуске — `npm run dev` из папки проекта.
+
+---
+
 ## Известные расхождения (требуют решения)
 
 - Fallback-домен в `src/config/brand.ts` (`VERCEL_ENV === "production"` → `https://www.vps1.store`) противоречит каноническому `https://www.seaps.asia`.

@@ -99,7 +99,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const session = await getSession();
 
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} h-full antialiased`} translate="yes">
+    <html lang="en" className={`${display.variable} ${body.variable} h-full antialiased`} translate="yes" suppressHydrationWarning>
       <body className="flex min-h-full flex-col pb-20 md:pb-0">
         <OrganizationJsonLd />
         <Script src="/scripts/seaps-lang-boot.js" strategy="beforeInteractive" />
