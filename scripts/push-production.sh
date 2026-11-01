@@ -20,7 +20,7 @@ git push -u github "$BRANCH"
 
 if git remote get-url origin &>/dev/null; then
   echo "Pushing ${BRANCH} to origin (Cursor mirror)..."
-  git push -u origin "$BRANCH"
+  git push origin "$BRANCH" || echo "warning: origin (Cursor mirror) push failed; production deploy from github is unaffected" >&2
 else
   echo "note: no origin remote; skipped" >&2
 fi
