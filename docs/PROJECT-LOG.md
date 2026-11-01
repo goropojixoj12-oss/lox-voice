@@ -130,6 +130,17 @@
 
 ---
 
+### Прод-пуш 2026-11-01 + установка Origin CLI для cursor-зеркала
+
+- **Что:** по новым правилам 11–12 перед пушем: `npm run build` (без ошибок) + скриншот главной (`tmp/audit/pre-push-home.png`, `( S E A P S )` на месте), поставлен резервный тег `backup/2026-11-01-pre-photo-and-rules` (указывает на прежний `github/main`), пуш в `github` выполнен (`c1cbdaa`), Vercel Production `● Ready`.
+- **Что ещё:** установлен нативный Windows **Origin CLI** (`irm/curl …/origin/install.ps1`, без обхода политик) → `C:\Users\Administrator\AppData\Local\cursor\bin\origin.exe`, версия `2026.10.28-16-42-28-e1b8407`; `origin auth login` прошёл через браузер, аккаунт `goropojixoj12@gmail.com`; в global git config прописан credential helper для `origin.cursor.com`.
+- **Зачем:** заказчик захотел дублировать историю в cursor-зеркало и авторизоваться подтверждением в браузере, а не логином/паролем.
+- **Файлы:** `docs/PROJECT-LOG.md`, `AGENTS.md` (правила 15–16 ранее), глобальный `~/.gitconfig` (вне репозитория), `~/.local`/`AppData\Local\cursor\bin` (вне репозитория).
+- **Проверено:** `origin auth status` → `Token: valid`; `git push github main` → `Everything up-to-date` (уже доставлено); живой сайт: curl нашёл `S E A P S` на главной, `/media/listings/bkk1-riverside/01.jpg` → HTTP 200 (344 КБ); браузером `https://www.seaps.asia/buy/residential` — карточка BKK 1 с реальным фото ванной, медузы нет (`tmp/audit/live-buy-residential.png`).
+- **НЕ закрыто:** пуш в `origin` (cursor) отклонён — `origin/main` ушёл вперёд на 3 коммита Cursor Agent (`2f8a995` storeId-фикс, `b9d3823` правка ряда «recently added», `fd66225` скрипт мержа). Проверено содержимое: storeId-фикс и скрипт **уже есть** в нашей истории (`src/lib/store-persistence.ts:132`, `scripts/pull-agent-main-and-push-github.sh`), правка `page.tsx` относилась к старой структуре главной и нашим новым кодом вытеснена. Требуется решение заказчика: `git merge origin/main -X ours` (история зеркала сохранится, файлы останутся как у нас) или иной вариант. Force-push запрещён правилами.
+
+---
+
 ## Известные расхождения (требуют решения)
 
 - Fallback-домен в `src/config/brand.ts` (`VERCEL_ENV === "production"` → `https://www.vps1.store`) противоречит каноническому `https://www.seaps.asia`.
