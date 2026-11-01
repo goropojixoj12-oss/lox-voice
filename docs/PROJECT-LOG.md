@@ -93,6 +93,16 @@
 
 ---
 
+### Листинг p-001: реальные фото вместо мок-медиа
+
+- **Что:** 43 фото кондоминиума (`C:\Users\Administrator\Downloads\estate_real\Condo\Condo`, 40 HEIC + 3 JPG) сконвертированы в JPEG 1600px max, q80 progressive, EXIF-повороты применены (`heic-convert` + `sharp`, тулзина в `tmp/heic-tool`, в деплой не идёт) и положены в `public/media/listings/bkk1-riverside/01.jpg`–`43.jpg` (12 МБ суммарно).
+- **Зачем:** просьба заказчика — убрать мок-видео (медуза с test-videos.co.uk) из первого листинга.
+- **Файлы:** `src/data/properties.ts` (листинг p-001 / `bkk1-riverside-apartment`, опознан по уникальному `updatedAt`): массив `images` → 43 новых записей (01 — `isCover: true`), `videos: []`, удалён `cardPreviewVideoUrl`, `hasVideoTour: false`. Новые файлы `public/media/listings/bkk1-riverside/*`.
+- **Проверено:** `tsc --noEmit` exit 0; Playwright: карточка на `/buy/residential` показывает реальное фото без бейджа «Video tour» (`tmp/audit/buy-residential-after.png`); страница `/property/bkk1-riverside-apartment` отрисовывает 43 файла в галерее-тессеракте (`tmp/audit/property-detail.png`).
+- **Замечание:** в консоли детальной страницы — hydration mismatch SVG-тессеракта (координаты вершин зависят от времени анимации), прежняя проблема компонента, на медиа не влияет.
+
+---
+
 ## Известные расхождения (требуют решения)
 
 - Fallback-домен в `src/config/brand.ts` (`VERCEL_ENV === "production"` → `https://www.vps1.store`) противоречит каноническому `https://www.seaps.asia`.
