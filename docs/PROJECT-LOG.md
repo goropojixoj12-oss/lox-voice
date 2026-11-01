@@ -141,6 +141,16 @@
 
 ---
 
+### Мерж cursor-зеркала и защита от устаревших ref
+
+- **Что:** (1) `git merge origin/main -X ours` — в историю влиты 3 коммита Cursor Agent (`2f8a995`, `b9d3823`, `fd66225`), конфликт add/add по `scripts/pull-agent-main-and-push-github.sh` разрешён в нашу пользу; код не изменился — хеш дерева до и после мержа одинаков (`d5b8903`). (2) `git push origin main` → `fd66225..6f3256f`, зеркало догнало прод-историю. (3) правило 17 в `AGENTS.md`: утверждения про опережение/отставание только после свежего `scripts/git-state.sh`. (4) добавлен `scripts/git-state.sh` — делает `fetch --all --prune` и печатает ahead/behind + вердикт по каждому ремоуту.
+- **Зачем:** я заявил «fast-forward на 635 коммитов» по устаревшему локальному ref и ошибся; правило + скрипт делают такую ошибку невозможной механически.
+- **Файлы:** `AGENTS.md`, `scripts/git-state.sh` (новый), `docs/PROJECT-LOG.md`, история git (merge-коммит `6f3256f`).
+- **Проверено:** `git rev-parse HEAD^{tree}` до/после мержа совпадает; `grep -c '<<<<<<<'` по конфликтному файлу = 0; пуш в origin прошёл без force; `bash scripts/git-state.sh` → `github +4 -0 fast-forward possible`, `origin +0 -0`.
+- **Не закрыто:** мерж-коммит и новые файлы ещё не запушены в `github` (прод) — жду команду; код идентичен уже задеплоенному, так что ребилд ничего не изменит.
+
+---
+
 ## Известные расхождения (требуют решения)
 
 - Fallback-домен в `src/config/brand.ts` (`VERCEL_ENV === "production"` → `https://www.vps1.store`) противоречит каноническому `https://www.seaps.asia`.
