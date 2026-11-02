@@ -190,6 +190,15 @@
 
 ---
 
+### Fix: подпись кнопки «SCHEDULE V» → «SCHEDULE VIEWING»
+
+- **Что:** в блоке «HERE IS EXACTLY WHAT YOU ARE LOOKING FOR!» на странице листинга исправлена подпись кнопки, ведущей на `/contact`.
+- **Зачем:** текст был укорочен в самом исходнике (`src/components/forms/property-inquiry-language-actions.tsx:73`), а не обрезан стилями — кнопка выглядела сломанной.
+- **Файлы:** `src/components/forms/property-inquiry-language-actions.tsx`, `docs/PROJECT-LOG.md`.
+- **Проверено:** локально на `/property/bkk1-riverside-apartment` через браузер — текст `SCHEDULE VIEWING`, `clipped: false` (scrollWidth ≤ clientWidth), контейнер `flex-wrap: wrap`, горизонтального переполнения страницы нет.
+
+---
+
 ## Известные расхождения (требуют решения)
 
 - Fallback-домен в `src/config/brand.ts` (`VERCEL_ENV === "production"` → `https://www.vps1.store`) противоречит каноническому `https://www.seaps.asia`.

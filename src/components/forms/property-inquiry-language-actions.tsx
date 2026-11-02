@@ -70,7 +70,7 @@ export function PropertyInquiryLanguageActions({ className }: { className?: stri
           KHMER
         </button>
         <ButtonLink href="/contact" variant="accent" className={cn(goldBtn, "inline-flex")}>
-          SCHEDULE V
+          SCHEDULE VIEWING
         </ButtonLink>
       </div>
     </div>
