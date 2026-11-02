@@ -24,9 +24,9 @@ const kh = (
   lng,
 });
 
-const VUE_ASTON_PHOTO_COUNT = 30;
+const VUE_ASTON_PHOTO_COUNT = 2;
 
-/** Real frames of the Vue Aston unit, stored at public/media/listings/vue-aston/01.jpg … 30.jpg, all 1600x1200. */
+/** Real frames of the Vue Aston unit, stored at public/media/listings/vue-aston/01.jpg … 02.jpg, all 1600x1200. */
 const vueAstonPhotos = () =>
   Array.from({ length: VUE_ASTON_PHOTO_COUNT }, (_, i) => {
     const file = String(i + 1).padStart(2, "0");
