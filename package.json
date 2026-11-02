@@ -6,6 +6,7 @@
     "dev": "next dev --hostname 0.0.0.0 --port 43123",
     "build": "next build",
     "start": "next start --hostname 0.0.0.0 --port 43123",
+    "store:audit": "node scripts/store-audit.mjs",
     "lint": "eslint"
   },
   "dependencies": {

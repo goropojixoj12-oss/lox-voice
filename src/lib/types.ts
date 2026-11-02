@@ -149,6 +149,11 @@ export interface Property {
   /** Attached documents with access levels. */
   documents?: ListingDocument[];
   projectId?: string;
+  /**
+   * Store listing this static copy was promoted from. The catalog hides that
+   * store record so the listing is never published twice.
+   */
+  promotedFrom?: string;
   publishedAt: string;
   updatedAt: string;
   hasVideoTour?: boolean;
