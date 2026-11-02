@@ -11,28 +11,6 @@ function buildDemoDrafts(): AggregatedDraft[] {
 
   return [
     {
-      title: "2BR condo near BKK1 cafés",
-      description:
-        "Bright two-bedroom condo with balcony and updated kitchen. Walkable to Street 308 cafés. Aggregated demo listing for Market Feed.",
-      price: 168000,
-      currency: "USD",
-      location: "Boeng Keng Kang 1, Phnom Penh",
-      propertyType: "condo",
-      photos: [
-        photoUrl("photo-1502672260266-1c1ef2d93688"),
-        photoUrl("photo-1560448204-e02f11c3d0e2"),
-      ],
-      publishedAt: iso(2),
-      sourceName: "SEAPS Market Feed",
-      sourceUrl: "https://example.local/demo/condo-bkk1",
-      contacts: {
-        phone: "+855 12 345 678",
-        email: "seller.demo@example.local",
-        messenger: "Telegram @demo_pp_seller",
-      },
-      externalId: "demo:condo-bkk1-001",
-    },
-    {
       title: "Riverside duplex for rent — Tonle Bassac",
       description:
         "Furnished duplex with river breeze and covered parking. Monthly lease preferred. Demo adapter sample.",

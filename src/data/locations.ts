@@ -13,12 +13,6 @@ export const cities: CityGuide[] = [
     blurb: "Capital apartments, riverside homes, and commercial corridors across the city.",
     districts: [
       {
-        slug: "bkk-1",
-        name: "BKK 1",
-        listingCount: 34,
-        image: img("photo-1545324418-cc1a3fa10c00", 1200),
-      },
-      {
         slug: "toul-kork",
         name: "Toul Kork",
         listingCount: 22,

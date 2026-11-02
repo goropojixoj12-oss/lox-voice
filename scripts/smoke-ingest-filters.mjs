@@ -26,7 +26,7 @@ const junk = [
 
 const keep = [
   {
-    title: "2BR condo for rent BKK1",
+    title: "2BR condo for rent Tonle Bassac",
     sourceName: "test",
     description: "Apartment near cafes",
     propertyType: "condo",

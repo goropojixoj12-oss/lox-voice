@@ -406,7 +406,7 @@ function buildCalendar(seed: number): CalendarEvent[] {
   return [
     {
       id: "cal-1",
-      title: "Buyer viewing — BKK 1 condo",
+      title: "Buyer viewing — Tonle Bassac condo",
       whenLabel: `Today · ${hour}:00`,
       kind: "viewing",
     },

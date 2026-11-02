@@ -36,7 +36,7 @@ export const marketStats: MarketStat[] = [
   {
     id: "m5",
     label: "Popular districts",
-    value: "BKK 1 · Daun Penh · Otres",
+    value: "Tonle Bassac · Daun Penh · Otres",
     change: "stable",
     note: "Based on inquiry concentration",
     demo: true,
@@ -52,7 +52,7 @@ export const marketStats: MarketStat[] = [
 ];
 
 export const popularDistrictPrices = [
-  { district: "BKK 1", city: "Phnom Penh", pricePerSqm: "$2,450 /m²", demo: true },
+  { district: "Tonle Bassac", city: "Phnom Penh", pricePerSqm: "$2,450 /m²", demo: true },
   { district: "Daun Penh", city: "Phnom Penh", pricePerSqm: "$2,200 /m²", demo: true },
   { district: "Toul Kork", city: "Phnom Penh", pricePerSqm: "$1,850 /m²", demo: true },
   { district: "Svay Dangkum", city: "Siem Reap", pricePerSqm: "$1,420 /m²", demo: true },

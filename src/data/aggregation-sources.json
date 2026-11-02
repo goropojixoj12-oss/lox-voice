@@ -1,9 +1,9 @@
 {
   "generatedAt": "2026-10-15T10:28:05.191Z",
   "sourceDocument": "cambodia-re-sources-unique-links-full.md",
-  "total": 773,
-  "defaultEnabledCount": 773,
-  "defaultEnabledNote": "All 773 URLs enabled for batched sync; portals/agencies polled, social marked blocked/skipped",
+  "total": 772,
+  "defaultEnabledCount": 772,
+  "defaultEnabledNote": "All 772 URLs enabled for batched sync; portals/agencies polled, social marked blocked/skipped",
   "sources": [
     {
       "id": "58cam-com",
@@ -3257,14 +3257,6 @@
       "id": "facebook-com-groups-bavetproperty",
       "name": "www.facebook.com",
       "url": "https://www.facebook.com/groups/bavetproperty",
-      "type": "facebook",
-      "enabled": true,
-      "adapterId": null
-    },
-    {
-      "id": "facebook-com-groups-bkk1realestate",
-      "name": "www.facebook.com",
-      "url": "https://www.facebook.com/groups/bkk1realestate",
       "type": "facebook",
       "enabled": true,
       "adapterId": null

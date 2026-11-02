@@ -12,10 +12,10 @@ export const agencies: Agency[] = [
     logo: img("photo-1486406146926-c627a92ad1ab", 200),
     cover: img("photo-1545324418-cc1a3fa10c00"),
     description:
-      "SEAPS desk for serviced apartments, family villas, and relocation housing across BKK 1, Chamkarmon, and Toul Kork.",
+      "SEAPS desk for serviced apartments, family villas, and relocation housing across Tonle Bassac, Chamkarmon, and Toul Kork.",
     city: "Phnom Penh",
     citySlug: "phnom-penh",
-    districts: ["BKK 1", "Chamkarmon", "Toul Kork"],
+    districts: ["Tonle Bassac", "Chamkarmon", "Toul Kork"],
     specializations: ["Apartments", "Relocation", "Long-term rent"],
     verified: true,
     agentIds: ["agent-sokha", "agent-dara"],
