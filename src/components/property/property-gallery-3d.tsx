@@ -28,7 +28,6 @@ type CubeFaceModel = {
   points: string;
   cx: number;
   cy: number;
-  depth: number;
   front: boolean;
   affine: string;
 };
@@ -57,29 +56,21 @@ const XW_SPEED = 0.1;
 const YW_SPEED = 0.07;
 const YAW_SPEED = 0.035;
 
-const ICO_VERTS: Pt[] = [
-  { x: 0.0, y: -0.525731, z: -0.850651 },
-  { x: -0.525731, y: -0.850651, z: 0.0 },
-  { x: -0.850651, y: 0.0, z: -0.525731 },
-  { x: 0.0, y: -0.525731, z: 0.850651 },
-  { x: -0.525731, y: 0.850651, z: 0.0 },
-  { x: 0.850651, y: 0.0, z: -0.525731 },
-  { x: 0.0, y: 0.525731, z: -0.850651 },
-  { x: 0.525731, y: -0.850651, z: 0.0 },
-  { x: -0.850651, y: 0.0, z: 0.525731 },
-  { x: 0.0, y: 0.525731, z: 0.850651 },
-  { x: 0.525731, y: 0.850651, z: 0.0 },
-  { x: 0.850651, y: 0.0, z: 0.525731 },
+/** Solid corner radius in camera units — stays inside the projected outer cell (radius 1.5). */
+const CUBE_HALF = 0.72;
+/**
+ * The 6 faces as corner rings [top-left, top-right, bottom-right, bottom-left] of the photo.
+ * Wound clockwise when seen from outside, with the photo's own up edge first.
+ * Corners are indexed by bits: bit0 = x, bit1 = y, bit2 = z, set means +CUBE_HALF.
+ */
+const CUBE_FACES: number[][] = [
+  [6, 7, 5, 4], // +z front
+  [7, 3, 1, 5], // +x right
+  [3, 2, 0, 1], // -z back
+  [2, 6, 4, 0], // -x left
+  [2, 3, 7, 6], // +y top, up edge meets the back face
+  [4, 5, 1, 0], // -y bottom, up edge meets the front face
 ];
-/** Vertex triples of the 20 faces, each wound so that (v1-v0) x (v2-v0) points out of the solid. */
-const ICO_FACES: number[][] = [
-  [0, 1, 2], [0, 7, 1], [0, 2, 6], [0, 6, 5], [0, 5, 7],
-  [1, 8, 2], [1, 7, 3], [1, 3, 8], [2, 4, 6], [2, 8, 4],
-  [3, 7, 11], [3, 9, 8], [3, 11, 9], [4, 10, 6], [4, 8, 9],
-  [4, 9, 10], [5, 6, 10], [5, 11, 7], [5, 10, 11], [9, 11, 10],
-];
-/** Circumradius in camera units; the solid is rigid, only yaw/pitch touch it. */
-const ICO_R = 1.7;
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const photos: MediaFace[] = images.map((img, i) => ({
@@ -155,41 +146,37 @@ function orbit3(p: Pt, yaw: number, pitch: number): Pt {
   };
 }
 
-/** z of the outward normal (v0→v1) x (v0→v2) in camera space; positive means the face looks at the camera. */
+/**
+ * dot(outward normal, face centre - camera) for the ring [TL,TR,BR,BL] in camera space.
+ * Negative means the face looks at the camera. Measured from the camera point rather than
+ * from its z alone, so a face seen almost edge-on is never culled on the wrong side.
+ */
 function facing(q: Pt[]): number {
-  return (q[1].x - q[0].x) * (q[2].y - q[0].y) - (q[1].y - q[0].y) * (q[2].x - q[0].x);
+  const e1x = q[1].x - q[0].x;
+  const e1y = q[1].y - q[0].y;
+  const e1z = q[1].z - q[0].z;
+  const e3x = q[3].x - q[0].x;
+  const e3y = q[3].y - q[0].y;
+  const e3z = q[3].z - q[0].z;
+  const nx = e3y * e1z - e3z * e1y;
+  const ny = e3z * e1x - e3x * e1z;
+  const nz = e3x * e1y - e3y * e1x;
+  const cx = (q[0].x + q[2].x) / 2;
+  const cy = (q[0].y + q[2].y) / 2;
+  const cz = (q[0].z + q[2].z) / 2 - D3;
+  return nx * cx + ny * cy + nz * cz;
 }
 
-/** Maps the image's local rect (0,0)-(1,1) onto the face: q0 is the photo's top-left, local x runs to q1, local y to q2. */
+/**
+ * Maps the square photo onto the ring [TL,TR,BR,BL]: local x runs TL→TR, local y runs TL→BL.
+ * The determinant is positive, so the photo is never mirrored, and it needs no vertex search.
+ */
 function affineMatrix(q: Pt[]): string {
   const a = q[1].x - q[0].x;
   const c = q[1].y - q[0].y;
-  const b = q[2].x - q[0].x;
-  const d = q[2].y - q[0].y;
+  const b = q[3].x - q[0].x;
+  const d = q[3].y - q[0].y;
   return `${a} ${c} ${b} ${d} ${q[0].x} ${q[0].y}`;
-}
-
-const TRI_PERMS: [number, number, number][] = [
-  [0, 1, 2], [1, 2, 0], [2, 0, 1], [0, 2, 1], [2, 1, 0], [1, 0, 2],
-];
-
-/** Picks the vertex order that puts the photo upright: local x as rightward as possible, local y as
- *  downward as possible, and never mirrored (a positive determinant in the SVG's y-down space). */
-function uprightOrder(q: Pt[]): Pt[] {
-  let best: Pt[] | null = null;
-  let bestScore = -Infinity;
-  for (const p of TRI_PERMS) {
-    const t = [q[p[0]], q[p[1]], q[p[2]]];
-    const rx = t[1].x - t[0].x, ry = t[1].y - t[0].y;
-    const dx = t[2].x - t[0].x, dy = t[2].y - t[0].y;
-    if (rx * dy - dx * ry <= 0) continue;
-    const score = rx / (Math.hypot(rx, ry) || 1) + dy / (Math.hypot(dx, dy) || 1);
-    if (score > bestScore) {
-      bestScore = score;
-      best = t;
-    }
-  }
-  return best ?? q;
 }
 
 function projectRaw(rot: Rot): Pt[] {
@@ -229,9 +216,17 @@ const CAMERA_FIT = (() => {
   };
 })();
 
-/** Camera-space vertex of the solid icosahedron; rigid, only yaw/pitch touch it. */
-function icoVertex(v: Pt, rot: Rot): Pt {
-  return orbit3({ x: v.x * ICO_R, y: v.y * ICO_R, z: v.z * ICO_R }, rot.yaw, rot.pitch);
+/** Camera-space corner of the solid photo cube; rigid, only yaw/pitch touch it. */
+function cubeCorner(i: number, rot: Rot): Pt {
+  return orbit3(
+    {
+      x: i & 1 ? CUBE_HALF : -CUBE_HALF,
+      y: i & 2 ? CUBE_HALF : -CUBE_HALF,
+      z: i & 4 ? CUBE_HALF : -CUBE_HALF,
+    },
+    rot.yaw,
+    rot.pitch,
+  );
 }
 
 function toScreen(p: Pt): { x: number; y: number; z: number } {
@@ -251,19 +246,17 @@ function buildModel(rot: Rot): { pts: Pt[]; cube: CubeFaceModel[] } {
     y: VIEW / 2 - (p.y - CAMERA_FIT.oy) * CAMERA_FIT.scale,
     z: p.z,
   }));
-  const verts = ICO_VERTS.map((v) => icoVertex(v, rot));
-  const cube = ICO_FACES.map((face, index) => {
-    const quad = face.map((i) => verts[i]);
+  const cube = CUBE_FACES.map((face, index) => {
+    const quad = face.map((i) => cubeCorner(i, rot));
     const screen = quad.map(toScreen);
     return {
       side: index,
       quad,
       points: screen.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "),
-      cx: (screen[0].x + screen[1].x + screen[2].x) / 3,
-      cy: (screen[0].y + screen[1].y + screen[2].y) / 3,
-      depth: (quad[0].z + quad[1].z + quad[2].z) / 3,
-      front: facing(quad) > 0,
-      affine: affineMatrix(uprightOrder(screen)),
+      cx: (screen[0].x + screen[1].x + screen[2].x + screen[3].x) / 4,
+      cy: (screen[0].y + screen[1].y + screen[2].y + screen[3].y) / 4,
+      front: facing(quad) < 0,
+      affine: affineMatrix(screen),
     };
   });
   return { pts, cube };
@@ -287,11 +280,11 @@ function attachTesseractMotion(svg: SVGSVGElement) {
   if (!facesLayer) return undefined;
 
   const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
-  const groups = ICO_FACES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
-  const bases = ICO_FACES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
-  const clips = ICO_FACES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
-  const images = ICO_FACES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
-  const plays = ICO_FACES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
+  const groups = CUBE_FACES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
+  const bases = CUBE_FACES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
+  const clips = CUBE_FACES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
+  const images = CUBE_FACES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
+  const plays = CUBE_FACES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
   const circles = Array.from({ length: 16 }, (_, i) => svg.querySelector(`circle[data-v="${i}"]`) as SVGCircleElement | null);
 
   const state: MotionState = {
@@ -318,16 +311,14 @@ function attachTesseractMotion(svg: SVGSVGElement) {
       line.setAttribute("x2", pts[b].x.toFixed(2));
       line.setAttribute("y2", pts[b].y.toFixed(2));
     }
-    const order = cube
-      .map((_, i) => i)
-      .sort((a, b) => cube[a].depth - cube[b].depth);
-    for (const idx of order) {
+    /* Visible faces of a convex solid never overlap, so the DOM order stays untouched —
+       moving nodes here would desynchronise them from React's hydration pairing. */
+    for (let idx = 0; idx < cube.length; idx += 1) {
       const group = groups[idx];
       const item = cube[idx];
       if (!group) continue;
       group.setAttribute("display", item.front ? "block" : "none");
       if (!item.front) continue;
-      facesLayer.appendChild(group);
       const base = bases[idx];
       if (base) base.setAttribute("points", item.points);
       const clip = clips[idx];
@@ -576,7 +567,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
         style={{ maxWidth: "none", overflow: "visible" }}
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label="4D tesseract cage around a solid icosahedron of listing photos"
+        aria-label="4D tesseract cage around a solid cube of listing photos"
         data-tesseract="1"
         data-xw={INITIAL_ROT.xw.toFixed(4)}
         data-yw={INITIAL_ROT.yw.toFixed(4)}
@@ -728,7 +719,7 @@ export function PropertyGallery3D({
           {autoRotate ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
         <p className="absolute bottom-3 left-3 z-10 max-w-[75%] rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-          4D cage · solid photo icosahedron · click a face · {faces.length} files
+          4D cage · solid photo cube · click a face · {faces.length} files
         </p>
       </div>
       {activeFace ? (

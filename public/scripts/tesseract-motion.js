@@ -12,31 +12,22 @@
   var YAW_SPEED = 0.035;
   var INITIAL = { xw: 0.08, yw: 0.1, zw: 0, xy: 0, yaw: 0.55, pitch: 0.38 };
 
-  /* Icosahedron: 12 vertices on the unit sphere (cyclic permutations of (0, +-1, +-phi), normalised). */
-  var ICO_VERTS = [
-    { x: 0.0, y: -0.525731, z: -0.850651 },
-    { x: -0.525731, y: -0.850651, z: 0.0 },
-    { x: -0.850651, y: 0.0, z: -0.525731 },
-    { x: 0.0, y: -0.525731, z: 0.850651 },
-    { x: -0.525731, y: 0.850651, z: 0.0 },
-    { x: 0.850651, y: 0.0, z: -0.525731 },
-    { x: 0.0, y: 0.525731, z: -0.850651 },
-    { x: 0.525731, y: -0.850651, z: 0.0 },
-    { x: -0.850651, y: 0.0, z: 0.525731 },
-    { x: 0.0, y: 0.525731, z: 0.850651 },
-    { x: 0.525731, y: 0.850651, z: 0.0 },
-    { x: 0.850651, y: 0.0, z: 0.525731 },
-  ];
-  /* Vertex triples of the 20 faces, each wound so that (v1-v0) x (v2-v0) points out of the solid. */
-  var ICO_FACES = [
-    [0, 1, 2], [0, 7, 1], [0, 2, 6], [0, 6, 5], [0, 5, 7],
-    [1, 8, 2], [1, 7, 3], [1, 3, 8], [2, 4, 6], [2, 8, 4],
-    [3, 7, 11], [3, 9, 8], [3, 11, 9], [4, 10, 6], [4, 8, 9],
-    [4, 9, 10], [5, 6, 10], [5, 11, 7], [5, 10, 11], [9, 11, 10],
-  ];
-  /* Circumradius in camera units; the solid is rigid, only yaw/pitch touch it. */
-  var ICO_R = 1.7;
+  /* Solid corner radius in camera units - stays inside the projected outer cell (radius 1.5). */
+  var CUBE_HALF = 0.72;
 
+  /*
+   * The 6 faces as corner rings [top-left, top-right, bottom-right, bottom-left] of the photo.
+   * Wound clockwise when seen from outside, with the photo's own up edge first.
+   * Corners are indexed by bits: bit0 = x, bit1 = y, bit2 = z, set means +CUBE_HALF.
+   */
+  var CUBE_FACES = [
+    [6, 7, 5, 4], // +z front
+    [7, 3, 1, 5], // +x right
+    [3, 2, 0, 1], // -z back
+    [2, 6, 4, 0], // -x left
+    [2, 3, 7, 6], // +y top, up edge meets the back face
+    [4, 5, 1, 0], // -y bottom, up edge meets the front face
+  ];
 
   function vertex(i) {
     return { x: i & 1 ? 1 : -1, y: i & 2 ? 1 : -1, z: i & 4 ? 1 : -1, w: i & 8 ? 1 : -1 };
@@ -78,35 +69,29 @@
     return { x: x1, y: p.y * cp - z1 * sp, z: p.y * sp + z1 * cp };
   }
 
-  // z of the outward normal (v0->v1) x (v0->v2) in camera space; positive means the face looks at the camera.
+  /*
+   * dot(outward normal, face centre - camera) for the ring [TL,TR,BR,BL] in camera space.
+   * Negative means the face looks at the camera. Measured from the camera point rather than
+   * from its z alone, so a face seen almost edge-on is never culled on the wrong side.
+   */
   function facing(q) {
-    return (q[1].x - q[0].x) * (q[2].y - q[0].y) - (q[1].y - q[0].y) * (q[2].x - q[0].x);
+    var e1x = q[1].x - q[0].x, e1y = q[1].y - q[0].y, e1z = q[1].z - q[0].z;
+    var e3x = q[3].x - q[0].x, e3y = q[3].y - q[0].y, e3z = q[3].z - q[0].z;
+    var nx = e3y * e1z - e3z * e1y;
+    var ny = e3z * e1x - e3x * e1z;
+    var nz = e3x * e1y - e3y * e1x;
+    var cx = (q[0].x + q[2].x) / 2, cy = (q[0].y + q[2].y) / 2, cz = (q[0].z + q[2].z) / 2 - D3;
+    return nx * cx + ny * cy + nz * cz;
   }
 
-  // Maps the image's local rect (0,0)-(1,1) onto the face: q0 top-left, local x to q1, local y to q2.
+  /*
+   * Maps the square photo onto the ring [TL,TR,BR,BL]: local x runs TL->TR, local y runs TL->BL.
+   * The determinant is positive, so the photo is never mirrored, and it needs no vertex search.
+   */
   function affineMatrix(q) {
-    var a = q[1].x - q[0].x;
-    var c = q[1].y - q[0].y;
-    var b = q[2].x - q[0].x;
-    var d = q[2].y - q[0].y;
+    var a = q[1].x - q[0].x, c = q[1].y - q[0].y;
+    var b = q[3].x - q[0].x, d = q[3].y - q[0].y;
     return a + " " + c + " " + b + " " + d + " " + q[0].x + " " + q[0].y;
-  }
-
-  var TRI_PERMS = [[0, 1, 2], [1, 2, 0], [2, 0, 1], [0, 2, 1], [2, 1, 0], [1, 0, 2]];
-
-  // Picks the vertex order that puts the photo upright and never mirrored.
-  function uprightOrder(q) {
-    var best = null, bestScore = -Infinity;
-    for (var i = 0; i < TRI_PERMS.length; i += 1) {
-      var p = TRI_PERMS[i];
-      var t = [q[p[0]], q[p[1]], q[p[2]]];
-      var rx = t[1].x - t[0].x, ry = t[1].y - t[0].y;
-      var dx = t[2].x - t[0].x, dy = t[2].y - t[0].y;
-      if (rx * dy - dx * ry <= 0) continue;
-      var score = rx / (Math.hypot(rx, ry) || 1) + dy / (Math.hypot(dx, dy) || 1);
-      if (score > bestScore) { bestScore = score; best = t; }
-    }
-    return best || q;
   }
 
   function projectRaw(rot) {
@@ -141,9 +126,17 @@
   var span = Math.max(maxX - minX, maxY - minY, 0.2);
   var FIT = { scale: (VIEW * 0.82) / span, ox: (minX + maxX) / 2, oy: (minY + maxY) / 2 };
 
-  // Camera-space vertex of the solid icosahedron; rigid, only yaw/pitch touch it.
-  function icoVertex(v, rot) {
-    return orbit3({ x: v.x * ICO_R, y: v.y * ICO_R, z: v.z * ICO_R }, rot.yaw, rot.pitch);
+  /* Camera-space corner of the solid photo cube; rigid, only yaw/pitch touch it. */
+  function cubeCorner(i, rot) {
+    return orbit3(
+      {
+        x: i & 1 ? CUBE_HALF : -CUBE_HALF,
+        y: i & 2 ? CUBE_HALF : -CUBE_HALF,
+        z: i & 4 ? CUBE_HALF : -CUBE_HALF,
+      },
+      rot.yaw,
+      rot.pitch
+    );
   }
 
   function toScreen(p) {
@@ -165,12 +158,9 @@
         z: p.z,
       };
     });
-    var verts = ICO_VERTS.map(function (v) {
-      return icoVertex(v, rot);
-    });
-    var cube = ICO_FACES.map(function (face, index) {
+    var cube = CUBE_FACES.map(function (face, index) {
       var quad = face.map(function (i) {
-        return verts[i];
+        return cubeCorner(i, rot);
       });
       var screen = quad.map(toScreen);
       return {
@@ -180,11 +170,10 @@
             return p.x.toFixed(2) + "," + p.y.toFixed(2);
           })
           .join(" "),
-        cx: (screen[0].x + screen[1].x + screen[2].x) / 3,
-        cy: (screen[0].y + screen[1].y + screen[2].y) / 3,
-        depth: (quad[0].z + quad[1].z + quad[2].z) / 3,
-        front: facing(quad) > 0,
-        affine: affineMatrix(uprightOrder(screen)),
+        cx: (screen[0].x + screen[1].x + screen[2].x + screen[3].x) / 4,
+        cy: (screen[0].y + screen[1].y + screen[2].y + screen[3].y) / 4,
+        front: facing(quad) < 0,
+        affine: affineMatrix(screen),
       };
     });
     return { pts: pts, cube: cube };
@@ -198,19 +187,19 @@
     var lines = EDGES.map(function (pair) {
       return svg.querySelector('line[data-e="' + pair[0] + "-" + pair[1] + '"]');
     });
-    var groups = ICO_FACES.map(function (_, i) {
+    var groups = CUBE_FACES.map(function (_, i) {
       return facesLayer.querySelector('g[data-f="' + i + '"]');
     });
-    var bases = ICO_FACES.map(function (_, i) {
+    var bases = CUBE_FACES.map(function (_, i) {
       return facesLayer.querySelector('polygon[data-ft="' + i + '"]');
     });
-    var clips = ICO_FACES.map(function (_, i) {
+    var clips = CUBE_FACES.map(function (_, i) {
       return svg.querySelector('polygon[data-fc="' + i + '"]');
     });
-    var images = ICO_FACES.map(function (_, i) {
+    var images = CUBE_FACES.map(function (_, i) {
       return facesLayer.querySelector('image[data-fi="' + i + '"]');
     });
-    var plays = ICO_FACES.map(function (_, i) {
+    var plays = CUBE_FACES.map(function (_, i) {
       return facesLayer.querySelector('polygon[data-fpb="' + i + '"]');
     });
     var circles = [];
@@ -253,21 +242,14 @@
         line.setAttribute("x2", model.pts[b].x.toFixed(2));
         line.setAttribute("y2", model.pts[b].y.toFixed(2));
       }
-      var order = model.cube
-        .map(function (_, idx) {
-          return idx;
-        })
-        .sort(function (ia, ib) {
-          return model.cube[ia].depth - model.cube[ib].depth;
-        });
-      for (var o = 0; o < order.length; o += 1) {
-        var idx = order[o];
+      /* Visible faces of a convex solid never overlap, so the DOM order stays untouched —
+         moving nodes here would desynchronise them from React's hydration pairing. */
+      for (var idx = 0; idx < model.cube.length; idx += 1) {
         var group = groups[idx];
         var item = model.cube[idx];
         if (!group) continue;
         group.setAttribute("display", item.front ? "block" : "none");
         if (!item.front) continue;
-        facesLayer.appendChild(group);
         if (bases[idx]) bases[idx].setAttribute("points", item.points);
         if (clips[idx]) clips[idx].setAttribute("points", item.points);
         if (images[idx]) images[idx].setAttribute("transform", "matrix(" + item.affine + ")");
