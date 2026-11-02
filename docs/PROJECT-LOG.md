@@ -217,6 +217,7 @@
 - **Зачем:** в подсказках телефонов был выдуманный номер (правило 13), а сами подсказки были слишком заметными — заказчик просит «светло-серым, почти незаметным». Реального телефона компании в репозитории нет, поэтому текст-подсказка сделан нейтральным, а не выдуманным.
 - **Файлы:** `src/app/globals.css`, `src/components/ui/input.tsx`, `src/components/forms/inquiry-form.tsx`, `src/components/forms/page-feedback-form.tsx`, `src/components/about/contact-us-modal.tsx`, `src/components/careers/careers-application-modal.tsx`, `src/components/dashboard/agent-profile-panel.tsx`, `docs/PROJECT-LOG.md`.
 - **Проверено:** локально на `/contact` — `getComputedStyle(el,'::placeholder').color` = `rgba(232, 238, 247, 0.26)` у email и phone, `placeholder="Your Number"`, скриншот формы: подсказки читаются, но заметно тусклее текста пользователя. Иконки соцсетей заказчик велел не трогать.
+- **Дополнение:** у `inquiry-message` оставался локальный оверрайд `placeholder:text-[var(--color-muted)]/80` (`inquiry-form.tsx:171`) — убран, теперь все подсказки идут один токен. Проверено на `/property/bkk1-riverside-apartment`: `rgba(232, 238, 247, 0.26)`, куб на месте (24 грани), консоль чистая. На проде `/contact` и `/property/...` токен отдаётся как `#e8eef742`.
 - **Отдельно:** Turbopack отдавал старый `:root` после правки `globals.css` (утилита появилась, токен — нет). Лечится сносом `.next` и перезапуском `npm run dev`; в чистом билде токен присутствует.
 
 ---

@@ -168,7 +168,7 @@ export function InquiryForm({
               : `I am interested in ${propertyTitle}. Please share next steps for a viewing.`
           }
           required={!isProperty}
-          className={isProperty ? "placeholder:text-sm placeholder:text-[var(--color-muted)]/80" : undefined}
+          className={isProperty ? "placeholder:text-sm" : undefined}
         />
         {errors.message ? (
           <p className="mt-1 text-xs text-[var(--color-danger)]">{errors.message}</p>
