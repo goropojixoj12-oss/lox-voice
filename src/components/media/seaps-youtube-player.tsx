@@ -1,13 +1,48 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 type SeapsYoutubePlayerProps = {
   videoId: string;
   title: string;
 };
 
+const YOUTUBE_EMBED_ORIGIN = "https://www.youtube-nocookie.com";
+
 /** Prestige-framed YouTube embed — gold chrome matches SEAPS site system. */
 export function SeapsYoutubePlayer({ videoId, title }: SeapsYoutubePlayerProps) {
-  const embedSrc = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
+  const frameRef = useRef<HTMLIFrameElement>(null);
+  const embedSrc = `${YOUTUBE_EMBED_ORIGIN}/embed/${videoId}?rel=0&modestbranding=1&autoplay=1&mute=1&playsinline=1&enablejsapi=1`;
+
+  useEffect(() => {
+    const command = (func: string) => {
+      frameRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: "command", func, args: [] }),
+        YOUTUBE_EMBED_ORIGIN,
+      );
+    };
+    const play = () => command("playVideo");
+
+    // Muted autoplay is still blocked by some OS/browser profiles, so the first
+    // real gesture is the fallback that makes playback work everywhere.
+    const timers = [400, 1200, 2600].map((ms) => window.setTimeout(play, ms));
+    const onGesture = () => {
+      play();
+      window.removeEventListener("pointerdown", onGesture);
+      window.removeEventListener("touchstart", onGesture);
+      window.removeEventListener("keydown", onGesture);
+    };
+    window.addEventListener("pointerdown", onGesture, { passive: true });
+    window.addEventListener("touchstart", onGesture, { passive: true });
+    window.addEventListener("keydown", onGesture);
+
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      window.removeEventListener("pointerdown", onGesture);
+      window.removeEventListener("touchstart", onGesture);
+      window.removeEventListener("keydown", onGesture);
+    };
+  }, []);
 
   return (
     <div className="seaps-youtube-player group relative">
@@ -30,12 +65,13 @@ export function SeapsYoutubePlayer({ videoId, title }: SeapsYoutubePlayerProps) 
         </div>
         <div className="relative mt-2 aspect-video overflow-hidden rounded-[var(--radius-lg)] bg-[#050d18] shadow-[inset_0_0_40px_rgba(0,0,0,0.45)]">
           <iframe
+            ref={frameRef}
             src={embedSrc}
             title={title}
             className="absolute inset-0 h-full w-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
-            loading="lazy"
+            loading="eager"
             referrerPolicy="strict-origin-when-cross-origin"
           />
         </div>

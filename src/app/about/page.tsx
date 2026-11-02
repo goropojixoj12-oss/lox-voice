@@ -48,6 +48,13 @@ export default function AboutUsPage() {
           Asia
         </p>
 
+        <div className="mt-8 max-w-4xl">
+          <SeapsYoutubePlayer
+            videoId={AWARDS_VIDEO_ID}
+            title="Cambodia Real Estate Awards — SEAPS recognition"
+          />
+        </div>
+
         <div className="mt-10 space-y-5 text-lg leading-relaxed text-[var(--color-muted)]">
           <p>
             South East Asia Property Services (SEAPS) is a multi-award-winning real estate, property
@@ -100,15 +107,8 @@ export default function AboutUsPage() {
           Awards and Recognition
         </h2>
         <p className="mt-4 text-lg leading-relaxed text-[var(--color-muted)]">
-          Watch the video highlighting the Cambodia Real Estate Awards:
+          The video above highlights the Cambodia Real Estate Awards, where SEAPS was recognised.
         </p>
-
-        <div className="mt-8 max-w-4xl">
-          <SeapsYoutubePlayer
-            videoId={AWARDS_VIDEO_ID}
-            title="Cambodia Real Estate Awards — SEAPS recognition"
-          />
-        </div>
         <p className="mt-5">
           <Link
             href="https://youtu.be/Ii9DyLywO3Q"
