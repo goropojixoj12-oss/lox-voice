@@ -24,21 +24,6 @@ const kh = (
   lng,
 });
 
-const BKK1_RIVERSIDE_PHOTO_COUNT = 43;
-
-/** Real photo set stored at public/media/listings/bkk1-riverside/01.jpg … 43.jpg. */
-const bkk1RiversidePhotos = (idPrefix: string, altLabel: string, startAt = 1) =>
-  Array.from({ length: BKK1_RIVERSIDE_PHOTO_COUNT }, (_, i) => {
-    const n = ((startAt - 1 + i) % BKK1_RIVERSIDE_PHOTO_COUNT) + 1;
-    const file = String(n).padStart(2, "0");
-    return {
-      id: `${idPrefix}-${file}`,
-      url: `/media/listings/bkk1-riverside/${file}.jpg`,
-      alt: `${altLabel} — photo ${n}`,
-      isCover: i === 0,
-    };
-  });
-
 const VUE_ASTON_TITLE =
   "Vue Aston  (Riverside)  -   Exclusively Designed, Developed and Built Condominium. 3 Bedrooms, 2 Bathrooms, Spacious 102.34 m2.   Fully Furnished and Available Immediately. Foreign Ownership Approved (Hard Title). This Beautiful Property is Priced Significantly Under Cost Value.";
 
@@ -112,7 +97,11 @@ E-Mail: ceo@seaps.asia`,
       "pet_friendly",
       "workspace",
     ],
-    images: bkk1RiversidePhotos("vueaston", "Vue Aston residence", 26),
+    images: [
+      { id: "vueaston-01", url: "/media/listings/vue-aston/01.jpg", alt: "Vue Aston residence — photo 1", isCover: true },
+      { id: "vueaston-02", url: "/media/listings/vue-aston/02.jpg", alt: "Vue Aston residence — photo 2", isCover: false },
+      { id: "vueaston-03", url: "/media/listings/vue-aston/03.jpg", alt: "Vue Aston residence — photo 3", isCover: false },
+    ],
     videos: [],
     location: kh(
       "Phnom Penh",
@@ -485,41 +474,6 @@ E-Mail: ceo@seaps.asia`,
     inquiries: 6,
   },
   {
-    id: "p-012",
-    slug: "bkk1-townhouse",
-    title: "BKK 1 Townhouse with Rooftop Terrace",
-    summary: "Three-bedroom townhouse on a quiet lane.",
-    description:
-      "A townhouse set back from the main BKK 1 arteries, with a rooftop terrace and flexible ground-floor room for guests or work.",
-    transactionType: "sale",
-    propertyType: "townhouse",
-    status: "draft",
-    verification: "verified",
-    sellerType: "agent",
-    price: 335000,
-    currency: "USD",
-    pricePeriod: null,
-    bedrooms: 3,
-    bathrooms: 3,
-    areaSqm: 168,
-    landSqm: 96,
-    furnishing: "semi",
-    amenities: ["parking", "terrace", "air_conditioning", "security"],
-    images: [
-      { ...img("photo-1605276374104-dee2a0ed3cd6", "Townhouse"), isCover: true },
-    ],
-    location: kh("Phnom Penh", "phnom-penh", "BKK 1", "bkk-1", "Quiet lane off Street 278", 11.55, 104.925),
-    agentId: "agent-sokha",
-    agencyId: "ag-mekong",
-    publishedAt: "2026-10-05T10:00:00.000Z",
-    updatedAt: "2026-04-04T12:00:00.000Z",
-    hasVideoTour: false,
-    isPremium: false,
-    isFeatured: true,
-    views: 200,
-    inquiries: 6,
-  },
-  {
     id: "p-013",
     slug: "sla-kram-short-stay-villa",
     title: "Sla Kram Garden Villa for Short Stays",
@@ -762,42 +716,6 @@ E-Mail: ceo@seaps.asia`,
     hasVideoTour: false,
     isPremium: false,
     isFeatured: false,
-    views: 200,
-    inquiries: 6,
-  },
-  {
-    id: "p-020",
-    slug: "bkk1-penthouse-terrace",
-    title: "BKK 1 Penthouse with Wrapped Terrace",
-    summary: "Four-bedroom penthouse above central BKK 1.",
-    description:
-      "A penthouse with wraparound terrace and separated entertaining rooms. Flagship listing for premium buyers seeking central Phnom Penh.",
-    transactionType: "sale",
-    propertyType: "condo",
-    status: "draft",
-    verification: "premium",
-    sellerType: "agent",
-    price: 780000,
-    currency: "USD",
-    pricePeriod: null,
-    bedrooms: 4,
-    bathrooms: 5,
-    areaSqm: 280,
-    landSqm: null,
-    furnishing: "furnished",
-    amenities: ["parking", "pool", "elevator", "terrace", "gym", "security", "air_conditioning"],
-    images: [
-      { ...img("photo-1600607687920-4e2a09cf159d", "Penthouse"), isCover: true },
-      img("photo-1600566753086-00f18fb6b3ea", "Terrace"),
-    ],
-    location: kh("Phnom Penh", "phnom-penh", "BKK 1", "bkk-1", "Central BKK 1 tower", 11.552, 104.924),
-    agentId: "agent-sokha",
-    agencyId: "ag-mekong",
-    publishedAt: "2026-09-27T10:00:00.000Z",
-    updatedAt: "2026-03-05T12:00:00.000Z",
-    hasVideoTour: true,
-    isPremium: true,
-    isFeatured: true,
     views: 200,
     inquiries: 6,
   }

@@ -624,7 +624,11 @@ const TesseractCanvas = memo(function TesseractCanvas({
         </g>
         <g data-layer="faces" suppressHydrationWarning>
           {initial.cube.map((item) => {
-            const media = faces[item.side % faces.length];
+            /* With exactly three files, front/back, right/left and top/bottom share one: opposite sides are never both visible, so the three shown faces are always distinct. */
+            const media =
+              faces.length === 3
+                ? faces[[0, 1, 0, 1, 2, 2][item.side]]
+                : faces[item.side % faces.length];
             return (
               <g
                 key={item.side}
