@@ -204,6 +204,13 @@
 - **Файлы:** `src/components/property/property-gallery-3d.tsx`, `docs/PROJECT-LOG.md`.
 - **Проверено:** локально на `/property/bkk1-riverside-apartment` через браузер — консоль чистая (0 ошибок, раньше была 1), вращение подтверждено (`0.8939 → 1.0162`, `spinning: true`), 24 грани с фото, клик по грани открывает лайтбокс «BKK 1 apartment — photo 7 · 7/43».
 
+### Fix: мёртвые иконки соцсетей в hero главной
+
+- **Что:** `src/components/home/hero-social-links.tsx` больше не рендерит сети с `href === "#"` — отфильтрованы до вывода, при полном отсутствии настроенных каналов блок скрывается целиком.
+- **Зачем:** из 8 иконок 7 вели в никуда (`#` — прыжок наверх), это противоречит правилу 13 о запрещении мок-ссылок. Реальный канал в `src/config/brand.ts` только Facebook; telegram/whatsapp/tiktok/linkedin/reddit/wechat/instagram остаются `#`.
+- **Файлы:** `src/components/home/hero-social-links.tsx`, `docs/PROJECT-LOG.md`.
+- **Проверено:** локально на `/` через браузер — в `ul[aria-label="SEAPS on social media"]` одна ссылка, `deadCount: 0`, Facebook открывается в новой вкладке; скриншот hero — ряд центрирован, вёрстка не поехала, консоль чистая. Отдельно проверено, что `/inquires` из `src/app/sitemap.ts` — живая страница (200), а не битая запись.
+
 ---
 
 ## Известные расхождения (требуют решения)

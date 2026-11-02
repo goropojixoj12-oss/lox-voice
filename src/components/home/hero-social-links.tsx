@@ -41,6 +41,8 @@ const networks = [
 ];
 
 export function HeroSocialLinks({ className }: { className?: string }) {
+  const configured = networks.filter(({ key }) => brand.social[key] !== "#");
+  if (configured.length === 0) return null;
   return (
     <ul
       className={cn(
@@ -49,14 +51,13 @@ export function HeroSocialLinks({ className }: { className?: string }) {
       )}
       aria-label="SEAPS on social media"
     >
-      {networks.map(({ key, label, Icon }) => {
+      {configured.map(({ key, label, Icon }) => {
         const href = brand.social[key];
-        const isPlaceholder = !href || href === "#";
-        const openInNewTab = !isPlaceholder && isExternalSocialHref(href);
+        const openInNewTab = isExternalSocialHref(href);
         return (
           <li key={key}>
             <a
-              href={href || "#"}
+              href={href}
               target={openInNewTab ? "_blank" : undefined}
               rel={openInNewTab ? "noopener noreferrer" : undefined}
               aria-label={label}
