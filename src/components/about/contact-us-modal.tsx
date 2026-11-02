@@ -217,7 +217,7 @@ export function ContactUsModal({ open, onClose }: ContactUsModalProps) {
                 name="phone"
                 type="tel"
                 autoComplete="tel"
-                placeholder="+855 12 345 678"
+                placeholder="Your Number"
                 aria-invalid={Boolean(errors.phone)}
                 aria-describedby={errors.phone ? "seaps-contact-phone-error" : undefined}
               />

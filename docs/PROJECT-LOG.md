@@ -211,6 +211,14 @@
 - **Файлы:** `src/components/home/hero-social-links.tsx`, `docs/PROJECT-LOG.md`.
 - **Проверено:** локально на `/` через браузер — в `ul[aria-label="SEAPS on social media"]` одна ссылка, `deadCount: 0`, Facebook открывается в новой вкладке; скриншот hero — ряд центрирован, вёрстка не поехала, консоль чистая. Отдельно проверено, что `/inquires` из `src/app/sitemap.ts` — живая страница (200), а не битая запись.
 
+### Fix: плейсхолдеры форм — «Your Number» и почти невидимый серый
+
+- **Что:** введён токен `--color-placeholder: rgba(232,238,247,0.26)` в `src/app/globals.css`, `Input`/`Textarea` в `src/components/ui/input.tsx` переведены на него; фейковый `+855 12 345 678` заменён на `Your Number` в `inquiry-form.tsx`, `page-feedback-form.tsx`, `contact-us-modal.tsx`, `careers-application-modal.tsx`, а `+855 …` в `agent-profile-panel.tsx` — тоже. Плюс убрана служебная фраза «No phone numbers are invented on this page» из публичной формы (`inquiry-form.tsx:120`).
+- **Зачем:** в подсказках телефонов был выдуманный номер (правило 13), а сами подсказки были слишком заметными — заказчик просит «светло-серым, почти незаметным». Реального телефона компании в репозитории нет, поэтому текст-подсказка сделан нейтральным, а не выдуманным.
+- **Файлы:** `src/app/globals.css`, `src/components/ui/input.tsx`, `src/components/forms/inquiry-form.tsx`, `src/components/forms/page-feedback-form.tsx`, `src/components/about/contact-us-modal.tsx`, `src/components/careers/careers-application-modal.tsx`, `src/components/dashboard/agent-profile-panel.tsx`, `docs/PROJECT-LOG.md`.
+- **Проверено:** локально на `/contact` — `getComputedStyle(el,'::placeholder').color` = `rgba(232, 238, 247, 0.26)` у email и phone, `placeholder="Your Number"`, скриншот формы: подсказки читаются, но заметно тусклее текста пользователя. Иконки соцсетей заказчик велел не трогать.
+- **Отдельно:** Turbopack отдавал старый `:root` после правки `globals.css` (утилита появилась, токен — нет). Лечится сносом `.next` и перезапуском `npm run dev`; в чистом билде токен присутствует.
+
 ---
 
 ## Известные расхождения (требуют решения)

@@ -121,7 +121,7 @@ export function PageFeedbackForm({
           name="phone"
           type="tel"
           autoComplete="tel"
-          placeholder="+855 12 345 678"
+          placeholder="Your Number"
         />
       </div>
       <div>

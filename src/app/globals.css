@@ -13,6 +13,8 @@
   --color-text: #e8eef7;
   /* AA-ish contrast on dark navy surfaces (~#0F2138) */
   --color-muted: #b7c6d8;
+  /* Placeholders are hints only — every field has a visible Label, so they stay faint by design */
+  --color-placeholder: rgba(232, 238, 247, 0.26);
   --color-border: #2a4060;
   --color-success: #3d8b6e;
   --color-warning: #d4af37;

@@ -117,7 +117,7 @@ export function InquiryForm({
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           {isProperty
             ? "response time average is 35 seconds"
-            : "Send a viewing or details request. No phone numbers are invented on this page."}
+            : "Send a viewing or details request and we will get back to you."}
         </p>
       </div>
       <div>
@@ -147,7 +147,7 @@ export function InquiryForm({
           name="phone"
           type="tel"
           autoComplete="tel"
-          placeholder="+855 12 345 678"
+          placeholder="Your Number"
           required={isProperty}
         />
         {errors.phone ? (

@@ -256,7 +256,7 @@ export function AgentProfilePanel({
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               autoComplete="tel"
-              placeholder="+855 …"
+              placeholder="Your Number"
             />
           </div>
           <div className="sm:col-span-2">
