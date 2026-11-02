@@ -572,6 +572,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
         data-tesseract="1"
         data-xw={INITIAL_ROT.xw.toFixed(4)}
         data-yw={INITIAL_ROT.yw.toFixed(4)}
+        suppressHydrationWarning
       >
         <defs>
           <filter id={`${uid}-glow`} x="-20%" y="-20%" width="140%" height="140%">
@@ -583,11 +584,11 @@ const TesseractCanvas = memo(function TesseractCanvas({
           </filter>
           {initial.faceModels.map((item) => (
             <clipPath key={`c${item.faceIndex}`} id={`${uid}-c${item.faceIndex}`}>
-              <polygon data-fc={item.faceIndex} points={item.points} />
+              <polygon data-fc={item.faceIndex} points={item.points} suppressHydrationWarning />
             </clipPath>
           ))}
         </defs>
-        <g data-layer="faces">
+        <g data-layer="faces" suppressHydrationWarning>
           {initial.faceModels.map((item) => {
             const back = item.area < 0;
             const media = faces[item.faceIndex % faces.length];
@@ -606,10 +607,11 @@ const TesseractCanvas = memo(function TesseractCanvas({
                   onOpenFace(media);
                 }}
                 style={{ cursor: "pointer" }}
+                suppressHydrationWarning
               >
-                <polygon data-ft={item.faceIndex} points={item.points} fill={tint} fillOpacity={back ? 0.04 : 0.06} />
+                <polygon data-ft={item.faceIndex} points={item.points} fill={tint} fillOpacity={back ? 0.04 : 0.06} suppressHydrationWarning />
                 {media.kind === "image" ? (
-                  <g clipPath={`url(#${uid}-c${item.faceIndex})`}>
+                  <g clipPath={`url(#${uid}-c${item.faceIndex})`} suppressHydrationWarning>
                     <image
                       data-fi={item.faceIndex}
                       href={media.url}
@@ -618,6 +620,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
                       preserveAspectRatio="none"
                       transform={`matrix(${item.affine})`}
                       opacity={photoOpacity}
+                      suppressHydrationWarning
                     />
                   </g>
                 ) : (
@@ -626,6 +629,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
                     points={`${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`}
                     fill={GOLD_BRIGHT}
                     display={back ? "none" : "block"}
+                    suppressHydrationWarning
                   />
                 )}
               </g>
@@ -647,6 +651,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
                 strokeWidth={wEdge ? 1.15 : 1.85}
                 strokeLinecap="round"
                 filter={`url(#${uid}-glow)`}
+                suppressHydrationWarning
               />
             );
           })}
@@ -662,6 +667,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
               fill={GOLD_BRIGHT}
               stroke={GOLD}
               strokeWidth="1.2"
+              suppressHydrationWarning
             />
           ))}
         </g>

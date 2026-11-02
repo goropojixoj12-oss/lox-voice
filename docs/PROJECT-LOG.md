@@ -197,6 +197,13 @@
 - **Файлы:** `src/components/forms/property-inquiry-language-actions.tsx`, `docs/PROJECT-LOG.md`.
 - **Проверено:** локально на `/property/bkk1-riverside-apartment` через браузер — текст `SCHEDULE VIEWING`, `clipped: false` (scrollWidth ≤ clientWidth), контейнер `flex-wrap: wrap`, горизонтального переполнения страницы нет.
 
+### Fix: hydration mismatch у 4D-тессеракта в галерее листинга
+
+- **Что:** в `src/components/property/property-gallery-3d.tsx` добавлен `suppressHydrationWarning` на все узлы, которые до гидратации мутирует пред-запуск `paint()` — `<svg data-tesseract>`, слои `faces`/`edges`/`verts`, полигоны `data-fc`/`data-ft`/`data-fpb`, `<image data-fi>`, `<line data-e>`, `<circle data-v>`, и отдельно на обёртку `<g clipPath={uid-cN}>`.
+- **Зачем:** тессеракт специально стартует до гидратации (иначе при троттлинге React он стоял на месте). React 19 применяет `suppressHydrationWarning` только к атрибутам конкретного узла и не распространяет его на детей, поэтому каждый мутируемый узел нужен был пометить сам. Отдельно мешал `appendChild(group)` в слое faces: он менял порядок детей, и `clipPath` на узлах-близнецах разъезжался.
+- **Файлы:** `src/components/property/property-gallery-3d.tsx`, `docs/PROJECT-LOG.md`.
+- **Проверено:** локально на `/property/bkk1-riverside-apartment` через браузер — консоль чистая (0 ошибок, раньше была 1), вращение подтверждено (`0.8939 → 1.0162`, `spinning: true`), 24 грани с фото, клик по грани открывает лайтбокс «BKK 1 apartment — photo 7 · 7/43».
+
 ---
 
 ## Известные расхождения (требуют решения)
