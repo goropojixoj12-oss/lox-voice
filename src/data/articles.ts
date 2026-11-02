@@ -19,7 +19,7 @@ SEAPS surfaces verification badges and update timestamps so you can prioritize t
     category: "guides",
     author: "Adam James",
     publishedAt: "2026-10-16T10:00:00.000Z",
-    relatedPropertyIds: ["p-001", "p-003"],
+    relatedPropertyIds: ["p-003"],
   },
   {
     id: "a-003",
