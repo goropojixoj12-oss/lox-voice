@@ -24,6 +24,20 @@ const kh = (
   lng,
 });
 
+const VUE_ASTON_PHOTO_COUNT = 30;
+
+/** Real frames of the Vue Aston unit, stored at public/media/listings/vue-aston/01.jpg … 30.jpg, all 1600x1200. */
+const vueAstonPhotos = () =>
+  Array.from({ length: VUE_ASTON_PHOTO_COUNT }, (_, i) => {
+    const file = String(i + 1).padStart(2, "0");
+    return {
+      id: `vueaston-${file}`,
+      url: `/media/listings/vue-aston/${file}.jpg`,
+      alt: `Vue Aston residence — photo ${i + 1}`,
+      isCover: i === 0,
+    };
+  });
+
 const VUE_ASTON_TITLE =
   "Vue Aston  (Riverside)  -   Exclusively Designed, Developed and Built Condominium. 3 Bedrooms, 2 Bathrooms, Spacious 102.34 m2.   Fully Furnished and Available Immediately. Foreign Ownership Approved (Hard Title). This Beautiful Property is Priced Significantly Under Cost Value.";
 
@@ -97,11 +111,7 @@ E-Mail: ceo@seaps.asia`,
       "pet_friendly",
       "workspace",
     ],
-    images: [
-      { id: "vueaston-01", url: "/media/listings/vue-aston/01.jpg", alt: "Vue Aston residence — photo 1", isCover: true },
-      { id: "vueaston-02", url: "/media/listings/vue-aston/02.jpg", alt: "Vue Aston residence — photo 2", isCover: false },
-      { id: "vueaston-03", url: "/media/listings/vue-aston/03.jpg", alt: "Vue Aston residence — photo 3", isCover: false },
-    ],
+    images: vueAstonPhotos(),
     videos: [],
     location: kh(
       "Phnom Penh",
