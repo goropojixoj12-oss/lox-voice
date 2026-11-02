@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type MutableRefObject } from "react";
+import { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Download, Pause, Play, X, ZoomIn, ZoomOut } from "lucide-react";
 import type { PropertyImage, PropertyVideo } from "@/lib/types";
 
@@ -22,19 +22,14 @@ type Rot = {
   pitch: number;
 };
 
-type FaceGeom = {
-  ids: number[];
-  cube: number;
-  wCell: boolean;
-};
-
-type FaceModel = {
-  faceIndex: number;
-  geom: FaceGeom;
+type CubeFaceModel = {
+  side: number;
   quad: Pt[];
   points: string;
+  cx: number;
+  cy: number;
   depth: number;
-  area: number;
+  front: boolean;
   affine: string;
 };
 
@@ -45,16 +40,8 @@ const D4 = 3;
 const D3 = 7.5;
 const GOLD = "#D4AF37";
 const GOLD_BRIGHT = "#F0D78C";
-const CUBE_TINTS = [
-  "rgba(212,175,55,0.28)",
-  "rgba(240,215,140,0.24)",
-  "rgba(184,134,11,0.26)",
-  "rgba(255,215,0,0.18)",
-  "rgba(205,173,106,0.26)",
-  "rgba(218,165,32,0.22)",
-  "rgba(153,122,48,0.26)",
-  "rgba(255,223,128,0.18)",
-] as const;
+/** Solid base under each photo, so a face is never see-through even if its image fails. */
+const FACE_BASE = "#0f2138";
 
 /** Nested cubes at rest; XW/YW auto-rotate grows the inner cell outward. */
 const INITIAL_ROT: Rot = {
@@ -65,14 +52,33 @@ const INITIAL_ROT: Rot = {
   yaw: 0.55,
   pitch: 0.38,
 };
-/** rad/s — XW/YW so the inner cell grows outward; yaw keeps the tumble readable. */
+/** rad/s — XW/YW morph the cage; yaw tumbles it and the solid cube together. */
 const XW_SPEED = 0.1;
 const YW_SPEED = 0.07;
 const YAW_SPEED = 0.035;
 
-function facePhotoOpacity(back: boolean): number {
-  return back ? 0.88 : 1;
-}
+/** Corners of the solid cube, unit half-edge. */
+const CUBE_CORNERS: Pt[] = [
+  { x: -1, y: -1, z: -1 },
+  { x: 1, y: -1, z: -1 },
+  { x: 1, y: 1, z: -1 },
+  { x: -1, y: 1, z: -1 },
+  { x: -1, y: -1, z: 1 },
+  { x: 1, y: -1, z: 1 },
+  { x: 1, y: 1, z: 1 },
+  { x: -1, y: 1, z: 1 },
+];
+/** Counter-clockwise when seen from outside, so a positive camera-space normal means visible. */
+const CUBE_SIDES: number[][] = [
+  [0, 3, 2, 1],
+  [4, 5, 6, 7],
+  [0, 4, 7, 3],
+  [1, 2, 6, 5],
+  [0, 1, 5, 4],
+  [3, 7, 6, 2],
+];
+/** Half-edge of the solid cube in 4D units — sits inside the cage at rest. */
+const CUBE_HALF = 1.2;
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const photos: MediaFace[] = images.map((img, i) => ({
@@ -108,37 +114,6 @@ function vertex(i: number): Vec4 {
   };
 }
 
-function tesseractSquares(): FaceGeom[] {
-  const faces: FaceGeom[] = [];
-  for (let a = 0; a < 4; a += 1) {
-    for (let b = a + 1; b < 4; b += 1) {
-      const fixed: number[] = [];
-      for (let d = 0; d < 4; d += 1) if (d !== a && d !== b) fixed.push(d);
-      for (const s0 of [0, 1]) {
-        for (const s1 of [0, 1]) {
-          const ids: number[] = [];
-          for (const va of [0, 1]) {
-            for (const vb of [0, 1]) {
-              let id = 0;
-              if (va) id |= 1 << a;
-              if (vb) id |= 1 << b;
-              if (s0) id |= 1 << fixed[0];
-              if (s1) id |= 1 << fixed[1];
-              ids.push(id);
-            }
-          }
-          faces.push({
-            ids: [ids[0], ids[1], ids[3], ids[2]],
-            cube: fixed[0] * 2 + s0,
-            wCell: a !== 3 && b !== 3,
-          });
-        }
-      }
-    }
-  }
-  return faces;
-}
-
 function tesseractEdges(): [number, number][] {
   const edges: [number, number][] = [];
   for (let i = 0; i < 16; i += 1) {
@@ -150,7 +125,6 @@ function tesseractEdges(): [number, number][] {
   return edges;
 }
 
-const SQUARES = tesseractSquares();
 const EDGES = tesseractEdges();
 
 function rotate4(v: Vec4, plane: [number, number], angle: number): Vec4 {
@@ -180,6 +154,7 @@ function orbit3(p: Pt, yaw: number, pitch: number): Pt {
   };
 }
 
+/** z of (v1-v0) x (v3-v0): positive means the face looks at the camera. */
 function facing(q: Pt[]): number {
   return (q[1].x - q[0].x) * (q[3].y - q[0].y) - (q[1].y - q[0].y) * (q[3].x - q[0].x);
 }
@@ -229,26 +204,48 @@ const CAMERA_FIT = (() => {
   };
 })();
 
-function buildModel(rot: Rot): { pts: Pt[]; faceModels: FaceModel[] } {
+/** Camera-space corner of the solid cube; rigid, only yaw/pitch touch it. */
+function cubeCorner(corner: Pt, rot: Rot): Pt {
+  return orbit3(
+    { x: corner.x * CUBE_HALF, y: corner.y * CUBE_HALF, z: corner.z * CUBE_HALF },
+    rot.yaw,
+    rot.pitch,
+  );
+}
+
+function toScreen(p: Pt): { x: number; y: number; z: number } {
+  const z = Math.min(p.z, D3 - 0.6);
+  const k = D3 / (D3 - z);
+  return {
+    x: VIEW / 2 + (p.x * k - CAMERA_FIT.ox) * CAMERA_FIT.scale,
+    y: VIEW / 2 - (p.y * k - CAMERA_FIT.oy) * CAMERA_FIT.scale,
+    z: p.z,
+  };
+}
+
+function buildModel(rot: Rot): { pts: Pt[]; cube: CubeFaceModel[] } {
   const raw = projectRaw(rot);
   const pts = raw.map((p) => ({
     x: VIEW / 2 + (p.x - CAMERA_FIT.ox) * CAMERA_FIT.scale,
     y: VIEW / 2 - (p.y - CAMERA_FIT.oy) * CAMERA_FIT.scale,
     z: p.z,
   }));
-  const faceModels = SQUARES.map((geom, faceIndex) => {
-    const quad = geom.ids.map((id) => pts[id]);
+  const corners = CUBE_CORNERS.map((c) => cubeCorner(c, rot));
+  const cube = CUBE_SIDES.map((side, index) => {
+    const quad = side.map((i) => corners[i]);
+    const screen = quad.map(toScreen);
     return {
-      faceIndex,
-      geom,
+      side: index,
       quad,
-      points: quad.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "),
+      points: screen.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "),
+      cx: (screen[0].x + screen[2].x) / 2,
+      cy: (screen[0].y + screen[2].y) / 2,
       depth: (quad[0].z + quad[1].z + quad[2].z + quad[3].z) / 4,
-      area: facing(quad),
-      affine: affineMatrix(quad),
+      front: facing(quad) > 0,
+      affine: affineMatrix(screen),
     };
   });
-  return { pts, faceModels };
+  return { pts, cube };
 }
 
 type MotionState = {
@@ -269,11 +266,11 @@ function attachTesseractMotion(svg: SVGSVGElement) {
   if (!facesLayer) return undefined;
 
   const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
-  const groups = SQUARES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
-  const tints = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
-  const clips = SQUARES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
-  const images = SQUARES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
-  const plays = SQUARES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
+  const groups = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
+  const bases = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
+  const clips = CUBE_SIDES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
+  const images = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
+  const plays = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
   const circles = Array.from({ length: 16 }, (_, i) => svg.querySelector(`circle[data-v="${i}"]`) as SVGCircleElement | null);
 
   const state: MotionState = {
@@ -287,7 +284,7 @@ function attachTesseractMotion(svg: SVGSVGElement) {
   };
 
   const paint = () => {
-    const { pts, faceModels } = buildModel(state.rot);
+    const { pts, cube } = buildModel(state.rot);
     svg.setAttribute("data-xw", state.rot.xw.toFixed(4));
     svg.setAttribute("data-yw", state.rot.yw.toFixed(4));
     svg.setAttribute("data-yaw", state.rot.yaw.toFixed(4));
@@ -300,33 +297,25 @@ function attachTesseractMotion(svg: SVGSVGElement) {
       line.setAttribute("x2", pts[b].x.toFixed(2));
       line.setAttribute("y2", pts[b].y.toFixed(2));
     }
-    const order = faceModels
+    const order = cube
       .map((_, i) => i)
-      .sort((a, b) => faceModels[a].depth - faceModels[b].depth);
+      .sort((a, b) => cube[a].depth - cube[b].depth);
     for (const idx of order) {
       const group = groups[idx];
-      const item = faceModels[idx];
+      const item = cube[idx];
       if (!group) continue;
+      group.setAttribute("display", item.front ? "block" : "none");
+      if (!item.front) continue;
       facesLayer.appendChild(group);
-      const back = item.area < 0;
-      const tint = tints[idx];
-      if (tint) {
-        tint.setAttribute("points", item.points);
-        tint.setAttribute("fill-opacity", back ? "0.04" : "0.06");
-      }
+      const base = bases[idx];
+      if (base) base.setAttribute("points", item.points);
       const clip = clips[idx];
       if (clip) clip.setAttribute("points", item.points);
       const image = images[idx];
-      if (image) {
-        image.setAttribute("transform", `matrix(${item.affine})`);
-        image.setAttribute("opacity", String(facePhotoOpacity(back)));
-      }
+      if (image) image.setAttribute("transform", `matrix(${item.affine})`);
       const play = plays[idx];
       if (play) {
-        const cx = (item.quad[0].x + item.quad[2].x) / 2;
-        const cy = (item.quad[0].y + item.quad[2].y) / 2;
-        play.setAttribute("points", `${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`);
-        play.setAttribute("display", back ? "none" : "block");
+        play.setAttribute("points", `${item.cx + 14},${item.cy} ${item.cx - 9},${item.cy - 11} ${item.cx - 9},${item.cy + 11}`);
       }
     }
     for (let i = 0; i < 16; i += 1) {
@@ -486,8 +475,6 @@ const TesseractCanvas = memo(function TesseractCanvas({
   uid: string;
   faces: MediaFace[];
   onOpenFace: (face: MediaFace) => void;
-  autoRotate?: boolean;
-  autoRotateRef?: MutableRefObject<boolean>;
 }) {
   const initial = useMemo(() => buildModel(INITIAL_ROT), []);
   const dragged = useRef(false);
@@ -533,8 +520,8 @@ const TesseractCanvas = memo(function TesseractCanvas({
           ...state.rot,
           yaw: state.drag.yaw + dx * 0.008,
           pitch: Math.max(-1.15, Math.min(1.15, state.drag.pitch + dy * 0.008)),
-          yw: state.drag.yw + dx * 0.004,
           xw: state.drag.xw + dy * 0.004,
+          yw: state.drag.yw + dx * 0.004,
         };
         state.paint();
       }}
@@ -568,7 +555,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
         style={{ maxWidth: "none", overflow: "visible" }}
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label="4D tesseract listing gallery — nested cubes, 24 faces"
+        aria-label="4D tesseract cage around a solid cube of listing photos"
         data-tesseract="1"
         data-xw={INITIAL_ROT.xw.toFixed(4)}
         data-yw={INITIAL_ROT.yw.toFixed(4)}
@@ -582,60 +569,12 @@ const TesseractCanvas = memo(function TesseractCanvas({
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
-          {initial.faceModels.map((item) => (
-            <clipPath key={`c${item.faceIndex}`} id={`${uid}-c${item.faceIndex}`}>
-              <polygon data-fc={item.faceIndex} points={item.points} suppressHydrationWarning />
+          {initial.cube.map((item) => (
+            <clipPath key={`c${item.side}`} id={`${uid}-c${item.side}`}>
+              <polygon data-fc={item.side} points={item.points} suppressHydrationWarning />
             </clipPath>
           ))}
         </defs>
-        <g data-layer="faces" suppressHydrationWarning>
-          {initial.faceModels.map((item) => {
-            const back = item.area < 0;
-            const media = faces[item.faceIndex % faces.length];
-            const tint = CUBE_TINTS[item.geom.cube] ?? CUBE_TINTS[0];
-            const photoOpacity = facePhotoOpacity(back);
-            const cx = (item.quad[0].x + item.quad[2].x) / 2;
-            const cy = (item.quad[0].y + item.quad[2].y) / 2;
-            return (
-              <g
-                key={item.faceIndex}
-                data-f={item.faceIndex}
-                onClick={() => {
-                  const svg = document.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
-                  const state = svg ? MOTION.get(svg) : undefined;
-                  if (dragged.current || state?.dragged) return;
-                  onOpenFace(media);
-                }}
-                style={{ cursor: "pointer" }}
-                suppressHydrationWarning
-              >
-                <polygon data-ft={item.faceIndex} points={item.points} fill={tint} fillOpacity={back ? 0.04 : 0.06} suppressHydrationWarning />
-                {media.kind === "image" ? (
-                  <g clipPath={`url(#${uid}-c${item.faceIndex})`} suppressHydrationWarning>
-                    <image
-                      data-fi={item.faceIndex}
-                      href={media.url}
-                      width={1}
-                      height={1}
-                      preserveAspectRatio="none"
-                      transform={`matrix(${item.affine})`}
-                      opacity={photoOpacity}
-                      suppressHydrationWarning
-                    />
-                  </g>
-                ) : (
-                  <polygon
-                    data-fpb={item.faceIndex}
-                    points={`${cx + 14},${cy} ${cx - 9},${cy - 11} ${cx - 9},${cy + 11}`}
-                    fill={GOLD_BRIGHT}
-                    display={back ? "none" : "block"}
-                    suppressHydrationWarning
-                  />
-                )}
-              </g>
-            );
-          })}
-        </g>
         <g data-layer="edges">
           {EDGES.map(([a, b]) => {
             const wEdge = (a ^ b) === 8;
@@ -670,6 +609,48 @@ const TesseractCanvas = memo(function TesseractCanvas({
               suppressHydrationWarning
             />
           ))}
+        </g>
+        <g data-layer="faces" suppressHydrationWarning>
+          {initial.cube.map((item) => {
+            const media = faces[item.side % faces.length];
+            return (
+              <g
+                key={item.side}
+                data-f={item.side}
+                display={item.front ? "block" : "none"}
+                onClick={() => {
+                  const svg = document.querySelector("svg[data-tesseract]") as SVGSVGElement | null;
+                  const state = svg ? MOTION.get(svg) : undefined;
+                  if (dragged.current || state?.dragged) return;
+                  onOpenFace(media);
+                }}
+                style={{ cursor: "pointer" }}
+                suppressHydrationWarning
+              >
+                <polygon data-ft={item.side} points={item.points} fill={FACE_BASE} suppressHydrationWarning />
+                {media.kind === "image" ? (
+                  <g clipPath={`url(#${uid}-c${item.side})`} suppressHydrationWarning>
+                    <image
+                      data-fi={item.side}
+                      href={media.url}
+                      width={1}
+                      height={1}
+                      preserveAspectRatio="none"
+                      transform={`matrix(${item.affine})`}
+                      suppressHydrationWarning
+                    />
+                  </g>
+                ) : (
+                  <polygon
+                    data-fpb={item.side}
+                    points={`${item.cx + 14},${item.cy} ${item.cx - 9},${item.cy - 11} ${item.cx - 9},${item.cy + 11}`}
+                    fill={GOLD_BRIGHT}
+                    suppressHydrationWarning
+                  />
+                )}
+              </g>
+            );
+          })}
         </g>
       </svg>
     </div>
@@ -711,13 +692,7 @@ export function PropertyGallery3D({
         className="relative w-full rounded-[var(--radius-xl)] bg-[radial-gradient(ellipse_at_center,_#163154_0%,_#07111f_62%,_#050d18_100%)] shadow-[0_0_48px_rgba(212,175,55,0.18)]"
         style={{ height: "clamp(28rem, 92vw, 46rem)" }}
       >
-        <TesseractCanvas
-          uid={uid}
-          faces={faces}
-          onOpenFace={setActiveFace}
-          autoRotate={autoRotate}
-          autoRotateRef={autoRotateRef}
-        />
+        <TesseractCanvas uid={uid} faces={faces} onOpenFace={setActiveFace} />
         <button
           type="button"
           className="absolute bottom-3 right-3 z-10 rounded-full bg-black/60 p-2 text-white"
@@ -732,7 +707,7 @@ export function PropertyGallery3D({
           {autoRotate ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
         <p className="absolute bottom-3 left-3 z-10 max-w-[75%] rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-          4D tesseract · XW/YW inner cube grows outward · 24 faces · {faces.length} files
+          4D cage · solid photo cube · click a face · {faces.length} files
         </p>
       </div>
       {activeFace ? (

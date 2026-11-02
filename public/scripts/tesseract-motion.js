@@ -1,6 +1,7 @@
 /**
- * 4D tesseract motion for listing galleries.
+ * 4D tesseract cage + solid photo cube for listing galleries.
  * Runs even if the React island is late or never hydrates (preview iframes / SSR HTML).
+ * Mirrors src/components/property/property-gallery-3d.tsx — keep the two in sync.
  */
 (function () {
   var VIEW = 1000;
@@ -9,41 +10,31 @@
   var XW_SPEED = 0.1;
   var YW_SPEED = 0.07;
   var YAW_SPEED = 0.035;
+  var CUBE_HALF = 1.2;
   var INITIAL = { xw: 0.08, yw: 0.1, zw: 0, xy: 0, yaw: 0.55, pitch: 0.38 };
+
+  var CUBE_CORNERS = [
+    { x: -1, y: -1, z: -1 },
+    { x: 1, y: -1, z: -1 },
+    { x: 1, y: 1, z: -1 },
+    { x: -1, y: 1, z: -1 },
+    { x: -1, y: -1, z: 1 },
+    { x: 1, y: -1, z: 1 },
+    { x: 1, y: 1, z: 1 },
+    { x: -1, y: 1, z: 1 },
+  ];
+  /** Counter-clockwise from outside, so a positive camera-space normal means visible. */
+  var CUBE_SIDES = [
+    [0, 3, 2, 1],
+    [4, 5, 6, 7],
+    [0, 4, 7, 3],
+    [1, 2, 6, 5],
+    [0, 1, 5, 4],
+    [3, 7, 6, 2],
+  ];
 
   function vertex(i) {
     return { x: i & 1 ? 1 : -1, y: i & 2 ? 1 : -1, z: i & 4 ? 1 : -1, w: i & 8 ? 1 : -1 };
-  }
-
-  function squares() {
-    var faces = [];
-    for (var a = 0; a < 4; a += 1) {
-      for (var b = a + 1; b < 4; b += 1) {
-        var fixed = [];
-        for (var d = 0; d < 4; d += 1) if (d !== a && d !== b) fixed.push(d);
-        for (var s0 = 0; s0 <= 1; s0 += 1) {
-          for (var s1 = 0; s1 <= 1; s1 += 1) {
-            var ids = [];
-            for (var va = 0; va <= 1; va += 1) {
-              for (var vb = 0; vb <= 1; vb += 1) {
-                var id = 0;
-                if (va) id |= 1 << a;
-                if (vb) id |= 1 << b;
-                if (s0) id |= 1 << fixed[0];
-                if (s1) id |= 1 << fixed[1];
-                ids.push(id);
-              }
-            }
-            faces.push({
-              ids: [ids[0], ids[1], ids[3], ids[2]],
-              cube: fixed[0] * 2 + s0,
-              wCell: a !== 3 && b !== 3,
-            });
-          }
-        }
-      }
-    }
-    return faces;
   }
 
   function edges() {
@@ -57,7 +48,6 @@
     return out;
   }
 
-  var SQUARES = squares();
   var EDGES = edges();
 
   function rotate4(v, plane, angle) {
@@ -83,6 +73,7 @@
     return { x: x1, y: p.y * cp - z1 * sp, z: p.y * sp + z1 * cp };
   }
 
+  /** z of (v1-v0) x (v3-v0): positive means the face looks at the camera. */
   function facing(q) {
     return (q[1].x - q[0].x) * (q[3].y - q[0].y) - (q[1].y - q[0].y) * (q[3].x - q[0].x);
   }
@@ -127,6 +118,24 @@
   var span = Math.max(maxX - minX, maxY - minY, 0.2);
   var FIT = { scale: (VIEW * 0.82) / span, ox: (minX + maxX) / 2, oy: (minY + maxY) / 2 };
 
+  function cubeCorner(corner, rot) {
+    return orbit3(
+      { x: corner.x * CUBE_HALF, y: corner.y * CUBE_HALF, z: corner.z * CUBE_HALF },
+      rot.yaw,
+      rot.pitch,
+    );
+  }
+
+  function toScreen(p) {
+    var z = Math.min(p.z, D3 - 0.6);
+    var k = D3 / (D3 - z);
+    return {
+      x: VIEW / 2 + (p.x * k - FIT.ox) * FIT.scale,
+      y: VIEW / 2 - (p.y * k - FIT.oy) * FIT.scale,
+      z: p.z,
+    };
+  }
+
   function buildModel(rot) {
     var raw = projectRaw(rot);
     var pts = raw.map(function (p) {
@@ -136,25 +145,29 @@
         z: p.z,
       };
     });
-    var faceModels = SQUARES.map(function (geom, faceIndex) {
-      var quad = geom.ids.map(function (id) {
-        return pts[id];
+    var corners = CUBE_CORNERS.map(function (c) {
+      return cubeCorner(c, rot);
+    });
+    var cube = CUBE_SIDES.map(function (side, index) {
+      var quad = side.map(function (i) {
+        return corners[i];
       });
+      var screen = quad.map(toScreen);
       return {
-        faceIndex: faceIndex,
-        geom: geom,
-        quad: quad,
-        points: quad
+        side: index,
+        points: screen
           .map(function (p) {
             return p.x.toFixed(2) + "," + p.y.toFixed(2);
           })
           .join(" "),
+        cx: (screen[0].x + screen[2].x) / 2,
+        cy: (screen[0].y + screen[2].y) / 2,
         depth: (quad[0].z + quad[1].z + quad[2].z + quad[3].z) / 4,
-        area: facing(quad),
-        affine: affineMatrix(quad),
+        front: facing(quad) > 0,
+        affine: affineMatrix(screen),
       };
     });
-    return { pts: pts, faceModels: faceModels };
+    return { pts: pts, cube: cube };
   }
 
   function attach(svg) {
@@ -165,19 +178,19 @@
     var lines = EDGES.map(function (pair) {
       return svg.querySelector('line[data-e="' + pair[0] + "-" + pair[1] + '"]');
     });
-    var groups = SQUARES.map(function (_, i) {
+    var groups = CUBE_SIDES.map(function (_, i) {
       return facesLayer.querySelector('g[data-f="' + i + '"]');
     });
-    var tints = SQUARES.map(function (_, i) {
+    var bases = CUBE_SIDES.map(function (_, i) {
       return facesLayer.querySelector('polygon[data-ft="' + i + '"]');
     });
-    var clips = SQUARES.map(function (_, i) {
+    var clips = CUBE_SIDES.map(function (_, i) {
       return svg.querySelector('polygon[data-fc="' + i + '"]');
     });
-    var images = SQUARES.map(function (_, i) {
+    var images = CUBE_SIDES.map(function (_, i) {
       return facesLayer.querySelector('image[data-fi="' + i + '"]');
     });
-    var plays = SQUARES.map(function (_, i) {
+    var plays = CUBE_SIDES.map(function (_, i) {
       return facesLayer.querySelector('polygon[data-fpb="' + i + '"]');
     });
     var circles = [];
@@ -220,34 +233,29 @@
         line.setAttribute("x2", model.pts[b].x.toFixed(2));
         line.setAttribute("y2", model.pts[b].y.toFixed(2));
       }
-      var order = model.faceModels
+      var order = model.cube
         .map(function (_, idx) {
           return idx;
         })
         .sort(function (ia, ib) {
-          return model.faceModels[ia].depth - model.faceModels[ib].depth;
+          return model.cube[ia].depth - model.cube[ib].depth;
         });
       for (var o = 0; o < order.length; o += 1) {
         var idx = order[o];
         var group = groups[idx];
-        var item = model.faceModels[idx];
+        var item = model.cube[idx];
         if (!group) continue;
+        group.setAttribute("display", item.front ? "block" : "none");
+        if (!item.front) continue;
         facesLayer.appendChild(group);
-        var back = item.area < 0;
-        if (tints[idx]) {
-          tints[idx].setAttribute("points", item.points);
-          tints[idx].setAttribute("fill-opacity", back ? "0.04" : "0.06");
-        }
+        if (bases[idx]) bases[idx].setAttribute("points", item.points);
         if (clips[idx]) clips[idx].setAttribute("points", item.points);
-        if (images[idx]) {
-          images[idx].setAttribute("transform", "matrix(" + item.affine + ")");
-          images[idx].setAttribute("opacity", back ? "0.88" : "1");
-        }
+        if (images[idx]) images[idx].setAttribute("transform", "matrix(" + item.affine + ")");
         if (plays[idx]) {
-          var cx = (item.quad[0].x + item.quad[2].x) / 2;
-          var cy = (item.quad[0].y + item.quad[2].y) / 2;
-          plays[idx].setAttribute("points", cx + 14 + "," + cy + " " + (cx - 9) + "," + (cy - 11) + " " + (cx - 9) + "," + (cy + 11));
-          plays[idx].setAttribute("display", back ? "none" : "block");
+          plays[idx].setAttribute(
+            "points",
+            item.cx + 14 + "," + item.cy + " " + (item.cx - 9) + "," + (item.cy - 11) + " " + (item.cx - 9) + "," + (item.cy + 11),
+          );
         }
       }
       for (var v = 0; v < 16; v += 1) {
@@ -308,8 +316,8 @@
         var dy = event.clientY - drag.y;
         rot.yaw = drag.yaw + dx * 0.008;
         rot.pitch = Math.max(-1.15, Math.min(1.15, drag.pitch + dy * 0.008));
-        rot.yw = drag.yw + dx * 0.004;
         rot.xw = drag.xw + dy * 0.004;
+        rot.yw = drag.yw + dx * 0.004;
         paint();
       });
       function endDrag() {
