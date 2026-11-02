@@ -90,7 +90,7 @@ export default async function PropertyDetailPage({
   if (!canViewListing(property, session)) notFound();
   const agent = property.agentId ? getAgentById(property.agentId) : undefined;
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
-  const related = getRelatedProperties(property);
+  const related = getRelatedProperties(property, 3, all);
   const showPublicSeo = isPublicListing(property);
   const headline = normalizeListingHeadline(property.title);
 
@@ -392,12 +392,14 @@ export default async function PropertyDetailPage({
         </aside>
       </div>
 
-      <Section className="px-0">
-        <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-          Similar listings
-        </h2>
-        <PropertyGrid items={related} userId={session?.id} />
-      </Section>
+      {related.length > 0 ? (
+        <Section className="px-0">
+          <h2 className="mb-5 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
+            Similar listings
+          </h2>
+          <PropertyGrid items={related} userId={session?.id} />
+        </Section>
+      ) : null}
     </div>
   );
 }

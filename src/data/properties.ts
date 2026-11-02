@@ -792,8 +792,8 @@ export function getPropertiesByProject(projectId: string) {
   return properties.filter((p) => p.projectId === projectId && isPublicListing(p));
 }
 
-export function getRelatedProperties(property: Property, limit = 3) {
-  return properties
+export function getRelatedProperties(property: Property, limit = 3, source: Property[] = properties) {
+  return source
     .filter(
       (p) =>
         p.id !== property.id &&
