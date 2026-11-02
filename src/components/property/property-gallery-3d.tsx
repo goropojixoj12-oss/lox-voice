@@ -57,28 +57,29 @@ const XW_SPEED = 0.1;
 const YW_SPEED = 0.07;
 const YAW_SPEED = 0.035;
 
-/** Corners of the solid cube, unit half-edge. */
-const CUBE_CORNERS: Pt[] = [
-  { x: -1, y: -1, z: -1 },
-  { x: 1, y: -1, z: -1 },
-  { x: 1, y: 1, z: -1 },
-  { x: -1, y: 1, z: -1 },
-  { x: -1, y: -1, z: 1 },
-  { x: 1, y: -1, z: 1 },
-  { x: 1, y: 1, z: 1 },
-  { x: -1, y: 1, z: 1 },
+const ICO_VERTS: Pt[] = [
+  { x: 0.0, y: -0.525731, z: -0.850651 },
+  { x: -0.525731, y: -0.850651, z: 0.0 },
+  { x: -0.850651, y: 0.0, z: -0.525731 },
+  { x: 0.0, y: -0.525731, z: 0.850651 },
+  { x: -0.525731, y: 0.850651, z: 0.0 },
+  { x: 0.850651, y: 0.0, z: -0.525731 },
+  { x: 0.0, y: 0.525731, z: -0.850651 },
+  { x: 0.525731, y: -0.850651, z: 0.0 },
+  { x: -0.850651, y: 0.0, z: 0.525731 },
+  { x: 0.0, y: 0.525731, z: 0.850651 },
+  { x: 0.525731, y: 0.850651, z: 0.0 },
+  { x: 0.850651, y: 0.0, z: 0.525731 },
 ];
-/** Counter-clockwise when seen from outside, so a positive camera-space normal means visible. */
-const CUBE_SIDES: number[][] = [
-  [0, 3, 2, 1],
-  [4, 5, 6, 7],
-  [0, 4, 7, 3],
-  [1, 2, 6, 5],
-  [0, 1, 5, 4],
-  [3, 7, 6, 2],
+/** Vertex triples of the 20 faces, each wound so that (v1-v0) x (v2-v0) points out of the solid. */
+const ICO_FACES: number[][] = [
+  [0, 1, 2], [0, 7, 1], [0, 2, 6], [0, 6, 5], [0, 5, 7],
+  [1, 8, 2], [1, 7, 3], [1, 3, 8], [2, 4, 6], [2, 8, 4],
+  [3, 7, 11], [3, 9, 8], [3, 11, 9], [4, 10, 6], [4, 8, 9],
+  [4, 9, 10], [5, 6, 10], [5, 11, 7], [5, 10, 11], [9, 11, 10],
 ];
-/** Half-edge of the solid cube in 4D units — sits inside the cage at rest. */
-const CUBE_HALF = 1.2;
+/** Circumradius in camera units; the solid is rigid, only yaw/pitch touch it. */
+const ICO_R = 1.7;
 
 function buildFaces(images: PropertyImage[], videos: PropertyVideo[]): MediaFace[] {
   const photos: MediaFace[] = images.map((img, i) => ({
@@ -154,17 +155,41 @@ function orbit3(p: Pt, yaw: number, pitch: number): Pt {
   };
 }
 
-/** z of (v1-v0) x (v3-v0): positive means the face looks at the camera. */
+/** z of the outward normal (v0→v1) x (v0→v2) in camera space; positive means the face looks at the camera. */
 function facing(q: Pt[]): number {
-  return (q[1].x - q[0].x) * (q[3].y - q[0].y) - (q[1].y - q[0].y) * (q[3].x - q[0].x);
+  return (q[1].x - q[0].x) * (q[2].y - q[0].y) - (q[1].y - q[0].y) * (q[2].x - q[0].x);
 }
 
+/** Maps the image's local rect (0,0)-(1,1) onto the face: q0 is the photo's top-left, local x runs to q1, local y to q2. */
 function affineMatrix(q: Pt[]): string {
-  const a = q[3].x - q[0].x;
-  const c = q[3].y - q[0].y;
-  const b = q[1].x - q[0].x;
-  const d = q[1].y - q[0].y;
+  const a = q[1].x - q[0].x;
+  const c = q[1].y - q[0].y;
+  const b = q[2].x - q[0].x;
+  const d = q[2].y - q[0].y;
   return `${a} ${c} ${b} ${d} ${q[0].x} ${q[0].y}`;
+}
+
+const TRI_PERMS: [number, number, number][] = [
+  [0, 1, 2], [1, 2, 0], [2, 0, 1], [0, 2, 1], [2, 1, 0], [1, 0, 2],
+];
+
+/** Picks the vertex order that puts the photo upright: local x as rightward as possible, local y as
+ *  downward as possible, and never mirrored (a positive determinant in the SVG's y-down space). */
+function uprightOrder(q: Pt[]): Pt[] {
+  let best: Pt[] | null = null;
+  let bestScore = -Infinity;
+  for (const p of TRI_PERMS) {
+    const t = [q[p[0]], q[p[1]], q[p[2]]];
+    const rx = t[1].x - t[0].x, ry = t[1].y - t[0].y;
+    const dx = t[2].x - t[0].x, dy = t[2].y - t[0].y;
+    if (rx * dy - dx * ry <= 0) continue;
+    const score = rx / (Math.hypot(rx, ry) || 1) + dy / (Math.hypot(dx, dy) || 1);
+    if (score > bestScore) {
+      bestScore = score;
+      best = t;
+    }
+  }
+  return best ?? q;
 }
 
 function projectRaw(rot: Rot): Pt[] {
@@ -204,13 +229,9 @@ const CAMERA_FIT = (() => {
   };
 })();
 
-/** Camera-space corner of the solid cube; rigid, only yaw/pitch touch it. */
-function cubeCorner(corner: Pt, rot: Rot): Pt {
-  return orbit3(
-    { x: corner.x * CUBE_HALF, y: corner.y * CUBE_HALF, z: corner.z * CUBE_HALF },
-    rot.yaw,
-    rot.pitch,
-  );
+/** Camera-space vertex of the solid icosahedron; rigid, only yaw/pitch touch it. */
+function icoVertex(v: Pt, rot: Rot): Pt {
+  return orbit3({ x: v.x * ICO_R, y: v.y * ICO_R, z: v.z * ICO_R }, rot.yaw, rot.pitch);
 }
 
 function toScreen(p: Pt): { x: number; y: number; z: number } {
@@ -230,19 +251,19 @@ function buildModel(rot: Rot): { pts: Pt[]; cube: CubeFaceModel[] } {
     y: VIEW / 2 - (p.y - CAMERA_FIT.oy) * CAMERA_FIT.scale,
     z: p.z,
   }));
-  const corners = CUBE_CORNERS.map((c) => cubeCorner(c, rot));
-  const cube = CUBE_SIDES.map((side, index) => {
-    const quad = side.map((i) => corners[i]);
+  const verts = ICO_VERTS.map((v) => icoVertex(v, rot));
+  const cube = ICO_FACES.map((face, index) => {
+    const quad = face.map((i) => verts[i]);
     const screen = quad.map(toScreen);
     return {
       side: index,
       quad,
       points: screen.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" "),
-      cx: (screen[0].x + screen[2].x) / 2,
-      cy: (screen[0].y + screen[2].y) / 2,
-      depth: (quad[0].z + quad[1].z + quad[2].z + quad[3].z) / 4,
+      cx: (screen[0].x + screen[1].x + screen[2].x) / 3,
+      cy: (screen[0].y + screen[1].y + screen[2].y) / 3,
+      depth: (quad[0].z + quad[1].z + quad[2].z) / 3,
       front: facing(quad) > 0,
-      affine: affineMatrix(screen),
+      affine: affineMatrix(uprightOrder(screen)),
     };
   });
   return { pts, cube };
@@ -266,11 +287,11 @@ function attachTesseractMotion(svg: SVGSVGElement) {
   if (!facesLayer) return undefined;
 
   const lines = EDGES.map(([a, b]) => svg.querySelector(`line[data-e="${a}-${b}"]`) as SVGLineElement | null);
-  const groups = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
-  const bases = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
-  const clips = CUBE_SIDES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
-  const images = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
-  const plays = CUBE_SIDES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
+  const groups = ICO_FACES.map((_, i) => facesLayer.querySelector(`g[data-f="${i}"]`) as SVGGElement | null);
+  const bases = ICO_FACES.map((_, i) => facesLayer.querySelector(`polygon[data-ft="${i}"]`) as SVGPolygonElement | null);
+  const clips = ICO_FACES.map((_, i) => svg.querySelector(`polygon[data-fc="${i}"]`) as SVGPolygonElement | null);
+  const images = ICO_FACES.map((_, i) => facesLayer.querySelector(`image[data-fi="${i}"]`) as SVGImageElement | null);
+  const plays = ICO_FACES.map((_, i) => facesLayer.querySelector(`polygon[data-fpb="${i}"]`) as SVGPolygonElement | null);
   const circles = Array.from({ length: 16 }, (_, i) => svg.querySelector(`circle[data-v="${i}"]`) as SVGCircleElement | null);
 
   const state: MotionState = {
@@ -555,7 +576,7 @@ const TesseractCanvas = memo(function TesseractCanvas({
         style={{ maxWidth: "none", overflow: "visible" }}
         preserveAspectRatio="xMidYMid meet"
         role="img"
-        aria-label="4D tesseract cage around a solid cube of listing photos"
+        aria-label="4D tesseract cage around a solid icosahedron of listing photos"
         data-tesseract="1"
         data-xw={INITIAL_ROT.xw.toFixed(4)}
         data-yw={INITIAL_ROT.yw.toFixed(4)}
@@ -707,7 +728,7 @@ export function PropertyGallery3D({
           {autoRotate ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
         <p className="absolute bottom-3 left-3 z-10 max-w-[75%] rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-          4D cage · solid photo cube · click a face · {faces.length} files
+          4D cage · solid photo icosahedron · click a face · {faces.length} files
         </p>
       </div>
       {activeFace ? (

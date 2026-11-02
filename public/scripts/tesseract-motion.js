@@ -10,28 +10,33 @@
   var XW_SPEED = 0.1;
   var YW_SPEED = 0.07;
   var YAW_SPEED = 0.035;
-  var CUBE_HALF = 1.2;
   var INITIAL = { xw: 0.08, yw: 0.1, zw: 0, xy: 0, yaw: 0.55, pitch: 0.38 };
 
-  var CUBE_CORNERS = [
-    { x: -1, y: -1, z: -1 },
-    { x: 1, y: -1, z: -1 },
-    { x: 1, y: 1, z: -1 },
-    { x: -1, y: 1, z: -1 },
-    { x: -1, y: -1, z: 1 },
-    { x: 1, y: -1, z: 1 },
-    { x: 1, y: 1, z: 1 },
-    { x: -1, y: 1, z: 1 },
+  /* Icosahedron: 12 vertices on the unit sphere (cyclic permutations of (0, +-1, +-phi), normalised). */
+  var ICO_VERTS = [
+    { x: 0.0, y: -0.525731, z: -0.850651 },
+    { x: -0.525731, y: -0.850651, z: 0.0 },
+    { x: -0.850651, y: 0.0, z: -0.525731 },
+    { x: 0.0, y: -0.525731, z: 0.850651 },
+    { x: -0.525731, y: 0.850651, z: 0.0 },
+    { x: 0.850651, y: 0.0, z: -0.525731 },
+    { x: 0.0, y: 0.525731, z: -0.850651 },
+    { x: 0.525731, y: -0.850651, z: 0.0 },
+    { x: -0.850651, y: 0.0, z: 0.525731 },
+    { x: 0.0, y: 0.525731, z: 0.850651 },
+    { x: 0.525731, y: 0.850651, z: 0.0 },
+    { x: 0.850651, y: 0.0, z: 0.525731 },
   ];
-  /** Counter-clockwise from outside, so a positive camera-space normal means visible. */
-  var CUBE_SIDES = [
-    [0, 3, 2, 1],
-    [4, 5, 6, 7],
-    [0, 4, 7, 3],
-    [1, 2, 6, 5],
-    [0, 1, 5, 4],
-    [3, 7, 6, 2],
+  /* Vertex triples of the 20 faces, each wound so that (v1-v0) x (v2-v0) points out of the solid. */
+  var ICO_FACES = [
+    [0, 1, 2], [0, 7, 1], [0, 2, 6], [0, 6, 5], [0, 5, 7],
+    [1, 8, 2], [1, 7, 3], [1, 3, 8], [2, 4, 6], [2, 8, 4],
+    [3, 7, 11], [3, 9, 8], [3, 11, 9], [4, 10, 6], [4, 8, 9],
+    [4, 9, 10], [5, 6, 10], [5, 11, 7], [5, 10, 11], [9, 11, 10],
   ];
+  /* Circumradius in camera units; the solid is rigid, only yaw/pitch touch it. */
+  var ICO_R = 1.7;
+
 
   function vertex(i) {
     return { x: i & 1 ? 1 : -1, y: i & 2 ? 1 : -1, z: i & 4 ? 1 : -1, w: i & 8 ? 1 : -1 };
@@ -73,17 +78,35 @@
     return { x: x1, y: p.y * cp - z1 * sp, z: p.y * sp + z1 * cp };
   }
 
-  /** z of (v1-v0) x (v3-v0): positive means the face looks at the camera. */
+  // z of the outward normal (v0->v1) x (v0->v2) in camera space; positive means the face looks at the camera.
   function facing(q) {
-    return (q[1].x - q[0].x) * (q[3].y - q[0].y) - (q[1].y - q[0].y) * (q[3].x - q[0].x);
+    return (q[1].x - q[0].x) * (q[2].y - q[0].y) - (q[1].y - q[0].y) * (q[2].x - q[0].x);
   }
 
+  // Maps the image's local rect (0,0)-(1,1) onto the face: q0 top-left, local x to q1, local y to q2.
   function affineMatrix(q) {
-    var a = q[3].x - q[0].x;
-    var c = q[3].y - q[0].y;
-    var b = q[1].x - q[0].x;
-    var d = q[1].y - q[0].y;
+    var a = q[1].x - q[0].x;
+    var c = q[1].y - q[0].y;
+    var b = q[2].x - q[0].x;
+    var d = q[2].y - q[0].y;
     return a + " " + c + " " + b + " " + d + " " + q[0].x + " " + q[0].y;
+  }
+
+  var TRI_PERMS = [[0, 1, 2], [1, 2, 0], [2, 0, 1], [0, 2, 1], [2, 1, 0], [1, 0, 2]];
+
+  // Picks the vertex order that puts the photo upright and never mirrored.
+  function uprightOrder(q) {
+    var best = null, bestScore = -Infinity;
+    for (var i = 0; i < TRI_PERMS.length; i += 1) {
+      var p = TRI_PERMS[i];
+      var t = [q[p[0]], q[p[1]], q[p[2]]];
+      var rx = t[1].x - t[0].x, ry = t[1].y - t[0].y;
+      var dx = t[2].x - t[0].x, dy = t[2].y - t[0].y;
+      if (rx * dy - dx * ry <= 0) continue;
+      var score = rx / (Math.hypot(rx, ry) || 1) + dy / (Math.hypot(dx, dy) || 1);
+      if (score > bestScore) { bestScore = score; best = t; }
+    }
+    return best || q;
   }
 
   function projectRaw(rot) {
@@ -118,12 +141,9 @@
   var span = Math.max(maxX - minX, maxY - minY, 0.2);
   var FIT = { scale: (VIEW * 0.82) / span, ox: (minX + maxX) / 2, oy: (minY + maxY) / 2 };
 
-  function cubeCorner(corner, rot) {
-    return orbit3(
-      { x: corner.x * CUBE_HALF, y: corner.y * CUBE_HALF, z: corner.z * CUBE_HALF },
-      rot.yaw,
-      rot.pitch,
-    );
+  // Camera-space vertex of the solid icosahedron; rigid, only yaw/pitch touch it.
+  function icoVertex(v, rot) {
+    return orbit3({ x: v.x * ICO_R, y: v.y * ICO_R, z: v.z * ICO_R }, rot.yaw, rot.pitch);
   }
 
   function toScreen(p) {
@@ -145,12 +165,12 @@
         z: p.z,
       };
     });
-    var corners = CUBE_CORNERS.map(function (c) {
-      return cubeCorner(c, rot);
+    var verts = ICO_VERTS.map(function (v) {
+      return icoVertex(v, rot);
     });
-    var cube = CUBE_SIDES.map(function (side, index) {
-      var quad = side.map(function (i) {
-        return corners[i];
+    var cube = ICO_FACES.map(function (face, index) {
+      var quad = face.map(function (i) {
+        return verts[i];
       });
       var screen = quad.map(toScreen);
       return {
@@ -160,11 +180,11 @@
             return p.x.toFixed(2) + "," + p.y.toFixed(2);
           })
           .join(" "),
-        cx: (screen[0].x + screen[2].x) / 2,
-        cy: (screen[0].y + screen[2].y) / 2,
-        depth: (quad[0].z + quad[1].z + quad[2].z + quad[3].z) / 4,
+        cx: (screen[0].x + screen[1].x + screen[2].x) / 3,
+        cy: (screen[0].y + screen[1].y + screen[2].y) / 3,
+        depth: (quad[0].z + quad[1].z + quad[2].z) / 3,
         front: facing(quad) > 0,
-        affine: affineMatrix(screen),
+        affine: affineMatrix(uprightOrder(screen)),
       };
     });
     return { pts: pts, cube: cube };
@@ -178,19 +198,19 @@
     var lines = EDGES.map(function (pair) {
       return svg.querySelector('line[data-e="' + pair[0] + "-" + pair[1] + '"]');
     });
-    var groups = CUBE_SIDES.map(function (_, i) {
+    var groups = ICO_FACES.map(function (_, i) {
       return facesLayer.querySelector('g[data-f="' + i + '"]');
     });
-    var bases = CUBE_SIDES.map(function (_, i) {
+    var bases = ICO_FACES.map(function (_, i) {
       return facesLayer.querySelector('polygon[data-ft="' + i + '"]');
     });
-    var clips = CUBE_SIDES.map(function (_, i) {
+    var clips = ICO_FACES.map(function (_, i) {
       return svg.querySelector('polygon[data-fc="' + i + '"]');
     });
-    var images = CUBE_SIDES.map(function (_, i) {
+    var images = ICO_FACES.map(function (_, i) {
       return facesLayer.querySelector('image[data-fi="' + i + '"]');
     });
-    var plays = CUBE_SIDES.map(function (_, i) {
+    var plays = ICO_FACES.map(function (_, i) {
       return facesLayer.querySelector('polygon[data-fpb="' + i + '"]');
     });
     var circles = [];
