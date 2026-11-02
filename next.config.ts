@@ -66,6 +66,11 @@ const nextConfig: NextConfig = {
         destination: "/insights/seaps-since-2013",
         permanent: true,
       },
+      {
+        source: "/property/vue-aston-3-bedroom-2-bathroom-fully-furnished-102m2-fBb84",
+        destination: "/property/vue-aston-riverside-3bed-102m2",
+        permanent: false,
+      },
       { source: "/market-feed", destination: "/search", permanent: true },
       { source: "/market-feed/:path*", destination: "/search", permanent: true },
       { source: "/admin/market-feed", destination: "/dashboard/admin", permanent: true },

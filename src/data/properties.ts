@@ -24,6 +24,27 @@ const kh = (
   lng,
 });
 
+const BKK1_RIVERSIDE_PHOTO_COUNT = 43;
+
+/** Real photo set stored at public/media/listings/bkk1-riverside/01.jpg … 43.jpg. */
+const bkk1RiversidePhotos = (idPrefix: string, altLabel: string, startAt = 1) =>
+  Array.from({ length: BKK1_RIVERSIDE_PHOTO_COUNT }, (_, i) => {
+    const n = ((startAt - 1 + i) % BKK1_RIVERSIDE_PHOTO_COUNT) + 1;
+    const file = String(n).padStart(2, "0");
+    return {
+      id: `${idPrefix}-${file}`,
+      url: `/media/listings/bkk1-riverside/${file}.jpg`,
+      alt: `${altLabel} — photo ${n}`,
+      isCover: i === 0,
+    };
+  });
+
+const VUE_ASTON_TITLE =
+  "Vue Aston  (Riverside)  -   Exclusively Designed, Developed and Built Condominium. 3 Bedrooms, 2 Bathrooms, Spacious 102.34 m2.   Fully Furnished and Available Immediately. Foreign Ownership Approved (Hard Title). This Beautiful Property is Priced Significantly Under Cost Value.";
+
+const VUE_ASTON_SUMMARY =
+  "Foreign Ownership Approved (Hard Title). Stunning Views of the City and River, 102.34 m2. Fully Furnished and Upgraded to a Precise Standard with Everything Specifically Designed to Fit For Purpose.";
+
 export const properties: Property[] = [
   {
     id: "p-001",
@@ -46,51 +67,7 @@ export const properties: Property[] = [
     landSqm: null,
     furnishing: "semi",
     amenities: ["elevator", "balcony", "air_conditioning", "security"],
-    images: [
-      { id: "bkk1-01", url: "/media/listings/bkk1-riverside/01.jpg", alt: "BKK 1 apartment — photo 1", isCover: true },
-      { id: "bkk1-02", url: "/media/listings/bkk1-riverside/02.jpg", alt: "BKK 1 apartment — photo 2" },
-      { id: "bkk1-03", url: "/media/listings/bkk1-riverside/03.jpg", alt: "BKK 1 apartment — photo 3" },
-      { id: "bkk1-04", url: "/media/listings/bkk1-riverside/04.jpg", alt: "BKK 1 apartment — photo 4" },
-      { id: "bkk1-05", url: "/media/listings/bkk1-riverside/05.jpg", alt: "BKK 1 apartment — photo 5" },
-      { id: "bkk1-06", url: "/media/listings/bkk1-riverside/06.jpg", alt: "BKK 1 apartment — photo 6" },
-      { id: "bkk1-07", url: "/media/listings/bkk1-riverside/07.jpg", alt: "BKK 1 apartment — photo 7" },
-      { id: "bkk1-08", url: "/media/listings/bkk1-riverside/08.jpg", alt: "BKK 1 apartment — photo 8" },
-      { id: "bkk1-09", url: "/media/listings/bkk1-riverside/09.jpg", alt: "BKK 1 apartment — photo 9" },
-      { id: "bkk1-10", url: "/media/listings/bkk1-riverside/10.jpg", alt: "BKK 1 apartment — photo 10" },
-      { id: "bkk1-11", url: "/media/listings/bkk1-riverside/11.jpg", alt: "BKK 1 apartment — photo 11" },
-      { id: "bkk1-12", url: "/media/listings/bkk1-riverside/12.jpg", alt: "BKK 1 apartment — photo 12" },
-      { id: "bkk1-13", url: "/media/listings/bkk1-riverside/13.jpg", alt: "BKK 1 apartment — photo 13" },
-      { id: "bkk1-14", url: "/media/listings/bkk1-riverside/14.jpg", alt: "BKK 1 apartment — photo 14" },
-      { id: "bkk1-15", url: "/media/listings/bkk1-riverside/15.jpg", alt: "BKK 1 apartment — photo 15" },
-      { id: "bkk1-16", url: "/media/listings/bkk1-riverside/16.jpg", alt: "BKK 1 apartment — photo 16" },
-      { id: "bkk1-17", url: "/media/listings/bkk1-riverside/17.jpg", alt: "BKK 1 apartment — photo 17" },
-      { id: "bkk1-18", url: "/media/listings/bkk1-riverside/18.jpg", alt: "BKK 1 apartment — photo 18" },
-      { id: "bkk1-19", url: "/media/listings/bkk1-riverside/19.jpg", alt: "BKK 1 apartment — photo 19" },
-      { id: "bkk1-20", url: "/media/listings/bkk1-riverside/20.jpg", alt: "BKK 1 apartment — photo 20" },
-      { id: "bkk1-21", url: "/media/listings/bkk1-riverside/21.jpg", alt: "BKK 1 apartment — photo 21" },
-      { id: "bkk1-22", url: "/media/listings/bkk1-riverside/22.jpg", alt: "BKK 1 apartment — photo 22" },
-      { id: "bkk1-23", url: "/media/listings/bkk1-riverside/23.jpg", alt: "BKK 1 apartment — photo 23" },
-      { id: "bkk1-24", url: "/media/listings/bkk1-riverside/24.jpg", alt: "BKK 1 apartment — photo 24" },
-      { id: "bkk1-25", url: "/media/listings/bkk1-riverside/25.jpg", alt: "BKK 1 apartment — photo 25" },
-      { id: "bkk1-26", url: "/media/listings/bkk1-riverside/26.jpg", alt: "BKK 1 apartment — photo 26" },
-      { id: "bkk1-27", url: "/media/listings/bkk1-riverside/27.jpg", alt: "BKK 1 apartment — photo 27" },
-      { id: "bkk1-28", url: "/media/listings/bkk1-riverside/28.jpg", alt: "BKK 1 apartment — photo 28" },
-      { id: "bkk1-29", url: "/media/listings/bkk1-riverside/29.jpg", alt: "BKK 1 apartment — photo 29" },
-      { id: "bkk1-30", url: "/media/listings/bkk1-riverside/30.jpg", alt: "BKK 1 apartment — photo 30" },
-      { id: "bkk1-31", url: "/media/listings/bkk1-riverside/31.jpg", alt: "BKK 1 apartment — photo 31" },
-      { id: "bkk1-32", url: "/media/listings/bkk1-riverside/32.jpg", alt: "BKK 1 apartment — photo 32" },
-      { id: "bkk1-33", url: "/media/listings/bkk1-riverside/33.jpg", alt: "BKK 1 apartment — photo 33" },
-      { id: "bkk1-34", url: "/media/listings/bkk1-riverside/34.jpg", alt: "BKK 1 apartment — photo 34" },
-      { id: "bkk1-35", url: "/media/listings/bkk1-riverside/35.jpg", alt: "BKK 1 apartment — photo 35" },
-      { id: "bkk1-36", url: "/media/listings/bkk1-riverside/36.jpg", alt: "BKK 1 apartment — photo 36" },
-      { id: "bkk1-37", url: "/media/listings/bkk1-riverside/37.jpg", alt: "BKK 1 apartment — photo 37" },
-      { id: "bkk1-38", url: "/media/listings/bkk1-riverside/38.jpg", alt: "BKK 1 apartment — photo 38" },
-      { id: "bkk1-39", url: "/media/listings/bkk1-riverside/39.jpg", alt: "BKK 1 apartment — photo 39" },
-      { id: "bkk1-40", url: "/media/listings/bkk1-riverside/40.jpg", alt: "BKK 1 apartment — photo 40" },
-      { id: "bkk1-41", url: "/media/listings/bkk1-riverside/41.jpg", alt: "BKK 1 apartment — photo 41" },
-      { id: "bkk1-42", url: "/media/listings/bkk1-riverside/42.jpg", alt: "BKK 1 apartment — photo 42" },
-      { id: "bkk1-43", url: "/media/listings/bkk1-riverside/43.jpg", alt: "BKK 1 apartment — photo 43" },
-    ],
+    images: bkk1RiversidePhotos("bkk1", "BKK 1 apartment"),
     videos: [],
     location: kh("Phnom Penh", "phnom-penh", "BKK 1", "bkk-1", "Street 308 area", 11.551, 104.923),
     agentId: "agent-sokha",
@@ -102,6 +79,93 @@ export const properties: Property[] = [
     isFeatured: true,
     views: 200,
     inquiries: 6,
+  },
+  {
+    id: "p-021",
+    slug: "vue-aston-riverside-3bed-102m2",
+    title: VUE_ASTON_TITLE,
+    summary: VUE_ASTON_SUMMARY,
+    description: `Luxury 3 Bedroom, 2 Full Bathroom (1 Ensuite) Condominium . 102.34 m2.
+
+Located in the Multiple Award Winning, Vue Aston Complex.
+
+Foreign Ownership Approved (Hard Title).
+
+Stunning 180 Degree Views of the City and River (Lounge Room and All Bedrooms).
+
+Fully furnished / Upgraded to a Precise Standard and Included in the Sale Price.
+
+All Internal Hard Furnishings are Specifically designed with Superior Materials,
+
+Designed, Built and Fit Specifically for Purpose.
+
+Built In Robes, Cabinetry, Shelves, Drawers etc. Crafted After Handover at Significant Extra Cost.
+
+24 Hour Security / Access Controlled Secure Underground Parking for Bikes and Cars.
+
+AC in All Areas / White Goods / High Quality Internal Soft Fixtures and Fittings.
+
+Custom Made Interior (Built in Robes, Cupboards, Shelves, Drawers, Beds).
+
+TV, Lounges, Dining.......... LOTS INCLUDED  and Ready To Move In IMMEDIATELY.
+
+Vue Aston Complex / Development
+
+Infinity Pool / Gymnasium / Fitness Facilities / Sauna / Steam / Spa
+
+Mini Mart / Coffee Shop / Dining Facilities / Large Function Areas
+
+Priced Well Under Cost Value - SEAPS Exclusive Client.
+
+Contact - Adam Creek (CEO)
+
+Phone / Telegram: +855 (0)17 355 169.
+
+E-Mail: ceo@seaps.asia`,
+    transactionType: "sale",
+    propertyType: "apartment",
+    status: "published",
+    verification: "premium",
+    sellerType: "agent",
+    price: 239000,
+    currency: "USD",
+    pricePeriod: null,
+    bedrooms: 3,
+    bathrooms: 2,
+    areaSqm: 102.35,
+    landSqm: null,
+    furnishing: "furnished",
+    amenities: [
+      "parking",
+      "pool",
+      "elevator",
+      "garden",
+      "gym",
+      "security",
+      "air_conditioning",
+      "pet_friendly",
+      "workspace",
+    ],
+    images: bkk1RiversidePhotos("vueaston", "Vue Aston residence", 26),
+    videos: [],
+    location: kh(
+      "Phnom Penh",
+      "phnom-penh",
+      "Koh Norea",
+      "koh-norea",
+      "Vue Aston",
+      11.5628,
+      104.9215,
+    ),
+    agentId: "agent-sokha",
+    agencyId: "ag-mekong",
+    publishedAt: "2026-10-30T08:59:46.017Z",
+    updatedAt: "2026-11-02T00:00:00.000Z",
+    hasVideoTour: false,
+    isPremium: true,
+    isFeatured: true,
+    views: 0,
+    inquiries: 0,
   },
   {
     id: "p-002",

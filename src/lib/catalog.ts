@@ -3,9 +3,18 @@ import { getRuntimeListings } from "@/lib/store";
 import { parseSearchParams, searchProperties } from "@/lib/search";
 import type { SearchFilters, TransactionType } from "@/lib/types";
 
+/**
+ * Agent-store listings whose content now lives in `src/data/properties.ts` (p-021).
+ * Kept out of the public catalog so the migrated copy is not listed twice.
+ */
+const MIGRATED_STORE_LISTING_IDS = new Set(["runtime-yl1YBrlr"]);
+
 export async function getAllProperties() {
   const runtime = await getRuntimeListings();
-  return [...runtime, ...properties];
+  return [
+    ...runtime.filter((listing) => !MIGRATED_STORE_LISTING_IDS.has(listing.id)),
+    ...properties,
+  ];
 }
 
 export type CatalogVisibility = "normal" | "cleared";

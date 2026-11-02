@@ -230,6 +230,18 @@
 
 ---
 
+## 2026-11-02
+
+### Вторая карточка: Vue Aston переведён в код, получил 43 фото и крутящийся куб
+
+- **Что:** в `src/data/properties.ts` добавлен листинг `p-021` (`vue-aston-riverside-3bed-102m2`) с настоящими данными карточки Vue Aston из прод-стора (239 000 USD, 3 спальни, 2 ванные, 102,35 м², Koh Norea, полный текст описания, 9 удобств, `agent-sokha`) и всеми 43 фото из `public/media/listings/bkk1-riverside/` — обложкой поставлен кадр 26.jpg, чтобы две карточки не выглядели близнецами. 43 строки `images` у `p-001` свёрнуты в хелпер `bkk1RiversidePhotos(idPrefix, altLabel, startAt)`. В `src/lib/catalog.ts` введён `MIGRATED_STORE_LISTING_IDS` (`runtime-yl1YBrlr`) — перенесённая в копия рантайм-запись исключена из публичного каталога. В `next.config.ts` добавлен редирект со старого slug на новый (`permanent: false`).
+- **Зачем:** карточка жила только в Vercel Blob, локально её данные недоступны (нет токена, OIDC для development-окружения выключено), поэтому куб (`images.length >= 3` в `src/app/property/[slug]/page.tsx:148`) у неё не появлялся. Заказчик велел завести листинг целиком в коде, под полным контролем, и «забыть про проблемы с блобом».
+- **Файлы:** `src/data/properties.ts`, `src/lib/catalog.ts`, `next.config.ts`, `docs/PROJECT-LOG.md`.
+- **Проверено:** локально `/search` — 2 карточки с разными обложками; `/property/vue-aston-riverside-3bed-102m2` — куб `data-live=1`, `data-xw` меняется между замерами, 24 грани с фото, 0 битых `<img>` из 38, клик по грани открывает лайтбокс «Vue Aston residence — photo 2 · 20/43», консоль чистая (единственная ошибка `setPointerCapture` — артефакт синтетического клика из теста, не браузера); регресс-проверка `/property/bkk1-riverside-apartment` — куб крутится, 0 ошибок; `/about` и `/` не затронуты; старый slug отвечает `307 → /property/vue-aston-riverside-3bed-102m2`; `npm run build` exit 0 без warning'ов.
+- **Оговорки:** фото — из квартиры BKK1, а не из Vue Aston, это осознанное решение заказчика от 2026-11-02 («налей те же 43 фото»). Запись `runtime-yl1YBrlr` остаётся в блобе и в админке — скрыта она только из публичного каталога; откат одного шага = убрать id из `MIGRATED_STORE_LISTING_IDS`.
+
+---
+
 ## Известные расхождения (требуют решения)
 
 - Fallback-домен в `src/config/brand.ts` (`VERCEL_ENV === "production"` → `https://www.vps1.store`) противоречит каноническому `https://www.seaps.asia`.
