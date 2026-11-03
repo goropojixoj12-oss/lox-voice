@@ -37,6 +37,10 @@ yarn-error.log*
 # demo runtime persistence
 .data/
 
+# local scratch (audit scripts, browser profiles, dumps) — never committed,
+# and tailwind's automatic source detection must not walk into it
+/tmp/
+
 # vercel
 .vercel
 
