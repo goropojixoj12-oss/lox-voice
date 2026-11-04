@@ -4,27 +4,39 @@
  *   npm run smoke
  *   npm run smoke -- --base https://www.seaps.asia
  *   npm run smoke -- --only dashboard
+ *   npm run smoke -- --concurrency=12
  *   npm run smoke -- --json
+ *   npm run smoke -- --no-session-cache
  *
  * Credentials: SMOKE_AGENT_EMAIL / SMOKE_AGENT_EMAIL-style env vars win, otherwise
  * the demo table in README.md is parsed. Passwords are never printed. The script
  * sends one POST to /api/auth/login per role and GET for everything else, so it
  * cannot create or change data on the target.
+ *
+ * Sessions are cached in tmp/smoke-sessions.json (per base+role) and re-validated
+ * with one GET, so repeated runs do not hit the /api/auth/login rate limit of
+ * 5 sign-ins per minute; --no-session-cache forces fresh logins.
  */
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const DEFAULT_BASE = "http://127.0.0.1:43123";
 
 const args = process.argv.slice(2);
 function argValue(name, fallback) {
   const hit = args.find((a) => a.startsWith(`--${name}=`));
-  return hit ? hit.slice(name.length + 3) : fallback;
+  if (hit) return hit.slice(name.length + 3);
+  const at = args.indexOf(`--${name}`);
+  const next = at >= 0 ? args[at + 1] : undefined;
+  return next && !next.startsWith("--") ? next : fallback;
 }
 const BASE = (argValue("base", process.env.SMOKE_BASE || DEFAULT_BASE)).replace(/\/+$/, "");
 const ONLY = argValue("only", "");
 const AS_JSON = args.includes("--json");
 const LIST = args.includes("--list");
+const NO_CACHE = args.includes("--no-session-cache");
 const TIMEOUT_MS = Number(argValue("timeout", "20000"));
+// checks are independent GETs; 6 in flight keeps prod happy and the dev server from thrashing
+const CONCURRENCY = Math.max(1, Number(argValue("concurrency", "6")));
 
 /** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[]}} Check */
 
@@ -95,6 +107,12 @@ const CHECKS = [
     path: "/property/vue-aston-riverside-3bed-102m2",
     status: [200],
     exclude: ["30%"],
+  },
+  {
+    name: "listing detail: the inquiry form carries the listing slug",
+    path: "/property/vue-aston-riverside-3bed-102m2",
+    status: [200],
+    include: ['name="propertySlug" value="vue-aston-riverside-3bed-102m2"'],
   },
   {
     name: "deleted bkk1 photo set stays gone",
@@ -239,7 +257,7 @@ function loadEnvFile() {
   return out;
 }
 
-async function login(role) {
+async function loginOnce(role) {
   const creds = credsFor(role);
   if (!creds) {
     return {
@@ -255,11 +273,79 @@ async function login(role) {
     redirect: "manual",
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
+  if (res.status === 429) {
+    const waitSec = Number(res.headers.get("retry-after") || "15");
+    return { error: `login ${role} -> 429`, retryAfterSec: waitSec };
+  }
   if (res.status >= 400) return { error: `login ${role} -> ${res.status}` };
   const setCookie = res.headers.getSetCookie?.() ?? [];
   const cookie = setCookie.map((c) => c.split(";")[0]).find((c) => c.startsWith("en_session="));
   if (!cookie) return { error: `login ${role} set no session cookie` };
   return { cookie };
+}
+
+const CACHE_URL = new URL("../tmp/smoke-sessions.json", import.meta.url);
+// the cookie itself lives 14 days; revalidate every run so a logout is still caught
+const CACHE_TTL_MS = 13 * 24 * 60 * 60 * 1000;
+const LOGIN_WAIT_BUDGET_MS = Number(argValue("login-wait", "70000"));
+
+function readSessionCache() {
+  try {
+    const parsed = JSON.parse(readFileSync(CACHE_URL, "utf8"));
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+const sessionCache = NO_CACHE ? {} : readSessionCache();
+
+function rememberSession(key, cookie) {
+  if (NO_CACHE) return;
+  sessionCache[key] = { cookie, at: Date.now() };
+  try {
+    mkdirSync(new URL("../tmp/", import.meta.url), { recursive: true });
+    writeFileSync(CACHE_URL, JSON.stringify({ ...readSessionCache(), ...sessionCache }, null, 2));
+  } catch (err) {
+    if (!AS_JSON) console.log(`note session cache not written: ${err.message}`);
+  }
+}
+
+/** Whose role this cookie currently authenticates as, or null when it is dead. */
+async function roleOfCookie(cookie) {
+  try {
+    const res = await fetch(`${BASE}/api/auth/session`, {
+      headers: { cookie },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) return null;
+    const body = await res.json();
+    return body?.user?.role ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function sessionForRole(role) {
+  const key = `${BASE}|${role}`;
+  const cached = sessionCache[key];
+  if (cached?.cookie && Date.now() - (cached.at ?? 0) < CACHE_TTL_MS) {
+    if ((await roleOfCookie(cached.cookie)) === role) return { cookie: cached.cookie, fromCache: true };
+  }
+  const waited = Date.now();
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const result = await loginOnce(role);
+    if (result.cookie) {
+      rememberSession(key, result.cookie);
+      return { cookie: result.cookie };
+    }
+    if (!result.retryAfterSec) return { error: result.error };
+    const waitMs = Math.min(result.retryAfterSec * 1000 + 500, LOGIN_WAIT_BUDGET_MS - (Date.now() - waited));
+    if (waitMs <= 0) return { error: `${result.error} (login-wait budget spent)` };
+    if (!AS_JSON) console.log(`note ${result.error}, waiting ${Math.round(waitMs / 1000)}s for the rate limit`);
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+  return { error: `login ${role} stayed rate limited` };
 }
 
 function firstErrorMessage(html) {
@@ -321,26 +407,47 @@ if (LIST) {
 
 const session = {};
 const setupProblems = [];
-for (const role of ["agent", "admin"]) {
-  const result = await login(role);
-  if (result.error) setupProblems.push(result.error);
-  else session[role] = result.cookie;
-}
+// only log in for roles the selected checks actually need
+const neededRoles = [...new Set(selected.map((c) => c.role).filter(Boolean))];
+await Promise.all(
+  neededRoles.map(async (role) => {
+    const result = await sessionForRole(role);
+    if (result.error) setupProblems.push(result.error);
+    else session[role] = result.cookie;
+  }),
+);
 
-if (!AS_JSON) console.log(`smoke against ${BASE} — ${selected.length} check(s)`);
-const results = [];
-for (const check of selected) {
-  if (check.role && !session[check.role]) {
-    results.push({ check, pass: false, why: `skipped: no ${check.role} session` });
-    continue;
-  }
-  const r = await runCheck(check, session);
-  results.push(r);
-  if (!AS_JSON) {
-    const tag = r.pass ? "ok  " : "FAIL";
-    console.log(`${tag} ${String(r.status ?? "---").padEnd(3)} ${r.check.path} — ${r.check.name}${r.pass ? "" : `\n     ${r.why}`}`);
+if (!AS_JSON)
+  console.log(
+    `smoke against ${BASE} — ${selected.length} check(s), concurrency ${CONCURRENCY}` +
+      (neededRoles.length ? `, session(s): ${neededRoles.join(", ")}` : ", anonymous only"),
+  );
+
+const startedAll = Date.now();
+const resultsByIndex = new Array(selected.length);
+let cursor = 0;
+async function worker() {
+  for (;;) {
+    const index = cursor++;
+    if (index >= selected.length) return;
+    const check = selected[index];
+    if (check.role && !session[check.role]) {
+      resultsByIndex[index] = { check, pass: false, why: `skipped: no ${check.role} session` };
+      continue;
+    }
+    resultsByIndex[index] = await runCheck(check, session);
   }
 }
+await Promise.all(Array.from({ length: Math.min(CONCURRENCY, selected.length) }, () => worker()));
+
+// printed in CHECKS order, so the output stays diffable between runs
+const results = resultsByIndex;
+for (const r of results) {
+  if (AS_JSON) break;
+  const tag = r.pass ? "ok  " : "FAIL";
+  console.log(`${tag} ${String(r.status ?? "---").padEnd(3)} ${r.check.path} — ${r.check.name}${r.pass ? "" : `\n     ${r.why}`}`);
+}
+const elapsedMs = Date.now() - startedAll;
 
 const failed = results.filter((r) => !r.pass);
 if (setupProblems.length && !AS_JSON) {
@@ -350,8 +457,13 @@ const summary = {
   base: BASE,
   checks: results.length,
   passed: results.length - failed.length,
+  ms: elapsedMs,
+  setupProblems,
   failed: failed.map((r) => ({ path: r.check.path, name: r.check.name, status: r.status, why: r.why })),
 };
 if (AS_JSON) console.log(JSON.stringify(summary, null, 2));
-else console.log(`${failed.length ? "SMOKE FAILED" : "smoke passed"} — ${summary.passed}/${results.length}`);
+else
+  console.log(
+    `${failed.length ? "SMOKE FAILED" : "smoke passed"} — ${summary.passed}/${results.length} in ${(elapsedMs / 1000).toFixed(1)}s`,
+  );
 process.exit(failed.length ? 1 : 0);
