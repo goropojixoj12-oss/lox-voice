@@ -13,7 +13,6 @@ const schema = z.object({
   path: z.string().min(1).max(512),
   sessionKey: z.string().min(1).max(64),
   referrer: z.string().max(512).optional(),
-  source: z.enum(["client", "server"]).optional(),
 });
 
 export async function POST(request: Request) {

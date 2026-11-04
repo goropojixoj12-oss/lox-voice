@@ -3,9 +3,8 @@ import type { PageViewEvent } from "@/lib/admin-types";
 export type AnalyticsReport = {
   periodDays: number;
   totalViews: number;
-  uniqueSessions: number;
-  avgDepth: number;
-  topPages: { path: string; views: number; share: number }[];
+  uniqueVisitors: number;
+  pages: { path: string; views: number; unique: number; share: number }[];
   recentPaths: { path: string; at: string }[];
 };
 
@@ -14,28 +13,37 @@ function withinDays(iso: string, days: number): boolean {
   return t >= Date.now() - days * 86400000;
 }
 
+/**
+ * A "unique" is one analytics session cookie — one browser profile over the whole
+ * period, not a person and not a visit. Views and uniques are counted separately
+ * for every path, so a single visitor reading one page fifty times is 50/1.
+ */
 export function buildAnalyticsReport(events: PageViewEvent[], periodDays = 30): AnalyticsReport {
   const windowed = events.filter((e) => withinDays(e.at, periodDays));
   const totalViews = windowed.length;
-  const sessions = new Map<string, number>();
-  for (const e of windowed) {
-    sessions.set(e.sessionKey, (sessions.get(e.sessionKey) ?? 0) + 1);
-  }
-  const uniqueSessions = sessions.size;
-  let depthSum = 0;
-  for (const count of sessions.values()) depthSum += count;
-  const avgDepth = uniqueSessions === 0 ? 0 : Math.round((depthSum / uniqueSessions) * 10) / 10;
 
-  const byPath = new Map<string, number>();
+  const viewsPerVisitor = new Map<string, number>();
+  const viewsPerPath = new Map<string, number>();
+  const visitorsPerPath = new Map<string, Set<string>>();
   for (const e of windowed) {
-    byPath.set(e.path, (byPath.get(e.path) ?? 0) + 1);
+    viewsPerVisitor.set(e.sessionKey, (viewsPerVisitor.get(e.sessionKey) ?? 0) + 1);
+    viewsPerPath.set(e.path, (viewsPerPath.get(e.path) ?? 0) + 1);
+    let visitors = visitorsPerPath.get(e.path);
+    if (!visitors) {
+      visitors = new Set<string>();
+      visitorsPerPath.set(e.path, visitors);
+    }
+    visitors.add(e.sessionKey);
   }
-  const topPages = [...byPath.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 12)
+
+  const uniqueVisitors = viewsPerVisitor.size;
+
+  const pages = [...viewsPerPath.entries()]
+    .sort((a, b) => b[1] - a[1] || b[0].localeCompare(a[0]))
     .map(([path, views]) => ({
       path,
       views,
+      unique: visitorsPerPath.get(path)?.size ?? 0,
       share: totalViews === 0 ? 0 : Math.round((views / totalViews) * 1000) / 10,
     }));
 
@@ -47,9 +55,26 @@ export function buildAnalyticsReport(events: PageViewEvent[], periodDays = 30): 
   return {
     periodDays,
     totalViews,
-    uniqueSessions,
-    avgDepth,
-    topPages,
+    uniqueVisitors,
+    pages,
     recentPaths,
   };
+}
+
+/** Views and uniques of a set of paths (used for one agent's own listing pages). */
+export function sumPaths(
+  events: PageViewEvent[],
+  paths: Iterable<string>,
+  periodDays = 30,
+): { views: number; unique: number } {
+  const wanted = new Set(paths);
+  if (wanted.size === 0) return { views: 0, unique: 0 };
+  let views = 0;
+  const visitors = new Set<string>();
+  for (const e of events) {
+    if (!wanted.has(e.path) || !withinDays(e.at, periodDays)) continue;
+    views++;
+    visitors.add(e.sessionKey);
+  }
+  return { views, unique: visitors.size };
 }

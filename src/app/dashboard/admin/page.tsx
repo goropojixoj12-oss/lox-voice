@@ -24,8 +24,9 @@ export default async function AdminAnalyticsPage() {
           Site Data - Analytics - Statistics
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Real traffic only (last {report.periodDays} days): each HTML visit and in-app route change
-          on the public site and dashboard is recorded. No demo or seeded numbers.
+          Real traffic only (last {report.periodDays} days): one record per page the visitor actually
+          opened, on the public site and in the dashboards. No demo or seeded numbers. &ldquo;Unique&rdquo;
+          counts distinct analytics cookies, so one person reading the same page all day is one unique.
         </p>
       </div>
 
@@ -39,8 +40,8 @@ export default async function AdminAnalyticsPage() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           ["Page views", report.totalViews],
-          ["Unique sessions", report.uniqueSessions],
-          ["Avg. depth", report.avgDepth],
+          ["Unique visitors", report.uniqueVisitors],
+          ["Pages tracked", report.pages.length],
           ["Pending listings", pending],
         ].map(([label, value]) => (
           <div key={String(label)} className="seaps-card rounded-[var(--radius-lg)] p-4">
@@ -51,34 +52,42 @@ export default async function AdminAnalyticsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="seaps-card rounded-[var(--radius-lg)] p-5">
-          <h2 className="text-lg font-semibold">Top pages</h2>
-          <table className="mt-3 w-full text-sm">
-            <thead>
-              <tr className="text-left text-[var(--color-muted)]">
-                <th className="pb-2">Path</th>
-                <th className="pb-2 text-right">Views</th>
-                <th className="pb-2 text-right">Share</th>
-              </tr>
-            </thead>
-            <tbody>
-              {report.topPages.length === 0 ? (
-                <tr>
-                  <td colSpan={3} className="py-4 text-[var(--color-muted)]">
-                    No paths yet.
-                  </td>
+        <section className="seaps-card min-w-0 rounded-[var(--radius-lg)] p-5">
+          <h2 className="text-lg font-semibold">Pages — views and unique visitors</h2>
+          <div className="mt-3 max-h-[28rem] overflow-auto">
+            <table className="w-full table-fixed text-sm">
+              <thead className="sticky top-0 bg-[var(--color-surface)]">
+                <tr className="text-left text-[var(--color-muted)]">
+                  <th className="w-[64%] pb-2 pr-2 sm:w-[52%]">Path</th>
+                  <th className="w-[18%] whitespace-nowrap pb-2 pl-2 text-right">Views</th>
+                  <th className="w-[18%] whitespace-nowrap pb-2 pl-2 text-right">Unique</th>
+                  <th className="hidden w-[12%] whitespace-nowrap pb-2 pl-2 text-right sm:table-cell">
+                    Share
+                  </th>
                 </tr>
-              ) : (
-                report.topPages.map((row) => (
-                  <tr key={row.path} className="border-t border-[var(--color-border)]">
-                    <td className="py-2 font-mono text-xs">{row.path}</td>
-                    <td className="py-2 text-right">{row.views}</td>
-                    <td className="py-2 text-right">{row.share}%</td>
+              </thead>
+              <tbody>
+                {report.pages.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="py-4 text-[var(--color-muted)]">
+                      No paths yet.
+                    </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  report.pages.map((row) => (
+                    <tr key={row.path} className="border-t border-[var(--color-border)]">
+                      <td className="break-all py-2 pr-2 font-mono text-xs">{row.path}</td>
+                      <td className="whitespace-nowrap py-2 pl-2 text-right">{row.views}</td>
+                      <td className="whitespace-nowrap py-2 pl-2 text-right">{row.unique}</td>
+                      <td className="hidden whitespace-nowrap py-2 pl-2 text-right sm:table-cell">
+                        {row.share}%
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <section className="seaps-card rounded-[var(--radius-lg)] p-5">

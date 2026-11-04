@@ -14,6 +14,8 @@ function readCookie(name: string): string | null {
   return decodeURIComponent(part.slice(name.length + 1));
 }
 
+let blockedSessionId: string | null = null;
+
 function sessionKey(): string {
   const fromCookie = readCookie(ANALYTICS_SESSION_COOKIE);
   if (fromCookie && fromCookie.length >= 8) return fromCookie;
@@ -27,7 +29,10 @@ function sessionKey(): string {
     }
     return id;
   } catch {
-    return crypto.randomUUID();
+    // storage blocked (private mode) — reuse one id per tab so a single visitor
+    // is not counted as a new unique session on every route change
+    if (!blockedSessionId) blockedSessionId = crypto.randomUUID();
+    return blockedSessionId;
   }
 }
 
@@ -36,6 +41,7 @@ export function PageViewBeacon() {
   const last = useRef<string | null>(null);
 
   useEffect(() => {
+    // Sole writer of page views — including the document load that brought us here.
     if (!pathname || pathname.startsWith("/api")) return;
     if (last.current === pathname) return;
     last.current = pathname;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import type { NextFetchEvent, NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import {
   ANALYTICS_COOKIE_MAX_AGE,
   ANALYTICS_SESSION_COOKIE,
@@ -12,33 +12,7 @@ function analyticsSessionId(request: NextRequest): string {
   return crypto.randomUUID();
 }
 
-function recordPageViewAsync(
-  event: NextFetchEvent,
-  request: NextRequest,
-  pathname: string,
-  sessionKey: string,
-) {
-  const url = new URL("/api/analytics/pageview", request.url);
-  const body = JSON.stringify({
-    path: pathname,
-    sessionKey,
-    referrer: request.headers.get("referer") ?? undefined,
-    source: "server",
-  });
-
-  event.waitUntil(
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        cookie: request.headers.get("cookie") ?? "",
-      },
-      body,
-    }).catch(() => undefined),
-  );
-}
-
-export function middleware(request: NextRequest, event: NextFetchEvent) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/dashboard/agent/list-property") {
@@ -49,6 +23,8 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
 
   const response = NextResponse.next();
 
+  // The middleware only owns the visitor identity. `PageViewBeacon` is the single
+  // writer of page views — recording here as well counted every hard navigation twice.
   if (
     request.method === "GET" &&
     isAnalyticsPath(pathname) &&
@@ -56,14 +32,12 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
     request.headers.get("purpose") !== "prefetch" &&
     !request.headers.get("next-router-prefetch")
   ) {
-    const sessionKey = analyticsSessionId(request);
-    response.cookies.set(ANALYTICS_SESSION_COOKIE, sessionKey, {
+    response.cookies.set(ANALYTICS_SESSION_COOKIE, analyticsSessionId(request), {
       path: "/",
       maxAge: ANALYTICS_COOKIE_MAX_AGE,
       sameSite: "lax",
       secure: request.nextUrl.protocol === "https:",
     });
-    recordPageViewAsync(event, request, pathname, sessionKey);
   }
 
   return response;

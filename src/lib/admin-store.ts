@@ -20,13 +20,32 @@ function isRealPageView(event: PageViewEvent): boolean {
   return !event.sessionKey.startsWith("seed-");
 }
 
+/**
+ * The middleware used to record the same navigation as the client beacon, so the
+ * stored history is full of same-path/same-session pairs milliseconds apart.
+ * Collapse them on read; the write path below refuses to create new ones.
+ */
+function compactDuplicateViews(events: PageViewEvent[]): PageViewEvent[] {
+  const kept: PageViewEvent[] = [];
+  const lastSeenAt = new Map<string, number>();
+  for (const event of events) {
+    const at = new Date(event.at).getTime();
+    const key = `${event.path}\u0000${event.sessionKey}`;
+    const previous = lastSeenAt.get(key);
+    if (previous !== undefined && at - previous < DEDUPE_MS) continue;
+    lastSeenAt.set(key, at);
+    kept.push(event);
+  }
+  return kept;
+}
+
 async function loadRealPageViews(): Promise<PageViewEvent[]> {
   const raw = await readStoreJson<PageViewEvent[]>(PAGE_VIEWS_FILE, []);
-  const real = raw.filter(isRealPageView);
-  if (real.length !== raw.length) {
-    await writeStoreJson(PAGE_VIEWS_FILE, real);
+  const compacted = compactDuplicateViews(raw.filter(isRealPageView));
+  if (compacted.length !== raw.length) {
+    await writeStoreJson(PAGE_VIEWS_FILE, compacted);
   }
-  return real;
+  return compacted;
 }
 
 export async function getPageViewEvents(): Promise<PageViewEvent[]> {
@@ -45,14 +64,10 @@ export async function appendPageView(input: {
   const now = Date.now();
 
   const events = await loadRealPageViews();
-  const last = events[events.length - 1];
-  if (
-    last &&
-    last.path === path &&
-    last.sessionKey === sessionKey &&
-    now - new Date(last.at).getTime() < DEDUPE_MS
-  ) {
-    return;
+  for (let i = events.length - 1; i >= 0; i--) {
+    const recent = events[i]!;
+    if (now - new Date(recent.at).getTime() > DEDUPE_MS) break;
+    if (recent.path === path && recent.sessionKey === sessionKey) return;
   }
 
   events.push({
