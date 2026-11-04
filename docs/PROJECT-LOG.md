@@ -11,7 +11,11 @@
 - **Что:** на каталоге `/buy/residential` у листинга Vue Aston studio (`…-_ZFWs`) золотая кнопка **Description** ведёт на `https://cambodia-condo-showcase-174801.onhercules.app/` (полный редирект, не iframe).
 - **Зачем:** Site Changes `zGOv85svQwRB` (CEO).
 - **Файлы:** `src/components/property/property-card.tsx`, `src/components/search/catalog-client.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md` (снят merge conflict).
+<<<<<<< HEAD
 - **Проверено:** уже в `origin/main` @ `e129ed4` (`3d60b5b`); curl/HTML прод `/buy/residential` — золотая кнопка `Description` → `https://cambodia-condo-showcase-174801.onhercules.app/`; `npm run smoke -- --base=https://www.seaps.asia --only="buy residential"` 2/2. PATCH `zGOv85svQwRB` — нет `SITE_AGENT_SECRET` в cloud VM (401).
+=======
+- **Проверено:** `npm run gate` exit 0 @ `e129ed4`; push `github/main`, тег `backup/2026-11-04-buy-residential-description`; прод HTML `/buy/residential` — золотая кнопка `Description` → `cambodia-condo-showcase-174801.onhercules.app`; `npm run smoke -- --base=https://www.seaps.asia` 50/50. PATCH `zGOv85svQwRB` — в cloud VM нет `SITE_AGENT_SECRET`.
+>>>>>>> 6a413c9 (docs: verify buy residential Description redirect zGOv85svQwRB)
 
 ### site change: condo showcase embed на Vue Aston studio (_ZFWs)
 
