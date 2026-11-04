@@ -35,6 +35,10 @@ export type ListPropertyDraftForm = {
   contactName: string;
   contactEmail: string;
   previewCount: string;
+  /** Moderation-only fields, filled by the admin desk; empty means "leave as is". */
+  commissionAgent?: string;
+  commissionCompany?: string;
+  assignedAgentId?: string;
 };
 
 export type ListPropertyDraft = {

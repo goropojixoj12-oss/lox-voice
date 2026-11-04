@@ -93,6 +93,9 @@ function listingToForm(listing: Property): ListPropertyDraftForm {
     imageUrl: listing.images?.[0]?.url ?? "",
     contactName: contactMatch?.[1] ?? "",
     contactEmail: contactMatch?.[2] ?? "",
+    commissionAgent: listing.commissionAgent != null ? String(listing.commissionAgent) : "",
+    commissionCompany: listing.commissionCompany != null ? String(listing.commissionCompany) : "",
+    assignedAgentId: listing.assignedAgentId ?? "",
   };
 }
 
@@ -243,6 +246,19 @@ export function AdminListingEditWizardProvider({
           videos: media.videos,
           cardPreviewVideoUrl: media.cardPreviewVideoUrl,
           previewPhotoCount: clampPreviewPhotoCount(payloadForm.previewCount),
+          ...(canModerate
+            ? {
+                commissionAgent:
+                  payloadForm.commissionAgent?.trim() === ""
+                    ? undefined
+                    : Number(payloadForm.commissionAgent),
+                commissionCompany:
+                  payloadForm.commissionCompany?.trim() === ""
+                    ? undefined
+                    : Number(payloadForm.commissionCompany),
+                assignedAgentId: payloadForm.assignedAgentId?.trim() || undefined,
+              }
+            : {}),
         }),
       });
       } catch {
@@ -532,8 +548,8 @@ export function AdminListingEditWizard({
                   <Label>Agent commission (%)</Label>
                   <Input
                     inputMode="numeric"
-                    value={String((form as Record<string, unknown>).commissionAgent ?? "")}
-                    onChange={(e) => update("commissionAgent" as keyof ListPropertyDraftForm, e.target.value)}
+                    value={form.commissionAgent ?? ""}
+                    onChange={(e) => update("commissionAgent", e.target.value)}
                     placeholder="e.g. 3"
                   />
                 </div>
@@ -541,8 +557,8 @@ export function AdminListingEditWizard({
                   <Label>Company income (%) — admin only</Label>
                   <Input
                     inputMode="numeric"
-                    value={String((form as Record<string, unknown>).commissionCompany ?? "")}
-                    onChange={(e) => update("commissionCompany" as keyof ListPropertyDraftForm, e.target.value)}
+                    value={form.commissionCompany ?? ""}
+                    onChange={(e) => update("commissionCompany", e.target.value)}
                     placeholder="e.g. 2"
                   />
                   <p className="mt-1 text-xs text-red-500">Only admin can see this value</p>
@@ -550,8 +566,8 @@ export function AdminListingEditWizard({
                 <div className="sm:col-span-2">
                   <Label>Assigned agent ID</Label>
                   <Input
-                    value={String((form as Record<string, unknown>).assignedAgentId ?? "")}
-                    onChange={(e) => update("assignedAgentId" as keyof ListPropertyDraftForm, e.target.value)}
+                    value={form.assignedAgentId ?? ""}
+                    onChange={(e) => update("assignedAgentId", e.target.value)}
                     placeholder="Agent user ID (from Employees list)"
                   />
                 </div>
