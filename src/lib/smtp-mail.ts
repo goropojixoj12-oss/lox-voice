@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import type Mail from "nodemailer/lib/mailer";
+import { brand } from "@/config/brand";
 
 export type FormMailAttachment = {
   filename: string;
@@ -15,6 +16,7 @@ export type FormSubmissionMailInput = {
   phone?: string;
   propertyId?: string;
   propertyTitle?: string;
+  propertySlug?: string;
   pageUrl?: string;
   attachments?: FormMailAttachment[];
 };
@@ -75,6 +77,10 @@ function buildTextBody(input: FormSubmissionMailInput): string {
   }
   if (input.propertyId?.trim()) {
     lines.push(`Reference ID: ${input.propertyId.trim()}`);
+  }
+  if (input.propertySlug?.trim()) {
+    const slug = input.propertySlug.trim().replace(/^\/+|\/+$/g, "");
+    lines.push(`Listing: ${brand.url.replace(/\/+$/, "")}/property/${slug}`);
   }
   if (input.propertyTitle?.trim()) {
     lines.push(`Context: ${input.propertyTitle.trim()}`);

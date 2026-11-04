@@ -30,12 +30,15 @@ const propertySchema = z.object({
 export function InquiryForm({
   propertyId,
   propertyTitle,
+  propertySlug,
   formCategory,
   variant = "default",
   embedded = false,
 }: {
   propertyId: string;
   propertyTitle: string;
+  /** Listing page slug, so the inquiry says exactly which listing it came from */
+  propertySlug?: string;
   /** Email subject / page category */
   formCategory?: string;
   variant?: "default" | "property";
@@ -112,6 +115,9 @@ export function InquiryForm({
       <input type="hidden" name="category" value={category} />
       <input type="hidden" name="propertyId" value={propertyId} />
       <input type="hidden" name="propertyTitle" value={propertyTitle} />
+      {propertySlug ? (
+        <input type="hidden" name="propertySlug" value={propertySlug} />
+      ) : null}
       <div>
         <h3 className="font-semibold text-[var(--color-accent-soft)]">Request information</h3>
         <p className="mt-1 text-sm text-[var(--color-muted)]">

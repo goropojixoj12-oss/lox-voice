@@ -14,6 +14,7 @@ const schema = z.object({
   category: z.string().trim().min(1).max(120),
   propertyId: z.string().min(1),
   propertyTitle: z.string().min(1),
+  propertySlug: z.string().trim().max(200).optional(),
   pageUrl: z.string().trim().max(500).optional(),
   website: z.string().optional(),
   consent: z.literal(true),
@@ -83,6 +84,7 @@ export async function POST(request: Request) {
     phone: parsed.data.phone,
     propertyId: parsed.data.propertyId,
     propertyTitle: parsed.data.propertyTitle,
+    propertySlug: parsed.data.propertySlug,
     pageUrl: parsed.data.pageUrl,
   });
 
@@ -111,6 +113,7 @@ export async function POST(request: Request) {
     message: rest.message,
     propertyId: rest.propertyId,
     propertyTitle: rest.category,
+    propertySlug: rest.propertySlug,
     recipientType: "platform",
   });
 

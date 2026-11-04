@@ -17,6 +17,7 @@ const siteFormFieldsBaseSchema = z.object({
   phone: z.string().trim().max(40).optional(),
   propertyId: z.string().trim().max(120).optional(),
   propertyTitle: z.string().trim().max(200).optional(),
+  propertySlug: z.string().trim().max(200).optional(),
   pageUrl: z.string().trim().max(500).optional(),
   website: z.string().optional(),
   consent: z.union([z.literal("true"), z.literal("on"), z.literal("1")]),

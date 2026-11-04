@@ -6,12 +6,14 @@ import { propertyInquiryPromoLines } from "@/lib/property-inquiry-promo-lines";
 export function PropertyListingInquiry({
   propertyId,
   propertyTitle,
+  propertySlug,
   coverUrl,
   coverAlt,
   promoLines,
 }: {
   propertyId: string;
   propertyTitle: string;
+  propertySlug?: string;
   coverUrl?: string;
   coverAlt?: string;
   promoLines?: string[];
@@ -51,6 +53,7 @@ export function PropertyListingInquiry({
         embedded
         propertyId={propertyId}
         propertyTitle={propertyTitle}
+        propertySlug={propertySlug}
       />
     </div>
   );
@@ -61,6 +64,7 @@ export function propertyListingInquiryFromProperty(property: Property) {
   return {
     propertyId: property.id,
     propertyTitle: property.title,
+    propertySlug: property.slug,
     coverUrl: cover?.url,
     coverAlt: cover?.alt ?? property.title,
     promoLines: propertyInquiryPromoLines(property),

@@ -71,6 +71,7 @@ export async function POST(request: Request) {
     phone: readField(formData, "phone") || undefined,
     propertyId: readField(formData, "propertyId") || undefined,
     propertyTitle: readField(formData, "propertyTitle") || undefined,
+    propertySlug: readField(formData, "propertySlug") || undefined,
     pageUrl: readField(formData, "pageUrl") || undefined,
     website,
     consent: consentRaw === "on" ? "on" : consentRaw === "true" ? "true" : consentRaw,
@@ -112,6 +113,7 @@ export async function POST(request: Request) {
     phone: data.phone,
     propertyId: data.propertyId,
     propertyTitle: data.propertyTitle,
+    propertySlug: data.propertySlug,
     pageUrl: data.pageUrl,
     attachments: buffers,
   });
@@ -140,6 +142,7 @@ export async function POST(request: Request) {
     message: data.message.trim() || "No additional message.",
     propertyId: data.propertyId ?? "site-form",
     propertyTitle: data.category,
+    propertySlug: data.propertySlug,
     recipientType: "platform",
   });
 

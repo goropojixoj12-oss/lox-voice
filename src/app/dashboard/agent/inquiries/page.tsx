@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { EmptyState } from "@/components/shared/states";
 import { requireRole } from "@/lib/auth";
 import { getInquiries } from "@/lib/store";
@@ -42,6 +43,14 @@ export default async function DashboardInquiriesPage() {
             <p className="mt-1 text-sm text-[var(--color-muted)]">
               {inquiry.name} · {inquiry.contact}
             </p>
+            {inquiry.propertySlug ? (
+              <Link
+                href={`/property/${inquiry.propertySlug}`}
+                className="mt-1 inline-block text-sm text-[var(--color-accent-soft)] underline-offset-4 hover:underline"
+              >
+                /property/{inquiry.propertySlug}
+              </Link>
+            ) : null}
             <p className="mt-2 text-sm">{inquiry.message}</p>
           </li>
         ))}

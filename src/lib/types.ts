@@ -276,6 +276,8 @@ export interface Inquiry {
   id: string;
   propertyId: string;
   propertyTitle: string;
+  /** Slug of the listing page the inquiry came from, when there is one. */
+  propertySlug?: string;
   name: string;
   contact: string;
   message: string;
