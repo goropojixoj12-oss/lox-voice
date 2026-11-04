@@ -45,6 +45,7 @@ import {
   formatListingApiIssues,
   listPropertyStepErrorMessage,
   normalizeListPropertyFormForSubmit,
+  parseListPropertyCoord,
   validateListPropertyStep,
 } from "@/lib/list-property-validation";
 import { cn } from "@/lib/utils";
@@ -142,38 +143,50 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
     setError("");
     const payloadForm = normalizeListPropertyFormForSubmit(form);
     const media = listingMediaToPropertyPayload(mediaItems, payloadForm.title || "Listing");
-    const res = await fetch(
-      "/api/properties",
-      withActingAgentUser(desk.actingUserId, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-        title: payloadForm.title,
-        summary: payloadForm.summary,
-        description: `${payloadForm.description}\n\nContact preference: ${payloadForm.contactName} · ${payloadForm.contactEmail}`,
-        transactionType: payloadForm.transactionType,
-        propertyType: payloadForm.propertyType,
-        price: Number(payloadForm.price),
-        currency: payloadForm.currency,
-        pricePeriod: payloadForm.transactionType === "sale" ? null : payloadForm.pricePeriod || "month",
-        bedrooms: payloadForm.bedrooms === "" ? null : Number(payloadForm.bedrooms),
-        bathrooms: payloadForm.bathrooms === "" ? null : Number(payloadForm.bathrooms),
-        areaSqm: payloadForm.areaSqm === "" ? null : Number(payloadForm.areaSqm),
-        countryCode: payloadForm.countryCode,
-        city: payloadForm.city,
-        citySlug: payloadForm.citySlug,
-        district: payloadForm.district,
-        districtSlug: payloadForm.districtSlug,
-        commune: payloadForm.commune,
-        communeSlug: payloadForm.communeSlug,
-        address: payloadForm.address,
-        images: media.images,
-        videos: media.videos,
-        cardPreviewVideoUrl: media.cardPreviewVideoUrl,
-        ...(desk.actingUserId ? { createdByUserId: desk.actingUserId } : {}),
-      }),
-      }),
-    );
+    const lat = parseListPropertyCoord(payloadForm.lat, -90, 90);
+    const lng = parseListPropertyCoord(payloadForm.lng, -180, 180);
+    let res: Response;
+    try {
+      res = await fetch(
+        "/api/properties",
+        withActingAgentUser(desk.actingUserId, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: payloadForm.title,
+            summary: payloadForm.summary,
+            description: `${payloadForm.description}\n\nContact preference: ${payloadForm.contactName} · ${payloadForm.contactEmail}`,
+            transactionType: payloadForm.transactionType,
+            propertyType: payloadForm.propertyType,
+            price: Number(payloadForm.price),
+            currency: payloadForm.currency,
+            pricePeriod:
+              payloadForm.transactionType === "sale" ? null : payloadForm.pricePeriod || "month",
+            bedrooms: payloadForm.bedrooms === "" ? null : Number(payloadForm.bedrooms),
+            bathrooms: payloadForm.bathrooms === "" ? null : Number(payloadForm.bathrooms),
+            areaSqm: payloadForm.areaSqm === "" ? null : Number(payloadForm.areaSqm),
+            countryCode: payloadForm.countryCode,
+            city: payloadForm.city,
+            citySlug: payloadForm.citySlug,
+            district: payloadForm.district,
+            districtSlug: payloadForm.districtSlug,
+            commune: payloadForm.commune,
+            communeSlug: payloadForm.communeSlug,
+            address: payloadForm.address,
+            lat,
+            lng,
+            images: media.images,
+            videos: media.videos,
+            cardPreviewVideoUrl: media.cardPreviewVideoUrl,
+            ...(desk.actingUserId ? { createdByUserId: desk.actingUserId } : {}),
+          }),
+        }),
+      );
+    } catch {
+      setLoading(false);
+      setError("Network error — the listing was not submitted. Check your connection and retry.");
+      return;
+    }
     setLoading(false);
     if (res.status === 401) {
       setError("Sign in as owner or agent before submitting a listing.");
@@ -391,6 +404,31 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
                 placeholder="Street or neighborhood descriptor"
               />
             </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="lat">Map pin latitude (optional)</Label>
+                <Input
+                  id="lat"
+                  inputMode="decimal"
+                  value={form.lat}
+                  onChange={(e) => update("lat", e.target.value)}
+                  placeholder="11.5463"
+                />
+              </div>
+              <div>
+                <Label htmlFor="lng">Map pin longitude (optional)</Label>
+                <Input
+                  id="lng"
+                  inputMode="decimal"
+                  value={form.lng}
+                  onChange={(e) => update("lng", e.target.value)}
+                  placeholder="104.9465"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-[var(--color-muted)]">
+              Without a pin the listing stays off the map on search pages.
+            </p>
           </div>
         ) : null}
 
@@ -528,8 +566,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
                         district: form.district,
                         districtSlug: form.districtSlug,
                         address: form.address,
-                        lat: 0,
-                        lng: 0,
+                        lat: parseListPropertyCoord(form.lat, -90, 90) ?? 0,
+                        lng: parseListPropertyCoord(form.lng, -180, 180) ?? 0,
                       },
                       publishedAt: new Date().toISOString(),
                       updatedAt: new Date().toISOString(),

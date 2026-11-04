@@ -55,6 +55,8 @@ const createSchema = z.object({
   commune: z.string().min(2),
   communeSlug: z.string().min(2),
   address: z.string().min(3),
+  lat: z.number().min(-90).max(90).nullable().optional(),
+  lng: z.number().min(-180).max(180).nullable().optional(),
   images: z
     .array(
       z.object({
@@ -152,8 +154,8 @@ export async function POST(request: Request) {
       commune: data.commune,
       communeSlug: data.communeSlug,
       address: data.address,
-      lat: 0,
-      lng: 0,
+      lat: data.lat ?? 0,
+      lng: data.lng ?? 0,
     },
     createdByUserId: listingOwnerId,
     ownerId: session.role === "owner" && listingOwnerId === session.id ? session.id : undefined,
@@ -165,7 +167,15 @@ export async function POST(request: Request) {
     inquiries: 0,
   };
 
-  await saveRuntimeListing(listing);
+  try {
+    await saveRuntimeListing(listing);
+  } catch (err) {
+    console.error("listing save failed", { listingId: listing.id, error: err });
+    return NextResponse.json(
+      { error: "Could not save the listing. It was not submitted — please try again." },
+      { status: 500 },
+    );
+  }
   const me = await getSession();
   return NextResponse.json({ listing, submittedBy: me?.id }, { status: 201 });
 }

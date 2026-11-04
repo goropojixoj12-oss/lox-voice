@@ -34,6 +34,7 @@ import {
 } from "@/lib/list-property-media";
 import {
   normalizeListPropertyFormForSubmit,
+  parseListPropertyCoord,
   validateListPropertyStep,
 } from "@/lib/list-property-validation";
 import { cn } from "@/lib/utils";
@@ -73,6 +74,8 @@ function listingToForm(listing: Property): ListPropertyDraftForm {
     commune: listing.location.commune ?? "",
     communeSlug: listing.location.communeSlug ?? "",
     address: listing.location.address,
+    lat: Number.isFinite(listing.location.lat) && listing.location.lat !== 0 ? String(listing.location.lat) : "",
+    lng: Number.isFinite(listing.location.lng) && listing.location.lng !== 0 ? String(listing.location.lng) : "",
     price: String(listing.price),
     currency: listing.currency,
     pricePeriod: listing.pricePeriod ?? "",
@@ -190,7 +193,11 @@ export function AdminListingEditWizardProvider({
         mediaItems,
         payloadForm.title || "Listing",
       );
-      const res = await fetch(`/api/admin/listings/${listing.id}`, {
+      const lat = parseListPropertyCoord(payloadForm.lat, -90, 90);
+      const lng = parseListPropertyCoord(payloadForm.lng, -180, 180);
+      let res: Response;
+      try {
+      res = await fetch(`/api/admin/listings/${listing.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -220,11 +227,18 @@ export function AdminListingEditWizardProvider({
           commune: payloadForm.commune,
           communeSlug: payloadForm.communeSlug,
           address: payloadForm.address,
+          lat,
+          lng,
           images: media.images,
           videos: media.videos,
           cardPreviewVideoUrl: media.cardPreviewVideoUrl,
         }),
       });
+      } catch {
+        setLoading(false);
+        setError("Network error — the listing was not saved. Check your connection and retry.");
+        return;
+      }
       setLoading(false);
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -405,6 +419,31 @@ export function AdminListingEditWizard({
                 placeholder="Street or neighborhood descriptor"
               />
             </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="edit-lat">Map pin latitude</Label>
+                <Input
+                  id="edit-lat"
+                  inputMode="decimal"
+                  value={form.lat}
+                  onChange={(e) => update("lat", e.target.value)}
+                  placeholder="11.5463"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-lng">Map pin longitude</Label>
+                <Input
+                  id="edit-lng"
+                  inputMode="decimal"
+                  value={form.lng}
+                  onChange={(e) => update("lng", e.target.value)}
+                  placeholder="104.9465"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-[var(--color-muted)]">
+              Without a pin the listing stays off the map on search pages.
+            </p>
           </div>
         ) : null}
 

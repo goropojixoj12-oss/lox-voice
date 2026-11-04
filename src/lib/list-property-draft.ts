@@ -17,6 +17,8 @@ export type ListPropertyDraftForm = {
   commune: string;
   communeSlug: string;
   address: string;
+  lat: string;
+  lng: string;
   price: string;
   currency: string;
   pricePeriod: "" | "month" | "night" | "year";
@@ -50,6 +52,8 @@ export const listPropertyDefaultForm: ListPropertyDraftForm = {
   commune: "",
   communeSlug: "",
   address: "",
+  lat: "",
+  lng: "",
   price: "",
   currency: "USD",
   pricePeriod: "",
@@ -135,6 +139,8 @@ function parseForm(value: unknown): ListPropertyDraftForm {
     commune: pickString(value, "commune", base.commune),
     communeSlug: pickString(value, "communeSlug", base.communeSlug),
     address: pickString(value, "address", base.address),
+    lat: pickString(value, "lat", base.lat),
+    lng: pickString(value, "lng", base.lng),
     price: pickString(value, "price", base.price),
     currency: pickString(value, "currency", base.currency),
     pricePeriod: PRICE_PERIODS.has(pricePeriod as ListPropertyDraftForm["pricePeriod"])

@@ -11,6 +11,14 @@ export function PropertyGallery({ images }: { images: PropertyImage[] }) {
   const [lightbox, setLightbox] = useState(false);
   const current = images[active] ?? images[0];
 
+  if (!current) {
+    return (
+      <div className="grid aspect-[16/10] w-full place-items-center rounded-[var(--radius-xl)] bg-[var(--color-secondary)] text-sm text-[var(--color-muted)]">
+        No photos yet
+      </div>
+    );
+  }
+
   return (
     <div>
       <button
@@ -27,23 +35,25 @@ export function PropertyGallery({ images }: { images: PropertyImage[] }) {
           priority
         />
       </button>
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-        {images.map((image, index) => (
-          <button
-            key={image.id}
-            type="button"
-            onClick={() => setActive(index)}
-            className={cn(
-              "relative h-20 w-28 shrink-0 overflow-hidden rounded-[var(--radius-md)] border-2",
-              active === index
-                ? "border-[var(--color-primary)]"
-                : "border-transparent opacity-80 hover:opacity-100",
-            )}
-          >
-            <Image src={image.url} alt={image.alt} fill className="object-cover" sizes="112px" />
-          </button>
-        ))}
-      </div>
+      {images.length > 1 ? (
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {images.map((image, index) => (
+            <button
+              key={image.id}
+              type="button"
+              onClick={() => setActive(index)}
+              className={cn(
+                "relative h-20 w-28 shrink-0 overflow-hidden rounded-[var(--radius-md)] border-2",
+                active === index
+                  ? "border-[var(--color-primary)]"
+                  : "border-transparent opacity-80 hover:opacity-100",
+              )}
+            >
+              <Image src={image.url} alt={image.alt} fill className="object-cover" sizes="112px" />
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {lightbox ? (
         <div

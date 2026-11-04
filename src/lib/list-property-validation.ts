@@ -9,7 +9,7 @@ export function listPropertyStepErrorMessage(stepIndex: number): string {
     case 0:
       return "Choose a deal type and category to continue.";
     case 1:
-      return "Location: fill country, city, district, commune (at least 2 characters), and address (at least 3 characters).";
+      return "Location: fill country, city, district, commune (at least 2 characters), and address (at least 3 characters). Coordinates must be a number between -90..90 and -180..180.";
     case 2:
       return "Enter a price greater than zero.";
     case 3:
@@ -21,6 +21,28 @@ export function listPropertyStepErrorMessage(stepIndex: number): string {
     default:
       return "Please complete the required fields for this step.";
   }
+}
+
+function isListPropertyCoordInRange(raw: string, min: number, max: number): boolean {
+  const trimmed = raw.trim();
+  if (!trimmed) return true;
+  const value = Number(trimmed);
+  return Number.isFinite(value) && value >= min && value <= max;
+}
+
+export function hasValidListPropertyCoords(form: ListPropertyDraftForm): boolean {
+  return (
+    isListPropertyCoordInRange(form.lat, -90, 90) && isListPropertyCoordInRange(form.lng, -180, 180)
+  );
+}
+
+/** Parsed map pin. Null when the creator left the field empty or typed a bad number. */
+export function parseListPropertyCoord(raw: string, min: number, max: number): number | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const value = Number(trimmed);
+  if (!Number.isFinite(value) || value < min || value > max) return null;
+  return value;
 }
 
 export function validateListPropertyStep(
@@ -38,7 +60,8 @@ export function validateListPropertyStep(
           form.city.trim().length >= 2 &&
           form.district.trim().length >= 2 &&
           form.commune.trim().length >= 2 &&
-          form.address.trim().length >= 3,
+          form.address.trim().length >= 3 &&
+          hasValidListPropertyCoords(form),
       );
     case 2:
       return Number(form.price) > 0;

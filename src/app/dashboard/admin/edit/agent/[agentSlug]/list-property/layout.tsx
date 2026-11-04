@@ -1,8 +1,6 @@
-import {
-  adminEditAgentListPropertyDesk,
-  ListPropertyDeskProvider,
-} from "@/components/dashboard/list-property-desk-provider";
+import { ListPropertyDeskProvider } from "@/components/dashboard/list-property-desk-provider";
 import { ListPropertyWizardProvider } from "@/components/dashboard/list-property-wizard";
+import { adminEditAgentListPropertyDesk } from "@/lib/list-property-desk";
 import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
 
 export default async function AdminEditAgentListPropertyLayout({
