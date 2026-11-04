@@ -11,7 +11,7 @@
 - **Что:** при пустой галерее листинга `PropertyGallery` рендерит `LiveNewsShowPanel` — iframe live/embed (env `NEXT_PUBLIC_LIVE_NEWS_*`), тикер «Live News Show», авто-refresh iframe раз в 4ч, fallback «No live feed available» + ссылки на insights/guides и highlights-ролик SEAPS.
 - **Зачем:** заявка Site Changes `kDcmT--pBgnG` (CEO): пустой блок фото → live news show.
 - **Файлы:** `src/components/property/live-news-show-panel.tsx`, `src/lib/live-news-show.ts`, `src/components/property/property-gallery.tsx`, `.env.example`, `scripts/smoke-site.mjs`.
-- **Проверено:** (заполняется после gate/ship).
+- **Проверено:** локально `LiveNewsShowPanel` на листинге без фото (визуально), `npm run gate` exit 0 (smoke 49/49), prod-smoke после ship — см. ниже.
 
 ## 2026-11-01
 
