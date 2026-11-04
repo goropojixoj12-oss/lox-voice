@@ -6,6 +6,13 @@
 
 ## 2026-11-04
 
+### site change: 5ng_JrFEQXFA (Description Kampot + Hercules вместо YouTube, _ZFWs)
+
+- **Что:** без нового кода — webhook повторяет заявку CEO: на листинге `cheapest-ever-studio-…-_ZFWs` (Andong Khmer, Kampot) iframe «Live News Show» → `https://cambodia-condo-showcase-174801.onhercules.app/` (не YouTube); клик по блоку **Description** → тот же showcase (`PropertyDescriptionSection`, `getListingDescriptionClickRedirect`).
+- **Зачем:** Site Changes `5ng_JrFEQXFA` (CEO, 2026-11-04T22:04Z).
+- **Файлы:** уже в `main` @ `fd2a53c`.
+- **Проверено:** curl прод — только onhercules в iframe src, `data-listing-description-redirect`, подсказка «Click to open the interactive showcase»; смоук `_ZFWs` + `/buy/residential` Description — ok на `https://www.seaps.asia`. PATCH `5ng_JrFEQXFA` — 401 без `SITE_AGENT_SECRET` в cloud VM.
+
 ### site change: кнопка Description на /buy/residential → Hercules showcase
 
 - **Что:** на каталоге `/buy/residential` у листинга Vue Aston studio (`…-_ZFWs`) золотая кнопка **Description** ведёт на `https://cambodia-condo-showcase-174801.onhercules.app/` (полный редирект, не iframe).
