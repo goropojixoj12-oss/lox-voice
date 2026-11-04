@@ -151,6 +151,23 @@ const CHECKS = [
     include: ["Signed in as"],
   },
   {
+    name: "agent overview: no seeded metrics survived the honest rewrite",
+    path: "/dashboard/agent/overview",
+    role: "agent",
+    status: [200],
+    include: ["Real data only", "Listing health"],
+    exclude: [
+      "Q4 closing goal",
+      "Sales effectiveness",
+      "Company agent ranking",
+      "Awards",
+      "Calendar snapshot",
+      "Deal pipeline",
+      "Shortlists sent",
+      "desk estimates",
+    ],
+  },
+  {
     name: "agent listings desk",
     path: "/dashboard/agent/listings",
     role: "agent",

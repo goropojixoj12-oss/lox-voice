@@ -1,12 +1,14 @@
-import { agents } from "@/data/agencies";
-import { properties } from "@/data/properties";
 import {
   agentHasRequiredProfilePhoto,
   type AgentProfileRecord,
 } from "@/lib/agent-profile-shared";
+import type { PageViewEvent } from "@/lib/admin-types";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
-import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
+import { isPublicListing } from "@/lib/listing-access";
 import type { Inquiry, Property } from "@/lib/types";
+
+/** Maps a desk segment (e.g. "inquiries") to the route that shows it. */
+export type DeskLinkFor = (...segments: string[]) => string;
 
 export type ProfileCompletionItem = {
   id: string;
@@ -15,23 +17,9 @@ export type ProfileCompletionItem = {
   complete: boolean;
 };
 
-export type AgentAward = {
-  id: string;
-  title: string;
-  detail: string;
-  earnedAt: string;
-};
-
 export type AgentDeskMetrics = {
   profileCompletionPercent: number;
   profileItems: ProfileCompletionItem[];
-  salesEffectivenessPercent: number;
-  salesEffectivenessLabel: string;
-  ytdSalesBonusUsd: number;
-  closedDealsYtd: number;
-  companyRank: number;
-  companyAgentCount: number;
-  awards: AgentAward[];
 };
 
 export type UrgentAction = {
@@ -42,7 +30,7 @@ export type UrgentAction = {
   priority: "high" | "medium" | "low";
 };
 
-export type PipelineStage = {
+export type InquiryStageRow = {
   id: string;
   label: string;
   count: number;
@@ -50,18 +38,9 @@ export type PipelineStage = {
 
 export type ActivitySnapshot = {
   leads7d: number;
-  replies7d: number;
-  shortlists7d: number;
   leads30d: number;
-  avgResponseMinutes: number;
-  deskAvgResponseMinutes: number;
-};
-
-export type QuarterlyGoal = {
-  targetDeals: number;
-  closedDeals: number;
-  percent: number;
-  dealsToNextBonus: number;
+  openThreads: number;
+  closedThreads: number;
 };
 
 export type ListingHealthRow = {
@@ -74,37 +53,20 @@ export type ListingHealthRow = {
 
 export type TopListingRow = {
   title: string;
-  views: number;
   slug: string;
-};
-
-export type CalendarEvent = {
-  id: string;
-  title: string;
-  whenLabel: string;
-  kind: "viewing" | "call" | "signing";
+  views: number;
+  unique: number;
 };
 
 export type AgentOverviewBundle = {
   metrics: AgentDeskMetrics;
   urgentActions: UrgentAction[];
-  pipeline: PipelineStage[];
+  inquiryStages: InquiryStageRow[];
   activity: ActivitySnapshot;
-  quarterlyGoal: QuarterlyGoal;
   listingHealth: ListingHealthRow[];
   topListings: TopListingRow[];
-  calendar: CalendarEvent[];
-  usesEstimatedMetrics: boolean;
+  deskLinks: { inquiries: string; profile: string; newListings: string };
 };
-
-function hashUserId(userId: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < userId.length; i++) {
-    h ^= userId.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
 
 function hasDoc(profile: AgentProfileRecord, kind: string): boolean {
   return profile.documents.some((d) => d.kind === kind);
@@ -174,91 +136,16 @@ export function buildProfileCompletion(profile: AgentProfileRecord): {
   return { percent, items };
 }
 
-function effectivenessLabel(score: number): string {
-  if (score >= 90) return "Elite performer";
-  if (score >= 75) return "Strong momentum";
-  if (score >= 55) return "Building pipeline";
-  return "Focus onboarding";
-}
-
-export function buildAgentDeskMetrics(
-  userId: string,
-  profile: AgentProfileRecord,
-): AgentDeskMetrics {
+export function buildAgentDeskMetrics(profile: AgentProfileRecord): AgentDeskMetrics {
   const { percent, items } = buildProfileCompletion(profile);
-  const seed = hashUserId(userId);
-  const companyAgentCount = agents.length;
-
-  const baseEffectiveness = 42 + (seed % 38);
-  const profileBoost = Math.round(percent * 0.35);
-  const salesEffectivenessPercent = Math.min(98, baseEffectiveness + profileBoost);
-
-  const closedDealsYtd = 3 + (seed % 14);
-  const ytdSalesBonusUsd = closedDealsYtd * 850 + (seed % 7) * 200;
-
-  const linked = agents.find((a) => a.platformUserId === userId);
-  const peerScores = agents.map((agent, index) => {
-    const peerSeed = hashUserId(agent.platformUserId ?? agent.id);
-    const score = 40 + (peerSeed % 50) + index * 2;
-    return { agentId: agent.id, score };
-  });
-  peerScores.sort((a, b) => b.score - a.score);
-  const rankIndex = linked
-    ? peerScores.findIndex((row) => row.agentId === linked.id)
-    : seed % companyAgentCount;
-  const companyRank = rankIndex >= 0 ? rankIndex + 1 : 1 + (seed % companyAgentCount);
-
-  const awards: AgentAward[] = [
-    {
-      id: "verified",
-      title: "SEAPS verified",
-      detail: linked?.verified ? "Public profile active on SEAPS" : "Complete verification docs",
-      earnedAt: "2026-09-01",
-    },
-  ];
-
-  if (percent >= 100) {
-    awards.push({
-      id: "profile-complete",
-      title: "Profile complete",
-      detail: "All HR and contact fields submitted",
-      earnedAt: new Date().toISOString().slice(0, 10),
-    });
-  }
-  if (closedDealsYtd >= 10) {
-    awards.push({
-      id: "deals-10",
-      title: "Double-digit closings",
-      detail: `${closedDealsYtd} deals closed year to date`,
-      earnedAt: "2026-08-15",
-    });
-  }
-  if (salesEffectivenessPercent >= 80) {
-    awards.push({
-      id: "top-quartile",
-      title: "Top quartile efficiency",
-      detail: "Response and conversion score in top 25% of desk",
-      earnedAt: "2026-10-01",
-    });
-  }
-
-  return {
-    profileCompletionPercent: percent,
-    profileItems: items,
-    salesEffectivenessPercent,
-    salesEffectivenessLabel: effectivenessLabel(salesEffectivenessPercent),
-    ytdSalesBonusUsd,
-    closedDealsYtd,
-    companyRank,
-    companyAgentCount,
-    awards,
-  };
+  return { profileCompletionPercent: percent, profileItems: items };
 }
 
 function buildUrgentActions(
   profile: AgentProfileRecord,
   metrics: AgentDeskMetrics,
   inquiries: Inquiry[],
+  link: DeskLinkFor,
 ): UrgentAction[] {
   const actions: UrgentAction[] = [];
   const newInquiries = inquiries.filter((i) => i.status === "new");
@@ -268,7 +155,7 @@ function buildUrgentActions(
       id: "reply-inquiries",
       title: `Reply to ${newInquiries.length} new inquir${newInquiries.length === 1 ? "y" : "ies"}`,
       detail: "Target response within 2 hours to protect conversion.",
-      href: agentDeskPath("inquiries"),
+      href: link("inquiries"),
       priority: "high",
     });
   }
@@ -278,7 +165,7 @@ function buildUrgentActions(
       id: "finish-profile",
       title: "Complete agent profile",
       detail: `${100 - metrics.profileCompletionPercent}% remaining for HR verification.`,
-      href: agentDeskPath("profile"),
+      href: link("profile"),
       priority: metrics.profileCompletionPercent < 60 ? "high" : "medium",
     });
   } else if (!agentHasRequiredProfilePhoto(profile)) {
@@ -286,18 +173,18 @@ function buildUrgentActions(
       id: "upload-portrait",
       title: "Upload portrait photo",
       detail: "Required for public agent cards across SEAPS.",
-      href: agentDeskPath("profile"),
+      href: link("profile"),
       priority: "high",
     });
   }
 
-  const stale = inquiries.filter((i) => i.status === "in_progress");
-  if (stale.length > 0) {
+  const openThreads = inquiries.filter((i) => i.status === "in_progress");
+  if (openThreads.length > 0) {
     actions.push({
       id: "follow-up",
-      title: `Follow up on ${stale.length} open thread${stale.length === 1 ? "" : "s"}`,
+      title: `Follow up on ${openThreads.length} open thread${openThreads.length === 1 ? "" : "s"}`,
       detail: "Move contacted leads toward a viewing or offer.",
-      href: agentDeskPath("inquiries"),
+      href: link("inquiries"),
       priority: "medium",
     });
   }
@@ -307,7 +194,7 @@ function buildUrgentActions(
       id: "pipeline-ok",
       title: "Inbox clear — grow pipeline",
       detail: "Share listings or publish a new property to attract leads.",
-      href: LIST_PROPERTY_WIZARD_ENTRY,
+      href: link("list-property", "step1"),
       priority: "low",
     });
   }
@@ -315,146 +202,126 @@ function buildUrgentActions(
   return actions.slice(0, 4);
 }
 
-function buildPipeline(inquiries: Inquiry[], seed: number): PipelineStage[] {
-  const lead = inquiries.filter((i) => i.status === "new").length + (seed % 4);
-  const contacted =
-    inquiries.filter((i) => i.status === "in_progress").length + 1 + (seed % 3);
-  const viewing = 1 + ((seed >> 3) % 5);
-  const offer = (seed >> 5) % 4;
-  const contract = (seed >> 7) % 3;
-  const closed = inquiries.filter((i) => i.status === "closed").length + (seed >> 9) % 2;
-
+function buildInquiryStages(inquiries: Inquiry[]): InquiryStageRow[] {
   return [
-    { id: "lead", label: "Lead", count: lead },
-    { id: "contacted", label: "Contacted", count: contacted },
-    { id: "viewing", label: "Viewing", count: viewing },
-    { id: "offer", label: "Offer", count: offer },
-    { id: "contract", label: "Contract", count: contract },
-    { id: "closed", label: "Closed", count: closed },
+    { id: "new", label: "New", count: inquiries.filter((i) => i.status === "new").length },
+    {
+      id: "in_progress",
+      label: "In progress",
+      count: inquiries.filter((i) => i.status === "in_progress").length,
+    },
+    { id: "closed", label: "Closed", count: inquiries.filter((i) => i.status === "closed").length },
   ];
 }
 
-function buildActivity(seed: number, inquiries: Inquiry[]): ActivitySnapshot {
-  const leads7d = inquiries.length + 2 + (seed % 6);
-  return {
-    leads7d,
-    replies7d: Math.max(1, leads7d - (seed % 3)),
-    shortlists7d: 2 + ((seed >> 2) % 8),
-    leads30d: leads7d * 3 + (seed % 9),
-    avgResponseMinutes: 18 + (seed % 45),
-    deskAvgResponseMinutes: 35 + (seed % 20),
-  };
+function withinDays(inquiries: Inquiry[], days: number): number {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return inquiries.filter((i) => new Date(i.createdAt).getTime() >= cutoff).length;
 }
 
-function buildListingHealth(
-  agentId: string | undefined,
-  runtimeListings: Property[],
-): { health: ListingHealthRow[]; top: TopListingRow[] } {
-  const catalog = agentId
-    ? properties.filter((p) => p.agentId === agentId)
-    : [];
-  const published = catalog.filter((p) => p.status === "published").length;
-  const needsMedia = catalog.filter((p) => p.images.length < 2).length;
-  const premium = catalog.filter((p) => p.isPremium || p.isFeatured).length;
+function ownListings(userId: string, listings: Property[]): Property[] {
+  return listings.filter((l) => l.createdByUserId === userId || l.ownerId === userId);
+}
 
-  const health: ListingHealthRow[] = [
+function buildListingHealth(own: Property[], link: DeskLinkFor): ListingHealthRow[] {
+  const live = own.filter(isPublicListing).length;
+  const pending = own.filter((l) => l.status === "pending").length;
+  const needsMedia = own.filter((l) => (l.images?.length ?? 0) < 2).length;
+
+  return [
     {
-      id: "published",
-      label: "Published in catalog",
-      count: published,
-      href: agentDeskPath("listings"),
-      tone: "ok",
+      id: "live",
+      label: "Live for the public",
+      count: live,
+      href: link("listings"),
+      tone: live > 0 ? "ok" : "neutral",
     },
     {
-      id: "runtime",
-      label: "Your runtime drafts",
-      count: runtimeListings.length,
-      href: agentDeskPath("listings"),
-      tone: runtimeListings.length > 0 ? "neutral" : "ok",
+      id: "pending",
+      label: "Waiting on moderation",
+      count: pending,
+      href: link("listings"),
+      tone: pending > 0 ? "warn" : "ok",
     },
     {
       id: "media",
       label: "Needs more photos",
       count: needsMedia,
-      href: agentDeskPath("listings"),
+      href: link("listings"),
       tone: needsMedia > 0 ? "warn" : "ok",
     },
     {
-      id: "featured",
-      label: "Featured / premium",
-      count: premium,
-      href: agentDeskPath("listings"),
+      id: "total",
+      label: "Listings on this account",
+      count: own.length,
+      href: link("listings"),
       tone: "neutral",
     },
   ];
-
-  const top = [...catalog]
-    .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
-    .slice(0, 3)
-    .map((p) => ({
-      title: p.title,
-      views: p.views ?? 0,
-      slug: p.slug,
-    }));
-
-  return { health, top };
 }
 
-function buildCalendar(seed: number): CalendarEvent[] {
-  const hour = 9 + (seed % 6);
-  const hour2 = 14 + (seed % 4);
-  return [
-    {
-      id: "cal-1",
-      title: "Buyer viewing — Tonle Bassac condo",
-      whenLabel: `Today · ${hour}:00`,
-      kind: "viewing",
-    },
-    {
-      id: "cal-2",
-      title: "Follow-up call — relocation client",
-      whenLabel: `Today · ${hour2}:30`,
-      kind: "call",
-    },
-    {
-      id: "cal-3",
-      title: "Lease signing — Chamkarmon villa",
-      whenLabel: "Tomorrow · 11:00",
-      kind: "signing",
-    },
-  ];
+function buildTopListings(
+  own: Property[],
+  events: PageViewEvent[],
+  periodDays: number,
+): TopListingRow[] {
+  const cutoff = Date.now() - periodDays * 24 * 60 * 60 * 1000;
+  const views = new Map<string, number>();
+  const visitors = new Map<string, Set<string>>();
+
+  for (const event of events) {
+    if (new Date(event.at).getTime() < cutoff) continue;
+    const slug = event.path.replace(/^\/property\//, "");
+    if (slug === event.path) continue;
+    views.set(slug, (views.get(slug) ?? 0) + 1);
+    const set = visitors.get(slug) ?? new Set<string>();
+    set.add(event.sessionKey);
+    visitors.set(slug, set);
+  }
+
+  return own
+    .map((listing) => ({
+      title: listing.title,
+      slug: listing.slug,
+      views: views.get(listing.slug) ?? 0,
+      unique: visitors.get(listing.slug)?.size ?? 0,
+    }))
+    .filter((row) => row.views > 0)
+    .sort((a, b) => b.views - a.views || a.title.localeCompare(b.title))
+    .slice(0, 3);
 }
 
-export function buildAgentOverviewBundle(
-  userId: string,
-  profile: AgentProfileRecord,
-  inquiries: Inquiry[],
-  runtimeListings: Property[],
-): AgentOverviewBundle {
-  const metrics = buildAgentDeskMetrics(userId, profile);
-  const seed = hashUserId(userId);
-  const linked = agents.find((a) => a.platformUserId === userId);
-
-  const targetDeals = 12;
-  const closedDeals = metrics.closedDealsYtd;
-  const quarterlyGoal: QuarterlyGoal = {
-    targetDeals,
-    closedDeals,
-    percent: Math.min(100, Math.round((closedDeals / targetDeals) * 100)),
-    dealsToNextBonus: Math.max(0, 10 - (closedDeals % 10)),
-  };
-
-  const { health, top } = buildListingHealth(linked?.id, runtimeListings);
+export function buildAgentOverviewBundle(input: {
+  userId: string;
+  profile: AgentProfileRecord;
+  inquiries: Inquiry[];
+  listings: Property[];
+  pageViews: PageViewEvent[];
+  periodDays?: number;
+  linkFor?: DeskLinkFor;
+}): AgentOverviewBundle {
+  const { userId, profile, inquiries, listings, pageViews } = input;
+  const periodDays = input.periodDays ?? 30;
+  const link = input.linkFor ?? agentDeskPath;
+  const metrics = buildAgentDeskMetrics(profile);
+  const own = ownListings(userId, listings);
 
   return {
     metrics,
-    urgentActions: buildUrgentActions(profile, metrics, inquiries),
-    pipeline: buildPipeline(inquiries, seed),
-    activity: buildActivity(seed, inquiries),
-    quarterlyGoal,
-    listingHealth: health,
-    topListings: top,
-    calendar: buildCalendar(seed),
-    usesEstimatedMetrics: true,
+    urgentActions: buildUrgentActions(profile, metrics, inquiries, link),
+    inquiryStages: buildInquiryStages(inquiries),
+    activity: {
+      leads7d: withinDays(inquiries, 7),
+      leads30d: withinDays(inquiries, 30),
+      openThreads: inquiries.filter((i) => i.status !== "closed").length,
+      closedThreads: inquiries.filter((i) => i.status === "closed").length,
+    },
+    listingHealth: buildListingHealth(own, link),
+    topListings: buildTopListings(own, pageViews, periodDays),
+    deskLinks: {
+      inquiries: link("inquiries"),
+      profile: link("profile"),
+      newListings: link("list-property", "step1"),
+    },
   };
 }

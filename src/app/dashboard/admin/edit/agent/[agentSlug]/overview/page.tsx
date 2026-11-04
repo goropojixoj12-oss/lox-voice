@@ -4,8 +4,11 @@ import { AgentOverviewPanel } from "@/components/dashboard/agent-overview-panel"
 import { adminEditAgentPath } from "@/lib/admin-edit-agent-paths";
 import { requireAgentForEditSlug } from "@/lib/admin-edit-agent-page";
 import { getAgentProfile } from "@/lib/agent-profile";
+import { getPageViewEvents } from "@/lib/admin-store";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
-import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
+import { getAllProperties } from "@/lib/catalog";
+import { filterInquiriesToAccount } from "@/lib/inquiry-access";
+import { getFavorites, getInquiries } from "@/lib/store";
 
 export async function generateMetadata({
   params,
@@ -33,19 +36,30 @@ export default async function AdminEditAgentOverviewPage({
   const { agentSlug } = await params;
   const agent = await requireAgentForEditSlug(agentSlug);
 
-  const [favorites, inquiries, listings] = await Promise.all([
+  const [favorites, allInquiries, listings, pageViews] = await Promise.all([
     getFavorites(agent.id),
     getInquiries(),
-    getRuntimeListings(),
+    getAllProperties(),
+    getPageViewEvents(),
   ]);
 
   const profile = await getAgentProfile(agent.id, {
     name: agent.name,
     email: agent.email,
   });
-  const agentOverview = buildAgentOverviewBundle(agent.id, profile, inquiries, listings);
+  const inquiries = filterInquiriesToAccount(allInquiries, listings, agent.id);
+  const agentOverview = buildAgentOverviewBundle({
+    userId: agent.id,
+    profile,
+    inquiries,
+    listings,
+    pageViews,
+    linkFor: (...segments) => adminEditAgentPath(agentSlug, ...segments),
+  });
 
-  const agentListings = listings.filter((l) => l.createdByUserId === agent.id);
+  const agentListings = listings.filter(
+    (l) => l.createdByUserId === agent.id || l.ownerId === agent.id,
+  );
 
   return (
     <div>
@@ -72,9 +86,7 @@ export default async function AdminEditAgentOverviewPage({
             },
             {
               label: "Inquiries",
-              value: inquiries.filter((i) =>
-                agentListings.some((l) => l.id === i.propertyId),
-              ).length,
+              value: inquiries.length,
               href: adminEditAgentPath(agentSlug, "inquiries"),
             },
             { label: "Listings", value: agentListings.length, href: adminEditAgentPath(agentSlug, "listings") },

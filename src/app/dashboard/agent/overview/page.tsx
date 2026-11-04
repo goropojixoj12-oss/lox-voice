@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AgentOverviewPanel } from "@/components/dashboard/agent-overview-panel";
 import { getAgentProfile } from "@/lib/agent-profile";
+import { getPageViewEvents } from "@/lib/admin-store";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { getSession } from "@/lib/auth";
+import { getAllProperties } from "@/lib/catalog";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 import { getInquiriesForSession } from "@/lib/inquiry-access";
-import { getFavorites, getRuntimeListings } from "@/lib/store";
+import { getFavorites } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -14,10 +16,11 @@ export default async function DashboardOverviewPage() {
   const session = await getSession();
   if (!session) return null;
 
-  const [favorites, inquiries, listings] = await Promise.all([
+  const [favorites, inquiries, listings, pageViews] = await Promise.all([
     getFavorites(session.id),
     getInquiriesForSession(session),
-    getRuntimeListings(),
+    getAllProperties(),
+    getPageViewEvents(),
   ]);
 
   let agentOverview = null;
@@ -26,12 +29,13 @@ export default async function DashboardOverviewPage() {
       name: session.name,
       email: session.email,
     });
-    agentOverview = buildAgentOverviewBundle(
-      session.id,
+    agentOverview = buildAgentOverviewBundle({
+      userId: session.id,
       profile,
       inquiries,
       listings,
-    );
+      pageViews,
+    });
   }
 
   return (
