@@ -18,7 +18,14 @@
 - **Что:** блок «Description» на листинге `cheapest-ever-studio-…-_ZFWs` кликабелен — `window.location.assign` на `https://cambodia-condo-showcase-174801.onhercules.app/`; атрибут `data-listing-description-redirect` для смоука.
 - **Зачем:** Site Changes `EE9XGzT-VEeW` (CEO): редирект при клике на Property Description.
 - **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/property-description-section.tsx`, `src/app/property/[slug]/page.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`.
-- **Проверено:** GitHub `main` @ `701d6a2`; прод `/property/cheapest-ever-studio-…-_ZFWs` — 200, `data-listing-description-redirect` → Hercules URL, подсказка «Click to open the interactive showcase»; `npm run smoke -- --base=https://www.seaps.asia` 49/49. PATCH `EE9XGzT-VEeW` — в cloud VM нет `SITE_AGENT_SECRET`.
+- **Проверено:** GitHub `main` @ `701d6a2`; прод `/property/cheapest-ever-studio-…-_ZFWs` — 200, `data-listing-description-redirect` → Hercules URL, подсказка «Click to open the interactive showcase», iframe showcase без youtube; `npm run build` exit 0; `npm run smoke -- --base=https://www.seaps.asia` 49/49 (или 39/49 без `.env.test`). PATCH `EE9XGzT-VEeW` — в cloud VM нет `SITE_AGENT_SECRET`.
+
+### site change: UG9GRp5ZbpGW (дубликат embed + Description click, _ZFWs)
+
+- **Что:** без нового кода — webhook повторил заявку: Hercules `https://cambodia-condo-showcase-174801.onhercules.app/` вместо YouTube на Vue Aston studio + клик по Description.
+- **Зачем:** Site Changes `UG9GRp5ZbpGW` (CEO, 2026-11-04T21:14Z).
+- **Файлы:** уже в `main` @ `701d6a2` (`b9d7130` embed, `91f6403` CSP, `701d6a2` Description redirect).
+- **Проверено:** curl прод HTML — redirect attr + iframe onhercules, youtube отсутствует. PATCH `UG9GRp5ZbpGW` — 401 без Bearer (`SITE_AGENT_SECRET` не в VM).
 
 ### site change: live news panel вместо «No photos yet»
 
