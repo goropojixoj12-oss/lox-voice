@@ -22,7 +22,8 @@ export async function GET(_request: Request, context: RouteContext) {
     status: 200,
     headers: {
       "Content-Type": file.contentType,
-      "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+      // photos are deletable, so only the edge may hold them, and only briefly
+      "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=300",
     },
   });
 }
