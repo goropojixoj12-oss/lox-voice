@@ -7,6 +7,7 @@ import {
 } from "@/components/forms/property-listing-inquiry";
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
+import { PropertyDescriptionSection } from "@/components/property/property-description-section";
 import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
@@ -207,21 +208,10 @@ export default async function PropertyDetailPage({
             </dl>
           </section>
 
-          <section>
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
-              Description
-            </h2>
-            {property.description.includes("<") ? (
-              <div
-                className="prose prose-sm mt-3 max-w-3xl text-[var(--color-muted)] prose-headings:text-[var(--color-accent-soft)] prose-a:text-[var(--color-accent)] prose-img:rounded-lg"
-                dangerouslySetInnerHTML={{ __html: property.description }}
-              />
-            ) : (
-              <p className="mt-3 max-w-3xl whitespace-pre-line leading-relaxed text-[var(--color-muted)]">
-                {property.description}
-              </p>
-            )}
-          </section>
+          <PropertyDescriptionSection
+            listingSlug={property.slug}
+            description={property.description}
+          />
 
           {property.amenities.length ? (
             <section>

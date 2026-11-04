@@ -20,6 +20,11 @@ export function getLiveNewsEmbedSrcForListing(slug: string | undefined): string 
   return getLiveNewsEmbedSrc();
 }
 
+/** Full-page redirect when the visitor clicks the Description block on a listing. */
+export function getListingDescriptionClickRedirect(slug: string): string | null {
+  return LISTING_LIVE_NEWS_EMBED_BY_SLUG[slug] ?? null;
+}
+
 /** Resolves optional live news iframe src from public env (YouTube video, channel live, or full embed URL). */
 export function getLiveNewsEmbedSrc(): string | null {
   const raw = process.env.NEXT_PUBLIC_LIVE_NEWS_EMBED_URL?.trim();
