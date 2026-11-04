@@ -26,13 +26,13 @@ export default async function AdminListingEditPage({
         href={adminDeskPath("listings")}
         className="text-sm text-[var(--color-accent-soft)] hover:underline"
       >
-        \u2190 Back to listings
+        ← Back to listings
       </Link>
       <h1 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
         Edit listing
       </h1>
       <p className="mt-2 text-sm text-[var(--color-muted)]">
-        Full 7-step editing \u2014 change any field, upload or remove media, then save, approve, or
+        Full 7-step editing — change any field, upload or remove media, then save, approve, or
         reject.
       </p>
       <div className="mt-6">

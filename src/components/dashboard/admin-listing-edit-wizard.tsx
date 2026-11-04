@@ -331,7 +331,7 @@ export function AdminListingEditWizard({
                   "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[rgba(212,175,55,0.45)]",
               )}
             >
-              step{index + 1} \u00b7 {label}
+              step{index + 1} · {label}
             </button>
           );
         })}
@@ -347,7 +347,7 @@ export function AdminListingEditWizard({
         Step {step + 1} of {LIST_PROPERTY_STEP_COUNT}: {LIST_PROPERTY_STEP_LABELS[step]}
         {dealSelection ? (
           <span className="text-[var(--color-accent-soft)]">
-            {" "}\u00b7 {formatDealSelection(dealSelection)}
+            {" "}· {formatDealSelection(dealSelection)}
           </span>
         ) : null}
       </p>
@@ -660,7 +660,7 @@ export function AdminListingEditWizard({
             <p className="text-[var(--color-muted)]">{form.summary}</p>
             <p className="text-[var(--color-muted)]">{form.description}</p>
             <p>
-              Contact: {form.contactName} \u00b7 {form.contactEmail}
+              Contact: {form.contactName} · {form.contactEmail}
             </p>
             <p className="rounded-[var(--radius-md)] bg-[var(--color-mist)] p-3">
               Current status: <strong>{listingStatus}</strong>. Use the buttons below to save,

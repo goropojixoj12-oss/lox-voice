@@ -250,7 +250,7 @@ export function ListPropertyMediaStep({
       <p className="text-sm text-[var(--color-muted)]">
         Upload many photos and videos for this listing. Cards across the site autoplay a{" "}
         <strong className="text-[var(--color-text)]">looping preview</strong>: your chosen preview
-        video, or \u2014 if you only upload photos \u2014 a fast flipbook (like YouTube hover previews, but
+        video, or — if you only upload photos — a fast flipbook (like YouTube hover previews, but
         always on). For {listingTitle ? `"${listingTitle}"` : "this listing"} you can add all{" "}
         <strong className="text-[var(--color-text)]">50 photos</strong> and{" "}
         <strong className="text-[var(--color-text)]">2 videos</strong> here. Large files upload
@@ -358,7 +358,7 @@ export function ListPropertyMediaStep({
 
       {items.length === 0 ? (
         <p className="text-sm text-[var(--color-muted)]">
-          Photos and videos are optional \u2014 skip this step or add media later.
+          Photos and videos are optional — skip this step or add media later.
         </p>
       ) : null}
     </div>
