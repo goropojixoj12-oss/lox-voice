@@ -4,10 +4,14 @@ import { agents } from "@/data/agencies";
 import { articles } from "@/data/articles";
 import { cities } from "@/data/locations";
 import { projects } from "@/data/projects";
-import { properties } from "@/data/properties";
+import { getAllProperties } from "@/lib/catalog";
 import { isPublicListing } from "@/lib/listing-access";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// listings live in the runtime store, so the file must be built per request —
+// a prerendered sitemap could only ever contain the static catalog
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/search",
@@ -36,11 +40,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
+  const listings = await getAllProperties();
+
   return [
     ...staticRoutes,
     // only listings an anonymous visitor can actually open: drafts and
     // withdrawn deals render notFound(), so listing them meant dead sitemap URLs
-    ...properties
+    ...listings
       .filter(isPublicListing)
       .map((p) => ({ url: `${brand.url}/property/${p.slug}`, lastModified: new Date(p.updatedAt) })),
     ...projects.map((p) => ({ url: `${brand.url}/projects/${p.slug}`, lastModified: new Date() })),

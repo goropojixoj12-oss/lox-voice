@@ -131,6 +131,11 @@ const CHECKS = [
     status: [200],
     include: ["/property/vue-aston-riverside-3bed-102m2"],
   },
+  {
+    name: "sitemap: every advertised property page opens for an anonymous visitor",
+    path: "/sitemap.xml",
+    crawlPropertyLinks: true,
+  },
   { name: "robots", path: "/robots.txt", status: [200] },
   {
     name: "wizard step1: closed to anonymous",
@@ -421,6 +426,44 @@ async function runCheck(check, session) {
   };
 }
 
+async function runSitemapLinkCrawl(check) {
+  const started = Date.now();
+  let xml;
+  try {
+    const res = await fetch(`${BASE}/sitemap.xml`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+    xml = await res.text();
+  } catch (err) {
+    return { check, pass: false, why: `sitemap request failed: ${err.message}` };
+  }
+  // rewritten onto BASE because <loc> carries the canonical prod domain even when
+  // the smoke runs against a local build
+  const links = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+    .map((match) => match[1])
+    .filter((url) => new URL(url).pathname.startsWith("/property/"))
+    .map((url) => `${BASE}${new URL(url).pathname}`);
+  if (links.length === 0)
+    return { check, pass: false, status: "0", why: "sitemap advertises no property page" };
+  const bad = [];
+  for (const url of links) {
+    try {
+      const res = await fetch(url, {
+        redirect: "manual",
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.status !== 200) bad.push(`${new URL(url).pathname} is ${res.status}`);
+    } catch (err) {
+      bad.push(`${new URL(url).pathname} request failed: ${err.message}`);
+    }
+  }
+  return {
+    check,
+    pass: bad.length === 0,
+    status: `${links.length - bad.length}/${links.length}`,
+    ms: Date.now() - started,
+    why: bad.join(", ") || null,
+  };
+}
+
 const selected = ONLY
   ? CHECKS.filter((c) => `${c.name} ${c.path}`.toLowerCase().includes(ONLY.toLowerCase()))
   : CHECKS;
@@ -460,7 +503,9 @@ async function worker() {
       resultsByIndex[index] = { check, pass: false, why: `skipped: no ${check.role} session` };
       continue;
     }
-    resultsByIndex[index] = await runCheck(check, session);
+    resultsByIndex[index] = check.crawlPropertyLinks
+      ? await runSitemapLinkCrawl(check)
+      : await runCheck(check, session);
   }
 }
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, selected.length) }, () => worker()));
