@@ -25,7 +25,7 @@
 - **Что:** блок «Description» на листинге `cheapest-ever-studio-…-_ZFWs` кликабелен — `window.location.assign` на `https://cambodia-condo-showcase-174801.onhercules.app/`; атрибут `data-listing-description-redirect` для смоука.
 - **Зачем:** Site Changes `EE9XGzT-VEeW` (CEO): редирект при клике на Property Description.
 - **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/property-description-section.tsx`, `src/app/property/[slug]/page.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`.
-- **Проверено:** GitHub `main` @ `701d6a2`; прод `/property/cheapest-ever-studio-…-_ZFWs` — 200, `data-listing-description-redirect` → Hercules URL; `npm run smoke -- --base=https://www.seaps.asia` 49/49. PATCH `EE9XGzT-VEeW` — при отсутствии `SITE_AGENT_SECRET` в VM вручную.
+- **Проверено:** `npm run gate` exit 0 @ `701d6a2`; push `github/main`, тег `backup/2026-11-04-description-redirect-zfws`; прод HTML `_ZFWs` — `data-listing-description-redirect` → Hercules URL, подсказка «Click to open the interactive showcase»; `npm run smoke -- --base=https://www.seaps.asia` 49/49. PATCH `EE9XGzT-VEeW` — нет `SITE_AGENT_SECRET` в cloud VM.
 
 ### site change: UG9GRp5ZbpGW (дубликат embed + Description click, _ZFWs)
 
