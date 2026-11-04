@@ -5,10 +5,9 @@ import { getAgentProfile } from "@/lib/agent-profile";
 import { getPageViewEvents } from "@/lib/admin-store";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { getSession } from "@/lib/auth";
-import { getAllProperties } from "@/lib/catalog";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
 import { getInquiriesForSession } from "@/lib/inquiry-access";
-import { getFavorites } from "@/lib/store";
+import { getFavorites, getRuntimeListings } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -19,7 +18,7 @@ export default async function DashboardOverviewPage() {
   const [favorites, inquiries, listings, pageViews] = await Promise.all([
     getFavorites(session.id),
     getInquiriesForSession(session),
-    getAllProperties(),
+    getRuntimeListings(),
     getPageViewEvents(),
   ]);
 

@@ -8,7 +8,7 @@ import { getPageViewEvents } from "@/lib/admin-store";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { getAllProperties } from "@/lib/catalog";
 import { filterInquiriesToAccount } from "@/lib/inquiry-access";
-import { getFavorites, getInquiries } from "@/lib/store";
+import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
 
 export async function generateMetadata({
   params,
@@ -36,10 +36,11 @@ export default async function AdminEditAgentOverviewPage({
   const { agentSlug } = await params;
   const agent = await requireAgentForEditSlug(agentSlug);
 
-  const [favorites, allInquiries, listings, pageViews] = await Promise.all([
+  const [favorites, allInquiries, allProperties, listings, pageViews] = await Promise.all([
     getFavorites(agent.id),
     getInquiries(),
     getAllProperties(),
+    getRuntimeListings(),
     getPageViewEvents(),
   ]);
 
@@ -47,7 +48,7 @@ export default async function AdminEditAgentOverviewPage({
     name: agent.name,
     email: agent.email,
   });
-  const inquiries = filterInquiriesToAccount(allInquiries, listings, agent.id);
+  const inquiries = filterInquiriesToAccount(allInquiries, allProperties, agent.id);
   const agentOverview = buildAgentOverviewBundle({
     userId: agent.id,
     profile,
