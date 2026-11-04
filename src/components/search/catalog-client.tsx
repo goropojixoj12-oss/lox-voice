@@ -9,6 +9,7 @@ import { PropertyGrid, PropertyList } from "@/components/property/property-card"
 import { EmptyState } from "@/components/shared/states";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
+import { hasMapCoords } from "@/lib/property-coords";
 import type { Property } from "@/lib/types";
 
 export function CatalogClient({
@@ -31,7 +32,10 @@ export function CatalogClient({
   coverAd?: { src: string; alt: string; href?: string };
 }) {
   const [view, setView] = useState<"grid" | "list" | "map">("grid");
-  const [activeId, setActiveId] = useState<string | undefined>(items[0]?.id);
+  // the strip under the map describes the selected pin, so start on a listing that has one
+  const [activeId, setActiveId] = useState<string | undefined>(
+    () => items.find(hasMapCoords)?.id,
+  );
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
