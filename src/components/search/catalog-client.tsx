@@ -61,8 +61,7 @@ export function CatalogClient({
 
   function descriptionHrefForProperty(property: Property): string | undefined {
     if (pathname !== "/buy/residential") return undefined;
-    if (property.slug !== VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG) return undefined;
-    return VUE_ASTON_CONDO_SHOWCASE_EMBED_URL;
+    return getListingDescriptionClickRedirect(property.slug) ?? undefined;
   }
 
   return (
