@@ -10,8 +10,14 @@
 
 - **Что:** для листинга `cheapest-ever-studio-…-_ZFWs` панель «Live News Show» (нет фото) грузит iframe `https://cambodia-condo-showcase-174801.onhercules.app/` через `getLiveNewsEmbedSrcForListing`; slug прокидывается из `PropertyGallery`.
 - **Зачем:** Site Changes `ev9QEBxQfSpO` (CEO): showcase Hercules вместо дефолтного highlights-only блока на этой карточке.
+<<<<<<< HEAD
 - **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/live-news-show-panel.tsx`, `src/components/property/property-gallery.tsx`, `src/app/property/[slug]/page.tsx`, `scripts/smoke-site.mjs`, `next.config.ts` — CSP `frame-src` для `onhercules.app`.
 - **Проверено:** `npm run gate` exit 0 (AUTH_SECRET + demo smoke agent); push `github/main` @ `b9d7130` (+ CSP follow-up на remote), тег `backup/2026-11-04-vue-aston-condo-showcase`; прод HTML листинга `_ZFWs` содержит `cambodia-condo-showcase-174801.onhercules.app`; `npm run smoke -- --base=https://www.seaps.asia` 49/49. PATCH `ev9QEBxQfSpO` не выполнен — в cloud VM нет `SITE_AGENT_SECRET`.
+=======
+- **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/live-news-show-panel.tsx`, `src/components/property/property-gallery.tsx`, `src/app/property/[slug]/page.tsx`, `scripts/smoke-site.mjs`.
+- **Файлы (доп.):** `next.config.ts` — CSP `frame-src` для `onhercules.app` (без этого браузер блокирует iframe).
+- **Проверено:** `npm run gate` exit 0 @ `91f6403`; push `github main`; prod iframe `https://cambodia-condo-showcase-174801.onhercules.app/` на `/property/cheapest-ever-studio-…-_ZFWs`, CSP с `onhercules.app`; `npm run smoke -- --base=https://www.seaps.asia` 49/49. PATCH `ev9QEBxQfSpO` — если секрет недоступен в VM, вручную на Vercel.
+>>>>>>> 008c2d4 (docs: prod verification for vue aston hercules embed)
 
 ### site change: live news panel вместо «No photos yet»
 
