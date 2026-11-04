@@ -50,3 +50,4 @@ next-env.d.ts
 backups/
 .brv/
 modelcontextprotocol-server-github-2025.4.8.tgz
+.aider*
