@@ -58,12 +58,10 @@ export async function PATCH(request: Request, context: RouteContext) {
   const input: AdminListingPatchInput = { ...parsed.data };
   for (const key of ADMIN_ONLY_KEYS) delete input[key];
 
-  const patched = applyAdminListingPatch(existing, input);
-  // moderation is the admin's call, so an edit of a live listing goes back to the queue
-  const updated: Property = {
-    ...patched,
-    status: existing.status === "published" ? "pending" : patched.status,
-  };
+  // `action` and `status` are admin-only keys, so a saved edit can never move the
+  // listing out of whatever moderation state it is in: publishing is revoked only
+  // by an explicit admin reject (owner ruling 2026-11-04)
+  const updated: Property = applyAdminListingPatch(existing, input);
 
   await saveRuntimeListing(updated);
   const otherListings = (await getRuntimeListings()).filter((l) => l.id !== updated.id);
