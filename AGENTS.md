@@ -137,7 +137,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 1. **Бэкап до изменения — по умолчанию, без команды.**
    - код: `git tag backup/YYYY-MM-DD-<имя>` на текущем HEAD и `git push github backup/...` (тег должен жить на github, иначе откат невозможен после пуша);
-   - данные: перед любой операцией над прод-стором — снимок затронутого ключа в `backups/` (`scripts/export-vercel-blob-download.mjs`) и полный слепок `bash scripts/create-absolute-backup.sh`;
+   - данные: перед любой операцией над прод-стором — снимок затронутого ключа в `backups/` (`scripts/export-vercel-blob-download.mjs`) и полный слепок `bash scripts/create-absolute-backup.sh`; имя снимка всегда с таймстампом и перезапись существующего запрещена (повторный запуск скрипта не должен затирать бэкап — так было потеряно 4106 записей `analytics-pageviews.json` 2026-11-04);
    - база: перед миграциями/правками Prisma — `bash scripts/postgres-dump.sh`.
 2. **Изменение** — одна логическая правка, запись в `docs/PROJECT-LOG.md` в том же ответе.
 3. **Локальный контроль** — открыть именно изменённый маршрут, изучить визуально и по поведению (правило 19). Прод-сборку для этого больше не поднимают руками: `npm run local` убивает висящий на 43131 прошлый сервер, собирает с `BLOB_DISABLED=1`, стартует и печатает URL (`npm run local -- --smoke` — то же плюс смоук против этого порта, `--stop` — только заглушить сервер).
