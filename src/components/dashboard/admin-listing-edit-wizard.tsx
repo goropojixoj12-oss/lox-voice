@@ -121,6 +121,8 @@ function listingToMedia(listing: Property): ListingMediaItem[] {
 export type AdminEditWizardProps = {
   listing: Property;
   afterSavePath: string;
+  apiBase?: string;
+  canModerate?: boolean;
 };
 
 type EditWizardContextValue = {
@@ -135,6 +137,7 @@ type EditWizardContextValue = {
   loading: boolean;
   submitAction: (action: "save" | "publish" | "reject") => Promise<void>;
   validateStep: (stepIndex: number) => boolean;
+  canModerate: boolean;
 };
 
 const EditWizardContext = createContext<EditWizardContextValue | null>(null);
@@ -148,6 +151,8 @@ function useEditWizard() {
 export function AdminListingEditWizardProvider({
   listing,
   afterSavePath,
+  apiBase = "/api/admin/listings",
+  canModerate = true,
   children,
 }: AdminEditWizardProps & { children: ReactNode }) {
   const router = useRouter();
@@ -199,7 +204,7 @@ export function AdminListingEditWizardProvider({
       const lng = parseListPropertyCoord(payloadForm.lng, -180, 180);
       let res: Response;
       try {
-      res = await fetch(`/api/admin/listings/${listing.id}`, {
+      res = await fetch(`${apiBase}/${listing.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -251,7 +256,7 @@ export function AdminListingEditWizardProvider({
       router.push(afterSavePath);
       router.refresh();
     },
-    [afterSavePath, form, listing.id, mediaItems, router],
+    [afterSavePath, apiBase, form, listing.id, mediaItems, router],
   );
 
   const value = useMemo(
@@ -267,9 +272,11 @@ export function AdminListingEditWizardProvider({
       loading,
       submitAction,
       validateStep,
+      canModerate,
     }),
     [
       applyDealSelection,
+      canModerate,
       dealSelection,
       error,
       form,
@@ -303,6 +310,7 @@ export function AdminListingEditWizard({
     loading,
     submitAction,
     validateStep,
+    canModerate,
   } = useEditWizard();
 
   const [step, setStep] = useState(0);
@@ -510,36 +518,42 @@ export function AdminListingEditWizard({
               <Label>{dealSelection?.category === "land" ? "Land area (m\u00b2)" : "Area (m\u00b2)"}</Label>
               <Input value={form.areaSqm} onChange={(e) => update("areaSqm", e.target.value)} />
             </div>
-            <div className="sm:col-span-2 mt-4 border-t border-[var(--color-border)] pt-4">
-              <p className="text-sm font-semibold text-[var(--color-accent-soft)]">Commission & assignment</p>
-            </div>
-            <div>
-              <Label>Agent commission (%)</Label>
-              <Input
-                inputMode="numeric"
-                value={String((form as Record<string, unknown>).commissionAgent ?? "")}
-                onChange={(e) => update("commissionAgent" as keyof ListPropertyDraftForm, e.target.value)}
-                placeholder="e.g. 3"
-              />
-            </div>
-            <div>
-              <Label>Company income (%) — admin only</Label>
-              <Input
-                inputMode="numeric"
-                value={String((form as Record<string, unknown>).commissionCompany ?? "")}
-                onChange={(e) => update("commissionCompany" as keyof ListPropertyDraftForm, e.target.value)}
-                placeholder="e.g. 2"
-              />
-              <p className="mt-1 text-xs text-red-500">Only admin can see this value</p>
-            </div>
-            <div className="sm:col-span-2">
-              <Label>Assigned agent ID</Label>
-              <Input
-                value={String((form as Record<string, unknown>).assignedAgentId ?? "")}
-                onChange={(e) => update("assignedAgentId" as keyof ListPropertyDraftForm, e.target.value)}
-                placeholder="Agent user ID (from Employees list)"
-              />
-            </div>
+            {canModerate ? (
+              <>
+                <div className="sm:col-span-2 mt-4 border-t border-[var(--color-border)] pt-4">
+                  <p className="text-sm font-semibold text-[var(--color-accent-soft)]">
+                    Commission &amp; assignment
+                  </p>
+                </div>
+                <div>
+                  <Label>Agent commission (%)</Label>
+                  <Input
+                    inputMode="numeric"
+                    value={String((form as Record<string, unknown>).commissionAgent ?? "")}
+                    onChange={(e) => update("commissionAgent" as keyof ListPropertyDraftForm, e.target.value)}
+                    placeholder="e.g. 3"
+                  />
+                </div>
+                <div>
+                  <Label>Company income (%) — admin only</Label>
+                  <Input
+                    inputMode="numeric"
+                    value={String((form as Record<string, unknown>).commissionCompany ?? "")}
+                    onChange={(e) => update("commissionCompany" as keyof ListPropertyDraftForm, e.target.value)}
+                    placeholder="e.g. 2"
+                  />
+                  <p className="mt-1 text-xs text-red-500">Only admin can see this value</p>
+                </div>
+                <div className="sm:col-span-2">
+                  <Label>Assigned agent ID</Label>
+                  <Input
+                    value={String((form as Record<string, unknown>).assignedAgentId ?? "")}
+                    onChange={(e) => update("assignedAgentId" as keyof ListPropertyDraftForm, e.target.value)}
+                    placeholder="Agent user ID (from Employees list)"
+                  />
+                </div>
+              </>
+            ) : null}
           </div>
         ) : null}
 
@@ -669,8 +683,10 @@ export function AdminListingEditWizard({
               Contact: {form.contactName} · {form.contactEmail}
             </p>
             <p className="rounded-[var(--radius-md)] bg-[var(--color-mist)] p-3">
-              Current status: <strong>{listingStatus}</strong>. Use the buttons below to save,
-              approve, or reject.
+              Current status: <strong>{listingStatus}</strong>.{" "}
+              {canModerate
+                ? "Use the buttons below to save, approve, or reject."
+                : "Save sends your edits to an admin; a published listing returns to review after any change."}
             </p>
           </div>
         ) : null}
@@ -715,21 +731,25 @@ export function AdminListingEditWizard({
         >
           {loading ? "Saving\u2026" : "Save edits"}
         </Button>
-        <Button
-          type="button"
-          disabled={loading}
-          onClick={() => void submitAction("publish")}
-        >
-          {loading ? "Publishing\u2026" : "Approve & publish"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          disabled={loading}
-          onClick={() => void submitAction("reject")}
-        >
-          {loading ? "Rejecting\u2026" : "Reject"}
-        </Button>
+        {canModerate ? (
+          <>
+            <Button
+              type="button"
+              disabled={loading}
+              onClick={() => void submitAction("publish")}
+            >
+              {loading ? "Publishing\u2026" : "Approve & publish"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={loading}
+              onClick={() => void submitAction("reject")}
+            >
+              {loading ? "Rejecting\u2026" : "Reject"}
+            </Button>
+          </>
+        ) : null}
       </div>
     </div>
   );

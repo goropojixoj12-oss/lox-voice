@@ -56,9 +56,12 @@ const patchSchema = z.object({
   commune: z.string().min(2).optional(),
   communeSlug: z.string().min(2).optional(),
   address: z.string().min(3).optional(),
+  lat: z.number().min(-90).max(90).nullable().optional(),
+  lng: z.number().min(-180).max(180).nullable().optional(),
   images: z.array(imageSchema).optional(),
   videos: z.array(videoSchema).optional(),
   cardPreviewVideoUrl: z.string().nullable().optional(),
+  previewPhotoCount: z.number().int().min(2).max(8).nullable().optional(),
   contactName: z.string().optional(),
   contactEmail: z.string().email().optional(),
   assignedAgentId: z.string().optional(),
@@ -143,6 +146,8 @@ export async function PATCH(request: Request, context: RouteContext) {
   if (data.commune !== undefined) location.commune = data.commune;
   if (data.communeSlug !== undefined) location.communeSlug = data.communeSlug;
   if (data.address !== undefined) location.address = data.address;
+  if (data.lat !== undefined) location.lat = data.lat ?? location.lat;
+  if (data.lng !== undefined) location.lng = data.lng ?? location.lng;
 
   const updated: Property = {
     ...existing,
@@ -162,6 +167,9 @@ export async function PATCH(request: Request, context: RouteContext) {
     cardPreviewVideoUrl: data.cardPreviewVideoUrl !== undefined
       ? data.cardPreviewVideoUrl
       : existing.cardPreviewVideoUrl,
+    previewPhotoCount: data.previewPhotoCount !== undefined
+      ? data.previewPhotoCount ?? null
+      : existing.previewPhotoCount ?? null,
     hasVideoTour: data.videos !== undefined
       ? data.videos.some((v) => v.role === "tour")
       : existing.hasVideoTour,

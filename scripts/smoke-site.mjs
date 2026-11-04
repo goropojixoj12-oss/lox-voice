@@ -145,6 +145,17 @@ const CHECKS = [
     include: ["Photos in the card preview", "preview-photo-count"],
   },
   {
+    name: "owner listing endpoint: PATCH only, no anonymous read",
+    path: "/api/dashboard/listings/any-listing",
+    status: [405],
+  },
+  {
+    name: "owner listing edit desk: closed to anonymous",
+    path: "/dashboard/agent/listings/any-listing",
+    role: null,
+    status: [302, 307, 308],
+  },
+  {
     name: "admin desk: closed to agent",
     path: "/dashboard/admin/listings",
     role: "agent",

@@ -165,7 +165,10 @@ export function applyAdminListingPatch(
     "address",
   ] as const;
   const hasLocUpdate =
-    data.countryCode != null || locFields.some((k) => data[k] !== undefined);
+    data.countryCode != null ||
+    data.lat !== undefined ||
+    data.lng !== undefined ||
+    locFields.some((k) => data[k] !== undefined);
 
   if (hasLocUpdate) {
     const countryCode = data.countryCode?.toUpperCase();

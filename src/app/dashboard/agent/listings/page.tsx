@@ -53,9 +53,17 @@ export default async function DashboardListingsPage({
                   Status: {listing.status} · {listing.location.city}
                 </p>
               </div>
-              <Link href={LIST_PROPERTY_WIZARD_ENTRY} className="text-sm text-[var(--color-accent)]">
-                Create another
-              </Link>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <Link
+                  href={`/dashboard/agent/listings/${listing.id}`}
+                  className="text-[var(--color-accent)]"
+                >
+                  Edit listing
+                </Link>
+                <Link href={LIST_PROPERTY_WIZARD_ENTRY} className="text-[var(--color-accent)]">
+                  Create another
+                </Link>
+              </div>
             </div>
           </li>
         ))}
