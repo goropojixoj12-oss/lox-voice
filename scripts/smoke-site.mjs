@@ -495,6 +495,10 @@ async function runSitemapLiveNewsProbe(check) {
       if (!text.includes("Live News Show")) continue;
       const problems = [];
       if (text.includes("No photos yet")) problems.push('still shows "No photos yet"');
+      const pathname = new URL(url).pathname;
+      if (pathname.includes("_ZFWs") && !text.includes("cambodia-condo-showcase-174801.onhercules.app")) {
+        problems.push("Vue Aston studio listing missing condo showcase embed URL");
+      }
       if (problems.length) {
         return {
           check,

@@ -6,6 +6,13 @@
 
 ## 2026-11-04
 
+### site change: condo showcase embed на Vue Aston studio (_ZFWs)
+
+- **Что:** для листинга `cheapest-ever-studio-…-_ZFWs` панель «Live News Show» (нет фото) грузит iframe `https://cambodia-condo-showcase-174801.onhercules.app/` через `getLiveNewsEmbedSrcForListing`; slug прокидывается из `PropertyGallery`.
+- **Зачем:** Site Changes `ev9QEBxQfSpO` (CEO): showcase Hercules вместо дефолтного highlights-only блока на этой карточке.
+- **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/live-news-show-panel.tsx`, `src/components/property/property-gallery.tsx`, `src/app/property/[slug]/page.tsx`, `scripts/smoke-site.mjs`.
+- **Проверено:** (заполнить после gate/ship и прода).
+
 ### site change: live news panel вместо «No photos yet»
 
 - **Что:** при пустой галерее листинга `PropertyGallery` рендерит `LiveNewsShowPanel` — iframe live/embed (env `NEXT_PUBLIC_LIVE_NEWS_*`), тикер «Live News Show», авто-refresh iframe раз в 4ч, fallback «No live feed available» + ссылки на insights/guides и highlights-ролик SEAPS.

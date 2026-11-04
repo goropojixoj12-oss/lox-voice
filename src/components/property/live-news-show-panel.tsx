@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { articles } from "@/data/articles";
 import {
-  getLiveNewsEmbedSrc,
+  getLiveNewsEmbedSrcForListing,
   getLiveNewsHighlightsEmbedSrc,
 } from "@/lib/live-news-show";
 
@@ -12,8 +12,8 @@ const REFRESH_MS = 4 * 60 * 60 * 1000;
 
 type StreamMode = "live" | "fallback";
 
-export function LiveNewsShowPanel() {
-  const configuredSrc = getLiveNewsEmbedSrc();
+export function LiveNewsShowPanel({ listingSlug }: { listingSlug?: string }) {
+  const configuredSrc = getLiveNewsEmbedSrcForListing(listingSlug);
   const [streamMode, setStreamMode] = useState<StreamMode>(
     configuredSrc ? "live" : "fallback",
   );

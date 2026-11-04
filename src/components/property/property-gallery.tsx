@@ -8,7 +8,13 @@ import type { PropertyImage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { LiveNewsShowPanel } from "@/components/property/live-news-show-panel";
 
-export function PropertyGallery({ images }: { images: PropertyImage[] }) {
+export function PropertyGallery({
+  images,
+  listingSlug,
+}: {
+  images: PropertyImage[];
+  listingSlug?: string;
+}) {
   const searchParams = useSearchParams();
   const [active, setActive] = useState(() => {
     // a card preview autoplays, so ?photo= carries the frame the visitor clicked
@@ -20,7 +26,7 @@ export function PropertyGallery({ images }: { images: PropertyImage[] }) {
   const current = images[active] ?? images[0];
 
   if (!current) {
-    return <LiveNewsShowPanel />;
+    return <LiveNewsShowPanel listingSlug={listingSlug} />;
   }
 
   return (

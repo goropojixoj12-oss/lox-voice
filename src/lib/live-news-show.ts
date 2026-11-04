@@ -1,5 +1,25 @@
 const YOUTUBE_EMBED_ORIGIN = "https://www.youtube-nocookie.com";
 
+/** Zero-photo Vue Aston studio listing — CEO showcase replaces default live embed. */
+export const VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG =
+  "cheapest-ever-studio-sold-vue-aston-never-seen-before-foreign-ownership-approved-hard-title-_ZFWs";
+
+export const VUE_ASTON_CONDO_SHOWCASE_EMBED_URL =
+  "https://cambodia-condo-showcase-174801.onhercules.app/";
+
+const LISTING_LIVE_NEWS_EMBED_BY_SLUG: Readonly<Record<string, string>> = {
+  [VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG]: VUE_ASTON_CONDO_SHOWCASE_EMBED_URL,
+};
+
+/** Per-listing iframe override when the gallery shows Live News Show (zero photos). */
+export function getLiveNewsEmbedSrcForListing(slug: string | undefined): string | null {
+  if (slug) {
+    const mapped = LISTING_LIVE_NEWS_EMBED_BY_SLUG[slug];
+    if (mapped) return mapped;
+  }
+  return getLiveNewsEmbedSrc();
+}
+
 /** Resolves optional live news iframe src from public env (YouTube video, channel live, or full embed URL). */
 export function getLiveNewsEmbedSrc(): string | null {
   const raw = process.env.NEXT_PUBLIC_LIVE_NEWS_EMBED_URL?.trim();
