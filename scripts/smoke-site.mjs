@@ -258,6 +258,12 @@ const CHECKS = [
     status: [200],
     include: ["user"],
   },
+  {
+    name: "edit desks: author edits without moderation, admin keeps it",
+    path: "/dashboard/admin/listings",
+    roles: ["admin", "agent"],
+    moderationDeskPair: true,
+  },
 ];
 
 const ESCAPE_TEXT = /\\u[0-9a-f]{4}/i;
@@ -273,6 +279,21 @@ function visibleText(html) {
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<!--[\s\S]*?-->/g, " ");
+}
+
+// SSR-разметка отдаёт & как &amp;, а ' как &#x27;, поэтому на голом теле часть
+// иголок не совпадает никогда — негативный чек выглядит зелёным, когда он просто
+// не нашёл строку из-за escaping. Сравниваем декодированный текст.
+function decodeEntities(html) {
+  return html
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/gi, "'")
+    .replace(/&#39;/gi, "'")
+    .replace(/&#x3D;/gi, "=")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
 }
 
 function credsFor(role) {
@@ -414,6 +435,7 @@ async function runCheck(check, session) {
     return { check, pass: false, why: `request failed: ${err.message}` };
   }
   const body = await res.text().catch(() => "");
+  const text = decodeEntities(body);
   const statusOk = (check.status ?? [200]).includes(res.status);
   const problems = [];
   if (!statusOk) problems.push(`status ${res.status}, want ${(check.status ?? [200]).join("|")}`);
@@ -422,16 +444,16 @@ async function runCheck(check, session) {
     if (detail) problems.push(`server said: ${detail}`);
   }
   for (const needle of check.include ?? []) {
-    if (!body.includes(needle)) problems.push(`missing ${JSON.stringify(needle)}`);
+    if (!text.includes(needle)) problems.push(`missing ${JSON.stringify(needle)}`);
   }
   for (const needle of check.exclude ?? []) {
-    if (body.includes(needle)) problems.push(`found forbidden ${JSON.stringify(needle)}`);
+    if (text.includes(needle)) problems.push(`found forbidden ${JSON.stringify(needle)}`);
   }
   if (res.headers.get("content-type")?.includes("text/html")) {
     for (const marker of CRASH_MARKERS) {
-      if (body.includes(marker)) problems.push(`crash marker ${JSON.stringify(marker)}`);
+      if (text.includes(marker)) problems.push(`crash marker ${JSON.stringify(marker)}`);
     }
-    if (ESCAPE_TEXT.test(visibleText(body))) {
+    if (ESCAPE_TEXT.test(visibleText(text))) {
       problems.push("escaped unicode printed as text (\\uXXXX inside JSX text)");
     }
   }
@@ -482,19 +504,95 @@ async function runSitemapLinkCrawl(check) {
   };
 }
 
+// Автор стола и админский стол живут одними и теми же компонентами, и разница
+// между ними — только canModerate. Регрессия здесь (кнопка апрува у владельца,
+// снятая модерация у админа) раньше ловилась только скретчем, который создавал
+// листинг через POST. Тут проверяем то же на том, что уже лежит в сторе, и
+// остаёмся строго на GET.
+async function getDecoded(path, cookie) {
+  const res = await fetch(`${BASE}${path}`, {
+    headers: cookie ? { cookie } : undefined,
+    redirect: "manual",
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  });
+  const body = res.status === 200 ? await res.text().catch(() => "") : "";
+  return { status: res.status, text: decodeEntities(body) };
+}
+
+function firstListingId(html, prefix) {
+  const ids = [...html.matchAll(new RegExp(`${prefix}/([^"'/?#]+)`, "g"))].map((m) => m[1]);
+  return [...new Set(ids)].find((id) => id !== "new" && !id.startsWith("step")) ?? null;
+}
+
+async function runModerationDeskPair(check, session) {
+  const started = Date.now();
+  const problems = [];
+  const notes = [];
+  if (!session.admin) return { check, pass: false, why: "no admin session" };
+  if (!session.agent) return { check, pass: false, why: "no agent session" };
+
+  const adminDesk = await getDecoded("/dashboard/admin/listings", session.admin);
+  if (adminDesk.status !== 200) {
+    return { check, pass: false, status: adminDesk.status, why: `admin desk is ${adminDesk.status}` };
+  }
+  const adminId = firstListingId(adminDesk.text, "/dashboard/admin/listings");
+  if (!adminId) {
+    notes.push("admin desk lists no listing to open, moderation controls not asserted");
+  } else {
+    const adminEdit = await getDecoded(`/dashboard/admin/listings/${adminId}`, session.admin);
+    if (adminEdit.status !== 200) problems.push(`admin edit page ${adminId} is ${adminEdit.status}`);
+    for (const needle of ["Edit listing", "Approve & publish"]) {
+      if (!adminEdit.text.includes(needle)) problems.push(`admin edit page missing ${JSON.stringify(needle)}`);
+    }
+    if (!/>\s*Reject\s*</.test(adminEdit.text)) problems.push("admin edit page lost the Reject control");
+    const stranger = await getDecoded(`/dashboard/admin/listings/${adminId}`, session.agent);
+    if (stranger.status === 200) problems.push(`agent opened the admin edit page ${adminId}`);
+  }
+
+  const agentDesk = await getDecoded("/dashboard/agent/listings", session.agent);
+  if (agentDesk.status !== 200) {
+    problems.push(`agent desk is ${agentDesk.status}`);
+  } else {
+    const ownerId = firstListingId(agentDesk.text, "/dashboard/agent/listings");
+    if (!ownerId) {
+      notes.push("agent desk lists no listing of his own, owner controls not asserted");
+    } else {
+      const ownerEdit = await getDecoded(`/dashboard/agent/listings/${ownerId}`, session.agent);
+      if (ownerEdit.status !== 200) problems.push(`owner edit page ${ownerId} is ${ownerEdit.status}`);
+      if (!ownerEdit.text.includes("Edit listing")) problems.push("owner edit page is not the edit desk");
+      if (ownerEdit.text.includes("Approve & publish")) problems.push("owner edit page shows Approve & publish");
+      if (/>\s*Reject\s*</.test(ownerEdit.text)) problems.push("owner edit page shows the Reject control");
+    }
+  }
+
+  return {
+    check,
+    pass: problems.length === 0,
+    status: adminId && firstListingId(agentDesk.text, "/dashboard/agent/listings")
+      ? `${adminId}+${firstListingId(agentDesk.text, "/dashboard/agent/listings")}`
+      : "no ids",
+    ms: Date.now() - started,
+    why: problems.join("; ") || null,
+    note: notes.join("; ") || null,
+  };
+}
+
 const selected = ONLY
   ? CHECKS.filter((c) => `${c.name} ${c.path}`.toLowerCase().includes(ONLY.toLowerCase()))
   : CHECKS;
 
+function rolesOf(check) {
+  return (check.roles ?? (check.role ? [check.role] : [])).filter(Boolean);
+}
 if (LIST) {
-  for (const c of selected) console.log(`${c.role ?? "anon"}\t${c.path}\t${c.name}`);
+  for (const c of selected) console.log(`${rolesOf(c).join("+") || "anon"}\t${c.path}\t${c.name}`);
   process.exit(0);
 }
 
 const session = {};
 const setupProblems = [];
 // only log in for roles the selected checks actually need
-const neededRoles = [...new Set(selected.map((c) => c.role).filter(Boolean))];
+const neededRoles = [...new Set(selected.flatMap(rolesOf))];
 await Promise.all(
   neededRoles.map(async (role) => {
     const result = await sessionForRole(role);
@@ -517,13 +615,16 @@ async function worker() {
     const index = cursor++;
     if (index >= selected.length) return;
     const check = selected[index];
-    if (check.role && !session[check.role]) {
-      resultsByIndex[index] = { check, pass: false, why: `skipped: no ${check.role} session` };
+    const missing = rolesOf(check).filter((role) => !session[role]);
+    if (missing.length) {
+      resultsByIndex[index] = { check, pass: false, why: `skipped: no ${missing.join("/")} session` };
       continue;
     }
     resultsByIndex[index] = check.crawlPropertyLinks
       ? await runSitemapLinkCrawl(check)
-      : await runCheck(check, session);
+      : check.moderationDeskPair
+        ? await runModerationDeskPair(check, session)
+        : await runCheck(check, session);
   }
 }
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, selected.length) }, () => worker()));
@@ -533,7 +634,8 @@ const results = resultsByIndex;
 for (const r of results) {
   if (AS_JSON) break;
   const tag = r.pass ? "ok  " : "FAIL";
-  console.log(`${tag} ${String(r.status ?? "---").padEnd(3)} ${r.check.path} — ${r.check.name}${r.pass ? "" : `\n     ${r.why}`}`);
+  const tail = r.pass ? (r.note ? `\n     note ${r.note}` : "") : `\n     ${r.why}`;
+  console.log(`${tag} ${String(r.status ?? "---").padEnd(3)} ${r.check.path} — ${r.check.name}${tail}`);
 }
 const elapsedMs = Date.now() - startedAll;
 

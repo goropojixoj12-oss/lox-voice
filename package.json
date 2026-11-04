@@ -10,6 +10,7 @@
     "smoke": "node scripts/smoke-site.mjs",
     "test:analytics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/analytics-filters.test.mjs",
     "gate": "node scripts/gate.mjs",
+    "local": "node scripts/local-check.mjs",
     "ship": "bash scripts/ship.sh",
     "lint": "eslint",
     "llm:check": "npx tsx scripts/gonka-check.mjs"
