@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import type { Property, PropertyImage } from "@/lib/types";
+import { orderImagesWithCover } from "@/lib/list-property-media";
 import { cn } from "@/lib/utils";
 
 const FLIPBOOK_MAX_FRAMES = 24;
@@ -137,14 +138,16 @@ export function listingPreviewFromMedia(
   title: string,
   items: { kind: string; url: string; isCover?: boolean; isCardPreview?: boolean }[],
 ): Pick<Property, "images" | "videos" | "cardPreviewVideoUrl" | "title"> {
-  const images = items
-    .filter((i) => i.kind === "image")
-    .map((i, index) => ({
-      id: `img-${index}`,
-      url: i.url,
-      alt: title,
-      isCover: i.isCover || index === 0,
-    }));
+  const images = orderImagesWithCover(
+    items
+      .filter((i) => i.kind === "image")
+      .map((i, index) => ({
+        id: `img-${index}`,
+        url: i.url,
+        alt: title,
+        isCover: i.isCover,
+      })),
+  );
   const videos = items
     .filter((i) => i.kind === "video")
     .map((i, index) => ({

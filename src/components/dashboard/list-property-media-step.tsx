@@ -1,6 +1,7 @@
 "use client";
 
 import { upload } from "@vercel/blob/client";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -231,6 +232,16 @@ export function ListPropertyMediaStep({
     onChange(items.filter((i) => i.id !== id));
   }
 
+  function move(id: string, delta: number) {
+    const from = items.findIndex((i) => i.id === id);
+    const to = from + delta;
+    if (from < 0 || to < 0 || to >= items.length) return;
+    const next = [...items];
+    next[to] = items[from];
+    next[from] = items[to];
+    onChange(next);
+  }
+
   const imageCount = items.filter((i) => i.kind === "image").length;
   const videoCount = items.filter((i) => i.kind === "video").length;
 
@@ -290,6 +301,35 @@ export function ListPropertyMediaStep({
             <span className="rounded-full bg-[var(--color-secondary)] px-2 py-0.5 text-[10px] uppercase tracking-wide">
               {item.kind}
             </span>
+            {item.kind === "image" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={item.url}
+                alt={item.name}
+                loading="lazy"
+                className="h-12 w-16 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover"
+              />
+            ) : null}
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              aria-label="Move earlier"
+              disabled={items.findIndex((i) => i.id === item.id) === 0}
+              onClick={() => move(item.id, -1)}
+            >
+              <ArrowUp className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              aria-label="Move later"
+              disabled={items.findIndex((i) => i.id === item.id) === items.length - 1}
+              onClick={() => move(item.id, 1)}
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
             {item.kind === "image" ? (
               <Button
                 type="button"

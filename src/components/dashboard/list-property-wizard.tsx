@@ -63,6 +63,7 @@ type WizardContextValue = {
   setError: (msg: string) => void;
   loading: boolean;
   setLoading: (v: boolean) => void;
+  draftReady: boolean;
   validateStep: (stepIndex: number) => boolean;
   submit: () => Promise<void>;
 };
@@ -219,12 +220,14 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
       setError,
       loading,
       setLoading,
+      draftReady,
       validateStep,
       submit,
     }),
     [
       applyDealSelection,
       dealSelection,
+      draftReady,
       error,
       form,
       loading,
@@ -251,6 +254,7 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
     error,
     setError,
     loading,
+    draftReady,
     validateStep,
     submit,
   } = useListPropertyWizard();
@@ -267,12 +271,15 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
   }, [currentStepPath, pathname, router]);
 
   useEffect(() => {
+    // child effects run before the provider's draft-load effect, so without this
+    // guard a bookmarked step always bounced back to step 1
+    if (!draftReady) return;
     const invalid = firstInvalidListPropertyStep(form, dealSelection, mediaItems);
     if (invalid == null || invalid >= step) return;
     setError(listPropertyStepErrorMessage(invalid));
     goToStep(invalid);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- redirect once per invalid earlier step
-  }, [step, form, dealSelection, mediaItems]);
+  }, [step, draftReady, form, dealSelection, mediaItems]);
 
   function goToStep(index: number) {
     const href = listPropertyStepPathForBase(desk.base, index + 1);

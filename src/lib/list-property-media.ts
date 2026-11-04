@@ -21,15 +21,27 @@ export function sortListingMedia(items: ListingMediaItem[]): ListingMediaItem[] 
   });
 }
 
+/**
+ * Cover first, everything else in the order the user left it, and exactly one
+ * `isCover` flag — consumers read `images.find(i => i.isCover)` or `images[0]`,
+ * so two covers or a cover sitting at position 3 silently loses the user's choice.
+ */
+export function orderImagesWithCover<T extends { isCover?: boolean }>(images: T[]): T[] {
+  if (images.length === 0) return [];
+  const chosen = images.find((i) => i.isCover) ?? images[0];
+  return [chosen, ...images.filter((i) => i !== chosen)].map((i) => ({
+    ...i,
+    isCover: i === chosen,
+  }));
+}
+
 export function listingMediaToPropertyPayload(items: ListingMediaItem[], title: string) {
-  const images = items
-    .filter((i) => i.kind === "image")
-    .map((i, index) => ({
-      id: i.id,
-      url: i.url,
-      alt: title,
-      isCover: i.isCover || index === 0,
-    }));
+  const images = orderImagesWithCover(items.filter((i) => i.kind === "image")).map((i) => ({
+    id: i.id,
+    url: i.url,
+    alt: title,
+    isCover: i.isCover,
+  }));
 
   const videos = items
     .filter((i) => i.kind === "video")
