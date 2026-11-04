@@ -21,9 +21,6 @@ export function PropertyListingInquiry({
   return (
     <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-soft)]">
       <div className="space-y-3 px-4 pt-4">
-        <p className="text-center font-[family-name:var(--font-display)] text-2xl font-bold uppercase tracking-[0.14em] text-[var(--color-accent-soft)]">
-          30% OFF
-        </p>
         {coverUrl ? (
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)]">
             <Image

@@ -91,6 +91,12 @@ const CHECKS = [
     include: ["/media/listings/vue-aston/02.jpg"],
   },
   {
+    name: "listing detail: the 30% promo banner stays removed",
+    path: "/property/vue-aston-riverside-3bed-102m2",
+    status: [200],
+    exclude: ["30%"],
+  },
+  {
     name: "deleted bkk1 photo set stays gone",
     path: "/media/listings/bkk1-riverside/01.jpg",
     status: [404],
