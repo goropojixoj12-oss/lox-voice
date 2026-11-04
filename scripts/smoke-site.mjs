@@ -38,7 +38,7 @@ const TIMEOUT_MS = Number(argValue("timeout", "20000"));
 // checks are independent GETs; 6 in flight keeps prod happy and the dev server from thrashing
 const CONCURRENCY = Math.max(1, Number(argValue("concurrency", "6")));
 
-/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean}} Check */
+/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean, buyResidentialDescriptionProbe?: boolean}} Check */
 
 /** @type {Check[]} */
 const CHECKS = [
@@ -77,6 +77,11 @@ const CHECKS = [
   { name: "short stay", path: "/short-stay", status: [200], include: ["Short"] },
   { name: "map", path: "/map", status: [200], include: ["map"] },
   { name: "buy residential", path: "/buy/residential", status: [200], include: ["Residential", "Buy"] },
+  {
+    name: "buy residential: Vue Aston studio Description → condo showcase",
+    path: "/buy/residential",
+    buyResidentialDescriptionProbe: true,
+  },
   { name: "buy land", path: "/buy/land", status: [200], include: ["Land"] },
   { name: "rent residential", path: "/rent/residential", status: [200], include: ["Residential"] },
   { name: "login form", path: "/auth/login", status: [200], include: ["Sign in", "password"] },
@@ -471,6 +476,52 @@ async function runCheck(check, session) {
   };
 }
 
+const VUE_ASTON_STUDIO_SLUG_MARKER = "_ZFWs";
+const CONDO_SHOWCASE_URL = "cambodia-condo-showcase-174801.onhercules.app";
+
+async function runBuyResidentialDescriptionProbe(check) {
+  const started = Date.now();
+  try {
+    const res = await fetch(`${BASE}/buy/residential`, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (res.status !== 200) {
+      return {
+        check,
+        pass: false,
+        status: res.status,
+        ms: Date.now() - started,
+        why: `expected 200, got ${res.status}`,
+      };
+    }
+    const text = decodeEntities(await res.text().catch(() => ""));
+    if (!text.includes(VUE_ASTON_STUDIO_SLUG_MARKER)) {
+      return {
+        check,
+        pass: true,
+        status: 200,
+        ms: Date.now() - started,
+        note: "Vue Aston studio not in catalog (probe skipped)",
+      };
+    }
+    const problems = [];
+    if (!text.includes("Description")) problems.push('missing "Description" control');
+    if (!text.includes(CONDO_SHOWCASE_URL)) {
+      problems.push("missing condo showcase URL on Description link");
+    }
+    return {
+      check,
+      pass: problems.length === 0,
+      status: 200,
+      ms: Date.now() - started,
+      why: problems.length ? problems.join("; ") : null,
+    };
+  } catch (err) {
+    return { check, pass: false, why: `buy/residential probe failed: ${err.message}` };
+  }
+}
+
 async function runSitemapLiveNewsProbe(check) {
   const started = Date.now();
   let xml;
@@ -720,9 +771,11 @@ async function worker() {
       ? await runSitemapLinkCrawl(check)
       : check.sitemapLiveNewsProbe
         ? await runSitemapLiveNewsProbe(check)
-        : check.moderationDeskPair
-          ? await runModerationDeskPair(check, session)
-          : await runCheck(check, session);
+        : check.buyResidentialDescriptionProbe
+          ? await runBuyResidentialDescriptionProbe(check)
+          : check.moderationDeskPair
+            ? await runModerationDeskPair(check, session)
+            : await runCheck(check, session);
   }
 }
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, selected.length) }, () => worker()));

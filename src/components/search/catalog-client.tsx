@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/shared/states";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
 import { hasMapCoords } from "@/lib/property-coords";
+import { getListingDescriptionClickRedirect } from "@/lib/live-news-show";
 import type { Property } from "@/lib/types";
 
 export function CatalogClient({
@@ -56,6 +57,12 @@ export function CatalogClient({
     if (next <= 1) params.delete("page");
     else params.set("page", String(next));
     router.push(`${pathname}?${params.toString()}`);
+  }
+
+  function descriptionHrefForProperty(property: Property): string | undefined {
+    if (pathname !== "/buy/residential") return undefined;
+    if (property.slug !== VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG) return undefined;
+    return VUE_ASTON_CONDO_SHOWCASE_EMBED_URL;
   }
 
   return (
@@ -132,12 +139,24 @@ export function CatalogClient({
           ) : view === "map" ? (
             <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
               <PropertyMap items={items} activeId={activeId} onSelect={setActiveId} />
-              <PropertyList items={items} userId={userId} />
+              <PropertyList
+                items={items}
+                userId={userId}
+                descriptionHrefForProperty={descriptionHrefForProperty}
+              />
             </div>
           ) : view === "list" ? (
-            <PropertyList items={items} userId={userId} />
+            <PropertyList
+              items={items}
+              userId={userId}
+              descriptionHrefForProperty={descriptionHrefForProperty}
+            />
           ) : (
-            <PropertyGrid items={items} userId={userId} />
+            <PropertyGrid
+              items={items}
+              userId={userId}
+              descriptionHrefForProperty={descriptionHrefForProperty}
+            />
           )}
 
           {totalPages > 1 ? (

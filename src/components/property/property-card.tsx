@@ -7,6 +7,7 @@ import { ListingCardPreview } from "@/components/property/listing-card-preview";
 import { Bath, BedDouble, LandPlot, Maximize2 } from "lucide-react";
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
+import { ButtonLink } from "@/components/ui/button";
 import {
   propertyTypeLabels,
   transactionLabels,
@@ -19,10 +20,13 @@ export function PropertyCard({
   property,
   variant = "grid",
   userId,
+  externalDescriptionHref,
 }: {
   property: Property;
   variant?: "grid" | "list" | "editorial";
   userId?: string;
+  /** Full-page redirect for catalog “Description” actions (e.g. Vue Aston studio showcase). */
+  externalDescriptionHref?: string;
 }) {
   const frameRef = useRef(0);
   const router = useRouter();
@@ -149,6 +153,11 @@ export function PropertyCard({
             </span>
           ) : null}
         </div>
+        {externalDescriptionHref ? (
+          <ButtonLink href={externalDescriptionHref} variant="accent" size="sm" className="w-full">
+            Description
+          </ButtonLink>
+        ) : null}
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-1 text-xs">
           <span className="rounded-full bg-[var(--color-mist)] px-2.5 py-1 text-[var(--color-accent-soft)]">
             {propertyTypeLabels[property.propertyType]}
@@ -168,14 +177,21 @@ export function PropertyCard({
 export function PropertyGrid({
   items,
   userId,
+  descriptionHrefForProperty,
 }: {
   items: Property[];
   userId?: string;
+  descriptionHrefForProperty?: (property: Property) => string | undefined;
 }) {
   return (
     <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {items.map((property) => (
-        <PropertyCard key={property.id} property={property} userId={userId} />
+        <PropertyCard
+          key={property.id}
+          property={property}
+          userId={userId}
+          externalDescriptionHref={descriptionHrefForProperty?.(property)}
+        />
       ))}
     </div>
   );
@@ -184,14 +200,22 @@ export function PropertyGrid({
 export function PropertyList({
   items,
   userId,
+  descriptionHrefForProperty,
 }: {
   items: Property[];
   userId?: string;
+  descriptionHrefForProperty?: (property: Property) => string | undefined;
 }) {
   return (
     <div className="grid items-stretch gap-4">
       {items.map((property) => (
-        <PropertyCard key={property.id} property={property} variant="list" userId={userId} />
+        <PropertyCard
+          key={property.id}
+          property={property}
+          variant="list"
+          userId={userId}
+          externalDescriptionHref={descriptionHrefForProperty?.(property)}
+        />
       ))}
     </div>
   );
