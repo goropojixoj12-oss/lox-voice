@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local scratch and snapshots (gitignored, same list Tailwind must not walk):
+    "tmp/**",
+    "backups/**",
   ]),
 ]);
 

@@ -18,18 +18,50 @@ If `npm ci` still complains about the lockfile, run `npm install` once (regenera
 
 Open [http://127.0.0.1:43123](http://127.0.0.1:43123).
 
+## Smoke contract
+
+`npm run smoke` walks the running build with GET requests only (plus one login POST
+per role) and fails with exit 1 on the first broken contract: route statuses, the
+nav and brand checkpoints of section 8 in `AGENTS.md`, the Vue Aston card, retired
+photo sets staying 404, and `\uXXXX` escapes printing as visible text.
+
+```bash
+npm run smoke -- --base=http://127.0.0.1:43123   # or https://www.seaps.asia
+npm run smoke -- --only dashboard                # subset by path/name
+npm run smoke -- --json                          # machine-readable summary
+npm run smoke -- --list                          # print the checklist, no requests
+```
+
+Roles use `SMOKE_AGENT_EMAIL` / `SMOKE_AGENT_PASSWORD` / `SMOKE_ADMIN_EMAIL` /
+`SMOKE_ADMIN_PASSWORD`, taken from the environment first and then from `.env.test`
+(gitignored). The script never prints a password and never sends a mutating
+request, so it is safe against prod. Add a check to `CHECKS` in
+`scripts/smoke-site.mjs` with the same commit that lands or retires a feature
+(rule 20 in `AGENTS.md`).
+
 ### Two local folders on Windows?
 
 If you have both `C:\Users\Administrator\lox-voice` and a `khmer_backup\lox-voice` copy, read **[docs/local-windows-clones-guide-ru.md](docs/local-windows-clones-guide-ru.md)** and run **`scripts/compare-windows-clones.ps1`** to pick one primary clone before `git push`.
 
 ## Access accounts
 
-| Role  | Email                 | Password         |
-| ----- | --------------------- | ---------------- |
-| Buyer | buyer@seaps.com.kh    | seaps-buyer-123  |
-| Owner | owner@seaps.com.kh    | seaps-owner-123  |
-| Agent | agent@seaps.com.kh    | seaps-agent-123  |
-| Admin | ceo@seaps.asia        | ceo@seaps.asiaQ  |
+Log in at [/auth/login](http://127.0.0.1:43123/auth/login) with one of these emails.
+Passwords are not published here any more: keep them in the gitignored `.env.test`
+next to this README, one per line:
+
+```
+SMOKE_AGENT_EMAIL=agent@seaps.com.kh
+SMOKE_AGENT_PASSWORD=...
+SMOKE_ADMIN_EMAIL=ceo@seaps.asia
+SMOKE_ADMIN_PASSWORD=...
+```
+
+`npm run smoke` reads the same file. Windows: `notepad .env.test` shows what you
+saved there. The demo accounts are `buyer@seaps.com.kh`, `owner@seaps.com.kh`,
+`agent@seaps.com.kh`, `ceo@seaps.asia` (admin); their bcrypt hashes live in
+`src/data/users.ts`. Note: the old values are still in git history from when this
+table was public, so rotating them is the only real cleanup — ask before rotating,
+it changes every existing login.
 
 ## Brand
 
