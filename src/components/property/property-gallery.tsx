@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
 import type { PropertyImage } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { LiveNewsShowPanel } from "@/components/property/live-news-show-panel";
 
 export function PropertyGallery({ images }: { images: PropertyImage[] }) {
   const searchParams = useSearchParams();
@@ -19,11 +20,7 @@ export function PropertyGallery({ images }: { images: PropertyImage[] }) {
   const current = images[active] ?? images[0];
 
   if (!current) {
-    return (
-      <div className="grid aspect-[16/10] w-full place-items-center rounded-[var(--radius-xl)] bg-[var(--color-secondary)] text-sm text-[var(--color-muted)]">
-        No photos yet
-      </div>
-    );
+    return <LiveNewsShowPanel />;
   }
 
   return (

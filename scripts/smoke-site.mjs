@@ -38,7 +38,7 @@ const TIMEOUT_MS = Number(argValue("timeout", "20000"));
 // checks are independent GETs; 6 in flight keeps prod happy and the dev server from thrashing
 const CONCURRENCY = Math.max(1, Number(argValue("concurrency", "6")));
 
-/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[]}} Check */
+/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean}} Check */
 
 /** @type {Check[]} */
 const CHECKS = [
@@ -82,6 +82,11 @@ const CHECKS = [
   { name: "login form", path: "/auth/login", status: [200], include: ["Sign in", "password"] },
   { name: "privacy", path: "/privacy", status: [200] },
   { name: "terms", path: "/terms", status: [200] },
+  {
+    name: "zero-photo listing: live news panel instead of empty stub",
+    path: "/sitemap.xml",
+    sitemapLiveNewsProbe: true,
+  },
   {
     name: "vue aston card: own photos only, no cube",
     path: "/property/vue-aston-riverside-3bed-102m2",
@@ -466,6 +471,71 @@ async function runCheck(check, session) {
   };
 }
 
+async function runSitemapLiveNewsProbe(check) {
+  const started = Date.now();
+  let xml;
+  try {
+    const res = await fetch(`${BASE}/sitemap.xml`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+    xml = await res.text();
+  } catch (err) {
+    return { check, pass: false, why: `sitemap request failed: ${err.message}` };
+  }
+  const links = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+    .map((match) => match[1])
+    .filter((url) => new URL(url).pathname.startsWith("/property/"))
+    .map((url) => `${BASE}${new URL(url).pathname}`);
+  for (const url of links) {
+    try {
+      const res = await fetch(url, {
+        redirect: "manual",
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.status !== 200) continue;
+      const text = decodeEntities(await res.text().catch(() => ""));
+      if (!text.includes("Live News Show")) continue;
+      const problems = [];
+      if (text.includes("No photos yet")) problems.push('still shows "No photos yet"');
+      if (problems.length) {
+        return {
+          check,
+          pass: false,
+          status: new URL(url).pathname,
+          ms: Date.now() - started,
+          why: problems.join("; "),
+        };
+      }
+      return {
+        check,
+        pass: true,
+        status: new URL(url).pathname,
+        ms: Date.now() - started,
+        why: null,
+      };
+    } catch {
+      continue;
+    }
+  }
+  const isLocalHost =
+    BASE.startsWith("http://127.0.0.1:") || BASE.startsWith("http://localhost:");
+  if (isLocalHost) {
+    return {
+      check,
+      pass: true,
+      status: "skip",
+      ms: Date.now() - started,
+      why: null,
+      note: "local file store has no zero-photo listings; prod smoke after ship asserts Live News Show",
+    };
+  }
+  return {
+    check,
+    pass: false,
+    status: "0",
+    ms: Date.now() - started,
+    why: "no sitemap property page renders Live News Show (need a zero-photo listing)",
+  };
+}
+
 async function runSitemapLinkCrawl(check) {
   const started = Date.now();
   let xml;
@@ -622,9 +692,11 @@ async function worker() {
     }
     resultsByIndex[index] = check.crawlPropertyLinks
       ? await runSitemapLinkCrawl(check)
-      : check.moderationDeskPair
-        ? await runModerationDeskPair(check, session)
-        : await runCheck(check, session);
+      : check.sitemapLiveNewsProbe
+        ? await runSitemapLiveNewsProbe(check)
+        : check.moderationDeskPair
+          ? await runModerationDeskPair(check, session)
+          : await runCheck(check, session);
   }
 }
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, selected.length) }, () => worker()));
