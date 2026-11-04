@@ -5,7 +5,8 @@ import {
   applyAdminListingPatch,
   type AdminListingPatchInput,
 } from "@/lib/admin-listing-patch";
-import { getRuntimeListingById, saveRuntimeListing } from "@/lib/store";
+import { getRuntimeListingById, getRuntimeListings, saveRuntimeListing } from "@/lib/store";
+import { deleteRemovedListingMedia } from "@/lib/listing-media-files";
 import type { Property } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -65,5 +66,15 @@ export async function PATCH(request: Request, context: RouteContext) {
   };
 
   await saveRuntimeListing(updated);
-  return NextResponse.json({ listing: updated });
+  const otherListings = (await getRuntimeListings()).filter((l) => l.id !== updated.id);
+  try {
+    const removedMedia = await deleteRemovedListingMedia(existing, updated, otherListings);
+    return NextResponse.json({ listing: updated, removedMedia });
+  } catch (error) {
+    console.error("owner listing media cleanup failed", updated.id, error);
+    return NextResponse.json(
+      { listing: updated, mediaCleanupError: "Saved, but some removed files could not be deleted" },
+      { status: 200 },
+    );
+  }
 }

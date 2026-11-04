@@ -6,8 +6,10 @@ import {
   BLOB_PREFIX,
   listingMediaPublicUrl,
   sanitizeListingFileName,
+  storageKeyFromListingMediaUrl,
 } from "@/lib/listing-media-constants";
 import { isBlobStorageAvailable } from "@/lib/store-persistence";
+import type { Property } from "@/lib/types";
 
 const LOCAL_DIR_NAME = "listing-media";
 
@@ -126,4 +128,34 @@ export async function deleteListingMediaFile(storageKey: string): Promise<void> 
   const filePath = await localFilePath(storageKey);
   await fs.unlink(filePath).catch(() => undefined);
   await fs.unlink(`${filePath}.meta.json`).catch(() => undefined);
+}
+
+type ListingMedia = Pick<Property, "images" | "videos">;
+
+function collectListingMediaKeys(listing: ListingMedia): Set<string> {
+  const keys = new Set<string>();
+  for (const item of [...(listing.images ?? []), ...(listing.videos ?? [])]) {
+    const key = item.storageKey || storageKeyFromListingMediaUrl(item.url);
+    if (key) keys.add(key);
+  }
+  return keys;
+}
+
+/**
+ * Uploaded files that the listing had before and no longer shows. Keys still used by
+ * the saved listing or by any other listing are protected, so removing a photo from one
+ * card cannot blank a file another card is still displaying.
+ */
+export async function deleteRemovedListingMedia(
+  before: ListingMedia,
+  after: ListingMedia,
+  stillReferenced: ListingMedia[] = [],
+): Promise<string[]> {
+  const protectedKeys = collectListingMediaKeys(after);
+  for (const listing of stillReferenced) {
+    for (const key of collectListingMediaKeys(listing)) protectedKeys.add(key);
+  }
+  const removed = [...collectListingMediaKeys(before)].filter((key) => !protectedKeys.has(key));
+  for (const key of removed) await deleteListingMediaFile(key);
+  return removed;
 }

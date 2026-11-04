@@ -95,6 +95,11 @@ const CHECKS = [
     path: "/media/listings/bkk1-riverside/01.jpg",
     status: [404],
   },
+  {
+    name: "listing media endpoint: a file that is not there is 404, not 500",
+    path: "/api/listings/media/smoke-user/smoke-no-such-upload.jpg",
+    status: [404],
+  },
   { name: "unknown slug is 404", path: "/property/no-such-slug-xyz", status: [404] },
   {
     name: "sitemap: served and lists a property page",

@@ -4,8 +4,10 @@ import { requireRole } from "@/lib/auth";
 import {
   deleteRuntimeListing,
   getRuntimeListingById,
+  getRuntimeListings,
   saveRuntimeListing,
 } from "@/lib/store";
+import { deleteRemovedListingMedia } from "@/lib/listing-media-files";
 import { resetListingViewTracking } from "@/lib/listing-view-store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import type {
@@ -22,6 +24,7 @@ const imageSchema = z.object({
   url: z.string().min(1),
   alt: z.string().min(1),
   isCover: z.boolean().optional(),
+  storageKey: z.string().min(1).optional(),
 });
 
 const videoSchema = z.object({
@@ -29,6 +32,7 @@ const videoSchema = z.object({
   url: z.string().min(1),
   label: z.string().optional(),
   role: z.enum(["tour", "card_preview"]).optional(),
+  storageKey: z.string().min(1).optional(),
 });
 
 const patchSchema = z.object({
@@ -185,7 +189,17 @@ export async function PATCH(request: Request, context: RouteContext) {
   };
 
   await saveRuntimeListing(updated);
-  return NextResponse.json({ listing: updated });
+  const otherListings = (await getRuntimeListings()).filter((l) => l.id !== updated.id);
+  try {
+    const removedMedia = await deleteRemovedListingMedia(existing, updated, otherListings);
+    return NextResponse.json({ listing: updated, removedMedia });
+  } catch (error) {
+    console.error("listing media cleanup failed", updated.id, error);
+    return NextResponse.json(
+      { listing: updated, mediaCleanupError: "Saved, but some removed files could not be deleted" },
+      { status: 200 },
+    );
+  }
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {

@@ -19,6 +19,7 @@ import {
 } from "@/components/dashboard/list-property-deal-step";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { ListPropertyMediaStep } from "@/components/dashboard/list-property-media-step";
+import { storageKeyFromListingMediaUrl } from "@/lib/listing-media-constants";
 import { ListingCardPreview, listingPreviewFromMedia } from "@/components/property/listing-card-preview";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
@@ -102,6 +103,7 @@ function listingToMedia(listing: Property): ListingMediaItem[] {
       id: img.id,
       kind: "image",
       url: img.url,
+      storageKey: img.storageKey ?? storageKeyFromListingMediaUrl(img.url) ?? undefined,
       name: img.alt || "Photo",
       isCover: img.isCover,
     });
@@ -111,6 +113,7 @@ function listingToMedia(listing: Property): ListingMediaItem[] {
       id: vid.id,
       kind: "video",
       url: vid.url,
+      storageKey: vid.storageKey ?? storageKeyFromListingMediaUrl(vid.url) ?? undefined,
       name: vid.label || "Video",
       isCardPreview: vid.role === "card_preview",
     });

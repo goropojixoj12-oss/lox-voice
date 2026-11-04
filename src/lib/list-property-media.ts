@@ -54,6 +54,7 @@ export function listingMediaToPropertyPayload(items: ListingMediaItem[], title: 
     url: i.url,
     alt: title,
     isCover: i.isCover,
+    storageKey: i.storageKey,
   }));
 
   const videos = items
@@ -63,6 +64,7 @@ export function listingMediaToPropertyPayload(items: ListingMediaItem[], title: 
       url: i.url,
       label: i.name,
       role: i.isCardPreview ? ("card_preview" as const) : ("tour" as const),
+      storageKey: i.storageKey,
     }));
 
   const cardPreview = items.find((i) => i.kind === "video" && i.isCardPreview);

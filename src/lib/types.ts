@@ -73,6 +73,8 @@ export interface PropertyImage {
   url: string;
   alt: string;
   isCover?: boolean;
+  /** Blob key of an uploaded file; absent for photos shipped in `public/`. */
+  storageKey?: string;
 }
 
 export interface PropertyVideo {
@@ -81,6 +83,7 @@ export interface PropertyVideo {
   label?: string;
   /** card_preview = autoplay loop on listing cards */
   role?: "tour" | "card_preview";
+  storageKey?: string;
 }
 
 export type NoteVisibility = "admin_only" | "staff" | "public";

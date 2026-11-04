@@ -11,6 +11,7 @@ const imageSchema = z.object({
   url: z.string().min(1),
   alt: z.string().min(1),
   isCover: z.boolean().optional(),
+  storageKey: z.string().min(1).optional(),
 });
 
 const videoSchema = z.object({
@@ -18,6 +19,7 @@ const videoSchema = z.object({
   url: z.string().min(1),
   label: z.string().optional(),
   role: z.enum(["tour", "card_preview"]).optional(),
+  storageKey: z.string().min(1).optional(),
 });
 
 const mediaItemSchema = z.object({
