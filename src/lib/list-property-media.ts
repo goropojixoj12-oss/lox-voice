@@ -1,5 +1,18 @@
 export type ListingMediaKind = "image" | "video";
 
+export const PREVIEW_PHOTO_DEFAULT = 3;
+export const PREVIEW_PHOTO_MIN = 2;
+export const PREVIEW_PHOTO_MAX = 8;
+export const PREVIEW_PHOTO_CHOICES = [2, 3, 4, 5, 6, 7, 8];
+
+/** Anything odd (empty field, old listings, junk from the store) falls back to the default. */
+export function clampPreviewPhotoCount(value: unknown): number {
+  if (value === null || value === undefined || value === "") return PREVIEW_PHOTO_DEFAULT;
+  const n = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(n)) return PREVIEW_PHOTO_DEFAULT;
+  return Math.min(PREVIEW_PHOTO_MAX, Math.max(PREVIEW_PHOTO_MIN, Math.round(n)));
+}
+
 export type ListingMediaItem = {
   id: string;
   kind: ListingMediaKind;

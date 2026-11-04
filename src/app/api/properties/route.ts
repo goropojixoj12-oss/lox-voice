@@ -6,6 +6,7 @@ import { getPlatformUserById } from "@/lib/admin-platform-users";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
 import { isPublicListing } from "@/lib/listing-access";
+import { clampPreviewPhotoCount } from "@/lib/list-property-media";
 import { saveRuntimeListing } from "@/lib/store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import { slugify } from "@/lib/utils";
@@ -78,6 +79,7 @@ const createSchema = z.object({
     )
     .optional(),
   cardPreviewVideoUrl: z.string().nullable().optional(),
+  previewPhotoCount: z.number().int().min(2).max(8).optional().nullable(),
   createdByUserId: z.string().min(1).optional(),
 });
 
@@ -143,6 +145,7 @@ export async function POST(request: Request) {
     images: data.images,
     videos: data.videos,
     cardPreviewVideoUrl: data.cardPreviewVideoUrl ?? null,
+    previewPhotoCount: clampPreviewPhotoCount(data.previewPhotoCount),
     hasVideoTour: Boolean(data.videos?.length),
     location: {
       country: countryRow.name,

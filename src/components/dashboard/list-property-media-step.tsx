@@ -5,11 +5,11 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/input";
+import { Label, Select } from "@/components/ui/input";
 import { BLOB_PREFIX } from "@/lib/listing-media-constants";
 import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
 import { listingMediaPublicUrl, sanitizeListingFileName } from "@/lib/listing-media-constants";
-import type { ListingMediaItem } from "@/lib/list-property-media";
+import { PREVIEW_PHOTO_CHOICES, type ListingMediaItem } from "@/lib/list-property-media";
 import { withActingAgentUser } from "@/lib/agent-desk-api-client";
 import { cn } from "@/lib/utils";
 
@@ -121,6 +121,8 @@ export function ListPropertyMediaStep({
   listingTitle,
   uploadUserId: uploadUserIdOverride,
   actingUserId,
+  previewCount,
+  onPreviewCountChange,
 }: {
   items: ListingMediaItem[];
   onChange: (next: ListingMediaItem[]) => void;
@@ -128,6 +130,8 @@ export function ListPropertyMediaStep({
   /** Storage namespace for uploads (agent account when admin is editing). */
   uploadUserId?: string | null;
   actingUserId?: string;
+  previewCount: number;
+  onPreviewCountChange: (next: number) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -290,6 +294,30 @@ export function ListPropertyMediaStep({
         {imageCount} photo{imageCount === 1 ? "" : "s"}, {videoCount} video
         {videoCount === 1 ? "" : "s"} uploaded
       </p>
+
+      <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+        <Label htmlFor="preview-photo-count" className="text-sm">
+          Photos in the card preview
+        </Label>
+        <Select
+          id="preview-photo-count"
+          value={String(previewCount)}
+          onChange={(e) => onPreviewCountChange(Number(e.target.value))}
+          className="w-24"
+          disabled={imageCount < 2}
+        >
+          {PREVIEW_PHOTO_CHOICES.map((n) => (
+            <option key={n} value={String(n)}>
+              {n}
+            </option>
+          ))}
+        </Select>
+        <span className="text-xs text-[var(--color-muted)]">
+          {imageCount >= 2
+            ? `cards flip through the first ${Math.min(previewCount, imageCount)} of ${imageCount} photos, starting with the cover`
+            : "add at least two photos and the card starts flipping through them"}
+        </span>
+      </div>
 
       <ul className="max-h-80 space-y-2 overflow-y-auto pr-1">
         {items.map((item) => (

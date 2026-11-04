@@ -1,6 +1,9 @@
 import type { DealSelection } from "@/components/dashboard/list-property-deal-step";
 import { DEFAULT_COUNTRY_CODE, isWorldCountryCode } from "@/data/countries";
-import type { ListingMediaItem } from "@/lib/list-property-media";
+import {
+  clampPreviewPhotoCount,
+  type ListingMediaItem,
+} from "@/lib/list-property-media";
 import type { PropertyType, TransactionType } from "@/lib/types";
 
 export const LIST_PROPERTY_DRAFT_KEY = "seaps-list-property-draft";
@@ -31,6 +34,7 @@ export type ListPropertyDraftForm = {
   imageUrl: string;
   contactName: string;
   contactEmail: string;
+  previewCount: string;
 };
 
 export type ListPropertyDraft = {
@@ -66,6 +70,7 @@ export const listPropertyDefaultForm: ListPropertyDraftForm = {
   imageUrl: "/media/photos/photo-1502672260266-1c1ef2d93688.jpg",
   contactName: "",
   contactEmail: "",
+  previewCount: "3",
 };
 
 const PROPERTY_TYPES = new Set<PropertyType>([
@@ -141,6 +146,7 @@ function parseForm(value: unknown): ListPropertyDraftForm {
     address: pickString(value, "address", base.address),
     lat: pickString(value, "lat", base.lat),
     lng: pickString(value, "lng", base.lng),
+    previewCount: String(clampPreviewPhotoCount(pickString(value, "previewCount", base.previewCount))),
     price: pickString(value, "price", base.price),
     currency: pickString(value, "currency", base.currency),
     pricePeriod: PRICE_PERIODS.has(pricePeriod as ListPropertyDraftForm["pricePeriod"])

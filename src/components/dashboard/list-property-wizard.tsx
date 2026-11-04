@@ -37,6 +37,7 @@ import {
   type ListPropertyDraftForm,
 } from "@/lib/list-property-draft";
 import {
+  clampPreviewPhotoCount,
   listingMediaToPropertyPayload,
   type ListingMediaItem,
 } from "@/lib/list-property-media";
@@ -179,6 +180,7 @@ export function ListPropertyWizardProvider({ children }: { children: ReactNode }
             images: media.images,
             videos: media.videos,
             cardPreviewVideoUrl: media.cardPreviewVideoUrl,
+            previewPhotoCount: clampPreviewPhotoCount(payloadForm.previewCount),
             ...(desk.actingUserId ? { createdByUserId: desk.actingUserId } : {}),
           }),
         }),
@@ -537,6 +539,8 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
               listingTitle={form.title}
               uploadUserId={desk.actingUserId}
               actingUserId={desk.actingUserId}
+              previewCount={clampPreviewPhotoCount(form.previewCount)}
+              onPreviewCountChange={(next) => update("previewCount", String(next))}
             />
             {mediaItems.length > 0 ? (
               <div>
@@ -547,6 +551,7 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
                   <ListingCardPreview
                     property={{
                       ...listingPreviewFromMedia(form.title || "Listing", mediaItems),
+                      previewPhotoCount: clampPreviewPhotoCount(form.previewCount),
                       id: "draft",
                       slug: "draft",
                       summary: "",

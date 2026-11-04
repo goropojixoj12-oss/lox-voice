@@ -132,6 +132,13 @@ const CHECKS = [
     include: ["Choose photos"],
   },
   {
+    name: "wizard step5: preview photo count control",
+    path: "/dashboard/agent/list-property/step5",
+    role: "agent",
+    status: [200],
+    include: ["Photos in the card preview", "preview-photo-count"],
+  },
+  {
     name: "admin desk: closed to agent",
     path: "/dashboard/admin/listings",
     role: "agent",

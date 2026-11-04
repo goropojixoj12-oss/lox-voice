@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
-import { listingMediaToPropertyPayload } from "@/lib/list-property-media";
+import {
+  clampPreviewPhotoCount,
+  listingMediaToPropertyPayload,
+} from "@/lib/list-property-media";
 import type { ListingStatus, Property } from "@/lib/types";
 
 const imageSchema = z.object({
@@ -96,6 +99,7 @@ export const adminListingPatchSchema = z.object({
   images: z.array(imageSchema).optional(),
   videos: z.array(videoSchema).optional(),
   cardPreviewVideoUrl: z.string().nullable().optional(),
+  previewPhotoCount: z.number().int().min(2).max(8).optional().nullable(),
   mediaItems: z.array(mediaItemSchema).optional(),
 });
 
@@ -127,6 +131,7 @@ export function applyAdminListingPatch(
   let images = existing.images;
   let videos = existing.videos;
   let cardPreviewVideoUrl = existing.cardPreviewVideoUrl ?? null;
+  let previewPhotoCount = existing.previewPhotoCount ?? null;
   let hasVideoTour = existing.hasVideoTour;
 
   if (data.mediaItems) {
@@ -140,6 +145,9 @@ export function applyAdminListingPatch(
     if (data.videos !== undefined) videos = data.videos;
     if (data.cardPreviewVideoUrl !== undefined) {
       cardPreviewVideoUrl = data.cardPreviewVideoUrl;
+    }
+    if (data.previewPhotoCount !== undefined) {
+      previewPhotoCount = clampPreviewPhotoCount(data.previewPhotoCount);
     }
     if (data.videos !== undefined) {
       hasVideoTour = Boolean(data.videos?.length);
@@ -208,6 +216,7 @@ export function applyAdminListingPatch(
     images,
     videos,
     cardPreviewVideoUrl,
+    previewPhotoCount,
     hasVideoTour,
     location,
     status,

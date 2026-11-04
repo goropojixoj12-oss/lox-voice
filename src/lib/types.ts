@@ -132,6 +132,8 @@ export interface Property {
   images: PropertyImage[];
   videos?: PropertyVideo[];
   cardPreviewVideoUrl?: string | null;
+  /** How many photos the site-wide card flipbook cycles through. */
+  previewPhotoCount?: number | null;
   location: LocationRef;
   agentId?: string;
   agencyId?: string;

@@ -29,6 +29,7 @@ import {
 import { getCountryByCode, isWorldCountryCode, worldCountries } from "@/data/countries";
 import { listPropertyDefaultForm, type ListPropertyDraftForm } from "@/lib/list-property-draft";
 import {
+  clampPreviewPhotoCount,
   listingMediaToPropertyPayload,
   type ListingMediaItem,
 } from "@/lib/list-property-media";
@@ -76,6 +77,7 @@ function listingToForm(listing: Property): ListPropertyDraftForm {
     address: listing.location.address,
     lat: Number.isFinite(listing.location.lat) && listing.location.lat !== 0 ? String(listing.location.lat) : "",
     lng: Number.isFinite(listing.location.lng) && listing.location.lng !== 0 ? String(listing.location.lng) : "",
+    previewCount: String(clampPreviewPhotoCount(listing.previewPhotoCount)),
     price: String(listing.price),
     currency: listing.currency,
     pricePeriod: listing.pricePeriod ?? "",
@@ -232,6 +234,7 @@ export function AdminListingEditWizardProvider({
           images: media.images,
           videos: media.videos,
           cardPreviewVideoUrl: media.cardPreviewVideoUrl,
+          previewPhotoCount: clampPreviewPhotoCount(payloadForm.previewCount),
         }),
       });
       } catch {
@@ -571,6 +574,8 @@ export function AdminListingEditWizard({
               items={mediaItems}
               onChange={setMediaItems}
               listingTitle={form.title}
+              previewCount={clampPreviewPhotoCount(form.previewCount)}
+              onPreviewCountChange={(next) => update("previewCount", String(next))}
             />
             {mediaItems.length > 0 ? (
               <div>
@@ -581,6 +586,7 @@ export function AdminListingEditWizard({
                   <ListingCardPreview
                     property={{
                       ...listingPreviewFromMedia(form.title || "Listing", mediaItems),
+                      previewPhotoCount: clampPreviewPhotoCount(form.previewCount),
                       id: "edit-preview",
                       slug: "edit-preview",
                       summary: "",

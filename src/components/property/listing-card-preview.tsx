@@ -3,10 +3,9 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import type { Property, PropertyImage } from "@/lib/types";
-import { orderImagesWithCover } from "@/lib/list-property-media";
+import { clampPreviewPhotoCount, orderImagesWithCover } from "@/lib/list-property-media";
 import { cn } from "@/lib/utils";
 
-const FLIPBOOK_MAX_FRAMES = 24;
 const FLIPBOOK_MS = 480;
 
 function pickCardVideoUrl(property: Property): string | null {
@@ -92,12 +91,12 @@ export function ListingCardPreview({
   const videoUrl = pickCardVideoUrl(property);
 
   const flipFrames = useMemo(() => {
-    const urls = property.images
+    const urls = orderImagesWithCover(property.images)
       .map((i: PropertyImage) => i.url)
       .filter(Boolean)
-      .slice(0, FLIPBOOK_MAX_FRAMES);
+      .slice(0, clampPreviewPhotoCount(property.previewPhotoCount));
     return urls.length >= 2 ? urls : [];
-  }, [property.images]);
+  }, [property.images, property.previewPhotoCount]);
 
   if (videoUrl) {
     return (
