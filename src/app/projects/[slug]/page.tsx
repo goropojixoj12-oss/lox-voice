@@ -6,6 +6,7 @@ import { InquiryForm } from "@/components/forms/inquiry-form";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
 import { amenityLabels } from "@/lib/labels";
+import { hasMapCoords } from "@/lib/property-coords";
 import { getProjectBySlug, projects } from "@/data/projects";
 import { getPropertiesByProject } from "@/data/properties";
 import { formatPrice } from "@/lib/utils";
@@ -139,15 +140,13 @@ export default async function ProjectDetailPage({
             <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Location
             </h2>
-            <PropertyMap
-              items={units.length ? units : []}
-              activeId={units[0]?.id}
-            />
-            {!units.length ? (
-              <p className="mt-2 text-sm text-[var(--color-muted)]">
+            {units.some(hasMapCoords) ? (
+              <PropertyMap items={units} activeId={units[0]?.id} />
+            ) : (
+              <p className="text-sm text-[var(--color-muted)]">
                 {project.location.district}, {project.location.city} · {project.location.address}
               </p>
-            ) : null}
+            )}
           </section>
         </div>
 

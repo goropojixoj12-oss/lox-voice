@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { hasMapCoords } from "@/lib/property-coords";
 import type { Property } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import "leaflet/dist/leaflet.css";
@@ -10,9 +12,8 @@ import "leaflet/dist/leaflet.css";
 const DEFAULT_CENTER: L.LatLngExpression = [12.5657, 104.991];
 const DEFAULT_ZOOM = 7;
 
-function hasValidCoords(property: Property) {
-  const { lat, lng } = property.location;
-  return Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0);
+function listingHref(property: Property) {
+  return `/property/${property.slug}`;
 }
 
 function escapeHtml(value: string) {
@@ -48,8 +49,11 @@ export function LeafletPropertyMap({
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const router = useRouter();
+  const routerRef = useRef(router);
+  routerRef.current = router;
 
-  const mappable = items.filter(hasValidCoords);
+  const mappable = items.filter(hasMapCoords);
   const activeProperty = items.find((p) => p.id === activeId);
 
   useEffect(() => {
@@ -78,7 +82,7 @@ export function LeafletPropertyMap({
     const map = mapRef.current;
     if (!map) return;
 
-    const pins = items.filter(hasValidCoords);
+    const pins = items.filter(hasMapCoords);
     const nextIds = new Set(pins.map((p) => p.id));
 
     for (const [id, marker] of markersRef.current) {
@@ -105,7 +109,11 @@ export function LeafletPropertyMap({
         zIndexOffset: isActive ? 1000 : 0,
       }).addTo(map);
 
-      marker.on("click", () => onSelectRef.current?.(property.id));
+      marker.on("click", () => {
+        onSelectRef.current?.(property.id);
+        const href = listingHref(property);
+        if (window.location.pathname !== href) routerRef.current.push(href);
+      });
       markersRef.current.set(property.id, marker);
     }
 
@@ -136,7 +144,7 @@ export function LeafletPropertyMap({
               </p>
             </div>
             <Link
-              href={`/property/${activeProperty.slug}`}
+              href={listingHref(activeProperty)}
               className="text-sm font-semibold text-[var(--color-accent)]"
             >
               Open

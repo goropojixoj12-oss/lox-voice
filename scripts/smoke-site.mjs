@@ -78,6 +78,13 @@ const CHECKS = [
     exclude: ["/media/listings/vue-aston/03.jpg", "bkk1-riverside", "tesseract"],
   },
   {
+    name: "listing detail: location map renders",
+    path: "/property/vue-aston-riverside-3bed-102m2",
+    status: [200],
+    include: ["Location", "Loading map"],
+    exclude: ["No listings with map coordinates"],
+  },
+  {
     name: "deleted bkk1 photo set stays gone",
     path: "/media/listings/bkk1-riverside/01.jpg",
     status: [404],

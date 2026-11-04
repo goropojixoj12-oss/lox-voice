@@ -21,6 +21,7 @@ import {
   getRelatedProperties,
 } from "@/data/properties";
 import { getAllProperties } from "@/lib/catalog";
+import { hasMapCoords } from "@/lib/property-coords";
 import { getSession } from "@/lib/auth";
 import { canViewListing, isPublicListing } from "@/lib/listing-access";
 import {
@@ -358,7 +359,14 @@ export default async function PropertyDetailPage({
             <h2 className="mb-3 font-[family-name:var(--font-display)] text-2xl text-[var(--color-accent-soft)]">
               Location
             </h2>
-            <PropertyMap items={[property]} activeId={property.id} />
+            {hasMapCoords(property) ? (
+              <PropertyMap items={[property]} activeId={property.id} />
+            ) : (
+              <p className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-sm text-[var(--color-muted)]">
+                {property.location.address} · {property.location.district},{" "}
+                {property.location.city}
+              </p>
+            )}
           </section>
         </div>
 
