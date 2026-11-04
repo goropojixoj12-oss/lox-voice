@@ -14,7 +14,7 @@
  * the environment already says otherwise, so a local gate never writes to Vercel Blob.
  */
 import { spawn, spawnSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const ROOT = path.resolve(import.meta.dirname, "..");
@@ -114,6 +114,16 @@ if (!FAST && LINT) {
 }
 
 if (!FAST) {
+  if (
+    !(await stage("analytics filters", () =>
+      run(
+        process.execPath,
+        ["--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", "--test", path.join(ROOT, "tests", "analytics-filters.test.mjs")],
+        { echo: true },
+      ),
+    ))
+  )
+    process.exit(1);
   if (!(await stage("next build", () => run(process.execPath, [NEXT_BIN, "build"], { echo: true })))) process.exit(1);
 }
 

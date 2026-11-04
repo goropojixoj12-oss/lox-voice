@@ -245,11 +245,12 @@ const CHECKS = [
     include: ["Listing management"],
   },
   {
-    name: "admin overview desk",
+    name: "admin overview desk: public audience only, no internal traffic",
     path: "/dashboard/admin",
     role: "admin",
     status: [200],
-    include: ["Signed in as"],
+    include: ["Signed in as", "Public site traffic only", "automated checks are excluded"],
+    exclude: ["on the public site and in the dashboards"],
   },
   {
     name: "session endpoint: anonymous has no user",

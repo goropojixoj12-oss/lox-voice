@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { isAnalyticsPath } from "@/lib/analytics-paths";
 import { ANALYTICS_SESSION_COOKIE } from "@/lib/analytics-session";
 
 function readCookie(name: string): string | null {
@@ -42,7 +43,7 @@ export function PageViewBeacon() {
 
   useEffect(() => {
     // Sole writer of page views — including the document load that brought us here.
-    if (!pathname || pathname.startsWith("/api")) return;
+    if (!pathname || !isAnalyticsPath(pathname)) return;
     if (last.current === pathname) return;
     last.current = pathname;
 

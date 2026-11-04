@@ -3,6 +3,8 @@ import { z } from "zod";
 import {
   ANALYTICS_COOKIE_MAX_AGE,
   ANALYTICS_SESSION_COOKIE,
+  isAutomatedAnalyticsUserAgent,
+  readAnalyticsSessionCookie,
 } from "@/lib/analytics-session";
 import { isAnalyticsPath } from "@/lib/analytics-paths";
 import { appendPageView } from "@/lib/admin-store";
@@ -30,16 +32,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  let sessionKey = parsed.data.sessionKey;
-  const cookieSid = request.headers
-    .get("cookie")
-    ?.split(";")
-    .map((p) => p.trim())
-    .find((p) => p.startsWith(`${ANALYTICS_SESSION_COOKIE}=`))
-    ?.slice(ANALYTICS_SESSION_COOKIE.length + 1);
-  if (cookieSid && cookieSid.length >= 8) {
-    sessionKey = decodeURIComponent(cookieSid);
+  if (isAutomatedAnalyticsUserAgent(request.headers.get("user-agent"))) {
+    return NextResponse.json({ ok: true });
   }
+  const sessionKey = readAnalyticsSessionCookie(request.headers.get("cookie"));
+  if (!sessionKey) return NextResponse.json({ ok: true });
 
   try {
     await appendPageView({

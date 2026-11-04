@@ -24,9 +24,10 @@ export default async function AdminAnalyticsPage() {
           Site Data - Analytics - Statistics
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Real traffic only (last {report.periodDays} days): one record per page the visitor actually
-          opened, on the public site and in the dashboards. No demo or seeded numbers. &ldquo;Unique&rdquo;
-          counts distinct analytics cookies, so one person reading the same page all day is one unique.
+          Public site traffic only (last {report.periodDays} days): one record per page the visitor
+          actually opened. Dashboards, sign-in pages, known bots, and automated checks are excluded.
+          &ldquo;Unique&rdquo; counts distinct analytics cookies, so one person reading the same page all
+          day is one unique.
         </p>
       </div>
 

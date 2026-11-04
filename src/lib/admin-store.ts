@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { isSyntheticAnalyticsSession } from "@/lib/analytics-session";
 import { readStoreJson, writeStoreJson } from "@/lib/store-persistence";
 import type {
   AdminComment,
@@ -17,7 +18,7 @@ const LEGAL_FILE = "admin-legal-docs.json";
 const DEDUPE_MS = 4000;
 
 function isRealPageView(event: PageViewEvent): boolean {
-  return !event.sessionKey.startsWith("seed-");
+  return !isSyntheticAnalyticsSession(event.sessionKey);
 }
 
 /**
@@ -57,7 +58,7 @@ export async function appendPageView(input: {
   sessionKey: string;
   referrer?: string;
 }): Promise<void> {
-  if (input.sessionKey.startsWith("seed-")) return;
+  if (isSyntheticAnalyticsSession(input.sessionKey)) return;
 
   const path = input.path.slice(0, 512);
   const sessionKey = input.sessionKey.slice(0, 64);

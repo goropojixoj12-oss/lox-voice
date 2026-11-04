@@ -8,6 +8,7 @@
     "start": "next start --hostname 0.0.0.0 --port 43123",
     "store:audit": "node scripts/store-audit.mjs",
     "smoke": "node scripts/smoke-site.mjs",
+    "test:analytics": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/analytics-filters.test.mjs",
     "gate": "node scripts/gate.mjs",
     "ship": "bash scripts/ship.sh",
     "lint": "eslint",

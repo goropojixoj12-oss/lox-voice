@@ -1,6 +1,8 @@
 /** Paths we record for site analytics (real HTTP navigations + SPA route changes). */
 export function isAnalyticsPath(pathname: string): boolean {
   if (!pathname || pathname.startsWith("/api")) return false;
+  if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) return false;
+  if (pathname === "/auth" || pathname.startsWith("/auth/")) return false;
   if (pathname.startsWith("/_next")) return false;
   if (pathname.startsWith("/media/")) return false;
   if (pathname.startsWith("/videos/")) return false;
