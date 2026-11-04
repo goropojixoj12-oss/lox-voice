@@ -2,12 +2,19 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
 import type { PropertyImage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function PropertyGallery({ images }: { images: PropertyImage[] }) {
-  const [active, setActive] = useState(0);
+  const searchParams = useSearchParams();
+  const [active, setActive] = useState(() => {
+    // a card preview autoplays, so ?photo= carries the frame the visitor clicked
+    const requested = Number(searchParams?.get("photo"));
+    if (!Number.isInteger(requested) || requested < 0) return 0;
+    return requested < images.length ? requested : 0;
+  });
   const [lightbox, setLightbox] = useState(false);
   const current = images[active] ?? images[0];
 

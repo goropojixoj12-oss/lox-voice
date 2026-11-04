@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ListingCardPreview } from "@/components/property/listing-card-preview";
 import { Bath, BedDouble, LandPlot, Maximize2 } from "lucide-react";
 import { FavoriteButton } from "@/components/property/favorite-button";
@@ -20,15 +24,37 @@ export function PropertyCard({
   variant?: "grid" | "list" | "editorial";
   userId?: string;
 }) {
+  const frameRef = useRef(0);
+  const router = useRouter();
   const href = `/property/${property.slug}`;
+  // the preview autoplays, so the click has to land on the frame the user is looking at,
+  // tracked in a ref to avoid re-rendering every card on every flip
+  function openListing(event: React.MouseEvent) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+    event.preventDefault();
+    const frame = frameRef.current;
+    router.push(frame > 0 ? `${href}?photo=${frame}` : href);
+  }
 
   if (variant === "editorial") {
     return (
       <article className="seaps-card group relative h-full overflow-hidden rounded-[var(--radius-xl)] text-white">
-        <Link href={href} className="block">
+        <Link href={href} onClick={openListing} className="block">
           <div className="relative aspect-[16/11]">
             <ListingCardPreview
               property={property}
+              onFrameChange={(index) => {
+                frameRef.current = index;
+              }}
               className="transition duration-700 group-hover:scale-[1.03]"
               sizes="(max-width:768px) 100vw, 33vw"
             />
@@ -56,9 +82,12 @@ export function PropertyCard({
       )}
     >
       <div className={cn("relative aspect-[4/3]", variant === "list" && "md:aspect-auto md:min-h-full")}>
-        <Link href={href} className="absolute inset-0 overflow-hidden">
+        <Link href={href} onClick={openListing} className="absolute inset-0 overflow-hidden">
           <ListingCardPreview
             property={property}
+            onFrameChange={(index) => {
+              frameRef.current = index;
+            }}
             className="transition duration-500 group-hover:scale-[1.02]"
             sizes="(max-width:768px) 100vw, 33vw"
           />

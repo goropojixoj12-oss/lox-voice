@@ -20,14 +20,20 @@ function FlipbookPreview({
   alt,
   className,
   sizes,
+  onIndexChange,
 }: {
   frames: string[];
   alt: string;
   className?: string;
   sizes: string;
+  onIndexChange?: (index: number) => void;
 }) {
   const [index, setIndex] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    onIndexChange?.(index);
+  }, [index, onIndexChange]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -81,10 +87,12 @@ export function ListingCardPreview({
   property,
   className,
   sizes = "(max-width:768px) 100vw, 33vw",
+  onFrameChange,
 }: {
   property: Property;
   className?: string;
   sizes?: string;
+  onFrameChange?: (index: number) => void;
 }) {
   const cover = property.images.find((i) => i.isCover) ?? property.images[0];
   const alt = cover?.alt || property.title;
@@ -114,7 +122,15 @@ export function ListingCardPreview({
   }
 
   if (flipFrames.length >= 2) {
-    return <FlipbookPreview frames={flipFrames} alt={alt} className={className} sizes={sizes} />;
+    return (
+      <FlipbookPreview
+        frames={flipFrames}
+        alt={alt}
+        className={className}
+        sizes={sizes}
+        onIndexChange={onFrameChange}
+      />
+    );
   }
 
   if (!cover?.url) {
