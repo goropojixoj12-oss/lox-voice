@@ -39,7 +39,7 @@ const securityHeaders = [
       "media-src 'self' blob: https://test-videos.co.uk",
       "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https://translate.googleapis.com https://translate-pa.googleapis.com https://translate.google.com https://*.vercel-storage.com https://blob.vercel-storage.com",
-      "frame-src 'self' https://translate.google.com https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com",
+      "frame-src 'self' https://translate.google.com https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://cambodia-condo-showcase-174801.onhercules.app https://*.onhercules.app",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

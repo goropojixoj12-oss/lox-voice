@@ -11,6 +11,7 @@
 - **Что:** для листинга `cheapest-ever-studio-…-_ZFWs` панель «Live News Show» (нет фото) грузит iframe `https://cambodia-condo-showcase-174801.onhercules.app/` через `getLiveNewsEmbedSrcForListing`; slug прокидывается из `PropertyGallery`.
 - **Зачем:** Site Changes `ev9QEBxQfSpO` (CEO): showcase Hercules вместо дефолтного highlights-only блока на этой карточке.
 - **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/live-news-show-panel.tsx`, `src/components/property/property-gallery.tsx`, `src/app/property/[slug]/page.tsx`, `scripts/smoke-site.mjs`.
+- **Файлы (доп.):** `next.config.ts` — CSP `frame-src` для `onhercules.app` (без этого браузер блокирует iframe).
 - **Проверено:** (заполнить после gate/ship и прода).
 
 ### site change: live news panel вместо «No photos yet»
