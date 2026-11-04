@@ -5,7 +5,8 @@ import { getAgentProfile } from "@/lib/agent-profile";
 import { buildAgentOverviewBundle } from "@/lib/agent-desk-metrics";
 import { getSession } from "@/lib/auth";
 import { agentDeskPath } from "@/lib/dashboard-agent-paths";
-import { getFavorites, getInquiries, getRuntimeListings } from "@/lib/store";
+import { getInquiriesForSession } from "@/lib/inquiry-access";
+import { getFavorites, getRuntimeListings } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -15,7 +16,7 @@ export default async function DashboardOverviewPage() {
 
   const [favorites, inquiries, listings] = await Promise.all([
     getFavorites(session.id),
-    getInquiries(),
+    getInquiriesForSession(session),
     getRuntimeListings(),
   ]);
 
@@ -54,7 +55,9 @@ export default async function DashboardOverviewPage() {
             { label: "Inquiries", value: inquiries.length, href: agentDeskPath("inquiries") },
             {
               label: "Your listings",
-              value: listings.filter((l) => l.createdByUserId === session.id).length,
+              value: listings.filter(
+                (l) => l.createdByUserId === session.id || l.ownerId === session.id,
+              ).length,
               href: agentDeskPath("listings"),
             },
           ].map((card) => (

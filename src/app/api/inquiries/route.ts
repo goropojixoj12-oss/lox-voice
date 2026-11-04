@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { contactLineFromForm } from "@/lib/form-submission-validation";
-import { createInquiry, getInquiries } from "@/lib/store";
+import { createInquiry } from "@/lib/store";
+import { getInquiriesForSession } from "@/lib/inquiry-access";
 import { getSession, requireRole } from "@/lib/auth";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { sendFormSubmissionEmail } from "@/lib/smtp-mail";
@@ -25,7 +26,7 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const inquiries = await getInquiries();
+  const inquiries = await getInquiriesForSession(session);
   return NextResponse.json({ inquiries });
 }
 

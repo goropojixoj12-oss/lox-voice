@@ -29,7 +29,6 @@ function staffCanPreviewListing(property: Property, session: SessionUser): boole
   if (session.role === "admin") return true;
   if (property.createdByUserId && property.createdByUserId === session.id) return true;
   if (property.ownerId && property.ownerId === session.id) return true;
-  if (session.role === "agent" && property.agentId) return true;
   return false;
 }
 

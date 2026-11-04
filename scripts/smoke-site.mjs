@@ -185,6 +185,31 @@ const CHECKS = [
     status: [302, 307, 308],
   },
   {
+    name: "draft catalog listing: closed to a signed-in agent who is not the author",
+    path: "/property/toul-kork-family-villa",
+    role: "agent",
+    status: [404],
+  },
+  {
+    name: "agent stats desk: closed to anonymous",
+    path: "/dashboard/agent/stats",
+    role: null,
+    status: [302, 307, 308],
+  },
+  {
+    name: "inquiries api: closed to anonymous",
+    path: "/api/inquiries",
+    role: null,
+    status: [401],
+  },
+  {
+    name: "agent inquiries desk: only his own listings",
+    path: "/dashboard/agent/inquiries",
+    role: "agent",
+    status: [200],
+    include: ["No inquiries yet"],
+  },
+  {
     name: "admin desk: closed to agent",
     path: "/dashboard/admin/listings",
     role: "agent",
