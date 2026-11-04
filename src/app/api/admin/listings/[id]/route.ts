@@ -225,5 +225,21 @@ export async function DELETE(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   await resetListingViewTracking(id).catch(() => undefined);
-  return NextResponse.json({ ok: true });
+  // the card is gone, so every file only it referenced should go too — keys still used
+  // by another listing are protected inside deleteRemovedListingMedia
+  const stillReferenced = await getRuntimeListings();
+  try {
+    const removedMedia = await deleteRemovedListingMedia(
+      existing,
+      { images: [], videos: [] },
+      stillReferenced,
+    );
+    return NextResponse.json({ ok: true, removedMedia });
+  } catch (error) {
+    console.error("listing media cleanup failed after delete", id, error);
+    return NextResponse.json({
+      ok: true,
+      mediaCleanupError: "Listing deleted, but some of its files could not be deleted",
+    });
+  }
 }
