@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: ilqR2sn71XuD (финал — обложка _ZFWs на /buy/residential)
+
+- **Что:** восстановлена обложка карточки `…-_ZFWs` (`listing-card-preview` + `catalog-page-covers` + png); смоук снова требует `vue-aston-web-page-cover` / catalog-cover API
+- **Зачем:** webhook `ilqR2sn71XuD` — заменить фото вторым вложением; параллельные tvpFFqmJs2vq/lUN61FJoDdzM трактовали «remove» как снятие блока — откат
+- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `public/media/catalog/vue-aston-web-page-cover.png`, `docs/PROJECT-LOG.md`
+- **Проверено:** gate; push `github/main`; prod smoke `/buy/residential`; PATCH — `SITE_AGENT_SECRET`
+
 ### site change: tvpFFqmJs2vq (/buy/residential — убрать фото с карточки)
 
 - **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` на `/buy/residential`; снова пустой синий блок, текст карточки без изменений; смоук требует отсутствия `vue-aston-web-page-cover` и `catalog-cover/buy-residential-vue-aston`
