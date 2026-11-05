@@ -737,3 +737,18 @@
 - **Что сделано:** ничего не удалял — все 276 файлов из `.git` перенесены в `tmp/windows-junk/git/` (плоские имена с путём), два файла из кэша Turbopack — в `tmp/windows-junk/`. После этого сборка зелёная, `git fetch` работает, `git for-each-ref` чистый.
 - **Проверено:** `find .git -name desktop.ini | wc -l` → 0; `npm run build` → exit 0; `bash scripts/git-state.sh` → печатает расхождение вместо ошибки; `npm run gate` → GATE PASS.
 - **Хвост у заказчика:** файлы появятся снова (это поведение проводника, не наш код). Предлагаю два шага: (1) добавить `desktop.ini` в `.gitignore`, чтобы ни один агент не закоммитил несколько сотен мусорных файлов; (2) выключить их автосоздание системным переключателем Windows — инструкция по запросу.
+### Windows-мусор: причина точнее — Google Drive, и лечение теперь автоматическое
+
+- **Дата:** 2026-11-05
+- **Уточнение к предыдущей записи:** я списал `desktop.ini` на проводник Windows и ручную чистку. Замеры показали другое: файлы пишет Google Drive (`IconResource=C:\Program Files\Google\Drive File Stream\133.0.2.0\GoogleDriveFS.exe,27`), процесс `GoogleDriveFS.exe` активен, в корне репозитория лежат `.tmp.driveupload` и `.tmp.drivedownload` — то есть дерево проекта находится в синхронизируемой папке. После того как я перенёс 276 файлов из `.git`, Drive вернул их за минуты (стало 276 в `.git` и 442 в `.next`). Ручная чистка поэтому бессмысленна.
+- **Что сделано:**
+  - `scripts/sweep-windows-junk.mjs` (новый) — переносит `desktop.ini` и `Thumbs.db` из `.git` и `.next` в `tmp/windows-junk/sweep-<stamp>/`, ничего не удаляет, повторный запуск ничего не находит;
+  - `scripts/gate.mjs` — свип стал первым стадием гейта, до `next build`;
+  - `scripts/git-state.sh` — свип перед `git fetch --all --prune`, потому что именно `.git/refs/desktop.ini` роняли fetch;
+  - `.gitignore` — `desktop.ini` и `Thumbs.db` (было 200+ мусорных untracked-строк в статусе, стало 0);
+  - `AGENTS.md` правило 25 — переписано с фактической причиной, местом свипа и отдельным вопросом безопасности.
+- **Зачем:** без этого любой `npm run gate` мог упасть с «invalid digit found in string», а любой пуш — с «fatal: bad object refs/desktop.ini», и оба симптома выглядели как поломка кода, хотя код был ни при чём.
+- **RED (воспроизведено подстановкой):** положил `desktop.ini` в `.next/cache/turbopack/v16.4.3-29bbeab0/` → `npm run build` → `[Error: Failed to open database / Loading persistence directory failed / invalid digit found in string]`.
+- **GREEN:** тот же файл на месте → `npm run gate` → `▸ windows junk sweep ✓ 112ms`, сборка зелёная, смоук 50/50, header clearance 390/820/1440, GATE PASS.
+- **Проверено дополнительно:** `bash scripts/git-state.sh` после свипа → fetch проходит, печатает `+0 -0 fast-forward possible` по обоим ремоутам; `git status --porcelain | grep -c desktop.ini` → 0.
+- **Хвост у заказчика (не технический, а безопасности):** раз папка синхронизируется Drive'ом, копии `.env.local` и `.env.test` с настоящими токенами лежат в его Google Drive. Вариант решения — вынести репозиторий из синхронизируемой папки или исключить её из бэкапа Drive; шаги расписаны в `docs/google-drive-repo-exclusion-ru.md`.

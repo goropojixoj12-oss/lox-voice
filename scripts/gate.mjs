@@ -109,6 +109,12 @@ const head = git("rev-parse", "--short", "HEAD");
 const dirty = git("status", "--porcelain", "--untracked-files=no");
 say(`gate on ${branch}@${head}${dirty ? ` — working tree has ${dirty.split("\n").length} uncommitted file(s)` : " — tree clean"}`);
 
+// Google Drive stamps desktop.ini into .git/refs and into the turbopack cache between runs, and
+// both make git fetch / next build fail on an unparseable name. Sweep before anything reads them.
+await stage("windows junk sweep", () =>
+  run(process.execPath, [path.join(ROOT, "scripts", "sweep-windows-junk.mjs")], { echo: false }),
+);
+
 if (!FAST && LINT) {
   if (!(await stage("eslint", () => run(process.execPath, [ESLINT_BIN], { echo: true })))) process.exit(1);
 }

@@ -5,6 +5,10 @@ cd "$(git rev-parse --show-toplevel)"
 
 BRANCH="${1:-$(git rev-parse --abbrev-ref HEAD)}"
 
+# Google Drive rewrites desktop.ini into .git/refs between our runs; git then reads them as
+# broken refs and the fetch dies. Sweep immediately before fetching.
+node scripts/sweep-windows-junk.mjs >/dev/null 2>&1 || true
+
 git fetch --all --prune --quiet
 
 echo "branch: $BRANCH  head: $(git rev-parse --short "$BRANCH")  tree: $(git rev-parse --short "$BRANCH^{tree}")"

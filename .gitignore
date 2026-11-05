@@ -54,3 +54,9 @@ modelcontextprotocol-server-github-2025.4.8.tgz
 
 # облачный загрузчик клиента кладёт служебные файлы внутрь папки проекта
 .tmp.driveupload/
+
+# проводник Windows раскладывает desktop.ini во всех папках подряд — в .git/refs
+# git читает их как битые ссылки и fetch падает, в кэше Turbopack числовой
+# парсер спотыкается о имя и падает сборка. В прод они не должны попадать
+desktop.ini
+Thumbs.db
