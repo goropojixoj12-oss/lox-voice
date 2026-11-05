@@ -11,7 +11,7 @@
 - **Что:** у листинга без фото `…-_ZFWs` на `/search` в верхней части карточки (над ценой $43,460) показывается вложение `cover.JPG` из заявки (`catalog-page-covers` slug `search-vue-aston-studio`, blob `C9pb-Jyw9jfg/cover.JPG`); на `/buy/residential` обложка по-прежнему снята (7CFgVx5XjUBO); смоук `/search` требует `catalog-cover/search-vue-aston-studio`
 - **Зачем:** Site Changes CEO (webhook `C9pb-Jyw9jfg`, 15:00Z): «At the top within the box detailing $43460, add the attached photograph» на https://www.seaps.asia/search
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `scripts/smoke-site.mjs`, `scripts/sync-site-request-attachment.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0 (локальный смоук search cover skipped — нет runtime-листинга в BLOB_DISABLED); после ship — prod `/search` + `npm run smoke -- --base=https://www.seaps.asia`
+- **Проверено:** `npm run gate` exit 0 @ `94545d1`; push `github/main`, тег `backup/2026-11-05-search-cover-c9pb`; prod `/search` — `catalog-cover/search-vue-aston-studio` в HTML карточки `_ZFWs`, API cover 200 (~154KB); `/buy/residential` без search-cover; `npm run smoke -- --base=https://www.seaps.asia --only=search: Vue Aston` 1/1. PATCH `C9pb-Jyw9jfg` — 401 без `SITE_AGENT_SECRET` в cloud VM
 
 ### site change: 7CFgVx5XjUBO (/buy/residential — убрать фото с карточки)
 
