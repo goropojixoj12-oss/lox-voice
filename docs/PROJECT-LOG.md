@@ -11,7 +11,7 @@
 - **Что:** при пустой галерее на slug `…-dA5Dl` `PropertyGallery` возвращает `null` вместо bordered-блока «No photos yet»; смоук Kampot architect проверяет отсутствие заглушки
 - **Зачем:** Site Changes CEO (webhook `DvvGNmrjquL-`, 2026-11-05T16:13Z): «Remove the empty text box at the top of this page»
 - **Файлы:** `src/components/property/property-gallery.tsx`, `src/lib/live-news-show.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0; push `github/main` @ `a3ae7fa`, тег `backup/2026-11-05-kampot-no-gallery-stub`; prod HTML — 0× «No photos yet», 0× «Property gallery placeholder»; `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1. PATCH `DvvGNmrjquL-` — нет `SITE_AGENT_SECRET` в cloud VM
+- **Проверено:** `npm run gate` exit 0; `github/main` @ `0fb2096` / `a3ae7fa`, тег `backup/2026-11-05-dA5Dl-no-empty-box`; prod HTML — 0× «No photos yet», 0× «Property gallery placeholder», 0× Live News; `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1. PATCH `DvvGNmrjquL-` — 401, в cloud VM нет `SITE_AGENT_SECRET`
 
 ### site change: xR6kanuO3dTq (листинг dA5Dl — убрать YouTube, дубликат q467nsHht6uW)
 
