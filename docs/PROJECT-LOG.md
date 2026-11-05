@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: 7CFgVx5XjUBO (/buy/residential — убрать фото с карточки)
+
+- **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` на `/buy/residential` (пустой синий блок); whitelist `catalog-page-covers` очищен; текст страницы и карточки без изменений; смоук: нет `vue-aston-web-page-cover` / `catalog-cover/buy-residential-vue-aston`
+- **Зачем:** Site Changes CEO (webhook `7CFgVx5XjUBO`, 14:44Z): «Remove the photograph in the first attachment» (IMG_1278.jpeg), без второго вложения
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (после gate/ship)
+
 ### site change: qcLymxiCQIRd (финал — замена обложки _ZFWs, не снятие)
 
 - **Что:** снова включена обложка каталога на карточке `…-_ZFWs` (`listing-card-preview` + `catalog-page-covers` + смоук); откат поверх `c13f284`/`tvpFFqmJs2vq`, где «remove the photograph» ошибочно убрало весь блок вместо замены вторым вложением

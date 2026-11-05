@@ -511,10 +511,10 @@ async function runBuyResidentialDescriptionProbe(check) {
       problems.push("missing condo showcase URL on Description link");
     }
     if (
-      !text.includes("vue-aston-web-page-cover") &&
-      !text.includes("catalog-cover/buy-residential-vue-aston")
+      text.includes("vue-aston-web-page-cover") ||
+      text.includes("catalog-cover/buy-residential-vue-aston")
     ) {
-      problems.push("Vue Aston studio card missing catalog cover image");
+      problems.push("Vue Aston studio card must not show catalog cover image");
     }
     return {
       check,
