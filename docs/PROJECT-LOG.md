@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: q467nsHht6uW (листинг dA5Dl — убрать YouTube / Live News box)
+
+- **Что:** для slug `…-dA5Dl` при пустой галерее `PropertyGallery` показывает заглушку «No photos yet» вместо `LiveNewsShowPanel` (YouTube highlights); `shouldShowLiveNewsPanelForListing` в `live-news-show.ts`
+- **Зачем:** Site Changes CEO (webhook `q467nsHht6uW`): убрать YouTube и блок на странице листинга Kampot architect house
+- **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/property-gallery.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (заполнить после gate/ship)
+
 ### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
 
 - **Что:** обложки карточек привязаны к pathname: `buy-residential-stunning-title` только на `/buy/residential`, `search-vue-aston-studio` только на `/search`; смоук buy/residential запрещает `catalog-cover/search-vue-aston-studio`

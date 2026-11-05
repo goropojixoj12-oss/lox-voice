@@ -4,6 +4,20 @@ const YOUTUBE_EMBED_ORIGIN = "https://www.youtube-nocookie.com";
 export const VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG =
   "cheapest-ever-studio-sold-vue-aston-never-seen-before-foreign-ownership-approved-hard-title-_ZFWs";
 
+/** Kampot architect house — site request q467nsHht6uW: no Live News / YouTube box when gallery is empty. */
+export const KAMPOT_ARCHITECT_ZERO_PHOTO_SLUG =
+  "stunning-architectural-masterpiece-large-executive-3-bedroom-all-ensuites-modern-colonial-style-house-beautiful-pool-western-award-winning-architect-a-personal-project-designed-built-and-proudly-displayed-by-one-of-cambodia-s-most-respected-and-trusted-architect-builders-dA5Dl";
+
+const LISTINGS_WITHOUT_LIVE_NEWS_PANEL: ReadonlySet<string> = new Set([
+  KAMPOT_ARCHITECT_ZERO_PHOTO_SLUG,
+]);
+
+/** When false, zero-photo gallery shows a plain placeholder instead of LiveNewsShowPanel. */
+export function shouldShowLiveNewsPanelForListing(slug: string | undefined): boolean {
+  if (!slug) return true;
+  return !LISTINGS_WITHOUT_LIVE_NEWS_PANEL.has(slug);
+}
+
 export const VUE_ASTON_CONDO_SHOWCASE_EMBED_URL =
   "https://cambodia-condo-showcase-174801.onhercules.app/";
 

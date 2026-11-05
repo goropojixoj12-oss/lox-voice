@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import type { PropertyImage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { LiveNewsShowPanel } from "@/components/property/live-news-show-panel";
+import { shouldShowLiveNewsPanelForListing } from "@/lib/live-news-show";
 
 export function PropertyGallery({
   images,
@@ -26,6 +27,16 @@ export function PropertyGallery({
   const current = images[active] ?? images[0];
 
   if (!current) {
+    if (!shouldShowLiveNewsPanelForListing(listingSlug)) {
+      return (
+        <div
+          className="relative grid aspect-[16/10] w-full place-items-center overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)]"
+          aria-label="Property gallery placeholder"
+        >
+          <p className="text-sm text-[var(--color-muted)]">No photos yet</p>
+        </div>
+      );
+    }
     return <LiveNewsShowPanel listingSlug={listingSlug} />;
   }
 

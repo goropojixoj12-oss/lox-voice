@@ -38,7 +38,7 @@ const TIMEOUT_MS = Number(argValue("timeout", "20000"));
 // checks are independent GETs; 6 in flight keeps prod happy and the dev server from thrashing
 const CONCURRENCY = Math.max(1, Number(argValue("concurrency", "6")));
 
-/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean, buyResidentialDescriptionProbe?: boolean, searchVueAstonCoverProbe?: boolean}} Check */
+/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean, buyResidentialDescriptionProbe?: boolean, searchVueAstonCoverProbe?: boolean, kampotArchitectNoYoutubeProbe?: boolean}} Check */
 
 /** @type {Check[]} */
 const CHECKS = [
@@ -96,6 +96,11 @@ const CHECKS = [
     name: "zero-photo listing: live news panel instead of empty stub",
     path: "/sitemap.xml",
     sitemapLiveNewsProbe: true,
+  },
+  {
+    name: "listing detail: Kampot architect dA5Dl — no YouTube live news box (q467nsHht6uW)",
+    path: "/sitemap.xml",
+    kampotArchitectNoYoutubeProbe: true,
   },
   {
     name: "vue aston card: own photos only, no cube",
@@ -595,6 +600,70 @@ async function runBuyResidentialDescriptionProbe(check) {
   }
 }
 
+async function runKampotArchitectNoYoutubeProbe(check) {
+  const started = Date.now();
+  const slugPath = `/property/stunning-architectural-masterpiece-large-executive-3-bedroom-all-ensuites-modern-colonial-style-house-beautiful-pool-western-award-winning-architect-a-personal-project-designed-built-and-proudly-displayed-by-one-of-cambodia-s-most-respected-and-trusted-architect-builders-dA5Dl`;
+  try {
+    const res = await fetch(`${BASE}${slugPath}`, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (res.status === 404) {
+      const isLocalHost =
+        BASE.startsWith("http://127.0.0.1:") || BASE.startsWith("http://localhost:");
+      if (isLocalHost) {
+        return {
+          check,
+          pass: true,
+          status: 404,
+          ms: Date.now() - started,
+          note: "Kampot architect runtime listing not in local store (probe skipped)",
+        };
+      }
+      return {
+        check,
+        pass: false,
+        status: 404,
+        ms: Date.now() - started,
+        why: "Kampot architect listing missing on prod",
+      };
+    }
+    if (res.status !== 200) {
+      return {
+        check,
+        pass: false,
+        status: res.status,
+        ms: Date.now() - started,
+        why: `expected 200, got ${res.status}`,
+      };
+    }
+    const text = decodeEntities(await res.text().catch(() => ""));
+    const problems = [];
+    if (!text.includes("ARCHITECTURAL MASTERPIECE")) {
+      problems.push('missing "ARCHITECTURAL MASTERPIECE" headline');
+    }
+    if (text.includes("Live News Show")) {
+      problems.push("still shows Live News Show panel");
+    }
+    if (text.includes("youtube-nocookie.com/embed")) {
+      problems.push("still embeds YouTube iframe");
+    }
+    return {
+      check,
+      pass: problems.length === 0,
+      status: 200,
+      ms: Date.now() - started,
+      why: problems.join("; ") || null,
+    };
+  } catch (err) {
+    return {
+      check,
+      pass: false,
+      why: `Kampot architect probe failed: ${err.message}`,
+    };
+  }
+}
+
 async function runSitemapLiveNewsProbe(check) {
   const started = Date.now();
   let xml;
@@ -851,6 +920,8 @@ async function worker() {
           ? await runBuyResidentialDescriptionProbe(check)
           : check.searchVueAstonCoverProbe
             ? await runSearchVueAstonCoverProbe(check)
+            : check.kampotArchitectNoYoutubeProbe
+              ? await runKampotArchitectNoYoutubeProbe(check)
             : check.moderationDeskPair
             ? await runModerationDeskPair(check, session)
             : await runCheck(check, session);
