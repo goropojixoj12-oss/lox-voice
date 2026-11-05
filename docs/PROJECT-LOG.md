@@ -11,7 +11,7 @@
 - **Что:** снята маркетинговая обложка `Title.jpg` (`buy-residential-stunning-title`) с карточки $330,000 (`…-dA5Dl`) на `/buy/residential` — снова пустой синий блок превью; whitelist и route в `catalog-page-covers` очищены; смоук запрещает любой `catalog-cover/*` в превью на этой странице (включая stunning-title и vue-aston covers)
 - **Зачем:** Site Changes CEO (webhook `a8z__BPqIMkH`, 2026-11-05T17:33Z): полностью убрать картинки в боксе на https://www.seaps.asia/buy/residential
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0 после коммита; локальный HTML `/buy/residential` без `catalog-cover/buy-residential-stunning-title`; ship → prod smoke buy residential 2/2
+- **Проверено:** `github/main` @ `e47b7b9`; prod HTML — у `…-dA5Dl` пустое превью, нет `catalog-cover/buy-residential-stunning-title`; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2 (automation 2026-11-05T17:38Z). PATCH `a8z__BPqIMkH` — 401, в cloud VM нет `SITE_AGENT_SECRET`
 
 ### site change: MhNxJ2BiT9Vz (листинг dA5Dl — убрать YouTube и контейнер)
 
