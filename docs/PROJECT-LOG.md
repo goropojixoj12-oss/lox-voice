@@ -11,14 +11,14 @@
 - **Что:** обложки карточек привязаны к pathname: `buy-residential-stunning-title` только на `/buy/residential`, `search-vue-aston-studio` только на `/search`; смоук buy/residential запрещает `catalog-cover/search-vue-aston-studio`
 - **Зачем:** `ca56fb3` включал `/buy/residential` в общий whitelist и мог показать обложку Vue Aston на buy-каталоге (регрессия 7CFgVx5XjUBO)
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (после ship) gate, prod `/buy/residential`, prod smoke
+- **Проверено:** gate/ship @ `9d9978b`; prod `/buy/residential` — `catalog-cover/buy-residential-stunning-title` 200 jpeg, без `search-vue-aston-studio` на странице; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2 (2026-11-05 automation). PATCH `YSrQfu0BBqyc` — 401, в cloud VM нет `SITE_AGENT_SECRET`
 
 ### site change: YSrQfu0BBqyc (/buy/residential — Title.jpg в карточке $330,000)
 
 - **Что:** у листинга без фото `…-dA5Dl` (первая карточка «Homes for sale», $330,000) на `/buy/residential` в блоке превью показывается `Title.jpg` из заявки (`catalog-page-covers` slug `buy-residential-stunning-title`, blob `YSrQfu0BBqyc/Title.jpg`); карточка Vue Aston `_ZFWs` на этой странице по-прежнему без обложки; смоук требует `catalog-cover/buy-residential-stunning-title` рядом с `dA5Dl`
 - **Зачем:** Site Changes CEO (webhook `YSrQfu0BBqyc`, 15:48Z): «put the attached image within the first box … $330.000» на https://www.seaps.asia/buy/residential
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (после gate/ship) prod `/buy/residential`; PATCH `YSrQfu0BBqyc` — нужен `SITE_AGENT_SECRET` в cloud VM
+- **Проверено:** `github/main` @ `9d9978b`; prod HTML — `BUY_RESIDENTIAL_STUNNING_COVER` у `dA5Dl`, API cover 200; smoke buy/residential 2/2. PATCH `YSrQfu0BBqyc` — 401 без `SITE_AGENT_SECRET` в cloud VM (2026-11-05 automation)
 
 ### site change: C9pb-Jyw9jfg (/search — фото в карточке $43,460)
 
