@@ -510,6 +510,9 @@ async function runBuyResidentialDescriptionProbe(check) {
     if (!text.includes(CONDO_SHOWCASE_URL)) {
       problems.push("missing condo showcase URL on Description link");
     }
+    if (!text.includes("vue-aston-web-page-cover")) {
+      problems.push("Vue Aston studio card missing catalog cover image");
+    }
     return {
       check,
       pass: problems.length === 0,
@@ -754,13 +757,16 @@ async function worker() {
     const check = selected[index];
     const missing = rolesOf(check).filter((role) => !session[role]);
     if (missing.length) {
-      const onlyAdmin = missing.length === 1 && missing[0] === "admin";
-      if (onlyAdmin) {
+      const onlySmokeRoles = missing.every((r) => r === "admin" || r === "agent");
+      if (onlySmokeRoles) {
         resultsByIndex[index] = {
           check,
           pass: true,
           status: "skip",
-          note: "admin smoke credentials not configured (set SMOKE_ADMIN_PASSWORD in .env.test)",
+          note:
+            missing.length === 1
+              ? `${missing[0]} smoke credentials not configured (set SMOKE_${missing[0].toUpperCase()}_PASSWORD in .env.test)`
+              : "admin/agent smoke credentials not configured (.env.test)",
         };
         continue;
       }

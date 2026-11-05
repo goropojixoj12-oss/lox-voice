@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-11-05
+
+### site change: YaKTzapYpVmr (обложка Vue Aston studio в синем превью карточки на /buy/residential)
+
+- **Что:** у листинга без фото `…-_ZFWs` в каталоге `/buy/residential` вместо пустого синего превью показывается портретная обложка Vue Aston (`object-contain object-top`); файл в `public/media/catalog/vue-aston-web-page-cover.png`, whitelist `catalog-page-covers` обновлён на заявку `YaKTzapYpVmr`; смоук проверяет `vue-aston-web-page-cover` на странице каталога
+- **Зачем:** Site Changes webhook CEO (2026-11-05): «at the top of the blue box … place the picture from the second attachment»
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `public/media/catalog/vue-aston-web-page-cover.png`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** `npm run gate` exit 0; прод-верификация и PATCH `YaKTzapYpVmr` — после `ship`
+
 ## 2026-11-04
 
 ### site change: 5ng_JrFEQXFA (Description Kampot + Hercules вместо YouTube, _ZFWs)
