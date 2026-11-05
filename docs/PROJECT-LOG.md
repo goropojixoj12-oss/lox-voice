@@ -11,7 +11,7 @@
 - **Что:** снята обложка с карточки `…-_ZFWs` (пустой синий блок); текст страницы и карточки без изменений; смоук: нет `vue-aston-web-page-cover` / `catalog-cover/buy-residential-vue-aston`
 - **Зачем:** webhook CEO `tvpFFqmJs2vq` (13:10Z): «Remove the photograph in the first attachment»
 - **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (после gate/push)
+- **Проверено:** `npm run gate` exit 0 @ `c13f284`; push `github/main`; прод `/buy/residential` без cover URL у `…-_ZFWs`; `npm run smoke -- --base=https://www.seaps.asia` 50/50. PATCH `tvpFFqmJs2vq` — 401, в cloud VM нет `SITE_AGENT_SECRET`
 
 ### site change: ilqR2sn71XuD (финал — обложка _ZFWs на /buy/residential)
 
