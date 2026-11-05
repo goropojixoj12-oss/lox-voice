@@ -195,18 +195,17 @@ export function PropertyCard({
   }
 
   return (
-    <article className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]">
+    <Link href={href} onClick={openListing} className="block h-full">
+      <article className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]">
       <div className="relative aspect-[4/3]">
-        <Link href={href} onClick={openListing} className="absolute inset-0 overflow-hidden">
-          <CardImagePreview
-            property={property}
-            onFrameChange={(index) => {
-              frameRef.current = index;
-            }}
-            className="transition duration-500 group-hover:scale-[1.02]"
-            sizes="(max-width:768px) 100vw, 33vw"
-          />
-        </Link>
+        <CardImagePreview
+          property={property}
+          onFrameChange={(index) => {
+            frameRef.current = index;
+          }}
+          className="transition duration-500 group-hover:scale-[1.02]"
+          sizes="(max-width:768px) 100vw, 33vw"
+        />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
           <span className="rounded-full bg-[var(--color-primary)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--color-accent-soft)]">
             {transactionLabels[property.transactionType]}
@@ -232,12 +231,9 @@ export function PropertyCard({
           <span className="text-xs text-[var(--color-muted)]">{daysAgo(property.publishedAt)}</span>
         </div>
         <div>
-          <Link
-            href={href}
-            className="break-words font-semibold text-[var(--color-text)] hover:text-[var(--color-accent-soft)]"
-          >
+          <h3 className="break-words font-semibold text-[var(--color-text)]">
             {property.title}
-          </Link>
+          </h3>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
             {property.location.district}, {property.location.city}
           </p>
@@ -282,6 +278,7 @@ export function PropertyCard({
         </div>
       </div>
     </article>
+    </Link>
   );
 }
 
