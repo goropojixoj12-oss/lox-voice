@@ -11,7 +11,7 @@
 - **Что:** восстановлена обложка карточки `…-_ZFWs` (`listing-card-preview` + `catalog-page-covers` + png); смоук снова требует `vue-aston-web-page-cover` / catalog-cover API
 - **Зачем:** webhook `ilqR2sn71XuD` — заменить фото вторым вложением; параллельные tvpFFqmJs2vq/lUN61FJoDdzM трактовали «remove» как снятие блока — откат
 - **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `public/media/catalog/vue-aston-web-page-cover.png`, `docs/PROJECT-LOG.md`
-- **Проверено:** gate; push `github/main`; prod smoke `/buy/residential`; PATCH — `SITE_AGENT_SECRET`
+- **Проверено:** `npm run gate` @ `08448f5`; push `github/main`, тег `backup/2026-11-05-ilqR2sn-cover`; prod `/buy/residential` — `vue-aston-web-page-cover`; `npm run smoke -- --base=https://www.seaps.asia --only=Vue Aston studio` 1/1. PATCH `ilqR2sn71XuD` — 401 без `SITE_AGENT_SECRET` в cloud VM
 
 ### site change: tvpFFqmJs2vq (/buy/residential — убрать фото с карточки)
 
