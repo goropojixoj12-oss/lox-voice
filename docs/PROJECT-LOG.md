@@ -8,17 +8,17 @@
 
 ### site change: xR6kanuO3dTq (листинг dA5Dl — убрать YouTube, дубликат q467nsHht6uW)
 
-- **Что:** без нового кода — повтор webhook CEO на тот же URL; на проде уже заглушка «No photos yet», нет «Live News Show» / `youtube-nocookie` (`shouldShowLiveNewsPanelForListing`, commit `05bb791`)
-- **Зачем:** Site Changes (webhook `xR6kanuO3dTq`, 16:09Z): «Remove the YouTube video» на странице Kampot architect house
+- **Что:** без нового кода — повтор webhook CEO; на листинге `…-dA5Dl` заглушка «No photos yet», нет «Live News Show» / YouTube (`shouldShowLiveNewsPanelForListing`, `main` @ `05bb791`)
+- **Зачем:** Site Changes (webhook `xR6kanuO3dTq`, 2026-11-05T16:09Z): «Remove the YouTube video»
 - **Файлы:** `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1; prod HTML листинга `…-dA5Dl`. PATCH `xR6kanuO3dTq` — в cloud VM нет `SITE_AGENT_SECRET`
+- **Проверено:** curl прод + `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1. PATCH `xR6kanuO3dTq` — 401, в cloud VM нет `SITE_AGENT_SECRET`
 
 ### site change: q467nsHht6uW (листинг dA5Dl — убрать YouTube / Live News box)
 
 - **Что:** для slug `…-dA5Dl` при пустой галерее `PropertyGallery` показывает заглушку «No photos yet» вместо `LiveNewsShowPanel` (YouTube highlights); `shouldShowLiveNewsPanelForListing` в `live-news-show.ts`
 - **Зачем:** Site Changes CEO (webhook `q467nsHht6uW`): убрать YouTube и блок на странице листинга Kampot architect house
 - **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/property-gallery.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `github/main` @ `05bb791`; prod HTML — только «No photos yet», нет «Live News Show» / `youtube-nocookie`; PATCH `q467nsHht6uW` — 401 без `SITE_AGENT_SECRET` в cloud VM (2026-11-05 automation)
+- **Проверено:** `github/main` @ `05bb791`; prod HTML — только «No photos yet», нет «Live News Show» / `youtube-nocookie`; smoke Kampot architect 1/1; PATCH `q467nsHht6uW` — 401 без `SITE_AGENT_SECRET` в cloud VM
 
 ### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
 
