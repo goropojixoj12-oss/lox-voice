@@ -706,3 +706,17 @@
 - **Зачем:** сегодня `tmp/prod-analytics-backup.mjs` писал в фиксированное имя, и мой же повторный запуск после сброса стёр слепок на 4106 событий.
 - **Файлы:** `AGENTS.md`.
 - **Проверено:** `grep -n «таймстампом» AGENTS.md` → строка 140; запись в `docs/PROJECT-LOG.md`.
+
+### Хедер перестал наползать на контент: высота строки выводится из меню
+
+- **Дата:** 2026-11-05
+- **Симптом:** на ~820px меню хедера переносилось и рисовалось поверх шапки кабинета («SEAPS EXECUTIVE DESK / Signed in as») — одинаково на `/dashboard/admin` и `/dashboard/admin/listings`, то есть глобально для кабинетов.
+- **Фаза 1, замеры на проде (не догадки):** `tmp/measure-header-overlap.mjs`, 820px → header 69px, row 68px, nav 150px (top 0 → bottom 150), шапка кабинета top=101, наложение 49px. 1440px → nav 74px при row 68px, наложения нет только потому, что контент начинается ниже. 390px → меню скрыто, наложения нет.
+- **Причина:** в `src/components/layout/site-header.tsx:43` высота строки хедера была задана утверждённо (`h-[4.25rem]` = 68px), а меню внутри неё — `md:flex-wrap`, то есть перенос разрешён исторически (`cee86f5` пробовал nowrap-одной-строкой, `6c723ec` вернул перенос обратно). Когда меню переносится на 3-4 строки, контейнер не растёт, `items-center` центрирует меню в 68px, и оно вылезает за нижнюю границу sticky-хедера наружу, на контент.
+- **Фикс (одна правка):** `h-[4.25rem]` → `min-h-[4.25rem]` — высота хедера выводится из содержимого, нижняя граница всегда под меню. Никаких изменений в составе пунктов меню и в breakpoint мобильного меню (§8 не затронут).
+- **RED до фикса** (`node scripts/check-header-clearance.mjs --base=http://127.0.0.1:43123 --path=/`):
+  - 390px — наложения нет; 820px — header 69px, nav 150px, вылезает на 81px; 1440px — header 69px, nav 74px, вылезает на 5px → exit 1
+- **GREEN после:** 390px ок; 820px header 151px, nav 150px, выступает -1px; 1440px header 75px, nav 74px, -1px → exit 0
+- **Файлы:** `src/components/layout/site-header.tsx` (min-h), `scripts/check-header-clearance.mjs` (новый постоянный чек геометрии через CDP, 390/820/1440, падает с числами если меню выходит за хедер; без Chromium отказывается делать вывод), `package.json` (`npm run layout:check`), `scripts/gate.mjs` (стадия «header clearance» после смоука, маркер теперь пишется только когда зелёные и smoke, и clearance), `AGENTS.md` правило 21 (описание gate дополнено).
+- **Визуальный контроль (правило 19):** `tmp/shot-local-admin-fixed-820.png` — шапка кабинета ниже хедера, наложения нет; `tmp/shot-local-header-fixed-820.png` — главная на 820: hero, поиск, «Personalise Your Experience», футер на местах.
+- **Как проверено дальше:** `npm run gate` (analytics 6/6, build, smoke 48/48, header clearance 3 ширины) → `bash scripts/ship.sh` → смоук против прода + скриншоты `/dashboard/admin` на 390/820/1440 на живом сайте.

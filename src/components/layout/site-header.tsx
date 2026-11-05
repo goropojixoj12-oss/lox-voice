@@ -40,7 +40,7 @@ export function SiteHeader({
   return (
     <LanguageSwitcherProvider>
       <header className="sticky top-0 z-[100] overflow-visible border-b border-[var(--color-border)]/80 bg-[rgba(7,17,31,0.92)] backdrop-blur-md supports-[background:color-mix(in_srgb,red,blue)]:bg-[color-mix(in_srgb,var(--color-background)_90%,transparent)]">
-        <div className="mx-auto grid h-[4.25rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-3 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] lg:px-8">
+        <div className="mx-auto grid min-h-[4.25rem] max-w-7xl grid-cols-[1fr_auto] items-center gap-2 px-4 sm:gap-3 sm:px-6 md:grid-cols-[auto_minmax(0,1fr)_auto] lg:px-8">
           <Link
             href="/"
             className="group shrink-0 notranslate justify-self-start md:col-start-1"

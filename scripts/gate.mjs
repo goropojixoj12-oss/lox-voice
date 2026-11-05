@@ -1,7 +1,7 @@
 /**
  * Gate: the one command an agent runs before pushing anything (AGENTS.md §9 steps 3–4).
  *
- *   npm run gate                 # build → prod-server smoke → writes tmp/gate-pass.json
+ *   npm run gate                 # build → prod-server smoke → header clearance → tmp/gate-pass.json
  *   npm run gate -- --fast       # skip build, smoke against the already running dev server
  *   npm run gate -- --lint       # also run eslint
  *   npm run gate -- --json       # machine-readable summary on the last line
@@ -170,6 +170,13 @@ const smokeOk = await stage("smoke", () =>
   run(process.execPath, [path.join(ROOT, "scripts", "smoke-site.mjs"), `--base=${base}`], { echo: true }),
 );
 
+// §19 as a machine check: the sticky header must contain its own navigation at 390/820/1440.
+const clearanceOk = await stage("header clearance", () =>
+  run(process.execPath, [path.join(ROOT, "scripts", "check-header-clearance.mjs"), `--base=${base}`], {
+    echo: true,
+  }),
+);
+
 if (server) server.kill("SIGTERM");
 
 const marker = {
@@ -180,10 +187,11 @@ const marker = {
   base,
   build: FAST ? "skipped (flag)" : "ok",
   smoke: smokeOk ? "ok" : "failed",
+  clearance: clearanceOk ? "ok" : "failed",
   ms: Date.now() - started,
 };
 
-if (smokeOk) {
+if (smokeOk && clearanceOk) {
   mkdirSync(path.dirname(MARKER), { recursive: true });
   writeFileSync(MARKER, JSON.stringify(marker, null, 2));
   say(`GATE PASS in ${((Date.now() - started) / 1000).toFixed(1)}s — marker written for ${marker.head.slice(0, 7)}`);
