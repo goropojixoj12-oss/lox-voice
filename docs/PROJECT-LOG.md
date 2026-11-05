@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: DvvGNmrjquL- (листинг dA5Dl — убрать пустую заглушку галереи)
+
+- **Что:** при пустой галерее на slug `…-dA5Dl` `PropertyGallery` возвращает `null` вместо bordered-блока «No photos yet»; смоук Kampot architect проверяет отсутствие заглушки
+- **Зачем:** Site Changes CEO (webhook `DvvGNmrjquL-`, 2026-11-05T16:13Z): «Remove the empty text box at the top of this page»
+- **Файлы:** `src/components/property/property-gallery.tsx`, `src/lib/live-news-show.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (заполнить после gate / ship / prod)
+
 ### site change: xR6kanuO3dTq (листинг dA5Dl — убрать YouTube, дубликат q467nsHht6uW)
 
 - **Что:** без нового кода — повтор webhook CEO; на листинге `…-dA5Dl` заглушка «No photos yet», нет «Live News Show» / YouTube (`shouldShowLiveNewsPanelForListing`, `main` @ `05bb791`)

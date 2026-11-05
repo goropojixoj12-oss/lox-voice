@@ -12,7 +12,7 @@ const LISTINGS_WITHOUT_LIVE_NEWS_PANEL: ReadonlySet<string> = new Set([
   KAMPOT_ARCHITECT_ZERO_PHOTO_SLUG,
 ]);
 
-/** When false, zero-photo gallery shows a plain placeholder instead of LiveNewsShowPanel. */
+/** When false, zero-photo gallery renders nothing (no LiveNewsShowPanel). */
 export function shouldShowLiveNewsPanelForListing(slug: string | undefined): boolean {
   if (!slug) return true;
   return !LISTINGS_WITHOUT_LIVE_NEWS_PANEL.has(slug);

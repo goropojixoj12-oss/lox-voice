@@ -98,7 +98,7 @@ const CHECKS = [
     sitemapLiveNewsProbe: true,
   },
   {
-    name: "listing detail: Kampot architect dA5Dl — no YouTube live news box (q467nsHht6uW)",
+    name: "listing detail: Kampot architect dA5Dl — no gallery stub or YouTube (DvvGNmrjquL-)",
     path: "/sitemap.xml",
     kampotArchitectNoYoutubeProbe: true,
   },
@@ -647,6 +647,12 @@ async function runKampotArchitectNoYoutubeProbe(check) {
     }
     if (text.includes("youtube-nocookie.com/embed")) {
       problems.push("still embeds YouTube iframe");
+    }
+    if (text.includes("No photos yet")) {
+      problems.push('still shows "No photos yet" placeholder');
+    }
+    if (text.includes("Property gallery placeholder")) {
+      problems.push("still shows empty gallery placeholder box");
     }
     return {
       check,

@@ -28,14 +28,7 @@ export function PropertyGallery({
 
   if (!current) {
     if (!shouldShowLiveNewsPanelForListing(listingSlug)) {
-      return (
-        <div
-          className="relative grid aspect-[16/10] w-full place-items-center overflow-hidden rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)]"
-          aria-label="Property gallery placeholder"
-        >
-          <p className="text-sm text-[var(--color-muted)]">No photos yet</p>
-        </div>
-      );
+      return null;
     }
     return <LiveNewsShowPanel listingSlug={listingSlug} />;
   }
