@@ -11,7 +11,7 @@
 - **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` на `/buy/residential` (пустой синий блок); whitelist `catalog-page-covers` очищен; текст страницы и карточки без изменений; смоук: нет `vue-aston-web-page-cover` / `catalog-cover/buy-residential-vue-aston`
 - **Зачем:** Site Changes CEO (webhook `7CFgVx5XjUBO`, 14:44Z): «Remove the photograph in the first attachment» (IMG_1278.jpeg), без второго вложения
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (после gate/ship)
+- **Проверено:** prod `/buy/residential` без `vue-aston-web-page-cover`; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2 @ `70ba57f`; PATCH `7CFgVx5XjUBO` — 401 без `SITE_AGENT_SECRET` в cloud VM
 
 ### site change: qcLymxiCQIRd (финал — замена обложки _ZFWs, не снятие)
 
