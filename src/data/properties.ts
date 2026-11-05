@@ -27,22 +27,7 @@ export const properties: Property[] = [
     landSqm: null,
     furnishing: null,
     amenities: [],
-    images: [
-      {
-        id: "vue-aston-01",
-        url: "/media/listings/vue-aston/01.jpg",
-        alt: "LUXURY @ VUE ASTON",
-        isCover: true,
-        storageKey: "public/vue-aston/01.jpg",
-      },
-      {
-        id: "vue-aston-02",
-        url: "/media/listings/vue-aston/02.jpg",
-        alt: "LUXURY @ VUE ASTON",
-        isCover: false,
-        storageKey: "public/vue-aston/02.jpg",
-      },
-    ],
+    images: [],
     cardPreviewVideoUrl: null,
     hasVideoTour: false,
     location: { country: "Cambodia", countrySlug: "cambodia", city: "Phnom Penh", citySlug: "phnom-penh", district: "Koh Norea", districtSlug: "koh-norea", commune: "Koh Norea", communeSlug: "koh-norea", address: "Vue Aston", lat: 0, lng: 0 },
