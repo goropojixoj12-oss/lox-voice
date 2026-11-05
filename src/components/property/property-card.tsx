@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bath, BedDouble, LandPlot, Maximize2 } from "lucide-react";
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
@@ -195,7 +194,7 @@ export function PropertyCard({
   }
 
   return (
-    <Link href={href} onClick={openListing} className="block h-full">
+    <a href={href} onClick={openListing} className="block h-full no-underline">
       <article className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]">
       <div className="relative aspect-[4/3]">
         <CardImagePreview
@@ -278,7 +277,7 @@ export function PropertyCard({
         </div>
       </div>
     </article>
-    </Link>
+    </a>
   );
 }
 
