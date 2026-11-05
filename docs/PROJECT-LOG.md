@@ -720,3 +720,20 @@
 - **Файлы:** `src/components/layout/site-header.tsx` (min-h), `scripts/check-header-clearance.mjs` (новый постоянный чек геометрии через CDP, 390/820/1440, падает с числами если меню выходит за хедер; без Chromium отказывается делать вывод), `package.json` (`npm run layout:check`), `scripts/gate.mjs` (стадия «header clearance» после смоука, маркер теперь пишется только когда зелёные и smoke, и clearance), `AGENTS.md` правило 21 (описание gate дополнено).
 - **Визуальный контроль (правило 19):** `tmp/shot-local-admin-fixed-820.png` — шапка кабинета ниже хедера, наложения нет; `tmp/shot-local-header-fixed-820.png` — главная на 820: hero, поиск, «Personalise Your Experience», футер на местах.
 - **Как проверено дальше:** `npm run gate` (analytics 6/6, build, smoke 48/48, header clearance 3 ширины) → `bash scripts/ship.sh` → смоук против прода + скриншоты `/dashboard/admin` на 390/820/1440 на живом сайте.
+### Хедер-фикс долит в прод и проверен на живом сайте
+
+- **Дата:** 2026-11-05
+- **Что:** коммит правки хедера после rebase лёг поверх 18 коммитов cron-агента в `github/main` (live news panel, Hercules embed, редиректы описаний) → `5762632`; прогнан `npm run gate`, затем `bash scripts/ship.sh header-clearance`.
+- **Зачем:** под `github/main` ушла вперёд локальная ветка — пуш без rebase означал бы откат чужой утверждённой работы (§8), а `git commit --amend` по чужому коммиту запрещён (правило 23).
+- **Файлы:** ничего сверх уже названных в прошлой записи; rebase не дал конфликтов, `git diff github/main --stat` = ровно шесть путей правки.
+- **Проверено:** `npm run gate` на новом HEAD — analytics 6/6, build, smoke 50/50, header clearance 390/820/1440; `ship.sh` — backup-тег `backup/2026-11-05-header-clearance`, push github + origin, `● Ready`, смоук против прода 50/50. На проде `node scripts/check-header-clearance.mjs --base=https://www.seaps.asia`: `/dashboard/admin` и `/` — 820px header 151px / nav 150px, 1440px header 75px / nav 74px, наружу не выступает. Глазами (правило 19): `tmp/prod-admin-390.png`, `tmp/prod-admin-820.png`, `tmp/prod-admin-1440.png`, `tmp/prod-home-820.png` — шапка кабинета начинается под хедером, наложения нет; §8 точки (первый пункт About Us, без Market Feed, бренд + «Co. Ltd.», золотой текст) на местах.
+- **Побочная находка:** счётчики прода после сброса показывают 101/16/13 и только публичные пути (`/buy/residential`, `/property/...`, `/tag/cbra`) — ни `/dashboard*`, ни `/auth*` в таблице нет, фильтр работает; цифры растут в том числе от моих же прогонов смоука реальным Chromium.
+
+### Windows desktop.ini ломал сборку и git fetch
+
+- **Дата:** 2026-11-05
+- **Симптом:** `npm run build` падал с `[Error: Failed to open database / Loading persistence directory failed / invalid digit found in string]`; `bash scripts/git-state.sh` — `fatal: bad object refs/desktop.ini`, fetch не проходил ни в `github`, ни в `origin`.
+- **Причина (замерена, не угадана):** проводник Windows раскидал `desktop.ini` по всему дереву, включая `.next/cache/turbopack/v16.4.3-29bbeab0/` — каталог персистентного кэша Turbopack, где каждая запись должна читаться как число, и `.git/refs/` + `.git/refs/remotes/{github,origin}/`, где git обязан видеть только ссылки. Числовой парсер спотыкается о `desktop.ini`, а git считает его битой ссылкой.
+- **Что сделано:** ничего не удалял — все 276 файлов из `.git` перенесены в `tmp/windows-junk/git/` (плоские имена с путём), два файла из кэша Turbopack — в `tmp/windows-junk/`. После этого сборка зелёная, `git fetch` работает, `git for-each-ref` чистый.
+- **Проверено:** `find .git -name desktop.ini | wc -l` → 0; `npm run build` → exit 0; `bash scripts/git-state.sh` → печатает расхождение вместо ошибки; `npm run gate` → GATE PASS.
+- **Хвост у заказчика:** файлы появятся снова (это поведение проводника, не наш код). Предлагаю два шага: (1) добавить `desktop.ini` в `.gitignore`, чтобы ни один агент не закоммитил несколько сотен мусорных файлов; (2) выключить их автосоздание системным переключателем Windows — инструкция по запросу.
