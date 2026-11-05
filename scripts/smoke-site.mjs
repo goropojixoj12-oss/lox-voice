@@ -488,7 +488,6 @@ async function runCheck(check, session) {
 
 const VUE_ASTON_STUDIO_SLUG_MARKER = "_ZFWs";
 const STUNNING_ARCHITECTURAL_SLUG_MARKER = "dA5Dl";
-const BUY_RESIDENTIAL_STUNNING_COVER = "catalog-cover/buy-residential-stunning-title";
 const CONDO_SHOWCASE_URL = "cambodia-condo-showcase-174801.onhercules.app";
 
 async function runSearchVueAstonCoverProbe(check) {
@@ -576,16 +575,14 @@ async function runBuyResidentialDescriptionProbe(check) {
     if (
       text.includes("vue-aston-web-page-cover") ||
       text.includes("catalog-cover/buy-residential-vue-aston") ||
-      text.includes("catalog-cover/search-vue-aston-studio")
+      text.includes("catalog-cover/search-vue-aston-studio") ||
+      text.includes("catalog-cover/buy-residential-stunning-title")
     ) {
-      problems.push("Vue Aston studio card must not show catalog cover image");
+      problems.push("buy/residential must not show catalog cover images in listing preview boxes");
     }
     if (text.includes(STUNNING_ARCHITECTURAL_SLUG_MARKER)) {
       if (!text.includes("330,000") && !text.includes("330000")) {
         problems.push("Stunning architectural listing price $330,000 not found");
-      }
-      if (!text.includes(BUY_RESIDENTIAL_STUNNING_COVER)) {
-        problems.push("Stunning architectural card missing buy/residential catalog cover");
       }
     }
     return {

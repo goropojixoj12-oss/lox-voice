@@ -20,10 +20,6 @@ export const catalogCoverBySlug: Record<
     ],
     alt: "Vue Aston studio — SEAPS listing cover",
   },
-  "buy-residential-stunning-title": {
-    storageKey: "YSrQfu0BBqyc/Title.jpg",
-    alt: "Stunning architectural masterpiece — SEAPS listing cover",
-  },
 };
 
 type ListingCardCoverRoute = { pathname: string; catalogSlug: string };
@@ -31,9 +27,6 @@ type ListingCardCoverRoute = { pathname: string; catalogSlug: string };
 const listingCardCoverRoutes: Readonly<Record<string, readonly ListingCardCoverRoute[]>> = {
   [VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG]: [
     { pathname: "/search", catalogSlug: "search-vue-aston-studio" },
-  ],
-  [STUNNING_ARCHITECTURAL_ZERO_PHOTO_SLUG]: [
-    { pathname: "/buy/residential", catalogSlug: "buy-residential-stunning-title" },
   ],
 };
 
