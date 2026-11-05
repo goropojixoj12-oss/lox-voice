@@ -6,12 +6,19 @@
 
 ## 2026-11-05
 
+### site change: tvpFFqmJs2vq (убрать фото с карточки на /buy/residential)
+
+- **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` в каталоге `/buy/residential` (и `vue-aston-web-page-cover.png`, и `/api/public/catalog-cover/buy-residential-vue-aston`); снова пустой синий блок, текст карточки без изменений; смоук проверяет отсутствие обоих URL в HTML
+- **Зачем:** Site Changes webhook CEO (2026-11-05T13:10Z): «Remove the photograph in the first attachment» на https://www.seaps.asia/buy/residential
+- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (заполняется после gate/ship)
+
 ### site change: ilqR2sn71XuD (/buy/residential — замена фото на карточке Vue Aston studio)
 
-- **Что:** обложка каталога `buy-residential-vue-aston` читается из blob заявки `ilqR2sn71XuD/IMG_1278.jpeg` (второй файл формы до фикса не сохранялся); POST `/api/admin/site-requests` принимает `file2`, webhook/pull отдают `secondAttachmentUrl`; смоук принимает `catalog-cover/buy-residential-vue-aston`
-- **Зачем:** Site Changes CEO (2026-11-05T13:05Z): заменить фото на https://www.seaps.asia/buy/residential без изменения текста
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/lib/site-agent-types.ts`, `src/lib/site-agent-store.ts`, `src/app/api/admin/site-requests/route.ts`, `src/lib/site-agent-webhook.ts`, `src/app/api/admin/site-requests/pull/route.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (gate + ship + прод — дополняется в этом же коммите)
+- **Что:** обложка каталога `buy-residential-vue-aston` читалась из blob `ilqR2sn71XuD/IMG_1278.jpeg`; POST `/api/admin/site-requests` принимает `file2`, webhook/pull отдают `secondAttachmentUrl`
+- **Зачем:** Site Changes CEO (2026-11-05T13:05Z): заменить фото без изменения текста
+- **Файлы:** `src/lib/site-agent-types.ts`, `src/lib/site-agent-store.ts`, `src/app/api/admin/site-requests/route.ts`, `src/lib/site-agent-webhook.ts`, `src/app/api/admin/site-requests/pull/route.ts`, …
+- **Проверено:** отменено заявкой `tvpFFqmJs2vq` (фото снято с карточки)
 
 ### site change: YaKTzapYpVmr (обложка Vue Aston studio в синем превью карточки на /buy/residential)
 

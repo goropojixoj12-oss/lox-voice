@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import type { Property, PropertyImage } from "@/lib/types";
-import { resolveListingCardCoverSrc } from "@/lib/catalog-page-covers";
 import { clampPreviewPhotoCount, orderImagesWithCover } from "@/lib/list-property-media";
 import { cn } from "@/lib/utils";
 
@@ -135,27 +134,6 @@ export function ListingCardPreview({
   }
 
   if (!cover?.url) {
-    const cardCoverSrc = resolveListingCardCoverSrc(property.slug);
-    if (cardCoverSrc) {
-      return (
-        <div
-          className={cn(
-            "absolute inset-0 overflow-hidden bg-[var(--color-secondary)]",
-            className,
-          )}
-        >
-          <Image
-            src={cardCoverSrc}
-            alt={alt}
-            fill
-            unoptimized
-            className="object-contain object-top"
-            sizes={sizes}
-            priority
-          />
-        </div>
-      );
-    }
     return <div className={cn("bg-[var(--color-secondary)]", className)} aria-hidden />;
   }
 
