@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ListingCardPreview } from "@/components/property/listing-card-preview";
 import { Bath, BedDouble, LandPlot, Maximize2 } from "lucide-react";
 import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
@@ -13,26 +13,171 @@ import {
   transactionLabels,
   verificationLabels,
 } from "@/lib/labels";
-import type { Property } from "@/lib/types";
+import type { Property, PropertyImage } from "@/lib/types";
+import { clampPreviewPhotoCount, orderImagesWithCover } from "@/lib/list-property-media";
 import { cn, daysAgo } from "@/lib/utils";
+
+const FLIPBOOK_MS = 480;
+
+export function listingPreviewFromMedia(
+  title: string,
+  items: { kind: string; url: string; isCover?: boolean; isCardPreview?: boolean }[],
+): Pick<Property, "images" | "videos" | "cardPreviewVideoUrl" | "title"> {
+  const images = orderImagesWithCover(
+    items
+      .filter((i) => i.kind === "image")
+      .map((i, index) => ({
+        id: `img-${index}`,
+        url: i.url,
+        alt: title,
+        isCover: i.isCover,
+      })),
+  );
+  const videos = items
+    .filter((i) => i.kind === "video")
+    .map((i, index) => ({
+      id: `vid-${index}`,
+      url: i.url,
+      role: i.isCardPreview ? ("card_preview" as const) : ("tour" as const),
+    }));
+  const cardPreviewVideoUrl = items.find((i) => i.kind === "video" && i.isCardPreview)?.url ?? null;
+  return { title, images, videos, cardPreviewVideoUrl };
+}
+
+
+// встроенный preview
+export function CardImagePreview({
+  property,
+  className,
+  onFrameChange,
+  sizes,
+}: {
+  property: Property;
+  className?: string;
+  onFrameChange?: (index: number) => void;
+  sizes: string;
+}) {
+  const [index, setIndex] = useState(0);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    onFrameChange?.(index);
+  }, [index, onFrameChange]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => setReduceMotion(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  const cardVideoUrl =
+    property.cardPreviewVideoUrl ||
+    property.videos?.find((v) => v.role === "card_preview")?.url ||
+    null;
+
+  const frames = useMemo(() => {
+    const urls = orderImagesWithCover(property.images)
+      .map((i: PropertyImage) => i.url)
+      .filter(Boolean)
+      .slice(0, clampPreviewPhotoCount(property.previewPhotoCount));
+    return urls.length >= 2 ? urls : [];
+  }, [property.images, property.previewPhotoCount]);
+
+  useEffect(() => {
+    if (reduceMotion || frames.length < 2) return;
+    const timer = window.setInterval(() => {
+      setIndex((i) => (i + 1) % frames.length);
+    }, FLIPBOOK_MS);
+    return () => window.clearInterval(timer);
+  }, [frames.length, reduceMotion]);
+
+  const cover = property.images.find((i) => i.isCover) ?? property.images[0];
+  const alt = cover?.alt || property.title;
+
+  if (cardVideoUrl) {
+    return (
+      <video
+        className={cn("absolute inset-0 h-full w-full object-cover", className)}
+        src={cardVideoUrl}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-label={alt}
+      />
+    );
+  }
+
+  if (frames.length >= 2) {
+    return (
+      <div
+        className={cn(
+          "absolute inset-0 overflow-hidden bg-[var(--color-secondary)]",
+          className,
+        )}
+      >
+        {reduceMotion || frames.length < 2 ? (
+          <Image
+            src={frames[0]}
+            alt={alt}
+            fill
+            unoptimized
+            className="object-cover"
+            sizes={sizes}
+          />
+        ) : (
+          frames.map((url, i) => (
+            <Image
+              key={`${i}-${url}`}
+              src={url}
+              alt={alt}
+              fill
+              className={cn(
+                "object-cover transition-opacity duration-300",
+                i === index ? "opacity-100" : "opacity-0",
+              )}
+              sizes={sizes}
+              priority={i === 0}
+              unoptimized
+            />
+          ))
+        )}
+      </div>
+    );
+  }
+
+  if (!cover?.url) {
+    return <div className={cn("bg-[var(--color-secondary)]", className)} aria-hidden />;
+  }
+
+  return (
+    <Image
+      src={cover.url}
+      alt={alt}
+      fill
+      className={cn("object-cover", className)}
+      sizes={sizes}
+      unoptimized={cover.url.startsWith("/api/")}
+    />
+  );
+}
 
 export function PropertyCard({
   property,
-  variant = "grid",
   userId,
   externalDescriptionHref,
 }: {
   property: Property;
-  variant?: "grid" | "list" | "editorial";
   userId?: string;
-  /** Full-page redirect for catalog “Description” actions (e.g. Vue Aston studio showcase). */
   externalDescriptionHref?: string;
 }) {
   const frameRef = useRef(0);
   const router = useRouter();
   const href = `/property/${property.slug}`;
-  // the preview autoplays, so the click has to land on the frame the user is looking at,
-  // tracked in a ref to avoid re-rendering every card on every flip
+
   function openListing(event: React.MouseEvent) {
     if (
       event.defaultPrevented ||
@@ -49,45 +194,11 @@ export function PropertyCard({
     router.push(frame > 0 ? `${href}?photo=${frame}` : href);
   }
 
-  if (variant === "editorial") {
-    return (
-      <article className="seaps-card group relative h-full overflow-hidden rounded-[var(--radius-xl)] text-white">
-        <Link href={href} onClick={openListing} className="block">
-          <div className="relative aspect-[16/11]">
-            <ListingCardPreview
-              property={property}
-              onFrameChange={(index) => {
-                frameRef.current = index;
-              }}
-              className="transition duration-700 group-hover:scale-[1.03]"
-              sizes="(max-width:768px) 100vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-5">
-              <p className="text-xs uppercase tracking-[0.16em] text-white/80">
-                {transactionLabels[property.transactionType]}
-              </p>
-              <h3 className="mt-2 font-[family-name:var(--font-display)] text-2xl leading-tight">
-                {property.title}
-              </h3>
-              <PriceDisplay property={property} className="mt-2 text-lg font-semibold" />
-            </div>
-          </div>
-        </Link>
-      </article>
-    );
-  }
-
   return (
-    <article
-      className={cn(
-        "seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]",
-        variant === "list" && "md:grid md:grid-cols-[280px_1fr]",
-      )}
-    >
-      <div className={cn("relative aspect-[4/3]", variant === "list" && "md:aspect-auto md:min-h-full")}>
+    <article className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]">
+      <div className="relative aspect-[4/3]">
         <Link href={href} onClick={openListing} className="absolute inset-0 overflow-hidden">
-          <ListingCardPreview
+          <CardImagePreview
             property={property}
             onFrameChange={(index) => {
               frameRef.current = index;
@@ -212,7 +323,6 @@ export function PropertyList({
         <PropertyCard
           key={property.id}
           property={property}
-          variant="list"
           userId={userId}
           externalDescriptionHref={descriptionHrefForProperty?.(property)}
         />

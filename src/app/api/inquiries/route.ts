@@ -89,6 +89,18 @@ export async function POST(request: Request) {
     pageUrl: parsed.data.pageUrl,
   });
 
+  const session = await getSession();
+  const { website: _hp, consent: _consent, email, phone, ...rest } = parsed.data;
+  const inquiry = await createInquiry({
+    name: rest.name,
+    contact: contactLineFromForm(email, phone),
+    message: rest.message,
+    propertyId: rest.propertyId,
+    propertyTitle: rest.category,
+    propertySlug: rest.propertySlug,
+    recipientType: "platform",
+  });
+
   if (!mailResult.delivered) {
     const reason = mailResult.reason ?? "delivery_failed";
     const isConfig = reason === "smtp_not_configured";
@@ -101,22 +113,11 @@ export async function POST(request: Request) {
           ? "Email delivery is not configured. Set SMTP_PASS on the server."
           : "Could not send email. Check SMTP credentials and Hostinger mailbox settings.",
         code: reason,
+        inquiry,
       },
       { status: isConfig ? 503 : 502 },
     );
   }
-
-  const session = await getSession();
-  const { website: _hp, consent: _consent, email, phone, ...rest } = parsed.data;
-  const inquiry = await createInquiry({
-    name: rest.name,
-    contact: contactLineFromForm(email, phone),
-    message: rest.message,
-    propertyId: rest.propertyId,
-    propertyTitle: rest.category,
-    propertySlug: rest.propertySlug,
-    recipientType: "platform",
-  });
 
   return NextResponse.json({ inquiry, sessionUserId: session?.id ?? null });
 }

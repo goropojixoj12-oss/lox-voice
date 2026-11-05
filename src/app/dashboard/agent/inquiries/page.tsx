@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EmptyState } from "@/components/shared/states";
+import { InquiryReplyModal } from "@/components/inquiry/inquiry-reply-modal";
 import { requireRole } from "@/lib/auth";
 import { getInquiriesForSession } from "@/lib/inquiry-access";
 import { redirect } from "next/navigation";
+import { InquiryList } from "@/components/inquiry/inquiry-list";
 
 export const metadata: Metadata = { title: "Inquiries" };
 
@@ -23,38 +25,5 @@ export default async function DashboardInquiriesPage() {
     );
   }
 
-  return (
-    <div>
-      <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-accent-soft)]">
-        Inquiries
-      </h1>
-      <ul className="mt-5 space-y-3">
-        {inquiries.map((inquiry) => (
-          <li
-            key={inquiry.id}
-            className="rounded-[var(--radius-md)] seaps-card p-4"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="font-semibold">{inquiry.propertyTitle}</p>
-              <span className="text-xs uppercase tracking-wide text-[var(--color-muted)]">
-                {inquiry.status}
-              </span>
-            </div>
-            <p className="mt-1 text-sm text-[var(--color-muted)]">
-              {inquiry.name} · {inquiry.contact}
-            </p>
-            {inquiry.propertySlug ? (
-              <Link
-                href={`/property/${inquiry.propertySlug}`}
-                className="mt-1 inline-block text-sm text-[var(--color-accent-soft)] underline-offset-4 hover:underline"
-              >
-                /property/{inquiry.propertySlug}
-              </Link>
-            ) : null}
-            <p className="mt-2 text-sm">{inquiry.message}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  return <InquiryList inquiries={inquiries} />;
 }

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "loksserver": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "https://api.gonkarouter.io/v1"
+      ],
+      "env": {
+        "KEY": "${env:GONKA_API_KEY}"
+      }
+    }
+  }
+}

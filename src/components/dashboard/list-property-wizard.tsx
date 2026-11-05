@@ -18,7 +18,7 @@ import {
 } from "@/components/dashboard/list-property-deal-step";
 import { ListPropertyMediaStep } from "@/components/dashboard/list-property-media-step";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
-import { ListingCardPreview, listingPreviewFromMedia } from "@/components/property/listing-card-preview";
+import { listingPreviewFromMedia, CardImagePreview } from "@/components/property/property-card";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Select, Textarea } from "@/components/ui/input";
 import { useListPropertyDesk } from "@/components/dashboard/list-property-desk-provider";
@@ -548,7 +548,7 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
                   Card preview (site-wide)
                 </p>
                 <div className="relative aspect-[4/3] max-w-sm overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)]">
-                  <ListingCardPreview
+                  <CardImagePreview
                     property={{
                       ...listingPreviewFromMedia(form.title || "Listing", mediaItems),
                       previewPhotoCount: clampPreviewPhotoCount(form.previewCount),
@@ -584,6 +584,7 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
                       publishedAt: new Date().toISOString(),
                       updatedAt: new Date().toISOString(),
                     }}
+                    sizes="(max-width:768px) 100vw, 33vw"
                   />
                 </div>
               </div>

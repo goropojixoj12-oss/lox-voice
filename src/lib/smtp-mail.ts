@@ -92,6 +92,54 @@ function buildTextBody(input: FormSubmissionMailInput): string {
   return lines.join("\n");
 }
 
+export type InquiryReplyMailInput = {
+  toName: string;
+  toEmail: string;
+  subject: string;
+  replyBody: string;
+  originalMessage: string;
+  propertyTitle: string;
+};
+
+export async function sendInquiryReplyEmail(
+  input: InquiryReplyMailInput,
+): Promise<{ delivered: boolean; reason?: string; detail?: string }> {
+  if (!smtpConfigured()) {
+    return { delivered: false, reason: "smtp_not_configured" };
+  }
+
+  const from = getDefaultFormMailFrom();
+  const fromHeader = from.includes("<") ? from : `SEAPS <${from}>`;
+  const text = [
+    `Hello ${input.toName},`,
+    "",
+    input.replyBody.trim(),
+    "",
+    "---",
+    `RE: ${input.propertyTitle}`,
+    "",
+    "Your original message:",
+    input.originalMessage.trim(),
+    "",
+    brand.fullName,
+  ].join("\n");
+
+  try {
+    const transport = createTransport();
+    await transport.sendMail({
+      from: fromHeader,
+      to: input.toEmail,
+      subject: input.subject.slice(0, 200),
+      text,
+    });
+    return { delivered: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("[smtp-mail] reply send failed:", message);
+    return { delivered: false, reason: "smtp_send_failed", detail: message };
+  }
+}
+
 export async function sendFormSubmissionEmail(
   input: FormSubmissionMailInput,
 ): Promise<{ delivered: boolean; reason?: string; detail?: string }> {

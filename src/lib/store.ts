@@ -66,6 +66,18 @@ export async function createInquiry(input: Omit<Inquiry, "id" | "createdAt" | "s
   return inquiry;
 }
 
+export async function updateInquiry(
+  id: string,
+  patch: Partial<Pick<Inquiry, "status">>,
+) {
+  const inquiries = await getInquiries();
+  const idx = inquiries.findIndex((i) => i.id === id);
+  if (idx < 0) return null;
+  inquiries[idx] = { ...inquiries[idx], ...patch };
+  await writeJson("inquiries.json", inquiries);
+  return inquiries[idx];
+}
+
 export async function getSavedSearches(userId: string) {
   const all = await readJson<Record<string, SavedSearch[]>>("saved-searches.json", {});
   return all[userId] ?? [];

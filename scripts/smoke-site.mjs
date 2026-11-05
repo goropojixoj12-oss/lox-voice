@@ -252,6 +252,14 @@ const CHECKS = [
     include: ["No inquiries yet"],
   },
   {
+    name: "inquiry reply api: 404 on unknown id",
+    path: "/api/admin/inquiries/nonexistent-id-for-smoke/reply",
+    role: "agent",
+    method: "POST",
+    body: JSON.stringify({ message: "smoke test" }),
+    status: [404],
+  },
+  {
     name: "admin desk: closed to agent",
     path: "/dashboard/admin/listings",
     role: "agent",
@@ -446,11 +454,17 @@ async function runCheck(check, session) {
   const started = Date.now();
   let res;
   try {
-    res = await fetch(`${BASE}${check.path}`, {
-      headers: check.role ? { cookie: session[check.role] } : undefined,
+    const fetchOpts = {
+      headers: {
+        ...(check.role ? { cookie: session[check.role] } : {}),
+        ...(check.body ? { "Content-Type": "application/json" } : {}),
+      },
       redirect: "manual",
       signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
+      ...(check.method ? { method: check.method } : {}),
+      ...(check.body ? { body: check.body } : {}),
+    };
+    res = await fetch(`${BASE}${check.path}`, fetchOpts);
   } catch (err) {
     return { check, pass: false, why: `request failed: ${err.message}` };
   }

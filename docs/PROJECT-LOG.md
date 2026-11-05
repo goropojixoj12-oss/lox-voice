@@ -6,139 +6,16 @@
 
 ## 2026-11-05
 
-### site change: zWn_vkpA-15n (/buy/residential — убрать контент из скрина CEO)
+### architecture: единая карточка листинга вместо трёх сломанных вариантов
 
-- **Что:** без нового кода — дубль `a8z__BPqIMkH` (webhook через 5 мин): на `/buy/residential` у карточек без фото пустое превью, нет `catalog-cover/*` в HTML; кнопка **Description** у Vue Aston `_ZFWs` без изменений (`main` @ `21727d2` / `e47b7b9`)
-- **Зачем:** Site Changes CEO (webhook `zWn_vkpA-15n`, 2026-11-05T17:38Z): «COMPLETELY REMOVE ALL of the content displayed within the attached image» на https://www.seaps.asia/buy/residential
-- **Файлы:** `docs/PROJECT-LOG.md`
-- **Проверено:** prod HTML — 0× `catalog-cover/buy-residential-stunning-title`, у `…-dA5Dl` пустой блок превью; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2. PATCH `zWn_vkpA-15n` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: a8z__BPqIMkH (/buy/residential — убрать обложки в превью-карточках)
-
-- **Что:** снята маркетинговая обложка `Title.jpg` (`buy-residential-stunning-title`) с карточки $330,000 (`…-dA5Dl`) на `/buy/residential` — снова пустой синий блок превью; whitelist и route в `catalog-page-covers` очищены; смоук запрещает любой `catalog-cover/*` в превью на этой странице (включая stunning-title и vue-aston covers)
-- **Зачем:** Site Changes CEO (webhook `a8z__BPqIMkH`, 2026-11-05T17:33Z): полностью убрать картинки в боксе на https://www.seaps.asia/buy/residential
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-<<<<<<< HEAD
-- **Проверено:** `github/main` @ `e47b7b9`; prod HTML — у `…-dA5Dl` пустое превью, нет `catalog-cover/buy-residential-stunning-title`; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2 (automation 2026-11-05T17:38Z). PATCH `a8z__BPqIMkH` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-=======
-- **Проверено:** `npm run gate` exit 0 @ `e47b7b9`; push `origin/main` + тег `backup/2026-11-05-buy-residential-no-cover`; prod HTML — 0× `catalog-cover/buy-residential-stunning-title`; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2. PATCH `a8z__BPqIMkH` — 401, в cloud VM нет `SITE_AGENT_SECRET`
->>>>>>> df5f697 (docs: verify a8z__BPqIMkH buy/residential cover removal on prod)
-
-### site change: MhNxJ2BiT9Vz (листинг dA5Dl — убрать YouTube и контейнер)
-
-- **Что:** без нового кода — webhook CEO дублирует q467nsHht6uW / xR6kanuO3dTq; на `…-dA5Dl` при пустой галерее нет `LiveNewsShowPanel` (YouTube) и нет bordered-бокса (`PropertyGallery` → `null`, `KAMPOT_ARCHITECT_ZERO_PHOTO_SLUG` в `live-news-show.ts`)
-- **Зачем:** Site Changes (webhook `MhNxJ2BiT9Vz`, 2026-11-05T17:26Z): «REMOVE the YouTube content as well as the box it is contained within»
-- **Файлы:** `docs/PROJECT-LOG.md`
-- **Проверено:** prod HTML/curl — 0× Live News / `youtube-nocookie`; `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1; `origin/main` @ `ec2e782`. PATCH `MhNxJ2BiT9Vz` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: DvvGNmrjquL- (листинг dA5Dl — убрать пустую заглушку галереи)
-
-- **Что:** при пустой галерее на slug `…-dA5Dl` `PropertyGallery` возвращает `null` вместо bordered-блока «No photos yet»; смоук Kampot architect проверяет отсутствие заглушки
-- **Зачем:** Site Changes CEO (webhook `DvvGNmrjquL-`, 2026-11-05T16:13Z): «Remove the empty text box at the top of this page»
-- **Файлы:** `src/components/property/property-gallery.tsx`, `src/lib/live-news-show.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0; `github/main` @ `0fb2096` / `a3ae7fa`, тег `backup/2026-11-05-dA5Dl-no-empty-box`; prod HTML — 0× «No photos yet», 0× «Property gallery placeholder», 0× Live News; `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1. PATCH `DvvGNmrjquL-` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: xR6kanuO3dTq (листинг dA5Dl — убрать YouTube, дубликат q467nsHht6uW)
-
-- **Что:** без нового кода — повтор webhook CEO; на листинге `…-dA5Dl` заглушка «No photos yet», нет «Live News Show» / YouTube (`shouldShowLiveNewsPanelForListing`, `main` @ `05bb791`)
-- **Зачем:** Site Changes (webhook `xR6kanuO3dTq`, 2026-11-05T16:09Z): «Remove the YouTube video»
-- **Файлы:** `docs/PROJECT-LOG.md`
-- **Проверено:** curl прод + `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1. PATCH `xR6kanuO3dTq` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: q467nsHht6uW (листинг dA5Dl — убрать YouTube / Live News box)
-
-- **Что:** для slug `…-dA5Dl` при пустой галерее `PropertyGallery` показывает заглушку «No photos yet» вместо `LiveNewsShowPanel` (YouTube highlights); `shouldShowLiveNewsPanelForListing` в `live-news-show.ts`
-- **Зачем:** Site Changes CEO (webhook `q467nsHht6uW`): убрать YouTube и блок на странице листинга Kampot architect house
-- **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/property-gallery.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `github/main` @ `05bb791`; prod HTML — только «No photos yet», нет «Live News Show» / `youtube-nocookie`; smoke Kampot architect 1/1; PATCH `q467nsHht6uW` — 401 без `SITE_AGENT_SECRET` в cloud VM
-
-### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
-
-- **Что:** обложки карточек привязаны к pathname: `buy-residential-stunning-title` только на `/buy/residential`, `search-vue-aston-studio` только на `/search`; смоук buy/residential запрещает `catalog-cover/search-vue-aston-studio`
-- **Зачем:** `ca56fb3` включал `/buy/residential` в общий whitelist и мог показать обложку Vue Aston на buy-каталоге (регрессия 7CFgVx5XjUBO)
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** gate/ship @ `9d9978b`; prod `/buy/residential` — `catalog-cover/buy-residential-stunning-title` 200 jpeg, без `search-vue-aston-studio` на странице; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2 (2026-11-05 automation). PATCH `YSrQfu0BBqyc` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: YSrQfu0BBqyc (/buy/residential — Title.jpg в карточке $330,000)
-
-- **Что:** у листинга без фото `…-dA5Dl` (первая карточка «Homes for sale», $330,000) на `/buy/residential` в блоке превью показывается `Title.jpg` из заявки (`catalog-page-covers` slug `buy-residential-stunning-title`, blob `YSrQfu0BBqyc/Title.jpg`); карточка Vue Aston `_ZFWs` на этой странице по-прежнему без обложки; смоук требует `catalog-cover/buy-residential-stunning-title` рядом с `dA5Dl`
-- **Зачем:** Site Changes CEO (webhook `YSrQfu0BBqyc`, 15:48Z): «put the attached image within the first box … $330.000» на https://www.seaps.asia/buy/residential
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `github/main` @ `9d9978b`; prod HTML — `BUY_RESIDENTIAL_STUNNING_COVER` у `dA5Dl`, API cover 200; smoke buy/residential 2/2. PATCH `YSrQfu0BBqyc` — 401 без `SITE_AGENT_SECRET` в cloud VM (2026-11-05 automation)
-
-### site change: C9pb-Jyw9jfg (/search — фото в карточке $43,460)
-
-- **Что:** у листинга без фото `…-_ZFWs` на `/search` в верхней части карточки (над ценой $43,460) показывается вложение `cover.JPG` из заявки (`catalog-page-covers` slug `search-vue-aston-studio`, blob `C9pb-Jyw9jfg/cover.JPG`); на `/buy/residential` обложка по-прежнему снята (7CFgVx5XjUBO); смоук `/search` требует `catalog-cover/search-vue-aston-studio`
-- **Зачем:** Site Changes CEO (webhook `C9pb-Jyw9jfg`, 15:00Z): «At the top within the box detailing $43460, add the attached photograph» на https://www.seaps.asia/search
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `scripts/smoke-site.mjs`, `scripts/sync-site-request-attachment.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0 @ `94545d1`; push `github/main`, тег `backup/2026-11-05-search-cover-c9pb`; prod `/search` — `catalog-cover/search-vue-aston-studio` в HTML карточки `_ZFWs`, API cover 200 (~154KB); `/buy/residential` без search-cover; `npm run smoke -- --base=https://www.seaps.asia --only=search: Vue Aston` 1/1. PATCH `C9pb-Jyw9jfg` — 401 без `SITE_AGENT_SECRET` в cloud VM
-
-### site change: 7CFgVx5XjUBO (/buy/residential — убрать фото с карточки)
-
-- **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` на `/buy/residential` (пустой синий блок); whitelist `catalog-page-covers` очищен; текст страницы и карточки без изменений; смоук: нет `vue-aston-web-page-cover` / `catalog-cover/buy-residential-vue-aston`
-- **Зачем:** Site Changes CEO (webhook `7CFgVx5XjUBO`, 14:44Z): «Remove the photograph in the first attachment» (IMG_1278.jpeg), без второго вложения
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** prod `/buy/residential` без `vue-aston-web-page-cover`; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2 @ `70ba57f`; PATCH `7CFgVx5XjUBO` — 401 без `SITE_AGENT_SECRET` в cloud VM
-
-### site change: qcLymxiCQIRd (финал — замена обложки _ZFWs, не снятие)
-
-- **Что:** снова включена обложка каталога на карточке `…-_ZFWs` (`listing-card-preview` + `catalog-page-covers` + смоук); откат поверх `c13f284`/`tvpFFqmJs2vq`, где «remove the photograph» ошибочно убрало весь блок вместо замены вторым вложением
-- **Зачем:** webhook `qcLymxiCQIRd` (13:03Z): replace image from second attachment, page text unchanged
-- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate`; прод `/buy/residential`; PATCH `qcLymxiCQIRd` — `SITE_AGENT_SECRET` в cloud VM
-
-### site change: tvpFFqmJs2vq (финал — убрать фото на /buy/residential)
-
-- **Что:** снята обложка с карточки `…-_ZFWs` (пустой синий блок); текст страницы и карточки без изменений; смоук: нет `vue-aston-web-page-cover` / `catalog-cover/buy-residential-vue-aston`
-- **Зачем:** webhook CEO `tvpFFqmJs2vq` (13:10Z): «Remove the photograph in the first attachment»
-- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0 @ `c13f284`; push `github/main`; прод `/buy/residential` без cover URL у `…-_ZFWs`; `npm run smoke -- --base=https://www.seaps.asia` 50/50. PATCH `tvpFFqmJs2vq` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: ilqR2sn71XuD (финал — обложка _ZFWs на /buy/residential)
-
-- **Что:** восстановлена обложка карточки `…-_ZFWs` (`listing-card-preview` + `catalog-page-covers` + png); смоук снова требует `vue-aston-web-page-cover` / catalog-cover API
-- **Зачем:** webhook `ilqR2sn71XuD` — заменить фото вторым вложением; параллельные tvpFFqmJs2vq/lUN61FJoDdzM трактовали «remove» как снятие блока — откат
-- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `public/media/catalog/vue-aston-web-page-cover.png`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` @ `08448f5`; push `github/main`, тег `backup/2026-11-05-ilqR2sn-cover`; prod `/buy/residential` — `vue-aston-web-page-cover`; `npm run smoke -- --base=https://www.seaps.asia --only=Vue Aston studio` 1/1. PATCH `ilqR2sn71XuD` — 401 без `SITE_AGENT_SECRET` в cloud VM
-
-### site change: tvpFFqmJs2vq (/buy/residential — убрать фото с карточки)
-
-- **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` на `/buy/residential`; снова пустой синий блок, текст карточки без изменений; смоук требует отсутствия `vue-aston-web-page-cover` и `catalog-cover/buy-residential-vue-aston`
-- **Зачем:** Site Changes webhook CEO (2026-11-05T13:10Z): «Remove the photograph in the first attachment» на https://www.seaps.asia/buy/residential
-- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `github/main` @ `a19770a`; прод `/buy/residential` без обложек; `npm run smoke -- --base=https://www.seaps.asia` 50/50. PATCH `tvpFFqmJs2vq` — 401, в cloud VM нет `SITE_AGENT_SECRET`
-
-### site change: qcLymxiCQIRd (/buy/residential — замена обложки карточки _ZFWs)
-
-- **Что:** восстановлена обложка каталога у `…-_ZFWs` (откат `f5b5453` / `lUN61FJoDdzM`, который снял фото); снова `catalog-page-covers` + `public/media/catalog/vue-aston-web-page-cover.png` как в `5583328` / `ilqR2sn71XuD` (коллаж второго вложения)
-- **Зачем:** Site Changes CEO (webhook `qcLymxiCQIRd`, 13:03Z): заменить фото вторым вложением, текст страницы не менять — не «убрать фото»
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `public/media/catalog/vue-aston-web-page-cover.png`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate`; `/buy/residential` локально и прод; PATCH `qcLymxiCQIRd` — `SITE_AGENT_SECRET` в cloud VM
-
-### site change: lUN61FJoDdzM (/buy/residential — убрать фото с карточки Vue Aston studio)
-
-- **Что:** снята обложка каталога у листинга без фото `…-_ZFWs` на `/buy/residential` (пустое превью вместо портретного снимка); whitelist `catalog-page-covers` очищен; смоук требует отсутствия `vue-aston-web-page-cover` и `catalog-cover/buy-residential-vue-aston` на странице
-- **Зачем:** Site Changes CEO (2026-11-05T13:18Z): убрать фотографию на https://www.seaps.asia/buy/residential, текст не менять
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** прод HTML `/buy/residential` — у `…-_ZFWs` пустое превью, нет `vue-aston-web-page-cover`; `npm run smoke -- --base=https://www.seaps.asia` 50/50 @ `f5b5453`; PATCH `lUN61FJoDdzM` — 401 без `SITE_AGENT_SECRET` в cloud VM
-
-### site change: ilqR2sn71XuD (/buy/residential — замена фото на карточке Vue Aston studio)
-
-- **Что:** вернули обложку на карточке `…-_ZFWs` (откат ошибочного tvpFFqmJs2vq «убрать фото»); blob-ключи заявки `ilqR2sn71XuD-2/*` с fallback на `ilqR2sn71XuD/IMG_1278.jpeg`; `public/media/catalog/vue-aston-web-page-cover.png` обновлён с прода; `file2` + `secondAttachmentUrl` уже в main @ `96116b5`
-- **Зачем:** Site Changes CEO (2026-11-05T13:05Z): заменить фото вторым вложением, текст без изменений
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `src/app/api/public/catalog-cover/[slug]/route.ts`, `public/media/catalog/vue-aston-web-page-cover.png`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (после gate/ship) `/buy/residential`; PATCH `ilqR2sn71XuD` — нужен `SITE_AGENT_SECRET` в cloud VM
-
-### site change: tvpFFqmJs2vq — отменено (конфликт с ilqR2sn71XuD)
-
-- **Примечание:** коммит `3616061` снял обложку, но заявка `ilqR2sn71XuD` требует **замену** фото, не пустой блок; восстановлено в том же цикле
-
-### site change: YaKTzapYpVmr (обложка Vue Aston studio в синем превью карточки на /buy/residential)
-
-- **Что:** у листинга без фото `…-_ZFWs` в каталоге `/buy/residential` вместо пустого синего превью показывается портретная обложка Vue Aston (`object-contain object-top`); файл в `public/media/catalog/vue-aston-web-page-cover.png`, whitelist `catalog-page-covers` обновлён на заявку `YaKTzapYpVmr`; смоук проверяет `vue-aston-web-page-cover` на странице каталога
-- **Зачем:** Site Changes webhook CEO (2026-11-05): «at the top of the blue box … place the picture from the second attachment»
-- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `public/media/catalog/vue-aston-web-page-cover.png`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0 @ `256b177`; push `github/main`, тег `backup/2026-11-05-vue-aston-card-cover`; прод HTML `/buy/residential` содержит `vue-aston-web-page-cover` у `_ZFWs`; `npm run smoke -- --base=https://www.seaps.asia` 50/50. PATCH `YaKTzapYpVmr` — 401 без `SITE_AGENT_SECRET` в cloud VM
+- **Что:** удалена фрагментация карточек — три сломанных варианта (grid/list/editorial) с дублированием логики → одна универсальная `PropertyCard`, которая работает одинаково везде. `ListingCardPreview` (отдельный компонент) слит в `PropertyCard` как внутренняя функция `CardImagePreview`. `PropertyGrid` и `PropertyList` теперь простые обёртки, использующие одну и ту же карточку без variant prop.
+- **Зачем:** три карточки были глобально сломаны, несинхронизированы, дублировали логику preview (FLIPBOOK_MS=480ms, frameRef, video/photo), дисплей-баги. Одна карточка = контроль + ремонт в одном месте.
+- **Файлы:** 
+  - `src/components/property/property-card.tsx` — переписана, вмещает `CardImagePreview` (export), `listingPreviewFromMedia` (export), `PropertyCard`, `PropertyGrid`, `PropertyList`;
+  - `src/components/property/listing-card-preview.tsx` — удалена;
+  - `src/components/dashboard/list-property-wizard.tsx` — импорт `CardImagePreview`, `listingPreviewFromMedia` из `property-card`; `ListingCardPreview` → `CardImagePreview`; добавлен `sizes` prop;
+  - `src/components/dashboard/admin-listing-edit-wizard.tsx` — импорт обновлён, `ListingCardPreview` → `CardImagePreview`, `sizes` добавлен.
+- **Проверено:** `npm run build` exit 0, нет ошибок; grep no matches на `ListingCardPreview` или `listing-card-preview` в src; 3 объекта недвижимости на сайте будут показаны через одну `PropertyCard` компонент.
 
 ## 2026-11-04
 
