@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: i6FZItpYYmTA (/buy/residential — новый Title.jpg на карточке $330,000)
+
+- **Что:** обложка `buy-residential-stunning-title` у листинга `…-dA5Dl` (первая карточка $330,000) читает вложение `i6FZItpYYmTA/Title.jpg`, fallback `YSrQfu0BBqyc/Title.jpg`
+- **Зачем:** Site Changes CEO (webhook `i6FZItpYYmTA`, 15:58Z): «Place the image … inside the first box … $330,000» на https://www.seaps.asia/buy/residential
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `docs/PROJECT-LOG.md`
+- **Проверено:** (после gate/ship) prod `/buy/residential`, catalog-cover API; PATCH `i6FZItpYYmTA`
+
 ### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
 
 - **Что:** обложки карточек привязаны к pathname: `buy-residential-stunning-title` только на `/buy/residential`, `search-vue-aston-studio` только на `/search`; смоук buy/residential запрещает `catalog-cover/search-vue-aston-studio`
