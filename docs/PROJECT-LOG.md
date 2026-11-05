@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: qcLymxiCQIRd (финал — замена обложки _ZFWs, не снятие)
+
+- **Что:** снова включена обложка каталога на карточке `…-_ZFWs` (`listing-card-preview` + `catalog-page-covers` + смоук); откат поверх `c13f284`/`tvpFFqmJs2vq`, где «remove the photograph» ошибочно убрало весь блок вместо замены вторым вложением
+- **Зачем:** webhook `qcLymxiCQIRd` (13:03Z): replace image from second attachment, page text unchanged
+- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** `npm run gate`; прод `/buy/residential`; PATCH `qcLymxiCQIRd` — `SITE_AGENT_SECRET` в cloud VM
+
 ### site change: tvpFFqmJs2vq (финал — убрать фото на /buy/residential)
 
 - **Что:** снята обложка с карточки `…-_ZFWs` (пустой синий блок); текст страницы и карточки без изменений; смоук: нет `vue-aston-web-page-cover` / `catalog-cover/buy-residential-vue-aston`
