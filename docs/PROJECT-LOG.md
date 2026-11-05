@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: xR6kanuO3dTq (листинг dA5Dl — убрать YouTube, дубликат q467nsHht6uW)
+
+- **Что:** без нового кода — повтор webhook CEO на тот же URL; на проде уже заглушка «No photos yet», нет «Live News Show» / `youtube-nocookie` (`shouldShowLiveNewsPanelForListing`, commit `05bb791`)
+- **Зачем:** Site Changes (webhook `xR6kanuO3dTq`, 16:09Z): «Remove the YouTube video» на странице Kampot architect house
+- **Файлы:** `docs/PROJECT-LOG.md`
+- **Проверено:** `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1; prod HTML листинга `…-dA5Dl`. PATCH `xR6kanuO3dTq` — в cloud VM нет `SITE_AGENT_SECRET`
+
 ### site change: q467nsHht6uW (листинг dA5Dl — убрать YouTube / Live News box)
 
 - **Что:** для slug `…-dA5Dl` при пустой галерее `PropertyGallery` показывает заглушку «No photos yet» вместо `LiveNewsShowPanel` (YouTube highlights); `shouldShowLiveNewsPanelForListing` в `live-news-show.ts`
