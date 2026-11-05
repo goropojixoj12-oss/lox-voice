@@ -11,7 +11,7 @@
 - **Что:** обложка `buy-residential-stunning-title` у листинга `…-dA5Dl` (первая карточка $330,000) читает вложение `i6FZItpYYmTA/Title.jpg`, fallback `YSrQfu0BBqyc/Title.jpg`
 - **Зачем:** Site Changes CEO (webhook `i6FZItpYYmTA`, 15:58Z): «Place the image … inside the first box … $330,000» на https://www.seaps.asia/buy/residential
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `docs/PROJECT-LOG.md`
-- **Проверено:** (после gate/ship) prod `/buy/residential`, catalog-cover API; PATCH `i6FZItpYYmTA`
+- **Проверено:** `npm run gate` exit 0 @ `17e6246`; push `main` → github отклонён `commit_refs_rules`; ветка `cursor/i6FZItpYYmTA-buy-residential-title`, PR https://github.com/goropojixoj12-oss/lox-voice/pull/3 ; тег `backup/2026-11-05-i6FZItpYYmTA-title` на github; PATCH `i6FZItpYYmTA` — 401 без `SITE_AGENT_SECRET`
 
 ### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
 
