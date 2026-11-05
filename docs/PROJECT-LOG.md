@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: zWn_vkpA-15n (/buy/residential — убрать контент из скрина CEO)
+
+- **Что:** без нового кода — дубль `a8z__BPqIMkH` (webhook через 5 мин): на `/buy/residential` у карточек без фото пустое превью, нет `catalog-cover/*` в HTML; кнопка **Description** у Vue Aston `_ZFWs` без изменений (`main` @ `21727d2` / `e47b7b9`)
+- **Зачем:** Site Changes CEO (webhook `zWn_vkpA-15n`, 2026-11-05T17:38Z): «COMPLETELY REMOVE ALL of the content displayed within the attached image» на https://www.seaps.asia/buy/residential
+- **Файлы:** `docs/PROJECT-LOG.md`
+- **Проверено:** prod HTML — 0× `catalog-cover/buy-residential-stunning-title`, у `…-dA5Dl` пустой блок превью; `npm run smoke -- --base=https://www.seaps.asia --only=buy residential` 2/2. PATCH `zWn_vkpA-15n` — 401, в cloud VM нет `SITE_AGENT_SECRET`
+
 ### site change: a8z__BPqIMkH (/buy/residential — убрать обложки в превью-карточках)
 
 - **Что:** снята маркетинговая обложка `Title.jpg` (`buy-residential-stunning-title`) с карточки $330,000 (`…-dA5Dl`) на `/buy/residential` — снова пустой синий блок превью; whitelist и route в `catalog-page-covers` очищены; смоук запрещает любой `catalog-cover/*` в превью на этой странице (включая stunning-title и vue-aston covers)
