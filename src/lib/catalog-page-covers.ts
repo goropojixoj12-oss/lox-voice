@@ -21,7 +21,8 @@ export const catalogCoverBySlug: Record<
     alt: "Vue Aston studio — SEAPS listing cover",
   },
   "buy-residential-stunning-title": {
-    storageKey: "YSrQfu0BBqyc/Title.jpg",
+    storageKey: "i6FZItpYYmTA/Title.jpg",
+    fallbackStorageKeys: ["YSrQfu0BBqyc/Title.jpg"],
     alt: "Stunning architectural masterpiece — SEAPS listing cover",
   },
 };
