@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: lUN61FJoDdzM (/buy/residential — убрать фото с карточки Vue Aston studio)
+
+- **Что:** снята обложка каталога у листинга без фото `…-_ZFWs` на `/buy/residential` (пустое превью вместо портретного снимка); whitelist `catalog-page-covers` очищен; смоук требует отсутствия `vue-aston-web-page-cover` и `catalog-cover/buy-residential-vue-aston` на странице
+- **Зачем:** Site Changes CEO (2026-11-05T13:18Z): убрать фотографию на https://www.seaps.asia/buy/residential, текст не менять
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (gate + ship + прод — дополняется в этом же коммите)
+
 ### site change: ilqR2sn71XuD (/buy/residential — замена фото на карточке Vue Aston studio)
 
 - **Что:** вернули обложку на карточке `…-_ZFWs` (откат ошибочного tvpFFqmJs2vq «убрать фото»); blob-ключи заявки `ilqR2sn71XuD-2/*` с fallback на `ilqR2sn71XuD/IMG_1278.jpeg`; `public/media/catalog/vue-aston-web-page-cover.png` обновлён с прода; `file2` + `secondAttachmentUrl` уже в main @ `96116b5`
