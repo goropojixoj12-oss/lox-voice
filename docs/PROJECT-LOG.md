@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: YSrQfu0BBqyc (/buy/residential — Title.jpg в карточке $330,000)
+
+- **Что:** у листинга без фото `…-dA5Dl` (первая карточка «Homes for sale», $330,000) на `/buy/residential` в блоке превью показывается `Title.jpg` из заявки (`catalog-page-covers` slug `buy-residential-stunning-title`, blob `YSrQfu0BBqyc/Title.jpg`); карточка Vue Aston `_ZFWs` на этой странице по-прежнему без обложки; смоук требует `catalog-cover/buy-residential-stunning-title` рядом с `dA5Dl`
+- **Зачем:** Site Changes CEO (webhook `YSrQfu0BBqyc`, 15:48Z): «put the attached image within the first box … $330.000» на https://www.seaps.asia/buy/residential
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (после gate/ship) prod `/buy/residential`; PATCH `YSrQfu0BBqyc` — нужен `SITE_AGENT_SECRET` в cloud VM
+
 ### site change: C9pb-Jyw9jfg (/search — фото в карточке $43,460)
 
 - **Что:** у листинга без фото `…-_ZFWs` на `/search` в верхней части карточки (над ценой $43,460) показывается вложение `cover.JPG` из заявки (`catalog-page-covers` slug `search-vue-aston-studio`, blob `C9pb-Jyw9jfg/cover.JPG`); на `/buy/residential` обложка по-прежнему снята (7CFgVx5XjUBO); смоук `/search` требует `catalog-cover/search-vue-aston-studio`

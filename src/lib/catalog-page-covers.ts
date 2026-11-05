@@ -1,5 +1,9 @@
 import { VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG } from "@/lib/live-news-show";
 
+/** Zero-photo executive home — first $330,000 card on /buy/residential. */
+export const STUNNING_ARCHITECTURAL_ZERO_PHOTO_SLUG =
+  "stunning-architectural-masterpiece-large-executive-3-bedroom-all-ensuites-modern-colonial-style-house-beautiful-pool-western-award-winning-architect-a-personal-project-designed-built-and-proudly-displayed-by-one-of-cambodia-s-most-respected-and-trusted-architect-builders-dA5Dl";
+
 /** Whitelisted site-request attachments exposed as public catalog cover ads. */
 export const catalogCoverBySlug: Record<
   string,
@@ -16,14 +20,19 @@ export const catalogCoverBySlug: Record<
     ],
     alt: "Vue Aston studio — SEAPS listing cover",
   },
+  "buy-residential-stunning-title": {
+    storageKey: "YSrQfu0BBqyc/Title.jpg",
+    alt: "Stunning architectural masterpiece — SEAPS listing cover",
+  },
 };
 
 const listingCardCoverCatalogSlug: Readonly<Record<string, string>> = {
   [VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG]: "search-vue-aston-studio",
+  [STUNNING_ARCHITECTURAL_ZERO_PHOTO_SLUG]: "buy-residential-stunning-title",
 };
 
 /** Catalog pages where a whitelisted marketing cover may appear on zero-photo cards. */
-export const LISTING_CARD_COVER_PATHS = new Set(["/search"]);
+export const LISTING_CARD_COVER_PATHS = new Set(["/search", "/buy/residential"]);
 
 export function resolveCatalogCoverSrc(slug: string): string | null {
   const entry = catalogCoverBySlug[slug];
