@@ -11,7 +11,7 @@
 - **Что:** для slug `…-dA5Dl` при пустой галерее `PropertyGallery` показывает заглушку «No photos yet» вместо `LiveNewsShowPanel` (YouTube highlights); `shouldShowLiveNewsPanelForListing` в `live-news-show.ts`
 - **Зачем:** Site Changes CEO (webhook `q467nsHht6uW`): убрать YouTube и блок на странице листинга Kampot architect house
 - **Файлы:** `src/lib/live-news-show.ts`, `src/components/property/property-gallery.tsx`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (заполнить после gate/ship)
+- **Проверено:** `github/main` @ `05bb791`; prod HTML — только «No photos yet», нет «Live News Show» / `youtube-nocookie`; PATCH `q467nsHht6uW` — 401 без `SITE_AGENT_SECRET` в cloud VM (2026-11-05 automation)
 
 ### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
 
