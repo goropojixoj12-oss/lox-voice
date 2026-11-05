@@ -11,7 +11,7 @@
 - **Что:** снята обложка каталога у листинга без фото `…-_ZFWs` на `/buy/residential` (пустое превью вместо портретного снимка); whitelist `catalog-page-covers` очищен; смоук требует отсутствия `vue-aston-web-page-cover` и `catalog-cover/buy-residential-vue-aston` на странице
 - **Зачем:** Site Changes CEO (2026-11-05T13:18Z): убрать фотографию на https://www.seaps.asia/buy/residential, текст не менять
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (gate + ship + прод — дополняется в этом же коммите)
+- **Проверено:** прод HTML `/buy/residential` — у `…-_ZFWs` пустое превью, нет `vue-aston-web-page-cover`; `npm run smoke -- --base=https://www.seaps.asia` 50/50 @ `f5b5453`; PATCH `lUN61FJoDdzM` — 401 без `SITE_AGENT_SECRET` в cloud VM
 
 ### site change: ilqR2sn71XuD (/buy/residential — замена фото на карточке Vue Aston studio)
 
