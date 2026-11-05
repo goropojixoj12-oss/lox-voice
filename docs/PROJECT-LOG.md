@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: qcLymxiCQIRd (/buy/residential — замена обложки карточки _ZFWs)
+
+- **Что:** восстановлена обложка каталога у `…-_ZFWs` (откат `f5b5453` / `lUN61FJoDdzM`, который снял фото); снова `catalog-page-covers` + `public/media/catalog/vue-aston-web-page-cover.png` как в `5583328` / `ilqR2sn71XuD` (коллаж второго вложения)
+- **Зачем:** Site Changes CEO (webhook `qcLymxiCQIRd`, 13:03Z): заменить фото вторым вложением, текст страницы не менять — не «убрать фото»
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `public/media/catalog/vue-aston-web-page-cover.png`, `docs/PROJECT-LOG.md`
+- **Проверено:** `npm run gate`; `/buy/residential` локально и прод; PATCH `qcLymxiCQIRd` — `SITE_AGENT_SECRET` в cloud VM
+
 ### site change: lUN61FJoDdzM (/buy/residential — убрать фото с карточки Vue Aston studio)
 
 - **Что:** снята обложка каталога у листинга без фото `…-_ZFWs` на `/buy/residential` (пустое превью вместо портретного снимка); whitelist `catalog-page-covers` очищен; смоук требует отсутствия `vue-aston-web-page-cover` и `catalog-cover/buy-residential-vue-aston` на странице
