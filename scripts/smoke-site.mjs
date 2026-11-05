@@ -38,7 +38,7 @@ const TIMEOUT_MS = Number(argValue("timeout", "20000"));
 // checks are independent GETs; 6 in flight keeps prod happy and the dev server from thrashing
 const CONCURRENCY = Math.max(1, Number(argValue("concurrency", "6")));
 
-/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean, buyResidentialDescriptionProbe?: boolean}} Check */
+/** @typedef {{name: string, path: string, role?: 'agent'|'admin'|null, status?: number[], include?: string[], exclude?: string[], sitemapLiveNewsProbe?: boolean, buyResidentialDescriptionProbe?: boolean, searchVueAstonCoverProbe?: boolean}} Check */
 
 /** @type {Check[]} */
 const CHECKS = [
@@ -81,6 +81,11 @@ const CHECKS = [
     name: "buy residential: Vue Aston studio Description → condo showcase",
     path: "/buy/residential",
     buyResidentialDescriptionProbe: true,
+  },
+  {
+    name: "search: Vue Aston studio $43,460 card cover",
+    path: "/search",
+    searchVueAstonCoverProbe: true,
   },
   { name: "buy land", path: "/buy/land", status: [200], include: ["Land"] },
   { name: "rent residential", path: "/rent/residential", status: [200], include: ["Residential"] },
@@ -479,6 +484,57 @@ async function runCheck(check, session) {
 const VUE_ASTON_STUDIO_SLUG_MARKER = "_ZFWs";
 const CONDO_SHOWCASE_URL = "cambodia-condo-showcase-174801.onhercules.app";
 
+async function runSearchVueAstonCoverProbe(check) {
+  const started = Date.now();
+  try {
+    const res = await fetch(`${BASE}/search`, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (res.status !== 200) {
+      return {
+        check,
+        pass: false,
+        status: res.status,
+        ms: Date.now() - started,
+        why: `expected 200, got ${res.status}`,
+      };
+    }
+    const text = decodeEntities(await res.text().catch(() => ""));
+    if (!text.includes(VUE_ASTON_STUDIO_SLUG_MARKER)) {
+      return {
+        check,
+        pass: true,
+        status: 200,
+        ms: Date.now() - started,
+        note: "Vue Aston studio not in search (probe skipped)",
+      };
+    }
+    if (!text.includes("43,460") && !text.includes("43460")) {
+      return {
+        check,
+        pass: false,
+        status: 200,
+        ms: Date.now() - started,
+        why: "Vue Aston studio price $43,460 not found on /search",
+      };
+    }
+    const problems = [];
+    if (!text.includes("catalog-cover/search-vue-aston-studio")) {
+      problems.push("Vue Aston studio card missing search catalog cover image");
+    }
+    return {
+      check,
+      pass: problems.length === 0,
+      status: 200,
+      ms: Date.now() - started,
+      why: problems.length ? problems.join("; ") : null,
+    };
+  } catch (err) {
+    return { check, pass: false, why: `search cover probe failed: ${err.message}` };
+  }
+}
+
 async function runBuyResidentialDescriptionProbe(check) {
   const started = Date.now();
   try {
@@ -782,7 +838,9 @@ async function worker() {
         ? await runSitemapLiveNewsProbe(check)
         : check.buyResidentialDescriptionProbe
           ? await runBuyResidentialDescriptionProbe(check)
-          : check.moderationDeskPair
+          : check.searchVueAstonCoverProbe
+            ? await runSearchVueAstonCoverProbe(check)
+            : check.moderationDeskPair
             ? await runModerationDeskPair(check, session)
             : await runCheck(check, session);
   }

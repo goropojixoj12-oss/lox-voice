@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { Property, PropertyImage } from "@/lib/types";
+import { resolveListingCardCoverSrc } from "@/lib/catalog-page-covers";
 import { clampPreviewPhotoCount, orderImagesWithCover } from "@/lib/list-property-media";
 import { cn } from "@/lib/utils";
 
@@ -94,6 +96,7 @@ export function ListingCardPreview({
   sizes?: string;
   onFrameChange?: (index: number) => void;
 }) {
+  const pathname = usePathname();
   const cover = property.images.find((i) => i.isCover) ?? property.images[0];
   const alt = cover?.alt || property.title;
   const videoUrl = pickCardVideoUrl(property);
@@ -134,6 +137,27 @@ export function ListingCardPreview({
   }
 
   if (!cover?.url) {
+    const cardCoverSrc = resolveListingCardCoverSrc(property.slug, pathname);
+    if (cardCoverSrc) {
+      return (
+        <div
+          className={cn(
+            "absolute inset-0 overflow-hidden bg-[var(--color-secondary)]",
+            className,
+          )}
+        >
+          <Image
+            src={cardCoverSrc}
+            alt={alt}
+            fill
+            unoptimized
+            className="object-contain object-top"
+            sizes={sizes}
+            priority
+          />
+        </div>
+      );
+    }
     return <div className={cn("bg-[var(--color-secondary)]", className)} aria-hidden />;
   }
 
