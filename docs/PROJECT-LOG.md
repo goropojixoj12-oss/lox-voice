@@ -11,7 +11,7 @@
 - **Что:** у листинга без фото `…-_ZFWs` в каталоге `/buy/residential` вместо пустого синего превью показывается портретная обложка Vue Aston (`object-contain object-top`); файл в `public/media/catalog/vue-aston-web-page-cover.png`, whitelist `catalog-page-covers` обновлён на заявку `YaKTzapYpVmr`; смоук проверяет `vue-aston-web-page-cover` на странице каталога
 - **Зачем:** Site Changes webhook CEO (2026-11-05): «at the top of the blue box … place the picture from the second attachment»
 - **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `public/media/catalog/vue-aston-web-page-cover.png`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** `npm run gate` exit 0; прод-верификация и PATCH `YaKTzapYpVmr` — после `ship`
+- **Проверено:** `npm run gate` exit 0 @ `256b177`; push `github/main`, тег `backup/2026-11-05-vue-aston-card-cover`; прод HTML `/buy/residential` содержит `vue-aston-web-page-cover` у `_ZFWs`; `npm run smoke -- --base=https://www.seaps.asia` 50/50. PATCH `YaKTzapYpVmr` — 401 без `SITE_AGENT_SECRET` в cloud VM
 
 ## 2026-11-04
 
