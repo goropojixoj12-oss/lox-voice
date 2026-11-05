@@ -570,7 +570,8 @@ async function runBuyResidentialDescriptionProbe(check) {
     }
     if (
       text.includes("vue-aston-web-page-cover") ||
-      text.includes("catalog-cover/buy-residential-vue-aston")
+      text.includes("catalog-cover/buy-residential-vue-aston") ||
+      text.includes("catalog-cover/search-vue-aston-studio")
     ) {
       problems.push("Vue Aston studio card must not show catalog cover image");
     }

@@ -26,13 +26,16 @@ export const catalogCoverBySlug: Record<
   },
 };
 
-const listingCardCoverCatalogSlug: Readonly<Record<string, string>> = {
-  [VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG]: "search-vue-aston-studio",
-  [STUNNING_ARCHITECTURAL_ZERO_PHOTO_SLUG]: "buy-residential-stunning-title",
-};
+type ListingCardCoverRoute = { pathname: string; catalogSlug: string };
 
-/** Catalog pages where a whitelisted marketing cover may appear on zero-photo cards. */
-export const LISTING_CARD_COVER_PATHS = new Set(["/search", "/buy/residential"]);
+const listingCardCoverRoutes: Readonly<Record<string, readonly ListingCardCoverRoute[]>> = {
+  [VUE_ASTON_STUDIO_ZERO_PHOTO_SLUG]: [
+    { pathname: "/search", catalogSlug: "search-vue-aston-studio" },
+  ],
+  [STUNNING_ARCHITECTURAL_ZERO_PHOTO_SLUG]: [
+    { pathname: "/buy/residential", catalogSlug: "buy-residential-stunning-title" },
+  ],
+};
 
 export function resolveCatalogCoverSrc(slug: string): string | null {
   const entry = catalogCoverBySlug[slug];
@@ -45,11 +48,16 @@ export function resolveListingCardCoverSrc(
   listingSlug: string,
   pathname?: string | null,
 ): string | null {
-  if (pathname && !LISTING_CARD_COVER_PATHS.has(pathname)) return null;
-  const catalogSlug = listingCardCoverCatalogSlug[listingSlug];
-  if (!catalogSlug) return null;
-  const entry = catalogCoverBySlug[catalogSlug];
+  const routes = listingCardCoverRoutes[listingSlug];
+  if (!routes?.length) return null;
+
+  const route = pathname
+    ? routes.find((entry) => entry.pathname === pathname)
+    : routes[0];
+  if (!route) return null;
+
+  const entry = catalogCoverBySlug[route.catalogSlug];
   if (!entry) return null;
   if (entry.publicAssetPath) return entry.publicAssetPath;
-  return resolveCatalogCoverSrc(catalogSlug);
+  return resolveCatalogCoverSrc(route.catalogSlug);
 }

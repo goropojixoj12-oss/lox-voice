@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### fix: YSrQfu0BBqyc — path-scoped covers (Vue Aston не на /buy/residential)
+
+- **Что:** обложки карточек привязаны к pathname: `buy-residential-stunning-title` только на `/buy/residential`, `search-vue-aston-studio` только на `/search`; смоук buy/residential запрещает `catalog-cover/search-vue-aston-studio`
+- **Зачем:** `ca56fb3` включал `/buy/residential` в общий whitelist и мог показать обложку Vue Aston на buy-каталоге (регрессия 7CFgVx5XjUBO)
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (после ship) gate, prod `/buy/residential`, prod smoke
+
 ### site change: YSrQfu0BBqyc (/buy/residential — Title.jpg в карточке $330,000)
 
 - **Что:** у листинга без фото `…-dA5Dl` (первая карточка «Homes for sale», $330,000) на `/buy/residential` в блоке превью показывается `Title.jpg` из заявки (`catalog-page-covers` slug `buy-residential-stunning-title`, blob `YSrQfu0BBqyc/Title.jpg`); карточка Vue Aston `_ZFWs` на этой странице по-прежнему без обложки; смоук требует `catalog-cover/buy-residential-stunning-title` рядом с `dA5Dl`
