@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: MhNxJ2BiT9Vz (листинг dA5Dl — убрать YouTube и контейнер)
+
+- **Что:** без нового кода — webhook CEO дублирует q467nsHht6uW / xR6kanuO3dTq; на `…-dA5Dl` при пустой галерее нет `LiveNewsShowPanel` (YouTube) и нет bordered-бокса (`PropertyGallery` → `null`, `KAMPOT_ARCHITECT_ZERO_PHOTO_SLUG` в `live-news-show.ts`)
+- **Зачем:** Site Changes (webhook `MhNxJ2BiT9Vz`, 2026-11-05T17:26Z): «REMOVE the YouTube content as well as the box it is contained within»
+- **Файлы:** `docs/PROJECT-LOG.md`
+- **Проверено:** prod HTML/curl — 0× Live News / `youtube-nocookie`; `npm run smoke -- --base=https://www.seaps.asia --only=Kampot architect` 1/1; `origin/main` @ `ec2e782`. PATCH `MhNxJ2BiT9Vz` — 401, в cloud VM нет `SITE_AGENT_SECRET`
+
 ### site change: DvvGNmrjquL- (листинг dA5Dl — убрать пустую заглушку галереи)
 
 - **Что:** при пустой галерее на slug `…-dA5Dl` `PropertyGallery` возвращает `null` вместо bordered-блока «No photos yet»; смоук Kampot architect проверяет отсутствие заглушки
