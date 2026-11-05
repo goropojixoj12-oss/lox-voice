@@ -194,7 +194,7 @@ export function PropertyCard({
   }
 
   return (
-    <a href={href} onClick={openListing} className="block h-full no-underline">
+    <a href={href} className="block h-full no-underline">
       <article className="seaps-card group h-full overflow-hidden rounded-[var(--radius-lg)] transition hover:border-[rgba(240,215,140,0.75)]">
       <div className="relative aspect-[4/3]">
         <CardImagePreview
