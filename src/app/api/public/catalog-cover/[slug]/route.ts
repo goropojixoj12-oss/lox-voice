@@ -35,7 +35,12 @@ export async function GET(_request: Request, context: RouteContext) {
     }
   }
 
-  const file = await readSiteRequestAttachment(entry.storageKey);
+  const storageKeys = [entry.storageKey, ...(entry.fallbackStorageKeys ?? [])];
+  let file: { bytes: Buffer; contentType: string } | null = null;
+  for (const key of storageKeys) {
+    file = await readSiteRequestAttachment(key);
+    if (file) break;
+  }
   if (!file) return NextResponse.json({ error: "Cover not available" }, { status: 404 });
 
   return new NextResponse(new Uint8Array(file.bytes), {

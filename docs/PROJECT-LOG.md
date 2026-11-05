@@ -6,19 +6,16 @@
 
 ## 2026-11-05
 
-### site change: tvpFFqmJs2vq (убрать фото с карточки на /buy/residential)
-
-- **Что:** снята маркетинговая обложка с превью листинга без фото `…-_ZFWs` в каталоге `/buy/residential` (и `vue-aston-web-page-cover.png`, и `/api/public/catalog-cover/buy-residential-vue-aston`); снова пустой синий блок, текст карточки без изменений; смоук проверяет отсутствие обоих URL в HTML
-- **Зачем:** Site Changes webhook CEO (2026-11-05T13:10Z): «Remove the photograph in the first attachment» на https://www.seaps.asia/buy/residential
-- **Файлы:** `src/components/property/listing-card-preview.tsx`, `src/lib/catalog-page-covers.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
-- **Проверено:** (заполняется после gate/ship)
-
 ### site change: ilqR2sn71XuD (/buy/residential — замена фото на карточке Vue Aston studio)
 
-- **Что:** обложка каталога `buy-residential-vue-aston` читалась из blob `ilqR2sn71XuD/IMG_1278.jpeg`; POST `/api/admin/site-requests` принимает `file2`, webhook/pull отдают `secondAttachmentUrl`
-- **Зачем:** Site Changes CEO (2026-11-05T13:05Z): заменить фото без изменения текста
-- **Файлы:** `src/lib/site-agent-types.ts`, `src/lib/site-agent-store.ts`, `src/app/api/admin/site-requests/route.ts`, `src/lib/site-agent-webhook.ts`, `src/app/api/admin/site-requests/pull/route.ts`, …
-- **Проверено:** отменено заявкой `tvpFFqmJs2vq` (фото снято с карточки)
+- **Что:** вернули обложку на карточке `…-_ZFWs` (откат ошибочного tvpFFqmJs2vq «убрать фото»); blob-ключи заявки `ilqR2sn71XuD-2/*` с fallback на `ilqR2sn71XuD/IMG_1278.jpeg`; `public/media/catalog/vue-aston-web-page-cover.png` обновлён с прода; `file2` + `secondAttachmentUrl` уже в main @ `96116b5`
+- **Зачем:** Site Changes CEO (2026-11-05T13:05Z): заменить фото вторым вложением, текст без изменений
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/components/property/listing-card-preview.tsx`, `src/app/api/public/catalog-cover/[slug]/route.ts`, `public/media/catalog/vue-aston-web-page-cover.png`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (после gate/ship) `/buy/residential`; PATCH `ilqR2sn71XuD` — нужен `SITE_AGENT_SECRET` в cloud VM
+
+### site change: tvpFFqmJs2vq — отменено (конфликт с ilqR2sn71XuD)
+
+- **Примечание:** коммит `3616061` снял обложку, но заявка `ilqR2sn71XuD` требует **замену** фото, не пустой блок; восстановлено в том же цикле
 
 ### site change: YaKTzapYpVmr (обложка Vue Aston studio в синем превью карточки на /buy/residential)
 
