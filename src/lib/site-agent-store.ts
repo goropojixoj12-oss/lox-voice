@@ -10,7 +10,11 @@ const REQUESTS_FILE = "admin-site-change-requests.json";
 const MAX_STORED = 200;
 
 async function loadRequests(): Promise<SiteChangeRequest[]> {
-  return readStoreJson<SiteChangeRequest[]>(REQUESTS_FILE, []);
+  const items = await readStoreJson<SiteChangeRequest[]>(REQUESTS_FILE, []);
+  return items.map((item) => ({
+    ...item,
+    secondAttachment: item.secondAttachment ?? null,
+  }));
 }
 
 async function saveRequests(items: SiteChangeRequest[]): Promise<void> {
@@ -28,6 +32,7 @@ export async function createSiteChangeRequest(input: {
   createdByUserId: string;
   createdByName: string;
   attachment: SiteChangeRequest["attachment"];
+  secondAttachment?: SiteChangeRequest["secondAttachment"];
 }): Promise<SiteChangeRequest> {
   const items = await loadRequests();
   const now = new Date().toISOString();
@@ -37,6 +42,7 @@ export async function createSiteChangeRequest(input: {
     scope: input.scope,
     status: "queued",
     attachment: input.attachment,
+    secondAttachment: input.secondAttachment ?? null,
     createdByUserId: input.createdByUserId,
     createdByName: input.createdByName,
     createdAt: now,
@@ -92,6 +98,19 @@ export async function setSiteChangeRequestAttachment(
   if (idx < 0) return null;
   const now = new Date().toISOString();
   items[idx] = { ...items[idx]!, attachment, updatedAt: now };
+  await saveRequests(items);
+  return items[idx]!;
+}
+
+export async function setSiteChangeRequestSecondAttachment(
+  id: string,
+  secondAttachment: NonNullable<SiteChangeRequest["secondAttachment"]>,
+): Promise<SiteChangeRequest | null> {
+  const items = await loadRequests();
+  const idx = items.findIndex((r) => r.id === id);
+  if (idx < 0) return null;
+  const now = new Date().toISOString();
+  items[idx] = { ...items[idx]!, secondAttachment, updatedAt: now };
   await saveRequests(items);
   return items[idx]!;
 }

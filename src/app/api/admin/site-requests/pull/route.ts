@@ -24,11 +24,15 @@ export async function GET(request: Request) {
   const attachmentUrl = item.attachment
     ? `${siteUrl}/api/admin/site-requests/file?key=${encodeURIComponent(item.attachment.storageKey)}`
     : null;
+  const secondAttachmentUrl = item.secondAttachment
+    ? `${siteUrl}/api/admin/site-requests/file?key=${encodeURIComponent(item.secondAttachment.storageKey)}`
+    : null;
 
   return NextResponse.json({
     request: {
       ...item,
       attachmentUrl,
+      secondAttachmentUrl,
     },
   });
 }

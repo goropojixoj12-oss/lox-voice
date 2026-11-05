@@ -6,6 +6,13 @@
 
 ## 2026-11-05
 
+### site change: ilqR2sn71XuD (/buy/residential — замена фото на карточке Vue Aston studio)
+
+- **Что:** обложка каталога `buy-residential-vue-aston` читается из blob заявки `ilqR2sn71XuD/IMG_1278.jpeg` (второй файл формы до фикса не сохранялся); POST `/api/admin/site-requests` принимает `file2`, webhook/pull отдают `secondAttachmentUrl`; смоук принимает `catalog-cover/buy-residential-vue-aston`
+- **Зачем:** Site Changes CEO (2026-11-05T13:05Z): заменить фото на https://www.seaps.asia/buy/residential без изменения текста
+- **Файлы:** `src/lib/catalog-page-covers.ts`, `src/lib/site-agent-types.ts`, `src/lib/site-agent-store.ts`, `src/app/api/admin/site-requests/route.ts`, `src/lib/site-agent-webhook.ts`, `src/app/api/admin/site-requests/pull/route.ts`, `scripts/smoke-site.mjs`, `docs/PROJECT-LOG.md`
+- **Проверено:** (gate + ship + прод — дополняется в этом же коммите)
+
 ### site change: YaKTzapYpVmr (обложка Vue Aston studio в синем превью карточки на /buy/residential)
 
 - **Что:** у листинга без фото `…-_ZFWs` в каталоге `/buy/residential` вместо пустого синего превью показывается портретная обложка Vue Aston (`object-contain object-top`); файл в `public/media/catalog/vue-aston-web-page-cover.png`, whitelist `catalog-page-covers` обновлён на заявку `YaKTzapYpVmr`; смоук проверяет `vue-aston-web-page-cover` на странице каталога
