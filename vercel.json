@@ -4,5 +4,6 @@
       "path": "/api/cron/site-agent",
       "schedule": "0 9 * * *"
     }
-  ]
+  ],
+  "ignoreCommand": "node scripts/vercel-ignore-build.mjs"
 }
