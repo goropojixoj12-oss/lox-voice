@@ -8,7 +8,6 @@ import { getAllProperties } from "@/lib/catalog";
 import { syncListingToRepo } from "@/lib/listing-sync";
 import { isPublicListing } from "@/lib/listing-access";
 import { clampPreviewPhotoCount } from "@/lib/list-property-media";
-import { saveRuntimeListing } from "@/lib/store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import { slugify } from "@/lib/utils";
 import type { Property } from "@/lib/types";
@@ -173,18 +172,8 @@ export async function POST(request: Request) {
     inquiries: 0,
   };
 
-  try {
-    await saveRuntimeListing(listing);
-  } catch (err) {
-    console.error("listing save failed", { listingId: listing.id, error: err });
-    return NextResponse.json(
-      { error: "Could not save the listing. It was not submitted — please try again." },
-      { status: 500 },
-    );
-  }
-
-  // The card must reach the repository in the same action, otherwise it exists
-  // only as a draft in the working store and never appears on the site.
+  // The repository is the only home of a listing. No runtime-store copy: it used
+  // to be written to Vercel Blob and could drift from what the site renders.
   const synced = await syncListingToRepo(listing);
 
   const me = await getSession();

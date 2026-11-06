@@ -183,7 +183,8 @@ export async function getAgentDocumentForUser(
   if (!profile) return null;
   const ref = profile.documents.find((d) => d.id === documentId);
   if (!ref) return null;
-  const bytes = await readAgentDocumentBytes(ref.storageKey);
+  const doc = await readAgentDocumentBytes(ref.storageKey);
+    const bytes = doc?.bytes ?? null;
   if (!bytes) return null;
   return { ref, bytes };
 }
@@ -199,7 +200,8 @@ export async function getProfilePhotoForAgentId(
   if (!profile) return null;
   const ref = getProfilePhotoDocument(profile);
   if (!ref) return null;
-  const bytes = await readAgentDocumentBytes(ref.storageKey);
+  const doc = await readAgentDocumentBytes(ref.storageKey);
+    const bytes = doc?.bytes ?? null;
   if (!bytes) return null;
   return { bytes, mimeType: ref.mimeType };
 }

@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
+import { getListingFromRepo, deleteListingFromRepo } from "@/lib/listing-git-store";
+import { getPropertyById } from "@/data/properties";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import {
-  deleteRuntimeListing,
+
   getRuntimeListingById,
-  getRuntimeListings,
-  saveRuntimeListing,
+
+
 } from "@/lib/store";
-import { deleteRemovedListingMedia } from "@/lib/listing-media-files";
 import { syncListingToRepo } from "@/lib/listing-sync";
 import { resetListingViewTracking } from "@/lib/listing-view-store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
@@ -102,7 +103,7 @@ export async function GET(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const { id } = await context.params;
-  const listing = await getRuntimeListingById(id);
+  const listing = (await getListingFromRepo(id)) ?? getPropertyById(id);
   if (!listing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -116,7 +117,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
-  const existing = await getRuntimeListingById(id);
+  const existing = (await getListingFromRepo(id)) ?? getPropertyById(id);
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -189,31 +190,13 @@ export async function PATCH(request: Request, context: RouteContext) {
     publishedAt: status === "published" ? now : existing.publishedAt,
   };
 
-  await saveRuntimeListing(updated);
   const synced = await syncListingToRepo(updated);
-  const otherListings = (await getRuntimeListings()).filter((l) => l.id !== updated.id);
-  try {
-    const removedMedia = await deleteRemovedListingMedia(existing, updated, otherListings);
-    return NextResponse.json({
-      listing: updated,
-      removedMedia,
-      exported: synced.ok,
-      commitUrl: synced.ok ? synced.commitUrl : null,
-      exportError: synced.ok ? null : synced.error,
-    });
-  } catch (error) {
-    console.error("listing media cleanup failed", updated.id, error);
-    return NextResponse.json(
-      {
-        listing: updated,
-        mediaCleanupError: "Saved, but some removed files could not be deleted",
-        exported: synced.ok,
-        commitUrl: synced.ok ? synced.commitUrl : null,
-        exportError: synced.ok ? null : synced.error,
-      },
-      { status: 200 },
-    );
-  }
+  return NextResponse.json({
+    listing: updated,
+    exported: synced.ok,
+    commitUrl: synced.ok ? synced.commitUrl : null,
+    exportError: synced.ok ? null : synced.error,
+  });
 }
 
 export async function DELETE(_request: Request, context: RouteContext) {
@@ -223,7 +206,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
-  const existing = await getRuntimeListingById(id);
+  const existing = (await getListingFromRepo(id)) ?? getPropertyById(id);
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -234,26 +217,10 @@ export async function DELETE(_request: Request, context: RouteContext) {
     );
   }
 
-  const removed = await deleteRuntimeListing(id);
+  const removed = await deleteListingFromRepo(id);
   if (!removed) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   await resetListingViewTracking(id).catch(() => undefined);
-  // the card is gone, so every file only it referenced should go too — keys still used
-  // by another listing are protected inside deleteRemovedListingMedia
-  const stillReferenced = await getRuntimeListings();
-  try {
-    const removedMedia = await deleteRemovedListingMedia(
-      existing,
-      { images: [], videos: [] },
-      stillReferenced,
-    );
-    return NextResponse.json({ ok: true, removedMedia });
-  } catch (error) {
-    console.error("listing media cleanup failed after delete", id, error);
-    return NextResponse.json({
-      ok: true,
-      mediaCleanupError: "Listing deleted, but some of its files could not be deleted",
-    });
-  }
+  return NextResponse.json({ ok: true, removedFromRepo: true });
 }

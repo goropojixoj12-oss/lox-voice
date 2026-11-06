@@ -7,8 +7,7 @@ import {
   LISTING_MEDIA_MAX_VIDEO_BYTES,
 } from "@/lib/listing-media-constants";
 import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
-import { sanitizeListingFileName } from "@/lib/listing-media-constants";
-import { writeListingMediaFile } from "@/lib/listing-media-files";
+import { saveListingUpload } from "@/lib/listing-upload-git";
 
 export const runtime = "nodejs";
 export const maxDuration = 1200;
@@ -62,16 +61,19 @@ export async function POST(request: Request) {
     }
 
     const bytes = Buffer.from(await file.arrayBuffer());
-    const safeName = sanitizeListingFileName(file.name || "upload");
-    const storageKey = `${storageUserId}/${nanoid(10)}-${safeName}`;
-    const saved = await writeListingMediaFile(storageKey, bytes, mime);
+    const saved = await saveListingUpload({
+      userId: storageUserId,
+      fileName: file.name || "upload",
+      bytes,
+      contentType: mime,
+    });
 
     return NextResponse.json({
       item: {
         id: nanoid(8),
         kind,
         url: saved.url,
-        storageKey: saved.storageKey,
+        storageKey: saved.path,
         name: file.name,
         size: file.size,
       },

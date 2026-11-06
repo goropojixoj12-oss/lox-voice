@@ -7,7 +7,8 @@ import {
 } from "@/components/dashboard/admin-listing-edit-wizard";
 import { getSession } from "@/lib/auth";
 import { ExportListingButton } from "@/components/dashboard/export-listing-button";
-import { getRuntimeListingById } from "@/lib/store";
+import { getListingFromRepo } from "@/lib/listing-git-store";
+import { getPropertyById } from "@/data/properties";
 
 export const metadata: Metadata = { title: "Edit my listing" };
 
@@ -19,7 +20,7 @@ export default async function AgentListingEditPage({
   const session = await getSession();
   if (!session) redirect("/auth/login");
   const { id } = await params;
-  const listing = await getRuntimeListingById(id);
+  const listing = (await getListingFromRepo(id)) ?? getPropertyById(id);
   if (!listing) notFound();
 
   const isMine =

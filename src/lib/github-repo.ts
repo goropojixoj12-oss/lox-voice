@@ -80,6 +80,22 @@ export async function listGitDir(path: string): Promise<GitDirEntry[]> {
   }));
 }
 
+/** Deletes one file (GitHub needs its blob sha to accept a removal). */
+export async function deleteGitFile(path: string, message: string): Promise<boolean> {
+  const res = await gh(`/repos/${repo()}/contents/${encodeURI(path)}?ref=${branch()}`);
+  if (res.status === 404) return false;
+  if (!res.ok) throw new Error(`github read ${path}: ${res.status}`);
+  const data = (await res.json()) as { sha?: string };
+  if (!data.sha) return false;
+
+  const del = await gh(`/repos/${repo()}/contents/${encodeURI(path)}`, {
+    method: "DELETE",
+    body: JSON.stringify({ message, sha: data.sha, branch: branch() }),
+  });
+  if (!del.ok) throw new Error(`github delete ${path}: ${del.status}`);
+  return true;
+}
+
 /** One atomic commit with any number of files. Returns the commit html_url. */
 export async function commitFiles(message: string, files: GitFile[]): Promise<string> {
   if (files.length === 0) throw new Error("commitFiles: nothing to commit");

@@ -1,14 +1,9 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
 import { ArrowDown, ArrowUp, X } from "lucide-react";
-import { nanoid } from "nanoid";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label, Select } from "@/components/ui/input";
-import { BLOB_PREFIX } from "@/lib/listing-media-constants";
-import { inferMimeType, mediaKindFromMime } from "@/lib/listing-media-mime";
-import { listingMediaPublicUrl, sanitizeListingFileName } from "@/lib/listing-media-constants";
 import { PREVIEW_PHOTO_CHOICES, type ListingMediaItem } from "@/lib/list-property-media";
 import { withActingAgentUser } from "@/lib/agent-desk-api-client";
 import { cn } from "@/lib/utils";
@@ -34,40 +29,6 @@ async function uploadViaServer(file: File, actingUserId?: string): Promise<Listi
   return data.item;
 }
 
-async function uploadViaBlobClient(
-  file: File,
-  userId: string,
-  actingUserId?: string,
-): Promise<ListingMediaItem> {
-  const mime = inferMimeType(file);
-  const kind = mediaKindFromMime(mime);
-  if (!kind) {
-    throw new Error("Use JPG, PNG, WebP, GIF, MP4, MOV, or WebM files.");
-  }
-  const safeName = sanitizeListingFileName(file.name || "upload");
-  const storageKey = `${userId}/${nanoid(10)}-${safeName}`;
-  const pathname = `${BLOB_PREFIX}/${storageKey}`;
-
-  const uploadQuery = actingUserId
-    ? `?userId=${encodeURIComponent(actingUserId)}`
-    : "";
-  await upload(pathname, file, {
-    access: "private",
-    handleUploadUrl: `/api/dashboard/list-property/media/client-upload${uploadQuery}`,
-    multipart: file.size > 4.5 * 1024 * 1024,
-    contentType: mime,
-  });
-
-  return {
-    id: nanoid(8),
-    kind,
-    url: listingMediaPublicUrl(storageKey),
-    storageKey,
-    name: file.name,
-    size: file.size,
-  };
-}
-
 async function withRetry<T>(
   fn: () => Promise<T>,
   retries: number,
@@ -85,31 +46,10 @@ async function withRetry<T>(
   throw lastErr;
 }
 
-async function uploadOne(
-  file: File,
-  userId: string | null,
-  actingUserId?: string,
-): Promise<ListingMediaItem> {
-  let serverError: string | null = null;
-  if (file.size <= 4.5 * 1024 * 1024) {
-    try {
-      return await withRetry(() => uploadViaServer(file, actingUserId), 7, 1000);
-    } catch (err) {
-      // Keep the server reason: the blob-client fallback usually fails with a
-      // generic token message that hides the real cause (401/400/etc).
-      serverError = err instanceof Error ? err.message : "Upload failed";
-      if (!userId) throw new Error(serverError);
-    }
-  }
-  if (!userId) {
-    throw new Error("Sign in required for large uploads.");
-  }
-  try {
-    return await withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 7, 1500);
-  } catch (err) {
-    const fallback = err instanceof Error ? err.message : "Upload failed";
-    throw new Error(serverError ? `${serverError} (fallback: ${fallback})` : fallback);
-  }
+async function uploadOne(file: File, actingUserId?: string): Promise<ListingMediaItem> {
+  // The server commits the file straight into the repository (content/uploads
+  // then public/media on publish). No client token, no object storage.
+  return withRetry(() => uploadViaServer(file, actingUserId), 3, 1500);
 }
 
 const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB
@@ -216,7 +156,7 @@ export function ListPropertyMediaStep({
         const file = queue.shift();
         if (!file) return;
         try {
-          const item = await uploadOne(file, userId!, actingUserId);
+          const item = await uploadOne(file, actingUserId);
           if (item.kind === "image" && !items.some((m) => m.kind === "image" && m.isCover) && !added.some((m) => m.isCover)) {
             item.isCover = true;
           }

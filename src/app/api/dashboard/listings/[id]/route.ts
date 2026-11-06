@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
+import { getListingFromRepo } from "@/lib/listing-git-store";
+import { getPropertyById } from "@/data/properties";
 import { getSession } from "@/lib/auth";
 import {
   adminListingPatchSchema,
   applyAdminListingPatch,
   type AdminListingPatchInput,
 } from "@/lib/admin-listing-patch";
-import { getRuntimeListingById, getRuntimeListings, saveRuntimeListing } from "@/lib/store";
-import { deleteRemovedListingMedia } from "@/lib/listing-media-files";
+
 import { syncListingToRepo } from "@/lib/listing-sync";
 import type { Property } from "@/lib/types";
 
@@ -39,7 +40,7 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
-  const existing = await getRuntimeListingById(id);
+  const existing = (await getListingFromRepo(id)) ?? getPropertyById(id);
   if (!existing) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -63,16 +64,11 @@ export async function PATCH(request: Request, context: RouteContext) {
   // listing out of whatever moderation state it is in: publishing is revoked only
   // by an explicit admin reject (owner ruling 2026-11-04)
   const updated: Property = applyAdminListingPatch(existing, input);
-
-  await saveRuntimeListing(updated);
   const synced = await syncListingToRepo(updated);
-  const otherListings = (await getRuntimeListings()).filter((l) => l.id !== updated.id);
-  try {
-    const removedMedia = await deleteRemovedListingMedia(existing, updated, otherListings);
-    return NextResponse.json({
+    try {
+        return NextResponse.json({
       listing: updated,
-      removedMedia,
-      exported: synced.ok,
+            exported: synced.ok,
       commitUrl: synced.ok ? synced.commitUrl : null,
       exportError: synced.ok ? null : synced.error,
     });
@@ -81,8 +77,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json(
       {
         listing: updated,
-        mediaCleanupError: "Saved, but some removed files could not be deleted",
-        exported: synced.ok,
+                exported: synced.ok,
         commitUrl: synced.ok ? synced.commitUrl : null,
         exportError: synced.ok ? null : synced.error,
       },

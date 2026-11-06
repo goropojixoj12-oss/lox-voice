@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
-import { writeListingMediaFile } from "@/lib/listing-media-files";
+import { writeStoreBlob } from "@/lib/store-persistence";
 import type { DocAccessLevel, ListingDocument } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -39,8 +39,9 @@ export async function POST(request: Request) {
 
     const bytes = Buffer.from(await file.arrayBuffer());
     const ext = file.name.split(".").pop() ?? "bin";
-    const storageKey = `docs/${listingId}/${nanoid(10)}.${ext}`;
-    const saved = await writeListingMediaFile(storageKey, bytes, file.type || "application/octet-stream");
+    const docKey = `listing-docs/${listingId}/${nanoid(10)}.${ext}`;
+    await writeStoreBlob(docKey, bytes, file.type || "application/octet-stream");
+    const saved = { url: `/api/admin/listings/documents/${docKey}`, storageKey: docKey };
 
     const doc: ListingDocument = {
       id: nanoid(8),
