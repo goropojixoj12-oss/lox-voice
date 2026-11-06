@@ -136,8 +136,8 @@ export const properties: Property[] = [
       "commune": "International Village",
       "communeSlug": "international-village",
       "address": "Andong Khmer (Central)",
-      "lat": 0,
-      "lng": 0
+      "lat": 10.6092,
+      "lng": 104.1657
     },
     "createdByUserId": "user-admin",
     "publishedAt": "2026-11-06T05:58:43.686Z",
