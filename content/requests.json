@@ -1,6 +1,18 @@
 {
   "requests": [
     {
+      "id": "1ycVOhaOF5dB",
+      "message": "queue smoke test 2026-11-06T08:16:36Z - safe to delete",
+      "scope": "site",
+      "status": "queued",
+      "attachment": null,
+      "secondAttachment": null,
+      "createdByUserId": "user-admin",
+      "createdByName": "SEAPS CEO",
+      "createdAt": "2026-11-06T08:16:36.797Z",
+      "updatedAt": "2026-11-06T08:16:36.797Z"
+    },
+    {
       "id": "RXSNTHeWO-hq",
       "message": "queue smoke test 2026-11-06T08:12:01Z - safe to delete",
       "scope": "site",
