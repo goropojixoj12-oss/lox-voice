@@ -163,3 +163,31 @@ GET  /api/cron/site-agent           -> крон-обёртка над pull
 Проверено на проде: коммит с одной заявкой дал в `vercel ls` деплой **Canceled (3s)** вместо сборки на ~20s; предыдущий production остаётся живым.
 
 Важно: экспорт карточки трогает `content/listings/*` и `src/data/properties.ts` — такой коммит **всегда собирается**.
+
+
+## 11. Загрузка фото и видео: почему понадобились срезы
+
+Два лимита, которые не видны в коде, но режут загрузку:
+
+| Ограничение | Значение | Что ломалось |
+| --- | --- | --- |
+| тело запроса к serverless-функции Vercel | ~4.5 МБ | фото 5–12 МБ → `413 FUNCTION_PAYLOAD_TOO_LARGE`, UI показывал «Upload failed» |
+| GitHub Contents API | inline base64 только до 1 МБ | загруженный файл 5 МБ отдавался как 404 из `/api/uploads/...` |
+| размер ответа функции | ограничен | отдача файла буфером обрезалась, поэтому ответ идёт потоком по 512 КБ |
+
+Порядок загрузки крупного файла:
+
+```
+POST /api/dashboard/list-property/media/init      {name,size,type} -> {uploadId, chunkSize, totalChunks}
+PUT  /api/dashboard/list-property/media/chunk?uploadId=..&index=0   (3 МБ, binary)
+PUT  /api/dashboard/list-property/media/chunk?uploadId=..&index=1
+POST /api/dashboard/list-property/media/complete  {uploadId} -> {item:{url, storageKey, size}}
+```
+
+- файлы до 3 МБ по-прежнему уходят одним `POST /api/dashboard/list-property/media` (multipart);
+- срезы лежат в `seaps_blobs` (Postgres) под ключом `listing-upload-staging/<uploadId>/<NNNN>.bin` и удаляются сразу после склейки; в dev — в `.data/blobs`;
+- сессия загрузки живёт 2 часа, срез можно переслать повторно (тот же индекс перезаписывается);
+- готовый файл коммитится в `content/uploads/<user>/<sha1-12>.<ext>`, при публикации копируется в `public/media/listings/<slug>/photo-<sha1-12>.jpg`;
+- фото больше 1.5 МБ ужимаются в браузере до 2560 px / JPEG q0.9 до отправки.
+
+Диагностика, если снова «Upload failed»: посмотреть статус ответа в devtools. `413` — файл пошёл одним запросом (проверить, что клиент выбрал путь со срезами); `410` — истекла сессия загрузки; `404` на `/api/uploads/...` — файла нет в git по этому пути.
