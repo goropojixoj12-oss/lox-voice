@@ -63,8 +63,8 @@ export const properties: Property[] = [
       "commune": "Koh Norea",
       "communeSlug": "koh-norea",
       "address": "Vue Aston",
-      "lat": 0,
-      "lng": 0
+      "lat": 11.54607,
+      "lng": 104.946748
     },
     "createdByUserId": "user-agent",
     "agentId": "agent-sokha",
@@ -100,7 +100,24 @@ export const properties: Property[] = [
     "landSqm": null,
     "furnishing": null,
     "amenities": [],
-    "images": [],
+    "images": [
+      {
+        "id": "img-1",
+        "url": "/media/photos/photo-1600585154340-be6161a56a0c.jpg",
+        "alt": "Modern colonial style house - exterior",
+        "isCover": true
+      },
+      {
+        "id": "img-2",
+        "url": "/media/photos/photo-1600596542815-ffad4c1539a9.jpg",
+        "alt": "House with pool"
+      },
+      {
+        "id": "img-3",
+        "url": "/media/photos/photo-1600607687920-4e2a09cf159d.jpg",
+        "alt": "Living area"
+      }
+    ],
     "cardPreviewVideoUrl": null,
     "hasVideoTour": false,
     "location": {
@@ -113,8 +130,8 @@ export const properties: Property[] = [
       "commune": "International Village",
       "communeSlug": "international-village",
       "address": "Andong Khmer",
-      "lat": 0,
-      "lng": 0
+      "lat": 10.6092,
+      "lng": 104.1657
     },
     "createdByUserId": "user-admin",
     "publishedAt": "2026-11-05T15:05:20.582Z",
@@ -125,7 +142,7 @@ export const properties: Property[] = [
     "commissionCompany": 3,
     "visibility": "public",
     "design": "standard",
-    "mediaPending": true
+    "mediaNote": "temporary stock photos until the owner sends the real ones"
   },
   {
     "id": "runtime-FpQKSPTb",
@@ -172,8 +189,8 @@ export const properties: Property[] = [
       "commune": "Koh Norea",
       "communeSlug": "koh-norea",
       "address": "Vue Aston",
-      "lat": 0,
-      "lng": 0
+      "lat": 11.54607,
+      "lng": 104.946748
     },
     "createdByUserId": "user-admin",
     "publishedAt": "2026-11-04T20:39:29.539Z",

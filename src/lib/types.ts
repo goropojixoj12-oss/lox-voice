@@ -149,6 +149,8 @@ export interface Property {
   design?: "standard" | "slides";
   /** No photos yet: the card shows a designed face and the validator only warns. */
   mediaPending?: boolean;
+  /** Why the current photos are placeholders (temporary stock, waiting for the owner). */
+  mediaNote?: string;
   location: LocationRef;
   agentId?: string;
   agencyId?: string;

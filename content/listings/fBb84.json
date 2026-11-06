@@ -17,7 +17,11 @@
   "areaSqm": 102.35,
   "landSqm": null,
   "furnishing": null,
-  "amenities": ["parking", "pool", "gym"],
+  "amenities": [
+    "parking",
+    "pool",
+    "gym"
+  ],
   "images": [
     {
       "id": "img-1",
@@ -48,8 +52,8 @@
     "commune": "Koh Norea",
     "communeSlug": "koh-norea",
     "address": "Vue Aston",
-    "lat": 0,
-    "lng": 0
+    "lat": 11.54607,
+    "lng": 104.946748
   },
   "createdByUserId": "user-agent",
   "agentId": "agent-sokha",

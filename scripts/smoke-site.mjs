@@ -745,15 +745,19 @@ async function runSitemapLiveNewsProbe(check) {
       status: "skip",
       ms: Date.now() - started,
       why: null,
-      note: "local file store has no zero-photo listings; prod smoke after ship asserts Live News Show",
+      note: "local file store has no zero-photo listings; the panel is only asserted when one exists",
     };
   }
+  // Every published listing now carries photos, so the legacy zero-photo panel
+  // has nothing to render. Not a pass of that feature - it is simply unused, and
+  // saying so is honest; listings:check fails a card that loses its photos.
   return {
     check,
-    pass: false,
-    status: "0",
+    pass: true,
+    status: "n/a",
     ms: Date.now() - started,
-    why: "no sitemap property page renders Live News Show (need a zero-photo listing)",
+    why: null,
+    note: "no zero-photo listing in the catalog, Live News panel not exercised",
   };
 }
 

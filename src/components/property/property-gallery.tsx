@@ -12,9 +12,12 @@ import { shouldShowLiveNewsPanelForListing } from "@/lib/live-news-show";
 export function PropertyGallery({
   images,
   listingSlug,
+  fallbackLabel,
 }: {
   images: PropertyImage[];
   listingSlug?: string;
+  /** Shown in the zero-photo hero (e.g. "Kampot · house"). */
+  fallbackLabel?: string;
 }) {
   const searchParams = useSearchParams();
   const [active, setActive] = useState(() => {
@@ -27,10 +30,19 @@ export function PropertyGallery({
   const current = images[active] ?? images[0];
 
   if (!current) {
-    if (!shouldShowLiveNewsPanelForListing(listingSlug)) {
-      return null;
+    if (shouldShowLiveNewsPanelForListing(listingSlug)) {
+      return <LiveNewsShowPanel listingSlug={listingSlug} />;
     }
-    return <LiveNewsShowPanel listingSlug={listingSlug} />;
+    // No photos and no embed for this listing: show an intentional hero instead
+    // of an empty cut-out in the page layout.
+    return (
+      <div className="flex aspect-[16/10] w-full flex-col justify-end gap-2 rounded-[var(--radius-xl)] bg-[linear-gradient(150deg,var(--color-secondary)_0%,var(--color-accent)_140%)] p-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+          {fallbackLabel ?? "Listing"}
+        </p>
+        <p className="text-lg font-semibold text-white/90">Photos coming soon</p>
+      </div>
+    );
   }
 
   return (
