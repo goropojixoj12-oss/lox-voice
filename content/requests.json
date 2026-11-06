@@ -4,13 +4,14 @@
       "id": "RXSNTHeWO-hq",
       "message": "queue smoke test 2026-11-06T08:12:01Z - safe to delete",
       "scope": "site",
-      "status": "queued",
+      "status": "done",
       "attachment": null,
       "secondAttachment": null,
       "createdByUserId": "user-admin",
       "createdByName": "SEAPS CEO",
       "createdAt": "2026-11-06T08:12:02.198Z",
-      "updatedAt": "2026-11-06T08:12:02.198Z"
+      "updatedAt": "2026-11-06T08:12:11.060Z",
+      "agentNote": "smoke test"
     }
   ]
 }
