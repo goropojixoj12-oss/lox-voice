@@ -60,19 +60,10 @@ export function CardImagePreview({
   sizes: string;
 }) {
   const [index, setIndex] = useState(0);
-  const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
     onFrameChange?.(index);
   }, [index, onFrameChange]);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduceMotion(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
 
   const cardVideoUrl =
     property.cardPreviewVideoUrl ||
@@ -88,12 +79,12 @@ export function CardImagePreview({
   }, [property.images, property.previewPhotoCount]);
 
   useEffect(() => {
-    if (reduceMotion || frames.length < 2) return;
+    if (frames.length < 2) return;
     const timer = window.setInterval(() => {
       setIndex((i) => (i + 1) % frames.length);
     }, FLIPBOOK_MS);
     return () => window.clearInterval(timer);
-  }, [frames.length, reduceMotion]);
+  }, [frames.length]);
 
   const cover = property.images.find((i) => i.isCover) ?? property.images[0];
   const alt = cover?.alt || property.title;
@@ -121,32 +112,21 @@ export function CardImagePreview({
           className,
         )}
       >
-        {reduceMotion || frames.length < 2 ? (
+        {frames.map((url, i) => (
           <Image
-            src={frames[0]}
+            key={`${i}-${url}`}
+            src={url}
             alt={alt}
             fill
-            unoptimized
-            className="object-cover"
+            className={cn(
+              "object-cover transition-opacity duration-500",
+              i === index ? "opacity-100" : "opacity-0",
+            )}
             sizes={sizes}
+            priority={i === 0}
+            unoptimized
           />
-        ) : (
-          frames.map((url, i) => (
-            <Image
-              key={`${i}-${url}`}
-              src={url}
-              alt={alt}
-              fill
-              className={cn(
-                "object-cover transition-opacity duration-300",
-                i === index ? "opacity-100" : "opacity-0",
-              )}
-              sizes={sizes}
-              priority={i === 0}
-              unoptimized
-            />
-          ))
-        )}
+        ))}
       </div>
     );
   }
