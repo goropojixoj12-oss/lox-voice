@@ -5,6 +5,7 @@ import { readActingAgentUserIdFromRequest } from "@/lib/agent-desk-acting-user";
 import { getPlatformUserById } from "@/lib/admin-platform-users";
 import { getSession, requireRole } from "@/lib/auth";
 import { getAllProperties } from "@/lib/catalog";
+import { syncListingToRepo } from "@/lib/listing-sync";
 import { isPublicListing } from "@/lib/listing-access";
 import { clampPreviewPhotoCount } from "@/lib/list-property-media";
 import { saveRuntimeListing } from "@/lib/store";
@@ -181,6 +182,14 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+
+  // The card must reach the repository in the same action, otherwise it exists
+  // only as a draft in the working store and never appears on the site.
+  const synced = await syncListingToRepo(listing);
+
   const me = await getSession();
-  return NextResponse.json({ listing, submittedBy: me?.id }, { status: 201 });
+  return NextResponse.json(
+    { listing, submittedBy: me?.id, exported: synced.ok, commitUrl: synced.ok ? synced.commitUrl : null, exportError: synced.ok ? null : synced.error },
+    { status: 201 },
+  );
 }

@@ -8,6 +8,7 @@ import {
   saveRuntimeListing,
 } from "@/lib/store";
 import { deleteRemovedListingMedia } from "@/lib/listing-media-files";
+import { syncListingToRepo } from "@/lib/listing-sync";
 import { resetListingViewTracking } from "@/lib/listing-view-store";
 import { countrySlugFromName, getCountryByCode, isWorldCountryCode } from "@/data/countries";
 import type {
@@ -189,14 +190,27 @@ export async function PATCH(request: Request, context: RouteContext) {
   };
 
   await saveRuntimeListing(updated);
+  const synced = await syncListingToRepo(updated);
   const otherListings = (await getRuntimeListings()).filter((l) => l.id !== updated.id);
   try {
     const removedMedia = await deleteRemovedListingMedia(existing, updated, otherListings);
-    return NextResponse.json({ listing: updated, removedMedia });
+    return NextResponse.json({
+      listing: updated,
+      removedMedia,
+      exported: synced.ok,
+      commitUrl: synced.ok ? synced.commitUrl : null,
+      exportError: synced.ok ? null : synced.error,
+    });
   } catch (error) {
     console.error("listing media cleanup failed", updated.id, error);
     return NextResponse.json(
-      { listing: updated, mediaCleanupError: "Saved, but some removed files could not be deleted" },
+      {
+        listing: updated,
+        mediaCleanupError: "Saved, but some removed files could not be deleted",
+        exported: synced.ok,
+        commitUrl: synced.ok ? synced.commitUrl : null,
+        exportError: synced.ok ? null : synced.error,
+      },
       { status: 200 },
     );
   }
