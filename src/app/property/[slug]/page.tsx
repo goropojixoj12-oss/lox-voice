@@ -363,7 +363,7 @@ export default async function PropertyDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <PropertyListingInquiry {...propertyListingInquiryFromProperty(property)} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <PropertyInquiryLanguageActions />
+            <PropertyInquiryLanguageActions listingSlug={property.slug} />
           </div>
           {agent ? (
             <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
