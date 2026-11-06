@@ -9,7 +9,7 @@ import { isPublicListing } from "@/lib/listing-access";
 
 // <listings:begin> (generated from content/listings - do not edit by hand)
 export const properties: Property[] = [
-    {
+  {
     "id": "runtime-yl1YBrlr",
     "slug": "vue-aston-3-bedroom-2-bathroom-fully-furnished-102m2-fBb84",
     "title": "Vue Aston  (Riverside)  -   Exclusively Designed, Developed and Built Condominium. 3 Bedrooms, 2 Bathrooms, Spacious 102.34 m2.   Fully Furnished and Available Immediately. Foreign Ownership Approved (Hard Title). This Beautiful Property is Priced Significantly Under Cost Value.",
