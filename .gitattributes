@@ -4,3 +4,14 @@
 # line ending so the two writers never produce a phantom diff.
 content/** text eol=lf
 src/data/properties.ts text eol=lf
+
+# Uploads are binary: never let git convert line endings inside them.
+*.jpg -text
+*.jpeg -text
+*.png -text
+*.webp -text
+*.gif -text
+*.mp4 -text
+*.webm -text
+*.mov -text
+*.pdf -text
