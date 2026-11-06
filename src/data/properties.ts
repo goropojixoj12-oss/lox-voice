@@ -339,6 +339,69 @@ export const properties: Property[] = [
     "design": "slides"
   },
   {
+    "id": "runtime-UbefJ57X",
+    "slug": "test-card-seaps-flow-check-ysegt",
+    "title": "Test card — seaps flow check",
+    "summary": "Тестовая карточка для проверки всей цепочки: визард, загрузка фото, публикация, каталог.",
+    "description": "Эта карточка создана автоматически из админской учётки, чтобы проверить весь путь целиком: заполнение полей, загрузку фотографий, сохранение в репозиторий, модерацию и появление на сайте. После проверки её можно удалить одной командой.",
+    "transactionType": "sale",
+    "propertyType": "apartment",
+    "status": "pending",
+    "verification": "unverified",
+    "sellerType": "owner",
+    "price": 123456,
+    "currency": "USD",
+    "pricePeriod": null,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "areaSqm": 88,
+    "landSqm": null,
+    "furnishing": null,
+    "amenities": [],
+    "images": [
+      {
+        "id": "img-1",
+        "url": "/media/listings/test-card-seaps-flow-check-ysegt/photo-ea5a1bbf10.jpg",
+        "alt": "Test photo 1",
+        "isCover": true
+      },
+      {
+        "id": "img-2",
+        "url": "/media/listings/test-card-seaps-flow-check-ysegt/photo-956921b2f8.jpg",
+        "alt": "Test photo 2",
+        "isCover": false
+      },
+      {
+        "id": "img-3",
+        "url": "/media/listings/test-card-seaps-flow-check-ysegt/photo-a15593c59a.jpg",
+        "alt": "Test photo 3",
+        "isCover": false
+      }
+    ],
+    "cardPreviewVideoUrl": null,
+    "previewPhotoCount": 3,
+    "hasVideoTour": false,
+    "location": {
+      "country": "Cambodia",
+      "countrySlug": "cambodia",
+      "city": "Phnom Penh",
+      "citySlug": "phnom-penh",
+      "district": "Chamkar Mon",
+      "districtSlug": "chamkar-mon",
+      "commune": "Tonle Bassac",
+      "communeSlug": "tonle-bassac",
+      "address": "Test address, street 308",
+      "lat": 11.54607,
+      "lng": 104.946748
+    },
+    "createdByUserId": "user-admin",
+    "publishedAt": "2026-11-06T21:22:32.408Z",
+    "updatedAt": "2026-11-06T21:22:32.408Z",
+    "views": 0,
+    "inquiries": 0,
+    "visibility": "public"
+  },
+  {
     "id": "runtime-FpQKSPTb",
     "slug": "cheapest-ever-studio-sold-vue-aston-never-seen-before-foreign-ownership-approved-hard-title-_ZFWs",
     "title": "LUXURY @ VUE ASTON - CHEAPEST.....EVER....STUDIO.... NEVER SEEN BEFORE PRICE- FOREIGN OWNERSHIP APPROVED (Hard Title Ready) - EXCLUSIVE to SEAPS",
