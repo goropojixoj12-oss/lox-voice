@@ -46,10 +46,82 @@ async function withRetry<T>(
   throw lastErr;
 }
 
-async function uploadOne(file: File, actingUserId?: string): Promise<ListingMediaItem> {
+type UploadProgress = (percent: number) => void;
+
+/**
+ * A serverless function accepts roughly 4.5 MB of request body, so a 12 MB
+ * photo cannot arrive in one POST. Small files still go in a single request;
+ * anything bigger is sliced, staged server-side and committed on the last call.
+ */
+const DIRECT_UPLOAD_LIMIT = 3 * 1024 * 1024;
+const FALLBACK_CHUNK_SIZE = 3 * 1024 * 1024;
+
+async function uploadInSlices(
+  file: File,
+  actingUserId: string | undefined,
+  onProgress?: UploadProgress,
+): Promise<ListingMediaItem> {
+  const initRes = await fetch(
+    "/api/dashboard/list-property/media/init",
+    withActingAgentUser(actingUserId, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: file.name, size: file.size, type: file.type }),
+    }),
+  );
+  const init = (await initRes.json().catch(() => ({}))) as {
+    uploadId?: string;
+    chunkSize?: number;
+    error?: string;
+  };
+  if (!initRes.ok || !init.uploadId) throw new Error(init.error ?? "Upload failed");
+
+  const chunkSize = init.chunkSize && init.chunkSize > 0 ? init.chunkSize : FALLBACK_CHUNK_SIZE;
+  let index = 0;
+  for (let offset = 0; offset < file.size; offset += chunkSize) {
+    const slice = file.slice(offset, Math.min(offset + chunkSize, file.size));
+    const res = await fetch(
+      `/api/dashboard/list-property/media/chunk?uploadId=${encodeURIComponent(init.uploadId)}&index=${index}`,
+      withActingAgentUser(actingUserId, { method: "PUT", body: slice }),
+    );
+    if (!res.ok) {
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      throw new Error(data.error ?? "Upload failed");
+    }
+    index += 1;
+    onProgress?.(Math.min(99, Math.round(((offset + slice.size) / file.size) * 100)));
+  }
+
+  const doneRes = await fetch(
+    "/api/dashboard/list-property/media/complete",
+    withActingAgentUser(actingUserId, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uploadId: init.uploadId }),
+    }),
+  );
+  const done = (await doneRes.json().catch(() => ({}))) as {
+    item?: ListingMediaItem;
+    error?: string;
+  };
+  if (!doneRes.ok || !done.item) throw new Error(done.error ?? "Upload failed");
+  onProgress?.(100);
+  return done.item;
+}
+
+async function uploadOne(
+  file: File,
+  actingUserId?: string,
+  onProgress?: UploadProgress,
+): Promise<ListingMediaItem> {
   // The server commits the file straight into the repository (content/uploads
   // then public/media on publish). No client token, no object storage.
-  return withRetry(() => uploadViaServer(file, actingUserId), 3, 1500);
+  if (file.size <= DIRECT_UPLOAD_LIMIT) {
+    const item = await withRetry(() => uploadViaServer(file, actingUserId), 3, 1500);
+    onProgress?.(100);
+    return item;
+  }
+  return uploadInSlices(file, actingUserId, onProgress);
 }
 
 const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB
@@ -84,6 +156,7 @@ export function ListPropertyMediaStep({
   const [uploadStatus, setUploadStatus] = useState<
     Record<string, "waiting" | "uploading" | "done" | "error">
   >({});
+  const [uploadPercent, setUploadPercent] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (uploadUserIdOverride) {
@@ -156,7 +229,9 @@ export function ListPropertyMediaStep({
         const file = queue.shift();
         if (!file) return;
         try {
-          const item = await uploadOne(file, actingUserId);
+          const item = await uploadOne(file, actingUserId, (percent) =>
+            setUploadPercent((prev) => ({ ...prev, [keyOf(file)]: percent })),
+          );
           if (item.kind === "image" && !items.some((m) => m.kind === "image" && m.isCover) && !added.some((m) => m.isCover)) {
             item.isCover = true;
           }
@@ -250,8 +325,8 @@ export function ListPropertyMediaStep({
         video, or — if you only upload photos — a fast flipbook (like YouTube hover previews, but
         always on). For {listingTitle ? `"${listingTitle}"` : "this listing"} you can add all{" "}
         <strong className="text-[var(--color-text)]">50 photos</strong> and{" "}
-        <strong className="text-[var(--color-text)]">2 videos</strong> here. Large files upload
-        directly to storage (up to 12MB per photo, 80MB per video).
+        <strong className="text-[var(--color-text)]">2 videos</strong> here. Large files are sent
+        in slices, so a 12MB photo or an 80MB video works on a phone connection too.
       </p>
 
       <div
@@ -317,7 +392,10 @@ export function ListPropertyMediaStep({
                         ? "uploaded"
                         : status === "error"
                           ? "failed"
-                          : "uploading…";
+                          : (() => {
+                              const percent = uploadPercent[`${entry.file.name}:${entry.file.size}`];
+                              return percent ? `uploading ${percent}%` : "uploading…";
+                            })();
                     const tone =
                       status === "done"
                         ? "text-green-600"
