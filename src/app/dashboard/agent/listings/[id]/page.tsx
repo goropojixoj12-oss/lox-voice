@@ -6,6 +6,7 @@ import {
   AdminListingEditWizardProvider,
 } from "@/components/dashboard/admin-listing-edit-wizard";
 import { getSession } from "@/lib/auth";
+import { ExportListingButton } from "@/components/dashboard/export-listing-button";
 import { getRuntimeListingById } from "@/lib/store";
 
 export const metadata: Metadata = { title: "Edit my listing" };
@@ -50,6 +51,9 @@ export default async function AgentListingEditPage({
         >
           <AdminListingEditWizard listingStatus={listing.status} />
         </AdminListingEditWizardProvider>
+      </div>
+      <div className="mt-6">
+        <ExportListingButton listingId={listing.id} />
       </div>
     </div>
   );

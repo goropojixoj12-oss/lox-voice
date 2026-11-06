@@ -1,7 +1,7 @@
 export type SiteChangeRequestStatus = "queued" | "in_progress" | "done" | "failed";
 
-/** Only public-site UI and signed-in user experiences (not infra, billing, or legal HR). */
-export type SiteChangeScope = "ui_auth";
+/** What the admin is allowed to change. The queue is not limited to UI any more. */
+export type SiteChangeScope = "site" | "listing" | "design" | "ui_auth";
 
 export type SiteChangeAttachment = {
   fileName: string;

@@ -1,24 +1,51 @@
 import { nanoid } from "nanoid";
-import { readStoreJson, writeStoreJson } from "@/lib/store-persistence";
+import { commitFiles, gitRepoConfigured, readGitFile } from "@/lib/github-repo";
 import type {
   SiteChangeRequest,
   SiteChangeRequestStatus,
   SiteChangeScope,
 } from "@/lib/site-agent-types";
 
-const REQUESTS_FILE = "admin-site-change-requests.json";
+/**
+ * The admin command queue lives in the repository: content/requests.json.
+ * Every queue transition is a commit on main, so the request, the reviewer and
+ * the resulting build are one history. No Blob/KV/database involved.
+ */
+const REQUESTS_FILE = "content/requests.json";
 const MAX_STORED = 200;
 
-async function loadRequests(): Promise<SiteChangeRequest[]> {
-  const items = await readStoreJson<SiteChangeRequest[]>(REQUESTS_FILE, []);
-  return items.map((item) => ({
-    ...item,
-    secondAttachment: item.secondAttachment ?? null,
-  }));
+export class GitQueueUnavailableError extends Error {
+  constructor() {
+    super(
+      "Admin commands need GITHUB_CONTENT_TOKEN on the server (fine-grained PAT with Contents: read & write for this repo).",
+    );
+  }
 }
 
-async function saveRequests(items: SiteChangeRequest[]): Promise<void> {
-  await writeStoreJson(REQUESTS_FILE, items.slice(0, MAX_STORED));
+function assertConfigured(): void {
+  if (!gitRepoConfigured()) throw new GitQueueUnavailableError();
+}
+
+async function loadRequests(): Promise<SiteChangeRequest[]> {
+  assertConfigured();
+  const file = await readGitFile(REQUESTS_FILE);
+  if (!file) return [];
+  try {
+    const parsed = JSON.parse(file.text) as { requests?: SiteChangeRequest[] };
+    return Array.isArray(parsed.requests) ? parsed.requests : [];
+  } catch {
+    throw new Error(`${REQUESTS_FILE} is not valid JSON - refusing to overwrite it`);
+  }
+}
+
+async function saveRequests(items: SiteChangeRequest[], message: string): Promise<void> {
+  assertConfigured();
+  await commitFiles(message, [
+    {
+      path: REQUESTS_FILE,
+      text: `${JSON.stringify({ requests: items.slice(0, MAX_STORED) }, null, 2)}\n`,
+    },
+  ]);
 }
 
 export async function listSiteChangeRequests(limit = 40): Promise<SiteChangeRequest[]> {
@@ -49,7 +76,7 @@ export async function createSiteChangeRequest(input: {
     updatedAt: now,
   };
   items.unshift(request);
-  await saveRequests(items);
+  await saveRequests(items, `feat(requests): ${request.scope} request from ${input.createdByName}`);
   return request;
 }
 
@@ -59,7 +86,7 @@ export async function claimNextSiteChangeRequest(): Promise<SiteChangeRequest | 
   if (idx < 0) return null;
   const now = new Date().toISOString();
   items[idx] = { ...items[idx]!, status: "in_progress", updatedAt: now };
-  await saveRequests(items);
+  await saveRequests(items, `chore(requests): claim ${items[idx]!.id}`);
   return items[idx]!;
 }
 
@@ -75,12 +102,8 @@ export async function updateSiteChangeRequest(
   const idx = items.findIndex((r) => r.id === id);
   if (idx < 0) return null;
   const now = new Date().toISOString();
-  items[idx] = {
-    ...items[idx]!,
-    ...patch,
-    updatedAt: now,
-  };
-  await saveRequests(items);
+  items[idx] = { ...items[idx]!, ...patch, updatedAt: now };
+  await saveRequests(items, `chore(requests): ${patch.status ?? "update"} ${id}`);
   return items[idx]!;
 }
 
@@ -98,7 +121,7 @@ export async function setSiteChangeRequestAttachment(
   if (idx < 0) return null;
   const now = new Date().toISOString();
   items[idx] = { ...items[idx]!, attachment, updatedAt: now };
-  await saveRequests(items);
+  await saveRequests(items, `chore(requests): attach screenshot to ${id}`);
   return items[idx]!;
 }
 
@@ -111,6 +134,6 @@ export async function setSiteChangeRequestSecondAttachment(
   if (idx < 0) return null;
   const now = new Date().toISOString();
   items[idx] = { ...items[idx]!, secondAttachment, updatedAt: now };
-  await saveRequests(items);
+  await saveRequests(items, `chore(requests): attach second screenshot to ${id}`);
   return items[idx]!;
 }

@@ -4,9 +4,9 @@ import { extractClientInfo, writeAuditEntry } from "@/lib/audit-log";
 import { requireRole } from "@/lib/auth";
 import { clientKey, rateLimit } from "@/lib/rate-limit";
 import { writeSiteRequestAttachment } from "@/lib/site-agent-attachments";
-import { notifySiteAgentWebhook } from "@/lib/site-agent-webhook";
 import {
   createSiteChangeRequest,
+  GitQueueUnavailableError,
   listSiteChangeRequests,
   setSiteChangeRequestAttachment,
   setSiteChangeRequestSecondAttachment,
@@ -52,9 +52,16 @@ export async function POST(request: Request) {
       );
     }
 
+    const scopeRaw = form.get("scope");
+    const scope =
+      typeof scopeRaw === "string" &&
+      ["site", "listing", "design", "ui_auth"].includes(scopeRaw)
+        ? (scopeRaw as "site" | "listing" | "design" | "ui_auth")
+        : "site";
+
     let requestRecord = await createSiteChangeRequest({
       message: parsedMessage.data,
-      scope: "ui_auth",
+      scope,
       createdByUserId: session.id,
       createdByName: session.name,
       attachment: null,
@@ -106,14 +113,16 @@ export async function POST(request: Request) {
       meta: { requestId: requestRecord.id, messagePreview: parsedMessage.data.slice(0, 120) },
     }).catch((err) => console.error("[audit] site-change log failed", err));
 
-    notifySiteAgentWebhook(requestRecord);
     return NextResponse.json({ request: requestRecord }, { status: 201 });
   } catch (error) {
     console.error("[admin/site-requests] POST failed", error);
+    if (error instanceof GitQueueUnavailableError) {
+      return NextResponse.json({ error: error.message }, { status: 503 });
+    }
+    const message = error instanceof Error ? error.message : "unknown error";
     return NextResponse.json(
       {
-        error:
-          "Could not save your request. Site storage may be misconfigured (check Blob/KV on the server).",
+        error: `Could not save your request to git: ${message}`,
       },
       { status: 503 },
     );

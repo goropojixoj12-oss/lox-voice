@@ -1,70 +1,28 @@
-import { del, get, put } from "@vercel/blob";
-import { promises as fs } from "fs";
-import os from "os";
 import path from "path";
-import { isBlobStorageAvailable, isBlobSuspendedError } from "@/lib/store-persistence";
+import { commitFiles, readGitFile } from "@/lib/github-repo";
 
-const BLOB_PREFIX = "seaps-admin-site-requests";
-const LOCAL_DIR = "admin-site-requests";
-const MAX_BYTES = 4 * 1024 * 1024;
+/**
+ * Screenshots for site-change requests live in the repository next to the
+ * request itself (content/requests/<id>/<file>). No Blob, no temp disk.
+ */
+const MAX_BYTES = 3 * 1024 * 1024;
 
-const ALLOWED_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-]);
+const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 
-function blobAuth(): { token?: string; storeId?: string; oidcToken?: string } {
-  const storeId =
-    process.env.BLOB_STORE_ID?.trim() || process.env.VERCEL_BLOB_STORE_ID?.trim();
-  const token =
-    process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
-    process.env.VERCEL_BLOB_READ_WRITE_TOKEN?.trim();
-  if (token) return storeId ? { token, storeId } : { token };
-  const oidcToken = process.env.VERCEL_OIDC_TOKEN?.trim();
-  if (storeId && oidcToken) return { storeId, oidcToken };
-  if (storeId && process.env.VERCEL === "1") return { storeId };
-  return {};
-}
-
-function blobPathname(storageKey: string): string {
-  return `${BLOB_PREFIX}/${storageKey}`;
-}
-
-function isServerlessRuntime(): boolean {
-  return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
-}
-
-function safeStorageFileName(storageKey: string): string {
-  return storageKey.replace(/\//g, "__");
-}
-
-function projectAttachmentPath(storageKey: string): string {
-  return path.join(process.cwd(), ".data", LOCAL_DIR, safeStorageFileName(storageKey));
-}
-
-function ephemeralAttachmentPath(storageKey: string): string {
-  return path.join(
-    /* turbopackIgnore: true */ os.tmpdir(),
-    LOCAL_DIR,
-    safeStorageFileName(storageKey),
-  );
-}
-
-function attachmentPaths(storageKey: string): string[] {
-  return isServerlessRuntime()
-    ? [ephemeralAttachmentPath(storageKey), projectAttachmentPath(storageKey)]
-    : [projectAttachmentPath(storageKey), ephemeralAttachmentPath(storageKey)];
-}
+const EXT_BY_TYPE: Record<string, string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
+  "image/gif": ".gif",
+};
 
 function sanitizeFileName(name: string): string {
-  const base = path.basename(name).replace(/[^\w.\-()+ ]+/g, "_").slice(0, 120);
-  return base || "attachment.bin";
+  const base = path.basename(name).replace(/[^\w.\-()+ ]+/g, "_").slice(0, 80);
+  return base || "screenshot";
 }
 
 export function validateSiteRequestAttachment(file: File): string | null {
-  if (file.size > MAX_BYTES) return "Image must be 4 MB or smaller.";
+  if (file.size > MAX_BYTES) return "Image must be 3 MB or smaller.";
   const type = (file.type || "").toLowerCase();
   if (!ALLOWED_TYPES.has(type)) return "Only JPEG, PNG, WebP, or GIF screenshots are allowed.";
   return null;
@@ -78,46 +36,13 @@ export async function writeSiteRequestAttachment(
   if (validation) throw new Error(validation);
 
   const fileName = sanitizeFileName(file.name);
-  const storageKey = `${requestId}/${fileName}`;
-  const bytes = Buffer.from(await file.arrayBuffer());
+  const storageKey = `content/requests/${requestId}/${fileName}`;
   const contentType = file.type || "application/octet-stream";
+  const bytes = Buffer.from(await file.arrayBuffer());
 
-  async function writeLocalCopy(): Promise<void> {
-    let written = false;
-    for (const filePath of attachmentPaths(storageKey)) {
-      try {
-        await fs.mkdir(path.dirname(filePath), { recursive: true });
-        await fs.writeFile(filePath, bytes);
-        await fs.writeFile(`${filePath}.meta.json`, JSON.stringify({ contentType }), "utf8");
-        written = true;
-        break;
-      } catch {
-        // try next candidate
-      }
-    }
-    if (!written) throw new Error("Failed to save attachment");
-  }
-
-  if (isBlobStorageAvailable()) {
-    try {
-      await put(blobPathname(storageKey), bytes, {
-        access: "private",
-        addRandomSuffix: false,
-        allowOverwrite: true,
-        contentType,
-        ...blobAuth(),
-      });
-    } catch (error) {
-      if (!isBlobSuspendedError(error)) throw error;
-      console.warn(
-        "[site-agent-attachments] Vercel Blob store suspended; saving attachment to ephemeral disk",
-        error,
-      );
-      await writeLocalCopy();
-    }
-  } else {
-    await writeLocalCopy();
-  }
+  await commitFiles(`chore(requests): screenshot for ${requestId}`, [
+    { path: storageKey, base64: bytes.toString("base64") },
+  ]);
 
   return { storageKey, fileName, contentType, sizeBytes: bytes.length };
 }
@@ -125,54 +50,13 @@ export async function writeSiteRequestAttachment(
 export async function readSiteRequestAttachment(
   storageKey: string,
 ): Promise<{ bytes: Buffer; contentType: string } | null> {
-  if (isBlobStorageAvailable()) {
-    try {
-      const result = await get(blobPathname(storageKey), {
-        access: "private",
-        useCache: false,
-        ...blobAuth(),
-      });
-      if (!result?.stream || result.statusCode !== 200) return null;
-      const ab = await new Response(result.stream).arrayBuffer();
-      return {
-        bytes: Buffer.from(ab),
-        contentType: result.blob.contentType ?? "application/octet-stream",
-      };
-    } catch {
-      return null;
-    }
-  }
-  for (const filePath of attachmentPaths(storageKey)) {
-    try {
-      const bytes = await fs.readFile(filePath);
-      let contentType = "application/octet-stream";
-      try {
-        const meta = JSON.parse(await fs.readFile(`${filePath}.meta.json`, "utf8")) as {
-          contentType?: string;
-        };
-        if (meta.contentType) contentType = meta.contentType;
-      } catch {
-        /* ignore */
-      }
-      return { bytes, contentType };
-    } catch {
-      // try next candidate
-    }
-  }
-  return null;
+  if (!storageKey.startsWith("content/requests/")) return null;
+  const file = await readGitFile(storageKey).catch(() => null);
+  if (!file) return null;
+  const ext = path.extname(storageKey).toLowerCase();
+  const contentType =
+    ext === ".png" ? "image/png" : ext === ".webp" ? "image/webp" : ext === ".gif" ? "image/gif" : "image/jpeg";
+  return { bytes: Buffer.from(file.base64, "base64"), contentType };
 }
 
-export async function deleteSiteRequestAttachment(storageKey: string): Promise<void> {
-  if (isBlobStorageAvailable()) {
-    try {
-      await del(blobPathname(storageKey), blobAuth());
-    } catch {
-      /* ignore */
-    }
-    return;
-  }
-  for (const filePath of attachmentPaths(storageKey)) {
-    await fs.unlink(filePath).catch(() => undefined);
-    await fs.unlink(`${filePath}.meta.json`).catch(() => undefined);
-  }
-}
+export { EXT_BY_TYPE };
