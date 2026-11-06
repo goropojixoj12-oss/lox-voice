@@ -1,7 +1,7 @@
 "use client";
 
 import { upload } from "@vercel/blob/client";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, X } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -139,6 +139,9 @@ export function ListPropertyMediaStep({
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
+  const [pendingFiles, setPendingFiles] = useState<
+    { file: File; preview?: string }[]
+  >([]);
 
   useEffect(() => {
     if (uploadUserIdOverride) {
@@ -157,6 +160,31 @@ export function ListPropertyMediaStep({
 
   async function handleFiles(fileList: FileList | null) {
     if (!fileList?.length) return;
+    const files = Array.from(fileList);
+    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+    if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
+      const totalMB = Math.round(totalBytes / 1024 / 1024);
+      setError(`Общий размер файлов ${totalMB} МБ превышает лимит 1 ГБ. Выберите меньше файлов.`);
+      return;
+    }
+    // Show local previews first so the user sees exactly what they picked
+    // before anything is uploaded.
+    setPendingFiles((prev) => [
+      ...prev,
+      ...files.map((file) => {
+        const isImage = file.type.startsWith("image/");
+        return {
+          file,
+          preview: isImage ? URL.createObjectURL(file) : undefined,
+        };
+      }),
+    ]);
+    setError("");
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  async function uploadPending() {
+    if (!pendingFiles.length) return;
     if (!sessionReady) {
       setError("Still loading your session \u2014 try again in a moment.");
       return;
@@ -166,13 +194,7 @@ export function ListPropertyMediaStep({
       return;
     }
     setError("");
-    const files = Array.from(fileList);
-    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
-    if (totalBytes > MAX_TOTAL_UPLOAD_BYTES) {
-      const totalMB = Math.round(totalBytes / 1024 / 1024);
-      setError(`Общий размер файлов ${totalMB} МБ превышает лимит 1 ГБ. Выберите меньше файлов.`);
-      return;
-    }
+    const files = pendingFiles.map((p) => p.file);
     setBusy(true);
     const next = [...items];
 
@@ -216,7 +238,7 @@ export function ListPropertyMediaStep({
 
     setProgress("");
     setBusy(false);
-    if (inputRef.current) inputRef.current.value = "";
+    setPendingFiles([]);
   }
 
   function patch(id: string, patch: Partial<ListingMediaItem>) {
@@ -224,12 +246,27 @@ export function ListPropertyMediaStep({
       items.map((item) => {
         if (item.id !== id) {
           if (patch.isCover && item.kind === "image") return { ...item, isCover: false };
+          // Only clear isCardPreview for videos (single-select); images are multi-select.
           if (patch.isCardPreview && item.kind === "video") return { ...item, isCardPreview: false };
           return item;
         }
         return { ...item, ...patch };
       }),
     );
+  }
+
+  /** Multi-select up to `previewCount` photos for the looping card preview. */
+  function toggleCardPreviewImage(id: string) {
+    const target = items.find((i) => i.id === id);
+    if (!target || target.kind !== "image") return;
+    const alreadySelected = items.filter((i) => i.kind === "image" && i.isCardPreview).length;
+    const turningOn = !target.isCardPreview;
+    if (turningOn && alreadySelected >= previewCount) {
+      setError(`The card preview is limited to ${previewCount} photos.`);
+      return;
+    }
+    setError("");
+    patch(id, { isCardPreview: turningOn });
   }
 
   function remove(id: string) {
@@ -287,6 +324,73 @@ export function ListPropertyMediaStep({
         </Label>
         {progress ? <p className="mt-3 text-xs text-[var(--color-muted)]">{progress}</p> : null}
       </div>
+
+      {pendingFiles.length > 0 ? (
+        <div className="rounded-[var(--radius-lg)] border border-[var(--color-accent)]/50 bg-[var(--color-mist)]/30 p-3">
+          <p className="text-sm font-semibold text-[var(--color-accent-soft)]">
+            Selected for upload ({pendingFiles.length})
+          </p>
+          <ul className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {pendingFiles.map((entry) => (
+              <li
+                key={entry.file.name + entry.file.size}
+                className="relative flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-sm"
+              >
+                {entry.preview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={entry.preview}
+                    alt={entry.file.name}
+                    className="h-12 w-16 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover"
+                  />
+                ) : (
+                  <span className="flex h-12 w-16 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-secondary)] text-[10px] uppercase text-[var(--color-muted)]">
+                    video
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{entry.file.name}</p>
+                  <p className="text-xs text-[var(--color-muted)]">
+                    {Math.round(entry.file.size / 1024)} KB
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  aria-label={`Remove ${entry.file.name} from selection`}
+                  className="text-[var(--color-muted)] hover:text-[var(--color-danger)]"
+                  onClick={() => {
+                    setPendingFiles((prev) => prev.filter((p) => p !== entry));
+                    if (entry.preview) URL.revokeObjectURL(entry.preview);
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <Button
+            type="button"
+            className="mt-3"
+            disabled={busy || !sessionReady}
+            onClick={() => void uploadPending()}
+          >
+            {busy ? "Uploading\u2026" : `Upload ${pendingFiles.length} file${pendingFiles.length === 1 ? "" : "s"}`}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className="mt-3 ml-2"
+            disabled={busy}
+            onClick={() => {
+              for (const p of pendingFiles) if (p.preview) URL.revokeObjectURL(p.preview);
+              setPendingFiles([]);
+            }}
+          >
+            Cancel selection
+          </Button>
+          {busy ? <p className="mt-2 text-xs text-[var(--color-muted)]">{progress}</p> : null}
+        </div>
+      ) : null}
 
       {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
 
@@ -359,14 +463,24 @@ export function ListPropertyMediaStep({
               <ArrowDown className="h-4 w-4" />
             </Button>
             {item.kind === "image" ? (
-              <Button
-                type="button"
-                size="sm"
-                variant={item.isCover ? "primary" : "outline"}
-                onClick={() => patch(item.id, { isCover: true })}
-              >
-                Cover
-              </Button>
+              <>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={item.isCover ? "primary" : "outline"}
+                  onClick={() => patch(item.id, { isCover: true })}
+                >
+                  Cover
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={item.isCardPreview ? "primary" : "outline"}
+                  onClick={() => toggleCardPreviewImage(item.id)}
+                >
+                  Card preview
+                </Button>
+              </>
             ) : (
               <Button
                 type="button"

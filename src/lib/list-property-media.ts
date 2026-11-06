@@ -35,14 +35,20 @@ export function sortListingMedia(items: ListingMediaItem[]): ListingMediaItem[] 
 }
 
 /**
- * Cover first, everything else in the order the user left it, and exactly one
- * `isCover` flag — consumers read `images.find(i => i.isCover)` or `images[0]`,
- * so two covers or a cover sitting at position 3 silently loses the user's choice.
+ * Cover first, then photos explicitly chosen for the card preview flipbook,
+ * then the rest in the order the user left them. Exactly one `isCover` flag —
+ * consumers read `images.find(i => i.isCover)` or `images[0]`, so two covers
+ * silently lose the user's choice.
  */
-export function orderImagesWithCover<T extends { isCover?: boolean }>(images: T[]): T[] {
+export function orderImagesWithCover<T extends { isCover?: boolean; isCardPreview?: boolean }>(
+  images: T[],
+): T[] {
   if (images.length === 0) return [];
   const chosen = images.find((i) => i.isCover) ?? images[0];
-  return [chosen, ...images.filter((i) => i !== chosen)].map((i) => ({
+  const chosenOnly = (i: T) => i !== chosen;
+  const previewChosen = images.filter((i) => i !== chosen && i.isCardPreview);
+  const rest = images.filter((i) => i !== chosen && !i.isCardPreview);
+  return [chosen, ...previewChosen, ...rest].map((i) => ({
     ...i,
     isCover: i === chosen,
   }));
@@ -54,6 +60,7 @@ export function listingMediaToPropertyPayload(items: ListingMediaItem[], title: 
     url: i.url,
     alt: title,
     isCover: i.isCover,
+    isCardPreview: i.isCardPreview,
     storageKey: i.storageKey,
   }));
 

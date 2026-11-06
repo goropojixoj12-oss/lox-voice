@@ -144,6 +144,7 @@ type EditWizardContextValue = {
   submitAction: (action: "save" | "publish" | "reject") => Promise<void>;
   validateStep: (stepIndex: number) => boolean;
   canModerate: boolean;
+  actingUserId?: string;
 };
 
 const EditWizardContext = createContext<EditWizardContextValue | null>(null);
@@ -164,6 +165,12 @@ export function AdminListingEditWizardProvider({
   const router = useRouter();
   const [form, setForm] = useState<ListPropertyDraftForm>(() => listingToForm(listing));
   const [mediaItems, setMediaItems] = useState<ListingMediaItem[]>(() => listingToMedia(listing));
+  // The listing's owner (agent) owns the storage namespace for media uploads. An
+  // admin editing another agent's listing must send the acting-user header so the
+  // upload route can resolve the agent desk — otherwise it returns 400.
+  const actingUserId = listing.createdByUserId && listing.createdByUserId !== "user-admin"
+      ? listing.createdByUserId
+      : undefined;
   const [dealSelection, setDealSelection] = useState<DealSelection | null>(() => ({
     transactionType: listing.transactionType === "short_stay" ? "rent" : listing.transactionType,
     category: propertyTypeToCategory(listing.propertyType),
@@ -292,8 +299,10 @@ export function AdminListingEditWizardProvider({
       submitAction,
       validateStep,
       canModerate,
+      actingUserId,
     }),
     [
+      actingUserId,
       applyDealSelection,
       canModerate,
       dealSelection,
@@ -330,6 +339,7 @@ export function AdminListingEditWizard({
     submitAction,
     validateStep,
     canModerate,
+    actingUserId,
   } = useEditWizard();
 
   const [step, setStep] = useState(0);
@@ -607,6 +617,8 @@ export function AdminListingEditWizard({
               items={mediaItems}
               onChange={setMediaItems}
               listingTitle={form.title}
+              uploadUserId={actingUserId}
+              actingUserId={actingUserId}
               previewCount={clampPreviewPhotoCount(form.previewCount)}
               onPreviewCountChange={(next) => update("previewCount", String(next))}
             />
