@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { list, get } from "@vercel/blob";
+import { requireRole } from "@/lib/auth";
 import { authorizeSiteAgent } from "@/lib/site-agent-auth";
 import { writeStoreRaw, writeStoreBlob, pingStore } from "@/lib/store-persistence";
 
@@ -16,8 +17,9 @@ const MAX_ITEMS = 5000;
  */
 export async function POST(request: Request) {
   const auth = await authorizeSiteAgent(request);
-  if (!auth.ok || auth.viaAdminSession) {
-    return NextResponse.json({ error: "Use Bearer token" }, { status: 401 });
+  const session = auth.ok && auth.viaAdminSession ? true : (await requireRole(["admin"])) !== null;
+  if (!auth.ok && !session) {
+    return NextResponse.json({ error: "Use Bearer token or admin session" }, { status: 401 });
   }
 
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
