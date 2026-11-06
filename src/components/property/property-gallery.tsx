@@ -46,10 +46,10 @@ export function PropertyGallery({
   }
 
   return (
-    <div>
+    <div className="w-full min-w-0 max-w-full">
       <button
         type="button"
-        className="relative h-[clamp(220px,58vh,560px)] w-full overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-secondary)]"
+        className="relative block h-[clamp(220px,58vh,560px)] w-full max-w-full overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-secondary)]"
         onClick={() => setLightbox(true)}
       >
         <Image
@@ -62,7 +62,7 @@ export function PropertyGallery({
         />
       </button>
       {images.length > 1 ? (
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div className="mt-3 flex w-full max-w-full gap-2 overflow-x-auto pb-1">
           {images.map((image, index) => (
             <button
               key={image.id}

@@ -145,7 +145,7 @@ export default async function PropertyDetailPage({
       </nav>
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="space-y-8">
+        <div className="min-w-0 space-y-8">
           <PropertyGallery images={property.images} listingSlug={property.slug} />
           <div>
             <div className="flex flex-wrap items-start justify-between gap-3">
