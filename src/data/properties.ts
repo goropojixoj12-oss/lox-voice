@@ -12,9 +12,9 @@ export const properties: Property[] = [
     {
     "id": "runtime-yl1YBrlr",
     "slug": "vue-aston-3-bedroom-2-bathroom-fully-furnished-102m2-fBb84",
-    "title": "Vue Aston (Riverside) - 3 Bedrooms, 2 Bathrooms, Fully Furnished",
-    "summary": "Foreign Ownership Approved. Stunning City and River Views, 102.34 m2",
-    "description": "<p>Luxury 3 Bedroom Condominium</p>",
+    "title": "Vue Aston  (Riverside)  -   Exclusively Designed, Developed and Built Condominium. 3 Bedrooms, 2 Bathrooms, Spacious 102.34 m2.   Fully Furnished and Available Immediately. Foreign Ownership Approved (Hard Title). This Beautiful Property is Priced Significantly Under Cost Value.",
+    "summary": "Foreign Ownership Approved (Hard Title). Stunning Views of the City and River, 102.34 m2. Fully Furnished and Upgraded to a Precise Standard with Everything Specifically Designed to Fit For Purpose.",
+    "description": "Luxury 3 Bedroom, 2 Full Bathroom (1 Ensuite) Condominium . 102.34 m2.\n\nLocated in the Multiple Award Winning, Vue Aston Complex.\n\nForeign Ownership Approved (Hard Title).\n\nStunning 180 Degree Views of the City and River (Lounge Room and All Bedrooms).\n\nFully furnished / Upgraded to a Precise Standard and Included in the Sale Price.\n\nAll Internal Hard Furnishings are Specifically designed with Superior Materials, \n\nDesigned, Built and Fit Specifically for Purpose.\n\nBuilt In Robes, Cabinetry, Shelves, Drawers etc. Crafted After Handover at Significant Extra Cost.\n\n24 Hour Security / Access Controlled Secure Underground Parking for Bikes and Cars.\n\nAC in All Areas / White Goods / High Quality Internal Soft Fixtures and Fittings.\n\nCustom Made Interior (Built in Robes, Cupboards, Shelves, Drawers, Beds).\n\nTV, Lounges, Dining.......... LOTS INCLUDED  and Ready To Move In IMMEDIATELY.\n\nVue Aston Complex / Development\n\nInfinity Pool / Gymnasium / Fitness Facilities / Sauna / Steam / Spa\n\nMini Mart / Coffee Shop / Dining Facilities / Large Function Areas\n\nPriced Well Under Cost Value - SEAPS Exclusive Client. \n\nContact - Adam Creek (CEO)\n\nPhone / Telegram: +855 (0)17 355 169.\n\nE-Mail: ceo@seaps.asia\n\nContact preference:  ·\n\nContact preference: Adam Creek · ceo@seaps.asia",
     "transactionType": "sale",
     "propertyType": "apartment",
     "status": "published",
@@ -31,7 +31,13 @@ export const properties: Property[] = [
     "amenities": [
       "parking",
       "pool",
-      "gym"
+      "elevator",
+      "garden",
+      "gym",
+      "security",
+      "air_conditioning",
+      "pet_friendly",
+      "workspace"
     ],
     "images": [
       {
@@ -49,6 +55,12 @@ export const properties: Property[] = [
         "id": "img-3",
         "url": "/media/listings/vue-aston/02.jpg",
         "alt": "Vue Aston - interior"
+      },
+      {
+        "id": "img-4",
+        "url": "/media/listings/vue-aston-3-bedroom-2-bathroom-fully-furnished-102m2-fBb84/04.jpg",
+        "alt": "Vue Aston  (Riverside)  -   Exclusively Designed, Developed and Built Condominium. 3 Bedrooms, 2 Bathrooms, Spacious 102.34 m2.   Fully Furnished and Available Immediately. Foreign Ownership Approved (Hard Title). This Beautiful Property is Priced Significantly Under Cost Value.",
+        "isCover": true
       }
     ],
     "cardPreviewVideoUrl": null,
@@ -63,14 +75,14 @@ export const properties: Property[] = [
       "commune": "Koh Norea",
       "communeSlug": "koh-norea",
       "address": "Vue Aston",
-      "lat": 11.54607,
-      "lng": 104.946748
+      "lat": 0,
+      "lng": 0
     },
     "createdByUserId": "user-agent",
     "agentId": "agent-sokha",
     "agencyId": "ag-mekong",
-    "publishedAt": "2026-11-04T14:15:15.944Z",
-    "updatedAt": "2026-11-04T14:15:15.944Z",
+    "publishedAt": "2026-11-06T08:16:28.708Z",
+    "updatedAt": "2026-11-06T08:16:28.708Z",
     "views": 0,
     "inquiries": 0,
     "isFeatured": true,
@@ -83,9 +95,9 @@ export const properties: Property[] = [
   {
     "id": "runtime-Iyrq-T59",
     "slug": "stunning-architectural-masterpiece-large-executive-3-bedroom-all-ensuites-modern-colonial-style-house-beautiful-pool-western-award-winning-architect-a-personal-project-designed-built-and-proudly-displayed-by-one-of-cambodia-s-most-respected-and-trusted-architect-builders-dA5Dl",
-    "title": "STUNNING, ARCHITECTURAL MASTERPIECE. A Personal Project - Designed, Built and Proudly Displayed by one of Cambodia's most Respected, Western (Award Winning) Architects.",
-    "summary": "Modern Colonial Style House - Beautiful Pool - 3 Bedrooms",
-    "description": "<p>A PROPERTY THAT DELIVERS ON EVERY LEVEL</p>",
+    "title": "STUNNING, ARCHITECTURAL MASTERPIECE. A Personal Project - Designed, Built and Proudly Displayed by one of Cambodia’s most Respected, Western (Award Winning) Architects.",
+    "summary": "Modern Colonial Style House - Beautiful Pool  - 3 Bedrooms (all with ensuites). This stunning property stands out for its brilliance in design, exceptional workmanship and  precice attention to detail in all aspects, from concept to completion.",
+    "description": "<p>A PROPERTY THAT DELIVERS ON EVERY LEVEL</p><p></p><p>Designed by one of Cambodia’s most respected Architects, who’s reputation is founded upon innovative design principles, the use of premium-grade materials and the incorporation of contemporary Western building techniques, This is more than simply an attractive house. It is a thoughtfully conceived and meticulously executed residence in which architectural vision, premium construction, intelligent space planning and everyday practicality have been brought together to create an exceptional living environment. The proportions of its living spaces and the versatility of its indoor and outdoor facilities, every element contributes to a property designed to be enjoyed.</p><p></p><p>ARCHITECTURAL DESIGN &amp; DISTINGUISHED FEATURES</p><p></p><p>Rather than simply maximising floor space, the architectural design has focused on achieving practical functionality and a welcoming atmosphere. A defining characteristic of this residence is the intelligent consideration given to its proportions, internal configuration and relationship between living spaces. Generous dimensions, carefully positioned rooms and natural transitions between individual areas create an inviting sense of openness, balance and refinement. The result is a genuinely welcoming family home, equally suited to comfortable everyday living and entertaining larger gatherings of family and friends.</p><p></p><p>THREE GENEROUSLY PROPORTIONED BEDROOMS</p><p></p><p>All three bedrooms feature their own private ensuite bathrooms, providing convenience, privacy and independence for family members and visiting guests.</p><p>The master bedroom is particularly impressive, measuring 6m x 4m, excluding the ensuite, and is complemented by a substantial 4m walk-in wardrobe. Its direct access to the first-floor balcony provides an additional dimension of space and a private area to relax and unwind.</p><p></p><p>A KITCHEN DESIGNED FOR BOTH FUNCTIONALITY &amp; ENTERTAINING</p><p></p><p>The spacious kitchen has been designed with practicality and presentation equally in mind. Fitted with premium-quality products, attractive bench-tops and generous preparation areas, it provides an exceptionally functional environment for everyday family cooking while offering the space and convenience required when entertaining guests.</p><p>Its considered positioning within the home further enhances the relationship between the kitchen, dining and living areas.</p><p></p><p>IMPRESSIVE LIVING &amp; ENTERTAINMENT AREAS</p><p></p><p>A substantial lounge and dining area forms the central gathering space of the residence. Generously proportioned, this area provides ample room for family living, while offering an impressive setting for entertaining larger groups of family and friends.</p><p>Particular attention has been given to the spatial relationship between the kitchen, dining and lounge areas, creating a natural flow that allows occupants and guests to move comfortably throughout the home.</p><p></p><p>AUTOMATED SWIMMING POOL &amp; OUTDOOR LIVING</p><p></p><p>Upon entering through the property's beautifully sculptured façade, residents and visitors are welcomed by an impressive swimming pool featuring an automated salt/chlorine treatment system, designed to assist in maintaining excellent water purity and cleanliness with minimal ongoing intervention.</p><p></p><p>Within the property's securely defined boundaries, the outdoor environment has been carefully planned to accommodate a variety of activities and lifestyles.</p><p></p><p>Features include undercover parking, dedicated recreation and relaxation areas, a BBQ and entertaining area, together with additional private, weather-protected spaces.These areas provide considerable versatility, whether enjoying quiet family time, relaxing outdoors or hosting larger gatherings and social occasions.</p><p></p><p></p><p>LANDSCAPED GARDENS &amp; LOW-MAINTENANCE OUTDOOR APPEAL</p><p></p><p>The garden has been thoughtfully landscaped to complement the property's architectural presentation, providing an attractive and welcoming outdoor environment without creating unnecessary maintenance requirements. The landscaping, recreational areas and outdoor facilities have all been considered as part of the property's overall design, ensuring that the external spaces remain as practical and enjoyable as the interior.</p><p></p><p>AN EXCEPTIONAL HOME. AN ATTRACTIVE INVESTMENT.</p><p></p><p>Beyond its considerable appeal as a private family residence, this property also presents an attractive investment opportunity. The property is particularly well suited to those seeking an investment that can generate strong, long-term rental income.</p><p>Its architectural quality, three ensuite bedrooms, swimming pool, generous entertaining areas and practical internal configuration provide a combination of features that appeal to a large audience. Importantly, the property's quality of construction, distinctive design and practical functionality provide characteristics that distinguish it from more conventional residential offerings.</p><p>Whether retained as a private residence or purchased as a rental investment, it offers an appealing proposition for buyers seeking quality, versatility and long-term value.</p><p></p><p>LOCATION &amp; CONVENIENCE</p><p></p><p>Ideally positioned within walking distance of a Mini-Mart, coffee shops, restaurants and resorts, the property enjoys convenient access to a selection of everyday amenities and local hospitality establishments.</p><p>Its location further complements the residence's appeal, providing a desirable balance between comfortable residential living and convenient access to the surrounding lifestyle amenities.</p><p></p>\n\nContact preference: Adam Creek · ceo@seaps.asia",
     "transactionType": "sale",
     "propertyType": "apartment",
     "status": "published",
@@ -129,13 +141,13 @@ export const properties: Property[] = [
       "districtSlug": "andong-khmer",
       "commune": "International Village",
       "communeSlug": "international-village",
-      "address": "Andong Khmer",
-      "lat": 10.6092,
-      "lng": 104.1657
+      "address": "Andong Khmer (Central)",
+      "lat": 0,
+      "lng": 0
     },
     "createdByUserId": "user-admin",
-    "publishedAt": "2026-11-05T15:05:20.582Z",
-    "updatedAt": "2026-11-05T15:05:20.582Z",
+    "publishedAt": "2026-11-06T05:58:43.686Z",
+    "updatedAt": "2026-11-06T05:58:43.686Z",
     "views": 0,
     "inquiries": 0,
     "previewPhotoCount": 3,

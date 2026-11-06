@@ -1,5 +1,6 @@
 import { brand } from "@/config/brand";
 import { commitFiles, gitRepoConfigured, listGitDir, readGitFile } from "@/lib/github-repo";
+import { applyListingsBlock } from "@/lib/listings-codegen";
 import type { Property, PropertyImage } from "@/lib/types";
 
 /**
@@ -144,6 +145,34 @@ export async function exportListingToRepo(
   };
 
   files.push({ path: targetPath, text: `${JSON.stringify(merged, null, 2)}\n` });
+
+  // The site renders from src/data/properties.ts, so the export has to rebuild
+  // it in the same commit - otherwise the card lands in git but not on the site.
+  const allListings: Property[] = [];
+  for (const entry of (await listGitDir(CONTENT_DIR)).filter(
+    (f) => f.type === "file" && f.name.endsWith(".json"),
+  )) {
+    if (entry.path === targetPath) {
+      allListings.push(merged);
+      continue;
+    }
+    const file = await readGitFile(entry.path);
+    if (!file) continue;
+    try {
+      allListings.push(JSON.parse(file.text) as Property);
+    } catch {
+      // broken file is reported by listings:check
+    }
+  }
+  if (!allListings.some((item) => item.id === merged.id)) allListings.push(merged);
+
+  const propertiesFile = await readGitFile("src/data/properties.ts");
+  if (propertiesFile) {
+    files.push({
+      path: "src/data/properties.ts",
+      text: applyListingsBlock(propertiesFile.text, allListings),
+    });
+  }
 
   const commitUrl = await commitFiles(
     `feat(listings): publish ${slug} from the cabinet`,
