@@ -1,6 +1,18 @@
 {
   "requests": [
     {
+      "id": "48f0ZTspnrPB",
+      "message": "page 'https://www.seaps.asia/buy/residential'\r\n\r\nRemove ALL pictures at the top of the boxes containing property details",
+      "scope": "site",
+      "status": "queued",
+      "attachment": null,
+      "secondAttachment": null,
+      "createdByUserId": "user-admin",
+      "createdByName": "SEAPS CEO",
+      "createdAt": "2026-11-06T15:03:56.332Z",
+      "updatedAt": "2026-11-06T15:03:56.332Z"
+    },
+    {
       "id": "YpYsU6ZZPfDg",
       "message": "smoke test queue write 2026-11-06T10:11:17Z - safe to delete",
       "scope": "site",
