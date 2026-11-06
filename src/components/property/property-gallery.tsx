@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
 import type { PropertyImage } from "@/lib/types";
@@ -27,7 +27,14 @@ export function PropertyGallery({
     return requested < images.length ? requested : 0;
   });
   const [lightbox, setLightbox] = useState(false);
+  const stripRef = useRef<HTMLDivElement | null>(null);
   const current = images[active] ?? images[0];
+
+  function scrollStrip(direction: -1 | 1) {
+    const el = stripRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * Math.max(240, el.clientWidth * 0.8), behavior: "smooth" });
+  }
 
   if (!current) {
     if (shouldShowLiveNewsPanelForListing(listingSlug)) {
@@ -62,22 +69,45 @@ export function PropertyGallery({
         />
       </button>
       {images.length > 1 ? (
-        <div className="mt-3 flex w-full max-w-full gap-2 overflow-x-auto pb-1">
-          {images.map((image, index) => (
-            <button
-              key={image.id}
-              type="button"
-              onClick={() => setActive(index)}
-              className={cn(
-                "relative h-20 w-28 shrink-0 overflow-hidden rounded-[var(--radius-md)] border-2",
-                active === index
-                  ? "border-[var(--color-primary)]"
-                  : "border-transparent opacity-80 hover:opacity-100",
-              )}
-            >
-              <Image src={image.url} alt={image.alt} fill className="object-cover" sizes="112px" />
-            </button>
-          ))}
+        <div className="relative mt-3 w-full max-w-full">
+          <div
+            ref={stripRef}
+            className="flex w-full max-w-full snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 pr-10"
+          >
+            {images.map((image, index) => (
+              <button
+                key={image.id}
+                type="button"
+                onClick={() => setActive(index)}
+                className={cn(
+                  "relative h-20 w-28 shrink-0 snap-start overflow-hidden rounded-[var(--radius-md)] border-2",
+                  active === index
+                    ? "border-[var(--color-primary)]"
+                    : "border-transparent opacity-80 hover:opacity-100",
+                )}
+              >
+                <Image src={image.url} alt={image.alt} fill className="object-cover" sizes="112px" />
+              </button>
+            ))}
+          </div>
+
+          {/* Mouse users have no horizontal wheel/trackpad; give them arrows. */}
+          <button
+            type="button"
+            aria-label="Previous photos"
+            onClick={() => scrollStrip(-1)}
+            className="absolute left-0 top-1/2 hidden h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white sm:grid"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="More photos"
+            onClick={() => scrollStrip(1)}
+            className="absolute right-0 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-lg text-white shadow-lg"
+          >
+            ›
+          </button>
         </div>
       ) : null}
 
