@@ -58,8 +58,29 @@ export async function readGitFile(
   const res = await gh(`/repos/${repo()}/contents/${encodeURI(path)}?ref=${branch()}`);
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`github read ${path}: ${res.status}`);
-  const data = (await res.json()) as { content?: string; encoding?: string };
-  if (!data.content) return null;
+  const data = (await res.json()) as {
+    content?: string;
+    encoding?: string;
+    sha?: string;
+    size?: number;
+  };
+
+  // The contents API returns inline base64 only up to 1 MB; anything bigger comes
+  // back without content, so the bytes are fetched from the blob endpoint. Phone
+  // photos are routinely 2-8 MB, so this path is the normal one for uploads.
+  if (!data.content) {
+    if (!data.sha) return null;
+    if ((data.size ?? 0) > 60 * 1024 * 1024) {
+      throw new Error(`github blob ${path}: ${data.size} bytes is too large to serve`);
+    }
+    const blobRes = await gh(`/repos/${repo()}/git/blobs/${data.sha}`);
+    if (!blobRes.ok) throw new Error(`github blob ${path}: ${blobRes.status}`);
+    const blob = (await blobRes.json()) as { content?: string; encoding?: string };
+    if (!blob.content) return null;
+    const base64 = blob.encoding === "base64" ? blob.content.replace(/\n/g, "") : blob.content;
+    return { base64, text: Buffer.from(base64, "base64").toString("utf8") };
+  }
+
   const base64 = data.content.replace(/\n/g, "");
   return { base64, text: Buffer.from(base64, "base64").toString("utf8") };
 }

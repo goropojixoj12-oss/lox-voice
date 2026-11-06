@@ -109,6 +109,42 @@ async function uploadInSlices(
   return done.item;
 }
 
+/**
+ * Phone photos arrive at 5-12 MB, which is slow to upload, expensive to serve
+ * and pointless for a listing card. Anything above 1.5 MB is redrawn to at most
+ * 2560 px and re-encoded as JPEG at quality 0.9 (typically 0.5-1.5 MB).
+ */
+const COMPRESS_ABOVE_BYTES = 1.5 * 1024 * 1024;
+const MAX_IMAGE_DIMENSION = 2560;
+
+async function shrinkImage(file: File): Promise<File> {
+  if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) return file;
+  if (file.size <= COMPRESS_ABOVE_BYTES) return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.9),
+    );
+    if (!blob || blob.size >= file.size) return file;
+    const name = `${file.name.replace(/\.[^.]+$/, "")}.jpg`;
+    return new File([blob], name, { type: "image/jpeg", lastModified: file.lastModified });
+  } catch {
+    return file;
+  }
+}
+
 async function uploadOne(
   file: File,
   actingUserId?: string,
@@ -116,12 +152,13 @@ async function uploadOne(
 ): Promise<ListingMediaItem> {
   // The server commits the file straight into the repository (content/uploads
   // then public/media on publish). No client token, no object storage.
-  if (file.size <= DIRECT_UPLOAD_LIMIT) {
-    const item = await withRetry(() => uploadViaServer(file, actingUserId), 3, 1500);
+  const payload = await shrinkImage(file);
+  if (payload.size <= DIRECT_UPLOAD_LIMIT) {
+    const item = await withRetry(() => uploadViaServer(payload, actingUserId), 3, 1500);
     onProgress?.(100);
     return item;
   }
-  return uploadInSlices(file, actingUserId, onProgress);
+  return uploadInSlices(payload, actingUserId, onProgress);
 }
 
 const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB
