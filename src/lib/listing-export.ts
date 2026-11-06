@@ -79,6 +79,33 @@ export async function exportListingToRepo(
   options: { extraPhotos?: { contentType: string; base64: string }[] } = {},
 ): Promise<{ commitUrl: string; slug: string; photoCount: number; skippedPhotos: number }> {
   if (!gitRepoConfigured()) {
+    // Local development: same file, written on disk, no commit.
+    const slug = normalizeSlug(listing.slug || listing.id);
+    const existingLocal = (await (await import("@/lib/listing-local-fs")).readListingsFromDisk()).find(
+      (row) => row.listing.id === listing.id,
+    );
+    const finalSlug = existingLocal?.listing.slug ?? slug;
+    const mergedLocal: Property = {
+      ...existingLocal?.listing,
+      ...listing,
+      slug: finalSlug,
+      images: existingLocal?.listing.images?.length
+        ? existingLocal.listing.images
+        : listing.images,
+      visibility: listing.visibility ?? existingLocal?.listing.visibility ?? "public",
+    };
+    await (await import("@/lib/listing-local-fs")).writeListingToDisk(
+      mergedLocal,
+      existingLocal?.path,
+    );
+    return {
+      commitUrl: "local://content/listings",
+      slug: finalSlug,
+      photoCount: mergedLocal.images?.length ?? 0,
+      skippedPhotos: 0,
+    };
+  }
+  if (!gitRepoConfigured()) {
     throw new Error(
       "Экспорт в репозиторий не настроен: добавьте GITHUB_CONTENT_TOKEN (Contents: read & write) в переменные Vercel.",
     );

@@ -1,5 +1,6 @@
-import { commitFiles, deleteGitFile, listGitDir, readGitFile } from "@/lib/github-repo";
+﻿import { commitFiles, deleteGitFile, gitRepoConfigured, listGitDir, readGitFile } from "@/lib/github-repo";
 import { applyListingsBlock } from "@/lib/listings-codegen";
+import { deleteListingFromDisk, readListingsFromDisk, writeListingToDisk } from "@/lib/listing-local-fs";
 import type { Property } from "@/lib/types";
 
 const CONTENT_DIR = "content/listings";
@@ -7,6 +8,10 @@ const CONTENT_DIR = "content/listings";
 type RepoListing = { path: string; listing: Property };
 
 async function readAllFromRepo(): Promise<RepoListing[]> {
+  // Without a token (local dev, smoke) the same files are read from disk.
+  if (!gitRepoConfigured()) {
+    return (await readListingsFromDisk()) as RepoListing[];
+  }
   const files = (await listGitDir(CONTENT_DIR)).filter(
     (entry) => entry.type === "file" && entry.name.endsWith(".json"),
   );
@@ -35,6 +40,7 @@ export async function listListingsFromRepo(): Promise<Property[]> {
 
 /** Removes a card from the repository and rebuilds the generated catalog. */
 export async function deleteListingFromRepo(id: string): Promise<boolean> {
+  if (!gitRepoConfigured()) return deleteListingFromDisk(id);
   const all = await readAllFromRepo();
   const target = all.find((row) => row.listing.id === id);
   if (!target) return false;
