@@ -55,7 +55,7 @@ const body = listings
 
 const block = `${BEGIN} (generated from content/listings - do not edit by hand)
 export const properties: Property[] = [
-  ${body},
+${body},
 ];
 ${END}`;
 
