@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { brand } from "@/config/brand";
 import { commitFiles, gitRepoConfigured, listGitDir, readGitFile } from "@/lib/github-repo";
 import { applyListingsBlock } from "@/lib/listings-codegen";
@@ -32,6 +33,13 @@ function extFor(contentType: string): string {
   if (contentType.includes("webp")) return ".webp";
   if (contentType.includes("gif")) return ".gif";
   return ".jpg";
+}
+
+function photoName(base64: string, contentType: string): string {
+  // Content-addressed name: exporting the same photo twice reuses the file
+  // instead of piling 04.jpg, 05.jpg, 06.jpg next to it.
+  const digest = createHash("sha1").update(Buffer.from(base64, "base64")).digest("hex").slice(0, 10);
+  return `photo-${digest}${extFor(contentType)}`;
 }
 
 async function fetchAsBase64(url: string): Promise<{ base64: string; contentType: string } | null> {
@@ -109,12 +117,14 @@ export async function exportListingToRepo(
       continue;
     }
     index += 1;
-    const name = String(index).padStart(2, "0") + extFor(fetched.contentType);
+    const name = photoName(fetched.base64, fetched.contentType);
     const path = `public/media/listings/${slug}/${name}`;
+    const publicUrl = `/media/listings/${slug}/${name}`;
+    if (seen.has(publicUrl)) continue;
     files.push({ path, base64: fetched.base64 });
     pushImage({
       id: "tmp",
-      url: `/media/listings/${slug}/${name}`,
+      url: publicUrl,
       alt: image.alt || listing.title,
       isCover: image.isCover,
     });
@@ -122,13 +132,13 @@ export async function exportListingToRepo(
 
   // 3. Extra uploads from the export dialog.
   for (const photo of options.extraPhotos ?? []) {
-    index += 1;
-    const name = String(index).padStart(2, "0") + extFor(photo.contentType);
-    const path = `public/media/listings/${slug}/${name}`;
-    files.push({ path, base64: photo.base64 });
+    const name = photoName(photo.base64, photo.contentType);
+    const publicUrl = `/media/listings/${slug}/${name}`;
+    if (seen.has(publicUrl)) continue;
+    files.push({ path: `public/media/listings/${slug}/${name}`, base64: photo.base64 });
     pushImage({
       id: "tmp",
-      url: `/media/listings/${slug}/${name}`,
+      url: publicUrl,
       alt: listing.title,
       isCover: images.length === 0,
     });
@@ -143,6 +153,14 @@ export async function exportListingToRepo(
     design: listing.design ?? existing?.listing.design,
     mediaNote: listing.mediaNote ?? existing?.listing.mediaNote,
   };
+
+  // The cabinet record often has no map pin; never overwrite curated coordinates
+  // from the repo with zeros.
+  if (merged.location && existing?.listing.location) {
+    const prev = existing.listing.location;
+    if ((!merged.location.lat || merged.location.lat === 0) && prev.lat) merged.location.lat = prev.lat;
+    if ((!merged.location.lng || merged.location.lng === 0) && prev.lng) merged.location.lng = prev.lng;
+  }
 
   files.push({ path: targetPath, text: `${JSON.stringify(merged, null, 2)}\n` });
 
