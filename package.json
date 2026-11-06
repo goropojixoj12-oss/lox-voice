@@ -35,8 +35,6 @@
         "@tiptap/react": "^3.32.1",
         "@tiptap/starter-kit": "^3.32.1",
         "@types/three": "^0.186.0",
-        "@vercel/blob": "^2.8.2",
-        "@vercel/kv": "^3.0.0",
         "bcryptjs": "^3.0.3",
         "clsx": "^2.1.1",
         "date-fns": "^4.4.0",
