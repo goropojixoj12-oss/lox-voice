@@ -90,20 +90,26 @@ async function uploadOne(
   userId: string | null,
   actingUserId?: string,
 ): Promise<ListingMediaItem> {
+  let serverError: string | null = null;
   if (file.size <= 4.5 * 1024 * 1024) {
     try {
       return await withRetry(() => uploadViaServer(file, actingUserId), 7, 1000);
-    } catch {
-      if (userId) {
-        return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 7, 1000);
-      }
-      throw new Error("Upload failed");
+    } catch (err) {
+      // Keep the server reason: the blob-client fallback usually fails with a
+      // generic token message that hides the real cause (401/400/etc).
+      serverError = err instanceof Error ? err.message : "Upload failed";
+      if (!userId) throw new Error(serverError);
     }
   }
   if (!userId) {
     throw new Error("Sign in required for large uploads.");
   }
-  return withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 7, 1500);
+  try {
+    return await withRetry(() => uploadViaBlobClient(file, userId, actingUserId), 7, 1500);
+  } catch (err) {
+    const fallback = err instanceof Error ? err.message : "Upload failed";
+    throw new Error(serverError ? `${serverError} (fallback: ${fallback})` : fallback);
+  }
 }
 
 const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB

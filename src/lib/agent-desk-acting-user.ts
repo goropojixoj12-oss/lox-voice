@@ -37,10 +37,16 @@ export async function resolveActingAgentUser(
 
   const targetId = readActingAgentUserIdFromRequest(request);
   if (!targetId) {
+    // Admin on their own desk (for example a listing created by the admin):
+    // nothing to delegate, so uploads belong to the admin account itself.
     return {
-      ok: false,
-      status: 400,
-      error: "Admin must specify agent userId when editing an agent desk.",
+      ok: true,
+      user: {
+        id: session.id,
+        email: session.email,
+        name: session.name,
+        role: "admin",
+      } as DemoUser,
     };
   }
 
