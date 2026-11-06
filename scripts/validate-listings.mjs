@@ -75,6 +75,14 @@ for (const file of files) {
   if (typeof listing.price !== "number" || !(listing.price > 0)) errors.push(`${where}: price must be a positive number`);
 
   if (!listing.location || !listing.location.citySlug) errors.push(`${where}: location.citySlug is required`);
+  if (
+    !listing.location ||
+    !Number.isFinite(listing.location.lat) ||
+    !Number.isFinite(listing.location.lng) ||
+    (listing.location.lat === 0 && listing.location.lng === 0)
+  ) {
+    warnings.push(`${where}: no map coordinates (detail page shows "no map" instead of a pin)`);
+  }
 
   if (listing.visibility && !["public", "hidden"].includes(listing.visibility)) {
     errors.push(`${where}: visibility must be "public" or "hidden"`);
