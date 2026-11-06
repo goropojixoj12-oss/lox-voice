@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-11-06
+
+### fix: админ-аплоад медиа + визуальное подтверждение выбора + выбор фото превью
+
+- **Что:** (а) починен блокер загрузки: админ, редактирующий листинг агента, теперь передаёт `actingUserId` (владелец листинга) в `ListPropertyMediaStep` → `/api/dashboard/list-property/media` резолвит кабинет агента и не отдаёт 400 «Admin must specify agent userId»; (b) визуальное подтверждение выбранных файлов: до аплоада показываются миниатюры с локальным превью, размером, кнопкой Remove и «Cancel selection», кнопка «Upload N files»; (c) выбор фото для карточки превью: у изображений кнопка «Card preview» (multi-select до `previewCount`), порядок флипбука учитывает `isCardPreview` (`orderImagesWithCover` → cover, затем выбранные превью, затем остальные).
+- **Зачем:** загрузка фото в админский визард не работала вообще; без превью-миниатюр нельзя было видеть выбор; превью карточки настраивалось только количеством, а не конкретными фото.
+- **Файлы:** `src/components/dashboard/admin-listing-edit-wizard.tsx`, `src/components/dashboard/list-property-media-step.tsx`, `src/components/property/property-card.tsx`, `src/lib/list-property-media.ts`, `src/lib/types.ts`.
+- **Проверено:** `npm run build` exit 0; прод-смоук `npm run smoke -- --base=https://www.seaps.asia` 53/53. Commit `74eacd0`, тег `backup/2026-11-06-media-upload-fix`.
+
 ## 2026-11-05
 
 ### architecture: единая карточка листинга вместо трёх сломанных вариантов
