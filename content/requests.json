@@ -4,13 +4,14 @@
       "id": "YpYsU6ZZPfDg",
       "message": "smoke test queue write 2026-11-06T10:11:17Z - safe to delete",
       "scope": "site",
-      "status": "queued",
+      "status": "done",
       "attachment": null,
       "secondAttachment": null,
       "createdByUserId": "user-admin",
       "createdByName": "SEAPS CEO",
       "createdAt": "2026-11-06T10:11:18.210Z",
-      "updatedAt": "2026-11-06T10:11:18.210Z"
+      "updatedAt": "2026-11-06T10:11:49.790Z",
+      "agentNote": "smoke cleanup"
     },
     {
       "id": "8L1qLfMd7YIh",
