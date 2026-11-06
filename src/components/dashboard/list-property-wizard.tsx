@@ -622,7 +622,7 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
 
             {mediaItems.filter((m) => m.kind === "image").length > 0 ? (
               <div className="space-y-2">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-secondary)]">
+                <div className="relative h-[clamp(200px,45vh,420px)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-secondary)]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={

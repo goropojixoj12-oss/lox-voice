@@ -36,7 +36,7 @@ export function PropertyGallery({
     // No photos and no embed for this listing: show an intentional hero instead
     // of an empty cut-out in the page layout.
     return (
-      <div className="flex aspect-[16/10] w-full flex-col justify-end gap-2 rounded-[var(--radius-xl)] bg-[linear-gradient(150deg,var(--color-secondary)_0%,var(--color-accent)_140%)] p-6">
+      <div className="flex h-[clamp(220px,58vh,560px)] w-full flex-col justify-end gap-2 rounded-[var(--radius-xl)] bg-[linear-gradient(150deg,var(--color-secondary)_0%,var(--color-accent)_140%)] p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
           {fallbackLabel ?? "Listing"}
         </p>
@@ -49,7 +49,7 @@ export function PropertyGallery({
     <div>
       <button
         type="button"
-        className="relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-xl)]"
+        className="relative h-[clamp(220px,58vh,560px)] w-full overflow-hidden rounded-[var(--radius-xl)] bg-[var(--color-secondary)]"
         onClick={() => setLightbox(true)}
       >
         <Image
