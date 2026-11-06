@@ -73,6 +73,8 @@ export interface PropertyImage {
   url: string;
   alt: string;
   isCover?: boolean;
+  /** Photos explicitly chosen for the looping card preview flipbook. */
+  isCardPreview?: boolean;
   /** Blob key of an uploaded file; absent for photos shipped in `public/`. */
   storageKey?: string;
 }
@@ -137,6 +139,16 @@ export interface Property {
   cardPreviewVideoUrl?: string | null;
   /** How many photos the site-wide card flipbook cycles through. */
   previewPhotoCount?: number | null;
+  /**
+   * Explicit publication switch stored with the listing itself. Replaces the
+   * old hardcoded "all rent listings are withdrawn" rule: whether a card is
+   * public is now data, not a global hack.
+   */
+  visibility?: "public" | "hidden";
+  /** Card/detail layout for this listing. "slides" = full-bleed photo slider. */
+  design?: "standard" | "slides";
+  /** No photos yet: the card shows a designed face and the validator only warns. */
+  mediaPending?: boolean;
   location: LocationRef;
   agentId?: string;
   agencyId?: string;

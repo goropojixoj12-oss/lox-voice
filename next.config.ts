@@ -66,11 +66,8 @@ const nextConfig: NextConfig = {
         destination: "/insights/seaps-since-2013",
         permanent: true,
       },
-      {
-        source: "/property/vue-aston-3-bedroom-2-bathroom-fully-furnished-102m2-fBb84",
-        destination: "/property/vue-aston-riverside-3bed-102m2",
-        permanent: false,
-      },
+      // Listing slugs are data now. Do not add per-listing redirects here:
+      // a redirect to a slug that no longer exists turns a live card into a 404.
       { source: "/market-feed", destination: "/search", permanent: true },
       { source: "/market-feed/:path*", destination: "/search", permanent: true },
       { source: "/admin/market-feed", destination: "/dashboard/admin", permanent: true },
@@ -105,11 +102,6 @@ const nextConfig: NextConfig = {
       },
       { source: "/buy", destination: "/buy/residential", permanent: true },
       { source: "/rent", destination: "/rent/residential", permanent: true },
-      {
-        source: "/insights/seaps-since-1997",
-        destination: "/insights/seaps-since-2013",
-        permanent: true,
-      },
     ];
   },
   images: {

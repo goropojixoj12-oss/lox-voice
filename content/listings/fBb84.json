@@ -1,0 +1,67 @@
+{
+  "id": "runtime-yl1YBrlr",
+  "slug": "vue-aston-3-bedroom-2-bathroom-fully-furnished-102m2-fBb84",
+  "title": "Vue Aston (Riverside) - 3 Bedrooms, 2 Bathrooms, Fully Furnished",
+  "summary": "Foreign Ownership Approved. Stunning City and River Views, 102.34 m2",
+  "description": "<p>Luxury 3 Bedroom Condominium</p>",
+  "transactionType": "sale",
+  "propertyType": "apartment",
+  "status": "published",
+  "verification": "premium",
+  "sellerType": "agent",
+  "price": 239000,
+  "currency": "USD",
+  "pricePeriod": null,
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "areaSqm": 102.35,
+  "landSqm": null,
+  "furnishing": null,
+  "amenities": ["parking", "pool", "gym"],
+  "images": [
+    {
+      "id": "img-1",
+      "url": "/media/listings/vue-aston-3bed/cover.jpg",
+      "alt": "Vue Aston 3 bedroom - living room",
+      "isCover": true
+    },
+    {
+      "id": "img-2",
+      "url": "/media/listings/vue-aston/01.jpg",
+      "alt": "Vue Aston - building"
+    },
+    {
+      "id": "img-3",
+      "url": "/media/listings/vue-aston/02.jpg",
+      "alt": "Vue Aston - interior"
+    }
+  ],
+  "cardPreviewVideoUrl": null,
+  "hasVideoTour": false,
+  "location": {
+    "country": "Cambodia",
+    "countrySlug": "cambodia",
+    "city": "Phnom Penh",
+    "citySlug": "phnom-penh",
+    "district": "Koh Norea",
+    "districtSlug": "koh-norea",
+    "commune": "Koh Norea",
+    "communeSlug": "koh-norea",
+    "address": "Vue Aston",
+    "lat": 0,
+    "lng": 0
+  },
+  "createdByUserId": "user-agent",
+  "agentId": "agent-sokha",
+  "agencyId": "ag-mekong",
+  "publishedAt": "2026-11-04T14:15:15.944Z",
+  "updatedAt": "2026-11-04T14:15:15.944Z",
+  "views": 0,
+  "inquiries": 0,
+  "isFeatured": true,
+  "isPremium": true,
+  "previewPhotoCount": 3,
+  "commissionCompany": 3,
+  "visibility": "public",
+  "design": "slides"
+}

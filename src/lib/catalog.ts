@@ -1,17 +1,16 @@
 import { properties } from "@/data/properties";
-import { getRuntimeListings } from "@/lib/store";
 import { parseSearchParams, searchProperties } from "@/lib/search";
 import type { SearchFilters, TransactionType } from "@/lib/types";
 
-/** Store listings that were promoted into `src/data/properties.ts` (see `promotedFrom`). */
-function promotedStoreIds() {
-  return new Set(properties.map((p) => p.promotedFrom).filter(Boolean) as string[]);
-}
-
+/**
+ * Single source of truth: `content/listings/*.json` -> `src/data/properties.ts`.
+ * The runtime store is intentionally NOT merged here any more: mixing the two
+ * produced duplicate cards (same listing twice) and stale copies without photos.
+ * Store records stay available for drafts/moderation and must be exported into
+ * `content/listings` to become part of the site.
+ */
 export async function getAllProperties() {
-  const promoted = promotedStoreIds();
-  const runtime = await getRuntimeListings();
-  return [...runtime.filter((listing) => !promoted.has(listing.id)), ...properties];
+  return properties;
 }
 
 export type CatalogVisibility = "normal" | "cleared";
@@ -39,8 +38,10 @@ export function dealDefault(deal: TransactionType): Partial<SearchFilters> {
   return { deal };
 }
 
-/** Long-term rent catalog routes show no public inventory (CEO site request). Sale catalogs list published inventory. */
-export function catalogVisibilityForDeal(deal?: TransactionType): CatalogVisibility {
-  if (deal === "rent") return "cleared";
+/**
+ * Catalogs no longer wipe whole deal types. Visibility of a card is decided by
+ * the listing itself (`visibility` field), so hidden inventory is explicit.
+ */
+export function catalogVisibilityForDeal(_deal?: TransactionType): CatalogVisibility {
   return "normal";
 }

@@ -1,0 +1,58 @@
+{
+  "id": "runtime-FpQKSPTb",
+  "slug": "cheapest-ever-studio-sold-vue-aston-never-seen-before-foreign-ownership-approved-hard-title-_ZFWs",
+  "title": "LUXURY @ VUE ASTON - CHEAPEST.....EVER....STUDIO.... NEVER SEEN BEFORE PRICE- FOREIGN OWNERSHIP APPROVED (Hard Title Ready) - EXCLUSIVE to SEAPS",
+  "summary": "This Studio Apartment is SIGNIFICANTLY reduced in price and ready for Immediate Ownership.",
+  "description": "<p>CHEAPEST STUDIO @ VUE ASTON</p>",
+  "transactionType": "sale",
+  "propertyType": "apartment",
+  "status": "published",
+  "verification": "unverified",
+  "sellerType": "owner",
+  "price": 43460,
+  "currency": "USD",
+  "pricePeriod": null,
+  "bedrooms": 1,
+  "bathrooms": 1,
+  "areaSqm": 27.08,
+  "landSqm": null,
+  "furnishing": null,
+  "amenities": [],
+  "images": [
+    {
+      "id": "img-1",
+      "url": "/media/listings/vue-aston/01.jpg",
+      "alt": "Vue Aston studio - living area",
+      "isCover": true
+    },
+    {
+      "id": "img-2",
+      "url": "/media/listings/vue-aston/02.jpg",
+      "alt": "Vue Aston studio - interior"
+    }
+  ],
+  "cardPreviewVideoUrl": null,
+  "hasVideoTour": false,
+  "location": {
+    "country": "Cambodia",
+    "countrySlug": "cambodia",
+    "city": "Phnom Penh",
+    "citySlug": "phnom-penh",
+    "district": "Koh Norea",
+    "districtSlug": "koh-norea",
+    "commune": "Koh Norea",
+    "communeSlug": "koh-norea",
+    "address": "Vue Aston",
+    "lat": 0,
+    "lng": 0
+  },
+  "createdByUserId": "user-admin",
+  "publishedAt": "2026-11-04T20:39:29.539Z",
+  "updatedAt": "2026-11-04T20:39:29.539Z",
+  "views": 0,
+  "inquiries": 0,
+  "previewPhotoCount": 3,
+  "commissionCompany": 3,
+  "visibility": "public",
+  "design": "slides"
+}

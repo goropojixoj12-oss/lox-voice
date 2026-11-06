@@ -121,6 +121,34 @@ if (!FAST && LINT) {
 
 if (!FAST) {
   if (
+    !(await stage("listings check", () =>
+      run(process.execPath, [path.join(ROOT, "scripts", "validate-listings.mjs")], { echo: true }),
+    ))
+  )
+    process.exit(1);
+
+  if (
+    !(await stage("listings build", () =>
+      run(process.execPath, [path.join(ROOT, "scripts", "listings-build.mjs")], { echo: true }),
+    ))
+  )
+    process.exit(1);
+
+  if (
+    !(await stage("listings generate is committed", () => {
+      const diff = git("status", "--porcelain", "--", "src/data/properties.ts");
+      if (diff) {
+        return {
+          code: 1,
+          tail: "src/data/properties.ts is out of date: run `npm run listings:build` and commit the result.",
+        };
+      }
+      return { code: 0 };
+    }))
+  )
+    process.exit(1);
+
+  if (
     !(await stage("analytics filters", () =>
       run(
         process.execPath,

@@ -30,6 +30,7 @@ export function listingPreviewFromMedia(
         url: i.url,
         alt: title,
         isCover: i.isCover,
+        isCardPreview: i.isCardPreview,
       })),
   );
   const videos = items
@@ -149,7 +150,24 @@ export function CardImagePreview({
   }
 
   if (!cover?.url) {
-    return <div className={cn("bg-[var(--color-secondary)]", className)} aria-hidden />;
+    // No photos yet (mediaPending). Show an intentional card face instead of a
+    // flat grey block, so the grid never reads as broken.
+    return (
+      <div
+        className={cn(
+          "flex h-full w-full flex-col justify-end gap-1 bg-[linear-gradient(150deg,var(--color-secondary)_0%,var(--color-accent)_140%)] p-3",
+          className,
+        )}
+        aria-hidden
+      >
+        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/70">
+          {property.propertyType}
+        </span>
+        <span className="line-clamp-2 text-xs font-semibold leading-snug text-white/90">
+          {property.location?.city ?? "Cambodia"}
+        </span>
+      </div>
+    );
   }
 
   return (
