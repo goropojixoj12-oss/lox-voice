@@ -346,7 +346,7 @@ export const properties: Property[] = [
     "description": "Эта карточка создана автоматически из админской учётки, чтобы проверить весь путь целиком: заполнение полей, загрузку фотографий, сохранение в репозиторий, модерацию и появление на сайте. После проверки её можно удалить одной командой.",
     "transactionType": "sale",
     "propertyType": "apartment",
-    "status": "pending",
+    "status": "published",
     "verification": "unverified",
     "sellerType": "owner",
     "price": 123456,
@@ -395,8 +395,8 @@ export const properties: Property[] = [
       "lng": 104.946748
     },
     "createdByUserId": "user-admin",
-    "publishedAt": "2026-11-06T21:22:32.408Z",
-    "updatedAt": "2026-11-06T21:22:32.408Z",
+    "publishedAt": "2026-11-06T21:22:42.378Z",
+    "updatedAt": "2026-11-06T21:22:42.378Z",
     "views": 0,
     "inquiries": 0,
     "visibility": "public"
