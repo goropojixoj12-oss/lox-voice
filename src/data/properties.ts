@@ -339,6 +339,64 @@ export const properties: Property[] = [
     "design": "slides"
   },
   {
+    "id": "runtime-FpQKSPTb",
+    "slug": "cheapest-ever-studio-sold-vue-aston-never-seen-before-foreign-ownership-approved-hard-title-_ZFWs",
+    "title": "LUXURY @ VUE ASTON - CHEAPEST.....EVER....STUDIO.... NEVER SEEN BEFORE PRICE- FOREIGN OWNERSHIP APPROVED (Hard Title Ready) - EXCLUSIVE to SEAPS",
+    "summary": "This Studio Apartment is SIGNIFICANTLY reduced in price and ready for Immediate Ownership. ",
+    "description": "<p>CHEAPEST STUDIO  SOLD @ VUE ASTON (Riverside), Koh Norea<br><br>Yes ,that is correct. Never before has a Condo (approved for Foreign Ownership - Hard Title) been sold @ such a discounted price @ Vue Aston. </p><p></p><p>As New, Studio Appartment with Lovely Peaceful Views with a Beautiful River Backdrop,</p><p></p><p>Ready To Move In IMMEDIATELY. </p><p></p><p>Sensational Facilities:  Infinity Pool / Gymnasium / Fitness Facilities / Sauna / Steam / Spa Mini Mart / Coffee Shop / Dining Facilities / Large Function Areas </p><p></p><p>Comes With Essential Furnishings including Kitchen, Bed, TV, Curtains and AC.<br></p><p><span style=\"color: rgb(183, 198, 216);\">24 Hour Security / Access Controlled Secure Underground Parking for Bikes and Cars. </span><br><span style=\"color: rgb(183, 198, 216);\">AC in All Areas / White Goods / High Quality Interna Fixtures and Fittings</span></p><p></p><p>Priced Well Under Cost Value - SEAPS Exclusive Client - Contact - Adam Creek (CEO) <br>Phone / Telegram: +855 (0)17 355 169. E-Mail: ceo@seaps.asia<br></p>\n\nContact preference: Adam Creek · ceo@seaps.asia",
+    "transactionType": "sale",
+    "propertyType": "apartment",
+    "status": "published",
+    "verification": "unverified",
+    "sellerType": "owner",
+    "price": 43460,
+    "currency": "USD",
+    "pricePeriod": null,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "areaSqm": 27.08,
+    "landSqm": null,
+    "furnishing": null,
+    "amenities": [],
+    "images": [
+      {
+        "id": "img-1",
+        "url": "/media/listings/vue-aston/01.jpg",
+        "alt": "Vue Aston studio - living area",
+        "isCover": true
+      },
+      {
+        "id": "img-2",
+        "url": "/media/listings/vue-aston/02.jpg",
+        "alt": "Vue Aston studio - interior"
+      }
+    ],
+    "cardPreviewVideoUrl": null,
+    "hasVideoTour": false,
+    "location": {
+      "country": "Cambodia",
+      "countrySlug": "cambodia",
+      "city": "Phnom Penh",
+      "citySlug": "phnom-penh",
+      "district": "Koh Norea",
+      "districtSlug": "koh-norea",
+      "commune": "Koh Norea",
+      "communeSlug": "koh-norea",
+      "address": "Vue Aston",
+      "lat": 11.54607,
+      "lng": 104.946748
+    },
+    "createdByUserId": "user-admin",
+    "publishedAt": "2026-11-06T20:27:32.159Z",
+    "updatedAt": "2026-11-06T20:27:32.159Z",
+    "views": 0,
+    "inquiries": 0,
+    "previewPhotoCount": 3,
+    "commissionCompany": 3,
+    "visibility": "public",
+    "design": "slides"
+  },
+  {
     "id": "runtime-Iyrq-T59",
     "slug": "stunning-architectural-masterpiece-large-executive-3-bedroom-all-ensuites-modern-colonial-style-house-beautiful-pool-western-award-winning-architect-a-personal-project-designed-built-and-proudly-displayed-by-one-of-cambodia-s-most-respected-and-trusted-architect-builders-dA5Dl",
     "title": "STUNNING, ARCHITECTURAL MASTERPIECE. A Personal Project - Designed, Built and Proudly Displayed by one of Cambodia’s most Respected, Western (Award Winning) Architects.",
@@ -401,64 +459,6 @@ export const properties: Property[] = [
     "visibility": "public",
     "design": "standard",
     "mediaNote": "temporary stock photos until the owner sends the real ones"
-  },
-  {
-    "id": "runtime-FpQKSPTb",
-    "slug": "cheapest-ever-studio-sold-vue-aston-never-seen-before-foreign-ownership-approved-hard-title-_ZFWs",
-    "title": "LUXURY @ VUE ASTON - CHEAPEST.....EVER....STUDIO.... NEVER SEEN BEFORE PRICE- FOREIGN OWNERSHIP APPROVED (Hard Title Ready) - EXCLUSIVE to SEAPS",
-    "summary": "This Studio Apartment is SIGNIFICANTLY reduced in price and ready for Immediate Ownership. ",
-    "description": "<p>CHEAPEST STUDIO  SOLD @ VUE ASTON (Riverside), Koh Norea<br><br>Yes ,that is correct. Never before has a Condo (approved for Foreign Ownership - Hard Title) been sold @ such a discounted price @ Vue Aston. </p><p></p><p>As New, Studio Appartment with Lovely Peaceful Views with a Beautiful River Backdrop,</p><p></p><p>Ready To Move In IMMEDIATELY. </p><p></p><p>Sensational Facilities:  Infinity Pool / Gymnasium / Fitness Facilities / Sauna / Steam / Spa Mini Mart / Coffee Shop / Dining Facilities / Large Function Areas </p><p></p><p>Comes With Essential Furnishings including Kitchen, Bed, TV, Curtains and AC.<br></p><p><span style=\"color: rgb(183, 198, 216);\">24 Hour Security / Access Controlled Secure Underground Parking for Bikes and Cars. </span><br><span style=\"color: rgb(183, 198, 216);\">AC in All Areas / White Goods / High Quality Interna Fixtures and Fittings</span></p><p></p><p>Priced Well Under Cost Value - SEAPS Exclusive Client - Contact - Adam Creek (CEO) <br>Phone / Telegram: +855 (0)17 355 169. E-Mail: ceo@seaps.asia<br></p>\n\nContact preference: Adam Creek · ceo@seaps.asia",
-    "transactionType": "sale",
-    "propertyType": "apartment",
-    "status": "published",
-    "verification": "unverified",
-    "sellerType": "owner",
-    "price": 43460,
-    "currency": "USD",
-    "pricePeriod": null,
-    "bedrooms": 1,
-    "bathrooms": 1,
-    "areaSqm": 27.08,
-    "landSqm": null,
-    "furnishing": null,
-    "amenities": [],
-    "images": [
-      {
-        "id": "img-1",
-        "url": "/media/listings/vue-aston/01.jpg",
-        "alt": "Vue Aston studio - living area",
-        "isCover": true
-      },
-      {
-        "id": "img-2",
-        "url": "/media/listings/vue-aston/02.jpg",
-        "alt": "Vue Aston studio - interior"
-      }
-    ],
-    "cardPreviewVideoUrl": null,
-    "hasVideoTour": false,
-    "location": {
-      "country": "Cambodia",
-      "countrySlug": "cambodia",
-      "city": "Phnom Penh",
-      "citySlug": "phnom-penh",
-      "district": "Koh Norea",
-      "districtSlug": "koh-norea",
-      "commune": "Koh Norea",
-      "communeSlug": "koh-norea",
-      "address": "Vue Aston",
-      "lat": 11.54607,
-      "lng": 104.946748
-    },
-    "createdByUserId": "user-admin",
-    "publishedAt": "2026-11-04T20:39:29.539Z",
-    "updatedAt": "2026-11-06T10:46:12.868Z",
-    "views": 0,
-    "inquiries": 0,
-    "previewPhotoCount": 3,
-    "commissionCompany": 3,
-    "visibility": "public",
-    "design": "slides"
   },
 ];
 // <listings:end>
