@@ -1,0 +1,133 @@
+# Листинги и команды админа: одна точка правды в репозитории
+
+Дата: 2026-11-06. Относится к `seaps.asia` (`C:\Users\Administrator\lox-voice`, репозиторий `goropojixoj12-oss/lox-voice`).
+
+Принцип: **карточки и команды живут в git**. Никаких Supabase, Vercel Blob, KV, внешних баз. Каждое изменение — обычный коммит в `main`, Vercel пересобирает сайт из него.
+
+---
+
+## 1. Где что лежит
+
+| Что | Путь | Кто пишет |
+|---|---|---|
+| Карточка листинга | `content/listings/<file>.json` | админ/агент через экспорт, либо вручную коммитом |
+| Фото карточки | `public/media/listings/<slug>/NN.jpg` | экспорт (скачивает и кладёт файлом) |
+| Генерируемый код каталога | `src/data/properties.ts` | **только** `npm run listings:build`, руками не править |
+| Очередь команд админа | `content/requests.json` | админка (`/api/admin/site-requests`) |
+| Скриншоты к командам | `content/requests/<id>/<file>` | админка |
+| Валидатор карточек | `scripts/validate-listings.mjs` | запускается в `npm run gate` |
+
+Маркеры в `properties.ts`: `// <listings:begin>` … `// <listings:end>` — всё между ними перегенерируется, остальное (хелперы `getPropertyBySlug` и т.д.) не трогается.
+
+---
+
+## 2. Четыре входа, один конвейер
+
+1. **Владелец → агенту (чат)**: агент создаёт/меняет `content/listings/*.json` + фото, прогоняет `npm run gate`, коммитит.
+2. **Агент в кабинете**: `/dashboard/agent/listings/<id>` → кнопка «Записать в репозиторий» → `POST /api/listings/export`.
+3. **Админ в кабинете**: `/dashboard/admin/listings/<id>` → та же кнопка, плюс полное редактирование.
+4. **Админ через админку управления сайтом**: `/dashboard/admin/site-changes` → текстовая команда (+скриншот) → `content/requests.json` → агент/крон забирает через `GET /api/admin/site-requests/pull` (Bearer `SITE_AGENT_SECRET` или `CRON_SECRET`) → выполняет → `PATCH /api/admin/site-requests/<id>` со статусом `done` и ссылкой на коммит.
+
+Пути 2 и 3 используют один API, разница только в правах:
+
+| Роль | Что может |
+|---|---|
+| admin | любая карточка, любой scope команды (`site`, `listing`, `design`, `ui_auth`) |
+| agent | только свои карточки (`createdByUserId` / `ownerId`), экспорт без публикации чужих |
+| owner | только свои карточки |
+
+---
+
+## 3. Как добавить карточку (канонический путь)
+
+```bash
+# 1. фото в репозиторий
+public/media/listings/<slug>/01.jpg
+public/media/listings/<slug>/02.jpg
+
+# 2. сама карточка
+content/listings/<slug>.json
+
+# 3. проверить и собрать
+npm run listings:check     # схема, дубли, наличие всех файлов фото
+npm run listings:build     # content -> src/data/properties.ts
+npm run gate                # build + smoke + header clearance
+
+# 4. выпустить
+npm run ship -- <short-name>
+```
+
+Из кабинета то же самое делает кнопка «Записать в репозиторий»: берёт запись из стора, скачивает её фото в `public/media/...`, и коммитит `content/listings/<file>.json` + фото одним атомарным коммитом (Git Trees API).
+
+---
+
+## 4. Что гарантирует валидатор (`scripts/validate-listings.mjs`)
+
+Ошибки (gate краснеет, пуш невозможен):
+- нет обязательных полей (`id`, `slug`, `title`, `summary`, `description`, `transactionType`, `propertyType`, `status`, `price`, `currency`, `location`);
+- неизвестный `transactionType` / `propertyType` / `visibility` / `design`;
+- дубли `slug` или `id`;
+- фото указано не локальным `/media/...` путём (внешние URL запрещены);
+- файла фото нет на диске;
+- ноль фото и нет флага `mediaPending`.
+
+Предупреждения (не блокируют):
+- нет координат (`lat`/`lng` = 0) — карта на странице покажет «нет координат»;
+- фото тяжелее 400 КБ — стоит пережать;
+- в `public/media/listings/` лежит файл, на который никто не ссылается.
+
+Публикация карточки — это данные, а не глобальное правило: `"visibility": "public" | "hidden"`. Раньше весь `rent` молча вырезался из каталога — именно так карточки «исчезали».
+
+---
+
+## 5. Очередь команд: как это работает
+
+```
+POST /api/admin/site-requests       -> коммит content/requests.json (status=queued)
+GET  /api/admin/site-requests       -> список заявок из git
+GET  /api/admin/site-requests/pull  -> берёт старейшую queued, ставит in_progress (Bearer)
+PATCH /api/admin/site-requests/<id> -> done / failed + agentNote + commitUrl (Bearer или админ)
+POST /api/admin/site-requests/dispatch -> вернуть failed в queued (ретрай)
+GET  /api/cron/site-agent           -> крон-обёртка над pull
+```
+
+Особенности:
+- вебхук-обход удалён: единственный канал доставки — очередь в git;
+- `scope` больше не зашит в `ui_auth`, админ командует любым аспектом сайта;
+- каждая смена статуса — коммит, поэтому история «кто попросил → что сделали → какой коммит» лежит в одном месте;
+- скриншоты едут в `content/requests/<id>/`.
+
+---
+
+## 6. Переменные окружения
+
+| Переменная | Зачем |
+|---|---|
+| `GITHUB_CONTENT_TOKEN` | **обязательна** для очереди и экспорта. Fine-grained PAT, `Contents: Read and write`, только репозиторий `lox-voice` |
+| `GITHUB_CONTENT_REPO` | опционально, по умолчанию `goropojixoj12-oss/lox-voice` |
+| `GITHUB_CONTENT_BRANCH` | опционально, по умолчанию `main` |
+| `SITE_AGENT_SECRET` / `CRON_SECRET` | Bearer для `pull` и `PATCH` |
+
+Без токена админка честно отвечает `503` с текстом про токен — молчаливого fallback в Blob нет.
+
+---
+
+## 7. Ограничения и известные нюансы
+
+- Экспорт идемпотентен: ищет карточку по `id`, пишет в тот же файл и тот же slug (регистр сохраняется), фото **добавляет**, а не заменяет.
+- Если slug занят другой карточкой (`id` другой) — экспорт падает с понятной ошибкой, а не перезаписывает.
+- Каждый шаг очереди — коммит, а значит пересборка Vercel. При активной работе имеет смысл `ignoreCommand`, который пропускает билд, если изменился только `content/requests.json`.
+- Файл `content/requests.json` хранит последние 200 заявок.
+- Фото в репозитории: держим ≤ 400 КБ на файл, предпочтительно webp; 100 карточек ≈ 10–15 МБ.
+
+---
+
+## 8. Диагностика
+
+| Симптом | Причина | Что делать |
+|---|---|---|
+| `503 ... GITHUB_CONTENT_TOKEN` | токен не задан или не в том Vercel-проекте (нужен `lox-voice`, не `data`) | добавить переменную → redeploy |
+| `403 Forbidden` | нет роли admin / не своя карточка | проверить пользователя |
+| `slug уже занят` | две карточки претендуют на один slug | поправить slug или удалить дубль |
+| gate падает на `listings check` | битая карточка (нет фото/полей/дубль) | текст ошибки говорит, какой файл и что именно |
+| после коммита сайт не обновился | Vercel ещё собирает | подождать деплой, проверить `/api/properties` |
