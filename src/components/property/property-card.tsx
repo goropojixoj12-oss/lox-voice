@@ -71,7 +71,12 @@ export function CardImagePreview({
     null;
 
   const frames = useMemo(() => {
-    const urls = orderImagesWithCover(property.images)
+    // If the agent explicitly picked photos for the card preview, show exactly
+    // those (the cover first when it is among them). Otherwise fall back to the
+    // first N photos in order.
+    const picked = property.images.filter((i) => i.isCardPreview);
+    const source = picked.length > 0 ? picked : property.images;
+    const urls = orderImagesWithCover(source)
       .map((i: PropertyImage) => i.url)
       .filter(Boolean)
       .slice(0, clampPreviewPhotoCount(property.previewPhotoCount));

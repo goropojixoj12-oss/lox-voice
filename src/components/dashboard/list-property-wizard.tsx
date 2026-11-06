@@ -615,22 +615,77 @@ export function ListPropertyWizard({ stepIndex }: { stepIndex: number }) {
         ) : null}
 
         {step === 6 ? (
-          <div className="space-y-2 text-sm">
-            <p className="text-lg font-semibold">{form.title || "Untitled listing"}</p>
-            <p>{dealSelection ? formatDealSelection(dealSelection) : form.transactionType}</p>
-            <p>
-              {form.address}
-              {form.commune ? `, ${form.commune}` : ""}, {form.district}, {form.city}
-              {getCountryByCode(form.countryCode)
-                ? `, ${getCountryByCode(form.countryCode)!.name}`
-                : ""}
+          <div className="space-y-4 text-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+              Так карточка будет выглядеть на сайте
             </p>
-            <p>
-              {form.price} {form.currency}
-              {form.pricePeriod ? ` / ${form.pricePeriod}` : ""}
-            </p>
-            <p className="text-[var(--color-muted)]">{form.summary}</p>
-            <p className="text-[var(--color-muted)]">{form.description}</p>
+
+            {mediaItems.filter((m) => m.kind === "image").length > 0 ? (
+              <div className="space-y-2">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-secondary)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={
+                      (mediaItems.find((m) => m.kind === "image" && m.isCover) ??
+                        mediaItems.find((m) => m.kind === "image"))!.url
+                    }
+                    alt={form.title || "Listing photo"}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+                  {mediaItems
+                    .filter((m) => m.kind === "image")
+                    .slice(0, 11)
+                    .map((m, i) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={m.id}
+                        src={m.url}
+                        alt={`${form.title} ${i + 1}`}
+                        className="aspect-square w-full rounded-[var(--radius-md)] border border-[var(--color-border)] object-cover"
+                      />
+                    ))}
+                </div>
+                {mediaItems.some((m) => m.kind === "video") ? (
+                  <p className="text-xs text-[var(--color-muted)]">
+                    видео: {mediaItems.filter((m) => m.kind === "video").length} · превью-видео:{" "}
+                    {mediaItems.some((m) => m.kind === "video" && m.isCardPreview) ? "выбрано" : "нет"}
+                  </p>
+                ) : null}
+              </div>
+            ) : (
+              <p className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-4 text-sm text-[var(--color-muted)]">
+                Фото не добавлены — карточка выйдет с заглушкой. Вернитесь на шаг 5, чтобы добавить фото.
+              </p>
+            )}
+
+            <div>
+              <p className="text-lg font-semibold">{form.title || "Untitled listing"}</p>
+              <p className="mt-1 text-[var(--color-accent-soft)]">
+                {form.price} {form.currency}
+                {form.pricePeriod ? ` / ${form.pricePeriod}` : ""}
+              </p>
+              <p className="mt-1">
+                {dealSelection ? formatDealSelection(dealSelection) : form.transactionType}
+                {" · "}
+                {form.bedrooms || "—"} bed · {form.bathrooms || "—"} bath ·{" "}
+                {form.areaSqm || "—"} m²
+              </p>
+              <p>
+                {form.address}
+                {form.commune ? `, ${form.commune}` : ""}, {form.district}, {form.city}
+                {getCountryByCode(form.countryCode)
+                  ? `, ${getCountryByCode(form.countryCode)!.name}`
+                  : ""}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold">{form.summary}</p>
+              <p className="mt-1 whitespace-pre-wrap text-[var(--color-muted)]">{form.description}</p>
+            </div>
+
             <p>
               Contact: {form.contactName} · {form.contactEmail}
             </p>

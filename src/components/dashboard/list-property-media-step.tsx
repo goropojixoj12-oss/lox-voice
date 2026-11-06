@@ -108,13 +108,6 @@ async function uploadOne(
 
 const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024; // 1 GB
 
-async function mapAllParallel<T, R>(
-  items: T[],
-  fn: (item: T, index: number) => Promise<R>,
-): Promise<R[]> {
-  return Promise.all(items.map((item, i) => fn(item, i)));
-}
-
 export function ListPropertyMediaStep({
   items,
   onChange,
@@ -142,6 +135,9 @@ export function ListPropertyMediaStep({
   const [pendingFiles, setPendingFiles] = useState<
     { file: File; preview?: string }[]
   >([]);
+  const [uploadStatus, setUploadStatus] = useState<
+    Record<string, "waiting" | "uploading" | "done" | "error">
+  >({});
 
   useEffect(() => {
     if (uploadUserIdOverride) {
@@ -196,38 +192,45 @@ export function ListPropertyMediaStep({
     setError("");
     const files = pendingFiles.map((p) => p.file);
     setBusy(true);
-    const next = [...items];
+    const keyOf = (file: File) => `${file.name}:${file.size}`;
+    setUploadStatus(Object.fromEntries(files.map((f) => [keyOf(f), "uploading" as const])));
 
     const failures: string[] = [];
     let completed = 0;
-    const uploaded = await mapAllParallel(files, async (file) => {
-      try {
-        const item = await uploadOne(file, userId, actingUserId);
-        completed += 1;
-        setProgress(`Uploaded ${completed} / ${files.length}\u2026`);
-        return { ok: true as const, item, file };
-      } catch (e) {
-        completed += 1;
-        setProgress(`Uploaded ${completed} / ${files.length}\u2026`);
-        return {
-          ok: false as const,
-          error: `${file.name}: ${e instanceof Error ? e.message : "Upload failed"}`,
-        };
-      }
-    });
 
-    for (const result of uploaded) {
-      if (!result.ok) {
-        failures.push(result.error);
-        continue;
+    // Add every finished file to the list immediately and keep only a few
+    // requests in flight: a batch of 42 photos used to fire all at once, show
+    // "0 uploaded" until the very end, and lose everything on a refresh.
+    const CONCURRENCY = 3;
+    const queue = [...files];
+    const added: ListingMediaItem[] = [];
+
+    async function worker() {
+      for (;;) {
+        const file = queue.shift();
+        if (!file) return;
+        try {
+          const item = await uploadOne(file, userId!, actingUserId);
+          if (item.kind === "image" && !items.some((m) => m.kind === "image" && m.isCover) && !added.some((m) => m.isCover)) {
+            item.isCover = true;
+          }
+          added.push(item);
+          onChange([...items, ...added]);
+          setUploadStatus((prev) => ({ ...prev, [keyOf(file)]: "done" }));
+        } catch (e) {
+          setUploadStatus((prev) => ({ ...prev, [keyOf(file)]: "error" }));
+          failures.push(`${file.name}: ${e instanceof Error ? e.message : "Upload failed"}`);
+        } finally {
+          completed += 1;
+          setProgress(`Uploaded ${completed} / ${files.length}\u2026`);
+        }
       }
-      const item = result.item;
-      if (item.kind === "image" && !next.some((m) => m.kind === "image" && m.isCover)) {
-        item.isCover = true;
-      }
-      next.push(item);
     }
-    onChange([...next]);
+
+    await Promise.all(
+      Array.from({ length: Math.min(CONCURRENCY, files.length) }, () => worker()),
+    );
+
     if (failures.length) {
       setError(
         failures.length === files.length
@@ -238,7 +241,14 @@ export function ListPropertyMediaStep({
 
     setProgress("");
     setBusy(false);
-    setPendingFiles([]);
+    // Keep only the files that actually failed - successful ones are already in
+    // the uploaded list and must not look "pending" any more.
+    setPendingFiles((prev) =>
+      prev.filter((entry) =>
+        failures.some((f) => f.startsWith(`${entry.file.name}:`)),
+      ),
+    );
+    setTimeout(() => setUploadStatus({}), 4000);
   }
 
   function patch(id: string, patch: Partial<ListingMediaItem>) {
@@ -353,6 +363,23 @@ export function ListPropertyMediaStep({
                   <p className="text-xs text-[var(--color-muted)]">
                     {Math.round(entry.file.size / 1024)} KB
                   </p>
+                  {(() => {
+                    const status = uploadStatus[`${entry.file.name}:${entry.file.size}`];
+                    if (!status) return null;
+                    const label =
+                      status === "done"
+                        ? "uploaded"
+                        : status === "error"
+                          ? "failed"
+                          : "uploading…";
+                    const tone =
+                      status === "done"
+                        ? "text-green-600"
+                        : status === "error"
+                          ? "text-[var(--color-danger)]"
+                          : "text-[var(--color-accent-soft)]";
+                    return <p className={`text-xs font-semibold ${tone}`}>{label}</p>;
+                  })()}
                 </div>
                 <button
                   type="button"
@@ -397,6 +424,7 @@ export function ListPropertyMediaStep({
       <p className="text-xs text-[var(--color-muted)]">
         {imageCount} photo{imageCount === 1 ? "" : "s"}, {videoCount} video
         {videoCount === 1 ? "" : "s"} uploaded
+        {busy ? " · uploading now, keep this tab open" : ""}
       </p>
 
       <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
@@ -418,7 +446,7 @@ export function ListPropertyMediaStep({
         </Select>
         <span className="text-xs text-[var(--color-muted)]">
           {imageCount >= 2
-            ? `cards flip through the first ${Math.min(previewCount, imageCount)} of ${imageCount} photos, starting with the cover`
+            ? `выбрано ${items.filter((i) => i.kind === "image" && i.isCardPreview).length} из ${Math.min(previewCount, imageCount)} — нажмите «Card preview» на фото ниже, чтобы включить или выключить его в превью`
             : "add at least two photos and the card starts flipping through them"}
         </span>
       </div>
