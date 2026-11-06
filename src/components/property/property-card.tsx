@@ -16,7 +16,9 @@ import type { Property, PropertyImage } from "@/lib/types";
 import { clampPreviewPhotoCount, orderImagesWithCover } from "@/lib/list-property-media";
 import { cn, daysAgo } from "@/lib/utils";
 
-const FLIPBOOK_MS = 480;
+// How long each photo stays on a card before the next one. Slower than the old
+// 480ms: the flipbook was flashing past frames before they could be read.
+const FLIPBOOK_MS = 1920;
 
 export function listingPreviewFromMedia(
   title: string,
