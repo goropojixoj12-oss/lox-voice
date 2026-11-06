@@ -64,6 +64,22 @@ export async function readGitFile(
   return { base64, text: Buffer.from(base64, "base64").toString("utf8") };
 }
 
+export type GitDirEntry = { name: string; path: string; type: "file" | "dir" };
+
+/** Minimal directory listing (one level). Returns [] when the path does not exist. */
+export async function listGitDir(path: string): Promise<GitDirEntry[]> {
+  const res = await gh(`/repos/${repo()}/contents/${encodeURI(path)}?ref=${branch()}`);
+  if (res.status === 404) return [];
+  if (!res.ok) throw new Error(`github list ${path}: ${res.status}`);
+  const data = (await res.json()) as unknown;
+  if (!Array.isArray(data)) return [];
+  return (data as Array<{ name: string; path: string; type: "file" | "dir" }>).map((entry) => ({
+    name: entry.name,
+    path: entry.path,
+    type: entry.type,
+  }));
+}
+
 /** One atomic commit with any number of files. Returns the commit html_url. */
 export async function commitFiles(message: string, files: GitFile[]): Promise<string> {
   if (files.length === 0) throw new Error("commitFiles: nothing to commit");

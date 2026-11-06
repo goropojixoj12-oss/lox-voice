@@ -1,14 +1,15 @@
 import { brand } from "@/config/brand";
-import { commitFiles, gitRepoConfigured, readGitFile } from "@/lib/github-repo";
+import { commitFiles, gitRepoConfigured, listGitDir, readGitFile } from "@/lib/github-repo";
 import type { Property, PropertyImage } from "@/lib/types";
 
 /**
  * Copies one listing from the cabinet into the repository:
- *   content/listings/<slug>.json
+ *   content/listings/<file>.json
  *   public/media/listings/<slug>/NN.jpg
  *
- * Photos that still live behind the old media route are pulled once and stored
- * as normal files, so the card never depends on an external store again.
+ * The export is idempotent and identity-aware: it looks the listing up by `id`
+ * in content/listings first, keeps that file and slug (case included), and
+ * merges photos instead of dropping the ones already stored in the repo.
  */
 export function listingExportConfigured(): boolean {
   return gitRepoConfigured();
@@ -47,6 +48,23 @@ async function fetchAsBase64(url: string): Promise<{ base64: string; contentType
   }
 }
 
+async function findExisting(
+  listingId: string,
+): Promise<{ path: string; listing: Property } | null> {
+  const files = (await listGitDir(CONTENT_DIR)).filter((f) => f.type === "file" && f.name.endsWith(".json"));
+  for (const entry of files) {
+    const file = await readGitFile(entry.path);
+    if (!file) continue;
+    try {
+      const parsed = JSON.parse(file.text) as Property;
+      if (parsed?.id === listingId) return { path: entry.path, listing: parsed };
+    } catch {
+      // A broken file is reported by listings:check; skip it here.
+    }
+  }
+  return null;
+}
+
 export async function exportListingToRepo(
   listing: Property,
   options: { extraPhotos?: { contentType: string; base64: string }[] } = {},
@@ -57,24 +75,31 @@ export async function exportListingToRepo(
     );
   }
 
-  const slug = normalizeSlug(listing.slug || listing.id);
-  const existing = await readGitFile(`${CONTENT_DIR}/${slug}.json`);
-  if (existing) {
-    const parsed = JSON.parse(existing.text) as { id?: string };
-    if (parsed.id && parsed.id !== listing.id) {
-      throw new Error(`slug "${slug}" уже занят другой карточкой (${parsed.id})`);
-    }
-  }
+  const existing = await findExisting(listing.id);
+  const slug = existing?.listing.slug ?? normalizeSlug(listing.slug || listing.id);
+  const targetPath = existing?.path ?? `${CONTENT_DIR}/${slug}.json`;
 
   const files: { path: string; base64?: string; text?: string }[] = [];
   const images: PropertyImage[] = [];
-  let index = 0;
-  let skipped = 0;
+  const seen = new Set<string>();
 
+  const pushImage = (image: PropertyImage | undefined) => {
+    if (!image?.url || seen.has(image.url)) return;
+    seen.add(image.url);
+    images.push({ ...image, id: `img-${images.length + 1}` });
+  };
+
+  // 1. Keep whatever the repo already has for this listing.
+  for (const image of existing?.listing.images ?? []) pushImage(image);
+
+  // 2. Add photos from the cabinet: local /media paths stay as-is, anything
+  //    behind the old media route is pulled once and stored as a real file.
+  let index = images.length;
+  let skipped = 0;
   for (const image of listing.images ?? []) {
     if (!image?.url) continue;
-    if (image.url.startsWith("/media/")) {
-      images.push(image);
+    if (image.url.startsWith("/media/") || seen.has(image.url)) {
+      pushImage(image);
       continue;
     }
     const fetched = await fetchAsBase64(image.url);
@@ -86,38 +111,39 @@ export async function exportListingToRepo(
     const name = String(index).padStart(2, "0") + extFor(fetched.contentType);
     const path = `public/media/listings/${slug}/${name}`;
     files.push({ path, base64: fetched.base64 });
-    images.push({
-      id: `img-${index}`,
+    pushImage({
+      id: "tmp",
       url: `/media/listings/${slug}/${name}`,
       alt: image.alt || listing.title,
-      isCover: image.isCover || index === 1,
+      isCover: image.isCover,
     });
   }
 
+  // 3. Extra uploads from the export dialog.
   for (const photo of options.extraPhotos ?? []) {
     index += 1;
     const name = String(index).padStart(2, "0") + extFor(photo.contentType);
     const path = `public/media/listings/${slug}/${name}`;
     files.push({ path, base64: photo.base64 });
-    images.push({
-      id: `img-${index}`,
+    pushImage({
+      id: "tmp",
       url: `/media/listings/${slug}/${name}`,
       alt: listing.title,
       isCover: images.length === 0,
     });
   }
 
-  const payload: Property = {
+  const merged: Property = {
+    ...existing?.listing,
     ...listing,
     slug,
     images,
-    visibility: listing.visibility ?? "public",
+    visibility: listing.visibility ?? existing?.listing.visibility ?? "public",
+    design: listing.design ?? existing?.listing.design,
+    mediaNote: listing.mediaNote ?? existing?.listing.mediaNote,
   };
 
-  files.push({
-    path: `${CONTENT_DIR}/${slug}.json`,
-    text: `${JSON.stringify(payload, null, 2)}\n`,
-  });
+  files.push({ path: targetPath, text: `${JSON.stringify(merged, null, 2)}\n` });
 
   const commitUrl = await commitFiles(
     `feat(listings): publish ${slug} from the cabinet`,
