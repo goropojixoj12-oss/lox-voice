@@ -3,7 +3,7 @@ import Link from "next/link";
 import { AdminListingTableRow } from "@/components/dashboard/admin-listing-table-row";
 import { adminDeskPath } from "@/lib/dashboard-admin-paths";
 import { adminListPropertyStepPath } from "@/lib/list-property-steps";
-import { getRuntimeListings } from "@/lib/store";
+import { listListingsFromRepo } from "@/lib/listing-git-store";
 import { ADMIN_HIDDEN_USER_IDS } from "@/lib/admin-platform-users";
 import { findPlatformUserById } from "@/lib/platform-users-store";
 import type { ListingStatus, Property } from "@/lib/types";
@@ -32,7 +32,7 @@ export default async function AdminListingsPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { status: statusParam } = await searchParams;
-  const runtime = await getRuntimeListings();
+  const runtime = await listListingsFromRepo();
   const filter = statusParam as ListingStatus | "all" | undefined;
   const activeTab =
     STATUS_TABS.find((t) => t.key === filter)?.key ??

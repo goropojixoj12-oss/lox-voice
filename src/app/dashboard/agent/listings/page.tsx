@@ -3,7 +3,7 @@ import Link from "next/link";
 import { EmptyState } from "@/components/shared/states";
 import { LIST_PROPERTY_WIZARD_ENTRY } from "@/lib/list-property-steps";
 import { getSession } from "@/lib/auth";
-import { getRuntimeListings } from "@/lib/store";
+import { listListingsFromRepo } from "@/lib/listing-git-store";
 
 export const metadata: Metadata = { title: "My listings" };
 
@@ -14,7 +14,7 @@ export default async function DashboardListingsPage({
 }) {
   const { submitted } = await searchParams;
   const session = await getSession();
-  const listings = (await getRuntimeListings()).filter(
+  const listings = (await listListingsFromRepo()).filter(
     (l) => !session || l.createdByUserId === session.id || l.ownerId === session.id || session.role === "admin",
   );
   if (!listings.length) {
