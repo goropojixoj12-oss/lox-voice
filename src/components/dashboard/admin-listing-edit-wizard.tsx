@@ -785,11 +785,16 @@ export function AdminListingEditWizard({
       </div>
       <p className="mt-2 text-xs leading-relaxed text-[var(--color-muted)]">
         <strong className="text-[var(--color-text)]">Save edits</strong> — сохранить правки и
-        записать карточку в репозиторий; статус не меняется.{" "}
-        <strong className="text-[var(--color-text)]">Approve &amp; publish</strong> — то же плюс
-        статус <em>published</em>: карточка появится на сайте примерно через минуту.{" "}
-        <strong className="text-[var(--color-text)]">Reject</strong> — скрыть с сайта
-        (<em>rejected</em>), правки сохраняются.
+        записать карточку в репозиторий; статус не меняется.
+        {canModerate ? (
+          <>
+            {" "}
+            <strong className="text-[var(--color-text)]">Approve &amp; publish</strong> — то же плюс
+            статус <em>published</em>: карточка появится на сайте примерно через минуту.{" "}
+            <strong className="text-[var(--color-text)]">Reject</strong> — скрыть с сайта
+            (<em>rejected</em>), правки сохраняются.
+          </>
+        ) : null}
       </p>
     </div>
   );
