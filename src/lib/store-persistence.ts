@@ -237,6 +237,44 @@ export async function deleteStoreBlob(key: string): Promise<void> {
   await fs.unlink(`${target}.meta`).catch(() => undefined);
 }
 
+/** Every key stored as JSON text — used by the full inventory backup. */
+export async function listStoreTextKeys(): Promise<string[]> {
+  if (resolveStorePersistenceBackend() === "postgres") {
+    await ensureTables();
+    const res = await getPool().query<{ key: string }>(
+      `SELECT key FROM ${PG_TABLE} ORDER BY key`,
+    );
+    return res.rows.map((row) => row.key);
+  }
+  const dir = await getDataDir();
+  const names = await fs.readdir(dir).catch(() => [] as string[]);
+  return names.filter((name) => name.endsWith(".json")).sort();
+}
+
+/** Every binary key — used by the full inventory backup. */
+export async function listStoreBlobKeys(): Promise<string[]> {
+  if (resolveStorePersistenceBackend() === "postgres") {
+    await ensureTables();
+    const res = await getPool().query<{ key: string }>(
+      `SELECT key FROM ${PG_BLOB_TABLE} ORDER BY key`,
+    );
+    return res.rows.map((row) => row.key);
+  }
+  const dir = await getDataDir();
+  const out: string[] = [];
+  async function walk(rel: string): Promise<void> {
+    const entries = await fs.readdir(path.join(dir, "blobs", rel), { withFileTypes: true }).catch(() => []);
+    for (const entry of entries) {
+      if (entry.name.endsWith(".meta")) continue;
+      const next = rel ? `${rel}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) await walk(next);
+      else out.push(next);
+    }
+  }
+  await walk("");
+  return out.sort();
+}
+
 /** Health probe used by /api/health/storage. */
 export async function pingStore(): Promise<{
   backend: StorePersistenceBackend;
