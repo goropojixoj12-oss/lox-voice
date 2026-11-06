@@ -15,8 +15,13 @@ import {
 export async function GET() {
   const session = await requireRole(["admin"]);
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const items = await listSiteChangeRequests(30);
-  return NextResponse.json({ items });
+  try {
+    const items = await listSiteChangeRequests(30);
+    return NextResponse.json({ items });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "queue unavailable";
+    return NextResponse.json({ error: message, items: [] }, { status: 503 });
+  }
 }
 
 const messageSchema = z
