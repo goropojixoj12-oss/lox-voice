@@ -395,8 +395,8 @@ export const properties: Property[] = [
       "lng": 104.946748
     },
     "createdByUserId": "user-admin",
-    "publishedAt": "2026-11-06T21:22:42.378Z",
-    "updatedAt": "2026-11-06T21:22:42.378Z",
+    "publishedAt": "2026-11-07T00:11:25.403Z",
+    "updatedAt": "2026-11-07T00:11:25.403Z",
     "views": 0,
     "inquiries": 0,
     "visibility": "public"
