@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
 import type { Property, PropertyImage } from "@/lib/types";
 
@@ -122,6 +123,27 @@ export function PropertyPresentation({ property }: { property: Property }) {
   );
 
   useEffect(() => setMounted(true), []);
+
+  // Cards marked as the slides design link here with ?presentation=1 so the
+  // deck is already open, the same way the old showcase page felt.
+  const searchParams = useSearchParams();
+  const autoOpen = searchParams?.get("presentation") === "1";
+
+  useEffect(() => {
+    if (!autoOpen || slides.length < 2) return;
+    setIndex(0);
+    setOpen(true);
+  }, [autoOpen, slides.length]);
+
+  // The hero button lives above this component; it asks the deck to open.
+  useEffect(() => {
+    const openDeck = () => {
+      setIndex(0);
+      setOpen(true);
+    };
+    window.addEventListener("seaps:open-presentation", openDeck);
+    return () => window.removeEventListener("seaps:open-presentation", openDeck);
+  }, []);
 
   useEffect(() => {
     if (!open) return;

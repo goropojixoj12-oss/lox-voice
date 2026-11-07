@@ -502,7 +502,9 @@ async function runCheck(check, session) {
 
 const VUE_ASTON_STUDIO_SLUG_MARKER = "_ZFWs";
 const STUNNING_ARCHITECTURAL_SLUG_MARKER = "dA5Dl";
-const CONDO_SHOWCASE_URL = "cambodia-condo-showcase-174801.onhercules.app";
+// The Hercules showcase was retired: every listing is now presented inside
+// the site itself, so any remaining reference is a regression.
+const RETIRED_SHOWCASE_MARKER = "onhercules";
 
 async function runSearchVueAstonCoverProbe(check) {
   const started = Date.now();
@@ -584,9 +586,11 @@ async function runBuyResidentialDescriptionProbe(check) {
       };
     }
     const problems = [];
-    if (!text.includes("Description")) problems.push('missing "Description" control');
-    if (!text.includes(CONDO_SHOWCASE_URL)) {
-      problems.push("missing condo showcase URL on Description link");
+    if (text.includes(RETIRED_SHOWCASE_MARKER)) {
+      problems.push("catalog still points at the retired Hercules showcase");
+    }
+    if (!text.includes("presentation=1")) {
+      problems.push("no presentation link on the slides-designed cards");
     }
     if (
       text.includes("vue-aston-web-page-cover") ||
@@ -704,18 +708,18 @@ async function runSitemapLiveNewsProbe(check) {
       });
       if (res.status !== 200) continue;
       const text = decodeEntities(await res.text().catch(() => ""));
+      if (text.includes(RETIRED_SHOWCASE_MARKER)) {
+        return {
+          check,
+          pass: false,
+          status: new URL(url).pathname,
+          ms: Date.now() - started,
+          why: "listing page still points at the retired Hercules showcase",
+        };
+      }
       if (!text.includes("Live News Show")) continue;
       const problems = [];
       if (text.includes("No photos yet")) problems.push('still shows "No photos yet"');
-      const pathname = new URL(url).pathname;
-      if (pathname.includes("_ZFWs")) {
-        if (!text.includes("cambodia-condo-showcase-174801.onhercules.app")) {
-          problems.push("Vue Aston studio listing missing condo showcase embed URL");
-        }
-        if (!text.includes("data-listing-description-redirect")) {
-          problems.push("Vue Aston studio listing missing description click redirect");
-        }
-      }
       if (problems.length) {
         return {
           check,

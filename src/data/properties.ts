@@ -520,7 +520,7 @@ export const properties: Property[] = [
     "previewPhotoCount": 3,
     "commissionCompany": 3,
     "visibility": "public",
-    "design": "standard",
+    "design": "slides",
     "mediaNote": "temporary stock photos until the owner sends the real ones"
   },
 ];

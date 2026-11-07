@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MapPin } from "lucide-react";
 import {
   PropertyListingInquiry,
   propertyListingInquiryFromProperty,
 } from "@/components/forms/property-listing-inquiry";
 import { FavoriteButton } from "@/components/property/favorite-button";
+import { OpenPresentationButton } from "@/components/property/open-presentation-button";
 import { PriceDisplay } from "@/components/property/price-display";
 import { PropertyDescriptionSection } from "@/components/property/property-description-section";
 import { PropertyGallery } from "@/components/property/property-gallery";
 import { PropertyPresentation } from "@/components/property/property-presentation";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
+import { ParallaxSection } from "@/components/shared/parallax-section";
 import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
 import { PropertyInquiryLanguageActions } from "@/components/forms/property-inquiry-language-actions";
 import { Section } from "@/components/shared/section";
@@ -33,8 +36,36 @@ import {
   transactionLabels,
   verificationLabels,
 } from "@/lib/labels";
-import { normalizeListingHeadline } from "@/lib/property-listing-promo";
 import { daysAgo } from "@/lib/utils";
+
+const HERO_HEADLINE_MAX = 84;
+
+/**
+ * A listing title is often a whole sales sentence ("The cheapest studio ever
+ * sold at Vue Aston ... contact Adam"). The hero needs a headline, so the text
+ * is cut at a word boundary and its last words are handed back for the gold
+ * italic accent.
+ */
+function heroHeadline(text: string): { lead: string; tail: string } {
+  const clean = text.replace(/\s+/g, " ").trim();
+  const needsCut = clean.length > HERO_HEADLINE_MAX;
+  let base = clean;
+  if (needsCut) {
+    // Cut at a word boundary, then drop a dangling one- or two-letter word so
+    // the headline never ends on "A..." or "of...".
+    base = `${clean
+      .slice(0, clean.lastIndexOf(" ", HERO_HEADLINE_MAX))
+      .replace(/[\s.,;:–—-]+$/, "")
+      .replace(/\s+\S{1,2}$/, "")
+      .replace(/[\s.,;:–—-]+$/, "")}…`;
+  }
+  const words = base.split(" ");
+  const tailCount = words.length > 6 ? 3 : words.length > 3 ? 2 : 0;
+  return {
+    lead: words.slice(0, words.length - tailCount).join(" "),
+    tail: words.slice(words.length - tailCount).join(" "),
+  };
+}
 
 export async function generateStaticParams() {
   const all = await getAllProperties();
@@ -94,10 +125,91 @@ export default async function PropertyDetailPage({
   const project = property.projectId ? getProjectById(property.projectId) : undefined;
   const related = getRelatedProperties(property, 3, all);
   const showPublicSeo = isPublicListing(property);
-  const headline = normalizeListingHeadline(property.title);
+  const headline = heroHeadline(property.title);
+  const cover = property.images?.[0];
+
+  const heroFacts: Array<[string, string]> = [];
+  if (property.bedrooms !== null) {
+    heroFacts.push(["Bedrooms", property.bedrooms === 0 ? "Studio" : String(property.bedrooms)]);
+  }
+  if (property.bathrooms !== null) heroFacts.push(["Bathrooms", String(property.bathrooms)]);
+  if (property.areaSqm) heroFacts.push(["Interior", `${property.areaSqm} m²`]);
+  if (property.landSqm) heroFacts.push(["Land", `${property.landSqm} m²`]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <>
+      <ParallaxSection
+        imageUrl={cover?.url}
+        alt={cover?.alt || property.title}
+        priority
+        className="flex min-h-[92svh] w-full flex-col justify-end"
+        contentClassName="mx-auto w-full max-w-7xl px-4 pb-12 pt-32 sm:px-6 sm:pb-16 lg:px-8"
+      >
+        <div className="max-w-4xl">
+          <p className="inline-flex items-center gap-2 rounded-full border border-[rgba(212,175,55,0.45)] bg-[rgba(11,28,51,0.55)] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--color-accent-soft)] backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" />
+            {transactionLabels[property.transactionType]} ·{" "}
+            {propertyTypeLabels[property.propertyType]}
+          </p>
+
+          <h1 className="mt-5 line-clamp-3 font-[family-name:var(--font-display)] text-[clamp(1.9rem,4.3vw,3.4rem)] font-normal leading-[1.06] text-balance text-white">
+            {headline.lead}{" "}
+            <span className="italic text-[var(--color-accent)]">{headline.tail}</span>
+          </h1>
+
+          <p className="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">
+            <MapPin className="h-4 w-4 text-[var(--color-accent)]" />
+            {[property.location.district, property.location.city].filter(Boolean).join(" · ")}
+          </p>
+
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+            {property.summary}
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-end gap-x-10 gap-y-4">
+            <PriceDisplay
+              property={property}
+              className="text-3xl font-semibold tracking-tight text-[var(--color-accent-soft)] sm:text-4xl"
+            />
+            <dl className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-white/70">
+              {heroFacts.map(([label, value]) => (
+                <div key={label}>
+                  <dt className="text-[10px] uppercase tracking-[0.2em] text-white/45">
+                    {label}
+                  </dt>
+                  <dd className="mt-0.5 text-base font-semibold text-white">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            {property.images?.length ? (
+              <OpenPresentationButton slides={property.images.length} />
+            ) : null}
+            <a
+              href="#enquiry"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/25 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-[var(--color-accent)] hover:text-[var(--color-accent-soft)]"
+            >
+              Enquire about this home
+            </a>
+            {property.images?.length ? (
+              <a
+                href="#gallery"
+                className="inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium text-white/70 underline-offset-4 transition hover:text-white hover:underline"
+              >
+                {property.images.length} photos
+              </a>
+            ) : null}
+          </div>
+        </div>
+
+        <p className="mt-10 hidden text-[10px] uppercase tracking-[0.32em] text-white/35 sm:block">
+          Scroll to explore
+        </p>
+      </ParallaxSection>
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {!showPublicSeo ? (
         <p className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-warning)]/40 bg-[var(--color-mist)] px-4 py-3 text-sm text-[var(--color-text)]">
           This listing is <strong>{property.status}</strong> and is not visible in public search until
@@ -147,37 +259,23 @@ export default async function PropertyDetailPage({
 
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="min-w-0 space-y-8">
-          <PropertyGallery images={property.images} listingSlug={property.slug} />
+          <div id="gallery" className="scroll-mt-24">
+            <PropertyGallery images={property.images} listingSlug={property.slug} />
+          </div>
           {property.images?.length ? <PropertyPresentation property={property} /> : null}
-          <div>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-accent)]">
-                  {transactionLabels[property.transactionType]} ·{" "}
-                  {propertyTypeLabels[property.propertyType]}
-                </p>
-                <h1 className="mt-2 font-[family-name:var(--font-display)] text-3xl leading-snug text-balance text-[var(--color-accent-soft)] sm:text-4xl">
-                  {headline}
-                </h1>
-                <p className="mt-2 text-[var(--color-muted)]">
-                  {property.location.address} · {property.location.district},{" "}
-                  {property.location.city}
-                </p>
-              </div>
-              <FavoriteButton propertyId={property.id} userId={session?.id} />
-            </div>
-            <PriceDisplay
-              property={property}
-              className="mt-4 text-3xl font-semibold text-[var(--color-accent-soft)]"
-            />
-            <div className="mt-4 flex flex-wrap gap-2 text-sm">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-wrap gap-2 text-sm">
               <span className="rounded-full bg-[var(--color-mist)] px-3 py-1">
                 {verificationLabels[property.verification]}
+              </span>
+              <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
+                {transactionLabels[property.transactionType]}
               </span>
               <span className="rounded-full bg-[var(--color-secondary)] px-3 py-1">
                 Updated {daysAgo(property.updatedAt)}
               </span>
             </div>
+            <FavoriteButton propertyId={property.id} userId={session?.id} />
           </div>
 
           <section>
@@ -210,10 +308,7 @@ export default async function PropertyDetailPage({
             </dl>
           </section>
 
-          <PropertyDescriptionSection
-            listingSlug={property.slug}
-            description={property.description}
-          />
+          <PropertyDescriptionSection description={property.description} />
 
           {property.amenities.length ? (
             <section>
@@ -362,7 +457,7 @@ export default async function PropertyDetailPage({
           </section>
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+        <aside id="enquiry" className="scroll-mt-24 space-y-4 lg:sticky lg:top-24 lg:self-start">
           <PropertyListingInquiry {...propertyListingInquiryFromProperty(property)} />
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <PropertyInquiryLanguageActions listingSlug={property.slug} />
@@ -395,6 +490,7 @@ export default async function PropertyDetailPage({
           <PropertyGrid items={related} userId={session?.id} />
         </Section>
       ) : null}
-    </div>
+      </div>
+    </>
   );
 }

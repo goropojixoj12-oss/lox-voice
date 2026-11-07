@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/shared/states";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
 import { hasMapCoords } from "@/lib/property-coords";
-import { getListingDescriptionClickRedirect } from "@/lib/live-news-show";
+import { ParallaxSection } from "@/components/shared/parallax-section";
 import type { Property } from "@/lib/types";
 
 export function CatalogClient({
@@ -59,22 +59,45 @@ export function CatalogClient({
     router.push(`${pathname}?${params.toString()}`);
   }
 
-  function descriptionHrefForProperty(property: Property): string | undefined {
-    if (pathname !== "/buy/residential") return undefined;
-    return getListingDescriptionClickRedirect(property.slug) ?? undefined;
+  /** Listings set to the slides design open the presentation straight away. */
+  function presentationHrefForProperty(property: Property): string | undefined {
+    if (property.design !== "slides") return undefined;
+    return `/property/${property.slug}?presentation=1`;
   }
+
+  /** Backdrop for the catalog header: a real property photo, never a test card. */
+  function catalogHeroImage(): { url: string; alt: string } | null {
+    for (const item of items) {
+      if (item.slug.startsWith("test-card")) continue;
+      const image = item.images?.[0];
+      if (image?.url) return { url: image.url, alt: image.alt || item.title };
+    }
+    return null;
+  }
+
+  const heroImage = catalogHeroImage();
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-6 max-w-3xl">
-        <h1 className="font-[family-name:var(--font-display)] text-4xl text-[var(--color-accent-soft)]">
+      <ParallaxSection
+        imageUrl={heroImage?.url ?? null}
+        alt={heroImage?.alt || title}
+        className="mb-6 flex min-h-[clamp(260px,38vh,420px)] flex-col justify-end rounded-[var(--radius-xl)]"
+        contentClassName="px-5 py-10 sm:px-10 sm:py-14"
+      >
+        <p className="inline-flex items-center gap-2 rounded-full border border-[rgba(212,175,55,0.45)] bg-[rgba(11,28,51,0.6)] px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.3em] text-[var(--color-accent-soft)] backdrop-blur-sm">
+          SEAPS · Listings
+        </p>
+        <h1 className="mt-3 max-w-3xl font-[family-name:var(--font-display)] text-[clamp(1.9rem,4.4vw,3.4rem)] leading-[1.05] text-balance text-white">
           {title}
         </h1>
-        <p className="mt-2 text-[var(--color-muted)]">{description}</p>
-        <p className="mt-2 text-sm text-[var(--color-muted)]">
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-base">
+          {description}
+        </p>
+        <p className="mt-4 text-xs uppercase tracking-[0.22em] text-white/50">
           {total} matching {total === 1 ? "listing" : "listings"}
         </p>
-      </div>
+      </ParallaxSection>
 
       {coverAd ? (
         <div className="mb-2 flex justify-center">
@@ -141,20 +164,20 @@ export function CatalogClient({
               <PropertyList
                 items={items}
                 userId={userId}
-                descriptionHrefForProperty={descriptionHrefForProperty}
+                presentationHrefForProperty={presentationHrefForProperty}
               />
             </div>
           ) : view === "list" ? (
             <PropertyList
               items={items}
               userId={userId}
-              descriptionHrefForProperty={descriptionHrefForProperty}
+              presentationHrefForProperty={presentationHrefForProperty}
             />
           ) : (
             <PropertyGrid
               items={items}
               userId={userId}
-              descriptionHrefForProperty={descriptionHrefForProperty}
+              presentationHrefForProperty={presentationHrefForProperty}
             />
           )}
 

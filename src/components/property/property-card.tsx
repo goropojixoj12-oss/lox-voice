@@ -172,11 +172,11 @@ export function CardImagePreview({
 export function PropertyCard({
   property,
   userId,
-  externalDescriptionHref,
+  presentationHref,
 }: {
   property: Property;
   userId?: string;
-  externalDescriptionHref?: string;
+  presentationHref?: string;
 }) {
   const frameRef = useRef(0);
   const router = useRouter();
@@ -264,9 +264,9 @@ export function PropertyCard({
             </span>
           ) : null}
         </div>
-        {externalDescriptionHref ? (
-          <ButtonLink href={externalDescriptionHref} variant="accent" size="sm" className="w-full">
-            Description
+        {presentationHref ? (
+          <ButtonLink href={presentationHref} variant="accent" size="sm" className="w-full">
+            Presentation
           </ButtonLink>
         ) : null}
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-1 text-xs">
@@ -289,11 +289,11 @@ export function PropertyCard({
 export function PropertyGrid({
   items,
   userId,
-  descriptionHrefForProperty,
+  presentationHrefForProperty,
 }: {
   items: Property[];
   userId?: string;
-  descriptionHrefForProperty?: (property: Property) => string | undefined;
+  presentationHrefForProperty?: (property: Property) => string | undefined;
 }) {
   return (
     <div className="grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -302,7 +302,7 @@ export function PropertyGrid({
           key={property.id}
           property={property}
           userId={userId}
-          externalDescriptionHref={descriptionHrefForProperty?.(property)}
+          presentationHref={presentationHrefForProperty?.(property)}
         />
       ))}
     </div>
@@ -312,11 +312,11 @@ export function PropertyGrid({
 export function PropertyList({
   items,
   userId,
-  descriptionHrefForProperty,
+  presentationHrefForProperty,
 }: {
   items: Property[];
   userId?: string;
-  descriptionHrefForProperty?: (property: Property) => string | undefined;
+  presentationHrefForProperty?: (property: Property) => string | undefined;
 }) {
   return (
     <div className="grid items-stretch gap-4">
@@ -325,7 +325,7 @@ export function PropertyList({
           key={property.id}
           property={property}
           userId={userId}
-          externalDescriptionHref={descriptionHrefForProperty?.(property)}
+          presentationHref={presentationHrefForProperty?.(property)}
         />
       ))}
     </div>

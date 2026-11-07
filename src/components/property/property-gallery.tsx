@@ -38,7 +38,7 @@ export function PropertyGallery({
 
   if (!current) {
     if (shouldShowLiveNewsPanelForListing(listingSlug)) {
-      return <LiveNewsShowPanel listingSlug={listingSlug} />;
+      return <LiveNewsShowPanel />;
     }
     // No photos and no embed for this listing: show an intentional hero instead
     // of an empty cut-out in the page layout.

@@ -698,3 +698,27 @@ font font {
     animation: none;
   }
 }
+
+/* Parallax: the photo drifts down slower than the page, the content drifts up.
+   The only motion source is one scroll listener per block, and it is disabled
+   for people who ask for reduced motion. */
+.seaps-parallax-media {
+  transform: translate3d(0, var(--seaps-parallax, 0px), 0) scale(1.16);
+  transform-origin: center top;
+  will-change: transform;
+}
+
+.seaps-parallax-content {
+  transform: translate3d(0, calc(var(--seaps-parallax, 0px) * -0.42), 0);
+  opacity: var(--seaps-parallax-fade, 1);
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seaps-parallax-media,
+  .seaps-parallax-content {
+    transform: none;
+    opacity: 1;
+    will-change: auto;
+  }
+}
