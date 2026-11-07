@@ -9,6 +9,7 @@ import { FavoriteButton } from "@/components/property/favorite-button";
 import { PriceDisplay } from "@/components/property/price-display";
 import { PropertyDescriptionSection } from "@/components/property/property-description-section";
 import { PropertyGallery } from "@/components/property/property-gallery";
+import { PropertyPresentation } from "@/components/property/property-presentation";
 import { PropertyGrid } from "@/components/property/property-card";
 import { PropertyMap } from "@/components/search/property-map";
 import { BreadcrumbJsonLd, PropertyJsonLd } from "@/components/seo/json-ld";
@@ -147,6 +148,7 @@ export default async function PropertyDetailPage({
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="min-w-0 space-y-8">
           <PropertyGallery images={property.images} listingSlug={property.slug} />
+          {property.images?.length ? <PropertyPresentation property={property} /> : null}
           <div>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>

@@ -654,3 +654,47 @@ font font {
   color: #0b1c33;
 }
 
+/* Presentation slideshow: one photo per slide, slow drift, text rises in.
+   Both effects are switched off for people who ask for reduced motion. */
+@keyframes seapsSlideDrift {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes seapsSlideRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.seaps-slide-photo {
+  animation: seapsSlideDrift 14s ease-out both;
+}
+
+.seaps-slide-rise {
+  animation: seapsSlideRise 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.seaps-slide-rise:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.seaps-slide-rise:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seaps-slide-photo,
+  .seaps-slide-rise {
+    animation: none;
+  }
+}
