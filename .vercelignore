@@ -1,0 +1,11 @@
+# Deployment source must stay small: the previous upload carried almost a
+# gigabyte of browser profiles from local screenshots, and the function
+# packaging step ran out of disk while writing the lambda archive.
+tmp
+docs
+tests
+.next
+.vercel
+backups
+*.log
+*.zip

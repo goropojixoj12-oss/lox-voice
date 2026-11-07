@@ -989,3 +989,29 @@ gate PASS, коммиты `5fc2257`, `e1df57a`.
 Что осталось:
 
 - в живом каталоге лежит тестовая карточка `Test card — seaps flow check` с портретом человека на обложке (её создавали для проверки загрузки фото). Это мой артефакт, не карточка клиента; удалять без твоего слова не стал.
+
+
+### 2026-11-07 — деплой падал 20 минут и выдавал «internal Vercel error»: виноват мусор в папке tmp
+
+Симптом: `vercel deploy --prod --archive=tgz` три раза подряд заканчивался `deploy_failed` с текстом `The deployment failed because of an internal Vercel error`. Сборка при этом проходила: `Build Completed in /vercel/output [2m]`, падало уже после — на шаге `Deploying outputs...`, всегда ровно через ~20 минут.
+
+Как нашёл причину (без гаданий):
+
+- в логах деплоя через API (`/v6/deployments`) вместо пустого сообщения лежал настоящий текст ошибки: `building erofs artifact: build: write frame at 1065353216: writing frame data: write <temp>/lambda.vhs: no space left on device` — то есть упаковщик функции упирался в диск;
+- раздутый артефакт давала не сборка, а исходники: в логе `Extracted 26935 deployment files`, а в проекте лежала папка `tmp` на **0.93 ГБ / 17 478 файлов** — профили Chrome от прошлых локальных скриншотов (`shot-profile*`, `measure-profile*`, `clearance-profile*` по 60–117 МБ каждый);
+- `tmp` есть в `.gitignore`, но `.vercelignore` в проекте не было, а CLI при выгрузке ориентируется именно на него, поэтому каждый деплой тащил почти гигабайт кэша браузера.
+
+Что сделано:
+
+- удалены все каталоги профилей в `tmp` (это кэш puppeteer, не данные проекта): `tmp` уменьшилась с 0.93 ГБ до 23 МБ / 64 файлов;
+- добавлен `.vercelignore`: `tmp`, `docs`, `tests`, `.next`, `.vercel`, `backups`, `*.log`, `*.zip` — чтобы каталог отладки больше никогда не уезжал в деплой;
+- попутно выяснено, почему не сработал обходной путь «собрать локально»: `vercel build` падает на `pnpm install`, потому что в Node 26 сломан путь к corepack (`Cannot find module ...\corepack\dist\pnpm.js`). Серверная сборка на Vercel работает, локальная — нет.
+
+Проверено на проде (`www.vps1.store`, деплой `dpl_3etJhf4woAC7PitD7A7sB3KFJxSH`, READY):
+
+- `/buy/residential` → 200, `onhercules` в HTML нет, ссылок `?presentation=1` — 3, класс `seaps-parallax` есть;
+- `/property/vue-aston-...-fBb84` → 200, `onhercules` нет, один `h1`, кнопка «Play the presentation» на месте;
+- параллакс на проде живой: после прокрутки на 420 px у блока `--seaps-parallax: 96.7px`, подложка сместилась (top ушёл в -249), контент погас до 0.31;
+- `www.seaps.asia` по-прежнему не резолвится (DNS-зона у хостера), хотя Vercel уже назначил алиас — это отдельная задача, не деплой.
+
+Вывод на будущее: при `internal Vercel error` не верить сообщению CLI, а смотреть `errorMessage` деплоя через API — там лежит настоящая причина.
